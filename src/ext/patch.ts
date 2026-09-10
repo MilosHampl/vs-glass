@@ -121,9 +121,9 @@ export function cleanupLegacyCss(appRoot: string, checksum: (buf: Buffer) => str
  *   - on each workbench window's `dom-ready` it applies the vibrancy material and inserts the glass CSS;
  *   - it watches the folder and re-applies live whenever the extension rewrites the files.
  */
-export function hookText(version: string): string {
+export function hookText(_version?: string): string {
   return `${WIN_START}
-/* VS Glass ${version} — ${HOOK_VERSION}. See-through window + live glass CSS. Added by the VS Glass extension; "VS Glass: Remove" restores this file byte-exact. */
+/* VS Glass — ${HOOK_VERSION}. See-through window + live glass CSS, installed by the VS Glass extension; "VS Glass: Remove" restores this file byte-exact. */
 ;(function () {
   var modules = null;
   try {

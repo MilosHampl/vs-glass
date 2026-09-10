@@ -119,7 +119,7 @@ VS Glass is one extension and needs nothing else: no Vibrancy Continued, no Cust
 1. Install the `.vsix` from the [latest release](https://github.com/MilosHampl/vs-glass/releases/latest):
 
    ```sh
-   code --install-extension vs-glass-1.1.0.vsix
+   code --install-extension vs-glass-1.1.1.vsix
    ```
 
    or in VS Code: Extensions view → `…` → **Install from VSIX…**.

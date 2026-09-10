@@ -16,6 +16,12 @@ try {
   // next to this one means "update, not uninstall": leave everything in place for the new version to manage.
   const siblings = fs.readdirSync(path.dirname(extDir)).filter(n => /^miloshampl\.vs-glass-/i.test(n) && path.join(path.dirname(extDir), n) !== extDir);
   if (siblings.length) { console.log(`VS Glass uninstall: newer install present (${siblings.join(', ')}); nothing undone`); process.exit(0); }
+  // VS Code removes an uninstalled extension from extensions.json before it runs this hook. If the id is still listed
+  // (an update, a version mismatch on a development symlink, a reinstall), this is not an uninstall: leave everything.
+  try {
+    const index = JSON.parse(fs.readFileSync(path.join(path.dirname(extDir), 'extensions.json'), 'utf8')) as Array<{ identifier?: { id?: string } }>;
+    if (index.some(e => String(e.identifier?.id ?? '').toLowerCase() === 'miloshampl.vs-glass')) { console.log('VS Glass uninstall: the extension is still installed (extensions.json lists it); nothing undone'); process.exit(0); }
+  } catch { /* no index: fall through */ }
   const paths = JSON.parse(fs.readFileSync(pathsFile, 'utf8')) as { main?: string; stateDir?: string };
   if (paths.main && fs.existsSync(paths.main)) console.log(`VS Glass uninstall: out/main.js ${restoreMain(paths.main)}`);
   if (paths.stateDir && fs.existsSync(paths.stateDir)) { fs.rmSync(paths.stateDir, { recursive: true, force: true }); console.log(`VS Glass uninstall: deleted ${paths.stateDir}`); }

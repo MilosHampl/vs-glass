@@ -1,4 +1,4 @@
-# VS Glass 1.1.0
+# VS Glass 1.1.1
 
 Glass optics for VS Code: a see-through window, refracting edges, specular rims and near-clear translucent planes — standalone, live-tunable. Unofficial; not affiliated with Apple.
 
@@ -12,13 +12,17 @@ Glass optics for VS Code: a see-through window, refracting edges, specular rims 
 
 **Webviews match.** Theme-scoped `[Glass …]` colour blocks are added to `workbench.colorCustomizations` while the effects are on, so Claude Code, Markdown preview and other webviews — which paint from theme colours no CSS can reach — carry the same near-clear alphas. Removed with Remove.
 
+## 1.1.1
+
+One material for every control, from a design review over the regenerated screenshots: list selection, focus and quick-input rows are an accent film with a ring instead of a solid blue bar; inputs, dropdowns and checkboxes are light films with a hairline; badges are accent pills; the focus ring is a soft accent; scrollbar sliders are white films; diff decorations are thin films with a 2 px edge accent; minimap marks are toned down; the active editor tab and the active panel tab share one light film. The editor card lost the ring that doubled the side bar's edge at the seam; a wider text halo keeps code, tabs and labels legible over bright desktops; widgets carry a 78 % body; mint and amber tints fixed.
+
 ## Assets
-`vs-glass-1.1.0.vsix` (theme + extension), and the plain CSS for people who inject by other means: `glass.css`, `glass-wallpaper.css`, `tints/*.css` (8), `density/*.css` (6), `lens/*.css` (2), `aberration/*.css` (3), `glass-filters.svg`.
+`vs-glass-1.1.1.vsix` (theme + extension), and the plain CSS for people who inject by other means: `glass.css`, `glass-wallpaper.css`, `tints/*.css` (8), `density/*.css` (6), `lens/*.css` (2), `aberration/*.css` (3), `glass-filters.svg`.
 
 ## Install
 
 ```sh
-code --install-extension vs-glass-1.1.0.vsix
+code --install-extension vs-glass-1.1.1.vsix
 ```
 Pick **Glass Regular Dark** (⌘K ⌘T), answer **Apply** to the one-time prompt, quit and reopen once. Recommended companion setting: `"workbench.experimental.modernUI": true`.
 

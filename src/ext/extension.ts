@@ -16,7 +16,7 @@ import * as vscode from 'vscode';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
-import { BACKUP_SUFFIX, HOOK_VERSION, LEGACY_CSS_START, anchorCount, applyHook, cleanupLegacyCss, ensureBackup, hasHook, hasSplice, hookText, hookVersionOf, isEsmApp, restoreMain, writeAtomic } from './patch';
+import { BACKUP_SUFFIX, LEGACY_CSS_START, anchorCount, applyHook, cleanupLegacyCss, ensureBackup, hasHook, hasSplice, hookText, hookVersionOf, isEsmApp, restoreMain, writeAtomic } from './patch';
 
 const GUARD = '.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)';
 const VIBRANCY_MARKER = 'VSCODE-VIBRANCY-START';
@@ -157,7 +157,7 @@ function status(ctx: vscode.ExtensionContext, cfg: Cfg): Status {
   const anchors = desktop ? anchorCount(main) : 0;
   return {
     desktop, esm, writable,
-    hookApplied: hasHook(main), hookCurrent: hookVersionOf(main) === HOOK_VERSION && (hasSplice(main) || anchors !== 1), hookLive,
+    hookApplied: hasHook(main), hookCurrent: main.includes(hookText()) && (hasSplice(main) || anchors !== 1), hookLive, // current = the exact shipped hook text is in place
     spliced: hasSplice(main), anchors, vibrancyContinued: main.includes(VIBRANCY_MARKER),
     cssApplied: css !== null, cssStale: css !== null && css !== compose(ctx, cfg),
     stateStale: state !== stateText(ctx, cfg),

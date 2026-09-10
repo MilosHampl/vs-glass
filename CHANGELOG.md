@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-10
+
+### Changed
+
+- One material for every control, from a design review over the regenerated screenshots: list selection, focus and
+  quick-input rows are an accent film (22 %) with the existing ring instead of a solid blue bar; inputs, dropdowns and
+  checkboxes are light films with a hairline (they were darker wells); badges are accent pills; the focus ring is a soft
+  accent; scrollbar sliders are white films; diff decorations are thin films with a 2 px edge accent; minimap and
+  overview-ruler marks are toned down; the active editor tab and the active panel tab share the same light film.
+- The editor card lost its edge ring (it doubled the side bar's right edge into a groove at the seam); a wider text halo
+  on code, tabs, breadcrumbs, list labels and the status bar for legibility over bright desktops.
+- Floating widgets carry a 78 % body (was 72 %) so what passes through the frost stays a haze.
+- Tints: mint is visible now (.09), amber is built on system yellow (it collapsed to maroon over warm desktops), blue
+  pulled back a step.
+
 ## [1.1.0] - 2026-09-10
 
 ### Added
@@ -134,6 +149,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   key coverage against the full VS Code key inventory), `npm run audit:contrast` (WCAG contrast).
 - Project documentation: README, DESIGN.md, and this CHANGELOG.
 
-[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/MilosHampl/vs-glass/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/MilosHampl/vs-glass/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/MilosHampl/vs-glass/releases/tag/v1.0.0

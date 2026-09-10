@@ -452,7 +452,7 @@ export const regularDark = build({
   id: 'glass-regular-dark', name: 'Glass Regular Dark', isDark: true, variant: 'regular',
   ladder: { ground: 0.165, groundDeep: 0.11, content: 0.205, chrome: 0.255, raised: 0.295, widget: 0.335, overlay: 0.375 },
   alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.42, widgetGlass: 0.62, content: 0.78, contentTheme: 0.72 },
-  labelBoost: 0, wallpaperVividness: 1.6, window: { content: 0.07, chrome: 0.06, widget: 0.72, dim: 0.015 },
+  labelBoost: 0, wallpaperVividness: 1.6, window: { content: 0.07, chrome: 0.06, widget: 0.78, dim: 0.015 },
   effects: { blur: 14, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 14, lensEdge: 56, aberration: 1.6, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
 
@@ -516,13 +516,13 @@ export const ABERRATION_PRESETS: { id: string; mul: number; description: string 
 export interface Tint { id: string; name: string; color: Hex; alpha: number; description: string }
 export const TINTS: Tint[] = [
   { id: 'graphite', name: 'Graphite', color: gray(0.5, 0.0), alpha: 0.14, description: 'neutral grey film — the smokiest glass' },
-  { id: 'blue', name: 'Blue', color: APPLE.dark.blue, alpha: 0.08, description: 'system blue' },
+  { id: 'blue', name: 'Blue', color: APPLE.dark.blue, alpha: 0.07, description: 'system blue' },
   { id: 'indigo', name: 'Indigo', color: APPLE.dark.indigo, alpha: 0.09, description: 'system indigo' },
   { id: 'violet', name: 'Violet', color: APPLE.dark.purple, alpha: 0.07, description: 'system purple' },
   { id: 'teal', name: 'Teal', color: APPLE.dark.teal, alpha: 0.07, description: 'system teal' },
-  { id: 'mint', name: 'Mint', color: APPLE.dark.mint, alpha: 0.06, description: 'system mint' },
+  { id: 'mint', name: 'Mint', color: APPLE.dark.mint, alpha: 0.09, description: 'system mint' },
   { id: 'rose', name: 'Rose', color: APPLE.dark.pink, alpha: 0.06, description: 'system pink' },
-  { id: 'amber', name: 'Amber', color: APPLE.dark.orange, alpha: 0.06, description: 'system orange' },
+  { id: 'amber', name: 'Amber', color: APPLE.dark.yellow, alpha: 0.07, description: 'system yellow, warm amber over most desktops' },
 ];
 
 /** Small report used by `npm run build` to print the ladder. */

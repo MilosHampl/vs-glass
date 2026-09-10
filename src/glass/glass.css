@@ -102,7 +102,74 @@
   --vscode-titleBar-inactiveBackground: transparent;
   --vscode-settings-headerBackground: transparent;
   --vscode-editorOverviewRuler-background: transparent;
+  /* controls as clear films, one material everywhere (review 1.1.1): the theme's opaque-ish selection bar, ink-well
+     inputs, solid badges, hard focus ring, stock grey scrollbar and full-band diff decorations all read as leftovers
+     from an opaque theme once the planes are near-clear */
+  --vscode-list-activeSelectionBackground: color-mix(in srgb, var(--vsg-accent) 22%, transparent);
+  --vscode-list-focusBackground: color-mix(in srgb, var(--vsg-accent) 22%, transparent);
+  --vscode-list-focusAndSelectionBackground: color-mix(in srgb, var(--vsg-accent) 26%, transparent);
+  --vscode-list-inactiveSelectionBackground: rgba(var(--vsg-spec-rgb), 0.10);
+  --vscode-list-hoverBackground: rgba(var(--vsg-spec-rgb), 0.07);
+  --vscode-quickInputList-focusBackground: color-mix(in srgb, var(--vsg-accent) 22%, transparent);
+  --vscode-editorSuggestWidget-selectedBackground: color-mix(in srgb, var(--vsg-accent) 22%, transparent);
+  --vscode-focusBorder: color-mix(in srgb, var(--vsg-accent) 55%, transparent);
+  --vscode-input-background: rgba(var(--vsg-spec-rgb), 0.06);
+  --vscode-input-border: rgba(var(--vsg-spec-rgb), 0.14);
+  --vscode-dropdown-background: rgba(var(--vsg-plane-widget-rgb), 0.55);
+  --vscode-dropdown-listBackground: rgba(var(--vsg-plane-widget-rgb), 0.9);
+  --vscode-dropdown-border: rgba(var(--vsg-spec-rgb), 0.14);
+  --vscode-checkbox-background: rgba(var(--vsg-spec-rgb), 0.06);
+  --vscode-checkbox-border: rgba(var(--vsg-spec-rgb), 0.18);
+  --vscode-badge-background: color-mix(in srgb, var(--vsg-accent) 26%, transparent);
+  --vscode-badge-foreground: var(--vsg-label-1);
+  --vscode-activityBarBadge-background: color-mix(in srgb, var(--vsg-accent) 60%, transparent);
+  --vscode-activityWarningBadge-background: color-mix(in srgb, #ffd600 55%, transparent);
+  --vscode-activityErrorBadge-background: color-mix(in srgb, #ff4245 60%, transparent);
+  --vscode-scrollbarSlider-background: rgba(var(--vsg-spec-rgb), 0.10);
+  --vscode-scrollbarSlider-hoverBackground: rgba(var(--vsg-spec-rgb), 0.16);
+  --vscode-scrollbarSlider-activeBackground: rgba(var(--vsg-spec-rgb), 0.22);
+  --vscode-diffEditor-insertedLineBackground: rgba(48, 209, 88, 0.09);
+  --vscode-diffEditor-removedLineBackground: rgba(255, 66, 69, 0.10);
+  --vscode-diffEditor-insertedTextBackground: rgba(48, 209, 88, 0.22);
+  --vscode-diffEditor-removedTextBackground: rgba(255, 66, 69, 0.26);
+  --vscode-diffEditor-unchangedRegionBackground: rgba(var(--vsg-spec-rgb), 0.06);
+  --vscode-diffEditor-unchangedCodeBackground: rgba(var(--vsg-spec-rgb), 0.04);
+  --vscode-minimap-errorHighlight: rgba(255, 66, 69, 0.42);
+  --vscode-minimap-warningHighlight: rgba(255, 214, 0, 0.42);
+  --vscode-editorOverviewRuler-errorForeground: rgba(255, 66, 69, 0.6);
+  --vscode-editorOverviewRuler-warningForeground: rgba(255, 214, 0, 0.6);
+  --vscode-editorOverviewRuler-infoForeground: rgba(var(--vsg-spec-rgb), 0.35);
+  --vscode-tab-activeBackground: rgba(var(--vsg-spec-rgb), 0.10);
+  --vscode-tab-unfocusedActiveBackground: rgba(var(--vsg-spec-rgb), 0.07);
+  --vscode-panelTitle-activeBorder: transparent;
 }
+/* the active tab and the active panel tab are the same light film with the same rim (they pointed opposite ways) */
+@G .part.editor .tabs-container .tab.active,
+@G .part.panel .composite.title .action-item.checked .action-label,
+@G .part.panel .composite.title .action-item.checked {
+  background: rgba(var(--vsg-spec-rgb), 0.10) !important;
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.22);
+}
+@G .part.panel .composite.title .action-item.checked .action-label { border-radius: var(--vsg-radius-control) !important; }
+/* form controls carry the control radius and a hairline, never a darker well */
+@G .monaco-inputbox,
+@G .monaco-select-box,
+@G .settings-editor .setting-item-control select,
+@G .monaco-custom-toggle {
+  border-radius: var(--vsg-radius-control) !important;
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.10);
+}
+@G .monaco-custom-toggle { border-radius: var(--vsg-radius-inner) !important; }
+/* diff decorations: a 1 px accent at the left edge carries the meaning; the fill stays a film */
+@G .monaco-diff-editor .line-insert,
+@G .monaco-diff-editor .char-insert { box-shadow: inset 2px 0 0 rgba(48, 209, 88, 0.55); }
+@G .monaco-diff-editor .line-delete,
+@G .monaco-diff-editor .char-delete { box-shadow: inset 2px 0 0 rgba(255, 66, 69, 0.55); }
+@G .monaco-editor .diff-hidden-lines,
+@G .monaco-editor .diff-hidden-lines .center { background: rgba(var(--vsg-spec-rgb), 0.05) !important; background-image: none !important; }
+/* badges are pills of the accent film, not hard rectangles */
+@G .monaco-count-badge,
+@G .part.panel .composite.title .badge .badge-content { border-radius: var(--vsg-radius-inner) !important; box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.14); }
 @G .part.editor,
 @G .part.editor .editor-container,
 @G .part.editor .editor-instance,
@@ -273,25 +340,20 @@
   background: transparent !important;
 }
 @G.floating-panels .part.editor > .content { position: relative; }
-@G.floating-panels .part.editor > .content::before {
-  content: "";
-  position: absolute; inset: 0; border-radius: inherit; padding: 1px;
-  background: conic-gradient(from 300deg at 22% 12%,
-    rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-mid) * 0.9)) 0deg,
-    rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-lo) * 1.2)) 140deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 260deg,
-    rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-mid) * 0.9)) 360deg);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
-  pointer-events: none; z-index: 50;
-}
+/* no ring on the editor card: its left rim doubled the side bar's right edge into a machined groove at the seam; the
+   inset top hairline (box-shadow above) is the editor's only edge light */
 @G .monaco-editor .minimap { background-color: transparent !important; }
 /* legibility shadow: text over a see-through plane gets a soft dark halo (Apple lifts labels off glass the same way);
    cheap enough that scroll frame times are unchanged (scripts/perf.mjs) */
 @G .part.editor .monaco-editor .view-lines,
 @G .part.editor .monaco-editor .margin-view-overlays .line-numbers,
 @G .part.panel .xterm-rows,
-@G .part.editor .monaco-editor .sticky-widget .sticky-line-content { text-shadow: 0 1px 2px rgba(var(--vsg-shadow-rgb), 0.45); }
+@G .part.editor .monaco-editor .sticky-widget .sticky-line-content,
+@G .part.editor .tabs-container .tab .label-name,
+@G .breadcrumbs-control .monaco-breadcrumb-item,
+@G .part.sidebar .monaco-list-row .label-name,
+@G .part.auxiliarybar .monaco-list-row .label-name,
+@G .part.statusbar .statusbar-item-label { text-shadow: 0 1px 3px rgba(var(--vsg-shadow-rgb), 0.6); }
 
 /* modal editors (Settings, and anything VS Code opens in its modal editor part) float OVER other editors: they are
    widgets, not base planes — a frosted body and a rim, so nothing underneath bleeds into their text */
@@ -362,7 +424,9 @@
 @G .monaco-editor .suggest-widget .suggest-status-bar,
 @G .monaco-editor .parameter-hints-widget .phwrapper,
 @G .monaco-hover .hover-contents,
-@G .monaco-hover .hover-row {
+@G .monaco-hover .hover-row,
+@G .monaco-hover .hover-row .actions,
+@G .monaco-hover .monaco-hover-content .hover-row.status-bar {
   background: transparent !important;
 }
 @G .quick-input-widget .quick-input-titlebar,

@@ -6,5 +6,5 @@
  */
 .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) {
   --vsg-tint-rgb: 0, 218, 195;
-  --vsg-tint-a: 0.06;
+  --vsg-tint-a: 0.09;
 }
