@@ -12,7 +12,7 @@ here was read from generated themes, research files, or a script run in this rep
 
 ## 1. Goals and non-goals
 
-**Goal: reproduce Liquid Glass's optical *behaviour*, not ship "another frosted theme."**
+**Goal: reproduce the optical *behaviour* of Apple's glass material, not ship "another frosted theme."**
 `research/prior-art.md` §4 surveyed ten-plus existing glass-flavoured VS Code themes and found every
 one stops at `backdrop-filter: blur()` plus a translucent background — none attempt the eight things
 Apple's material actually does (lensing, specular highlights that trace geometry, size-dependent
@@ -33,7 +33,7 @@ top of either mode, and six `glass/density/glass-density-<percent>.css` presets 
 density into a knob, from fully clear to opaque-ish, on top of any mode or tint — floating widgets keep
 their own fixed, readable body regardless (§3). See §5.
 
-**Non-goal, hard rule: never filter editor text.** Apple's Liquid Glass is a functional layer above
+**Non-goal, hard rule: never filter editor text.** Apple's material is a functional layer above
 content that must never degrade it (§2). No selector in `glass.css` puts `backdrop-filter`, `filter`,
 or `mix-blend-mode` on `.monaco-editor`'s text nodes — only its *background* gets a slightly
 translucent color (optic 7). Widgets that overlap code (suggest, hover, find, sticky scroll) filter
@@ -42,7 +42,7 @@ displaced.
 
 **Non-goal: Layer 2 is CSS-only, by design.** PROGRESS.md's Phase-1 findings confirm data-URI SVG
 filters work inside `backdrop-filter` (finding 3) — no runtime script, no CSP change, no Trusted
-Types dependency (finding 8). This bounds optic 8 ("liquid response"): real Liquid Glass reshapes
+Types dependency (finding 8). This bounds optic 8 ("liquid response"): Apple's real material reshapes
 its map per frame from touch/motion; VS Glass keeps its specular sheen static and only transitions a
 small, deliberate set of properties on `:active`/pop-in/focus — a press scale, a widget's entrance, a
 focus glow — see §4.8, §9.
@@ -154,7 +154,7 @@ before any preset), and `--vsg-density` (default `1`), multiplied together: `rgb
 density)` (`--vsg-plane-dim` clamps to `min(1, density)` so it can't invert past fully opaque). The
 tuned default base alpha is now low — "almost clear," a faint smoky film rather than a visible material
 — and `glass/density/glass-density-<percent>.css` presets (§5) do nothing but set `--vsg-density` to a
-new number: `0` is fully clear (only rims, bevels, lensing and text left), `2` is opaque-ish. Because
+new number: `0` is fully clear (only rims, lensing and text left), `2` is opaque-ish. Because
 the multiplication happens once in `glass.css` itself, that one line changes the window film and every
 base plane together. `glass-wallpaper.css` only re-points the *base-alpha* half of the formula
 (`--vsg-plane-content-a` → `--vsg-plane-content-wall-a`, and so on) to wallpaper mode's denser starting
@@ -166,7 +166,7 @@ presets above), with a floor under the multiplication (`max(floor, base-a × wid
 bodiless widget over an otherwise-clear base window has nothing to frost against and ghosts instead of
 reading as glass, so widgets keep a fixed, readable body while the base window goes as clear as density
 `0` allows. Command palette, hovers, suggest, notifications, dialogs and dropdown lists all use this
-plane; only their alpha, not their lensing or bevel, is protected this way.
+plane; only their alpha, not their lensing, is protected this way.
 
 Each `Elevation` carries `solid` (composited look, used for contrast math), `bg` (the `#RRGGBBAA`
 written to theme JSON), `bgGlass` (same tint at Layer 2's alpha), `border`, and a `specular {hi, mid,
@@ -383,22 +383,20 @@ more-visible, more-distorted character.
 | `column` | 48×820 | x | 0.5 | activity bar |
 | `strip` | 1400×36 | y | 0.35 | title/status bar, tab strip, sticky scroll |
 | `capsule` | 32×32 | xy, convex | 0.6 | icon-only pills (activity/status items) — a "ball lens" profile, no frosted body |
-| `edge-top` | 1400×40 | y, top-only | 0.6 | window slab's top rim (title bar) |
-| `edge-bottom` | 1400×40 | y, bottom-only | 0.6 | window slab's bottom rim (status bar); editor card's bottom seam |
+| `edge-top` | 1400×40 | y, top-only | 0.6 | unused since 1.1.0 (set to `none`): the window edge carries no lens |
+| `edge-bottom` | 1400×40 | y, bottom-only | 0.6 | unused since 1.1.0 (set to `none`) |
 
 `rim` scales `lensEdge`/`lensScale` down for thinner surfaces so the lens zone doesn't consume a
 36px strip. The two `edge-*` classes set `blur: 0` — clear glass, no frosted body — since a window-edge
 strip is meant to bend the title bar/status bar/code beneath it, never blur it.
 
-**Window-edge lensing:** `.monaco-workbench::before`/`::after` (§4.5) carry the `edge-top`/`edge-bottom`
-filters directly, giving the window slab's own top and bottom rim real, GPU-evaluated refraction — not
-just a static gradient — following the window's 20px corner radius. Both strips are 40px tall, tall
-enough that title-bar and status-bar text visibly compresses toward the frame rather than just tinting
-at the very edge. The editor card gets a matching `edge-bottom` strip (56px tall, its own taller box —
-the filter itself doesn't care how tall the element applying it is) along its own bottom seam, bending
-the last visible code lines the same way. The window's *side* rim has no lens (a straight edge with
-nothing to bend toward its own middle axis doesn't need one) — it's a plain inset ring on
-`.monaco-workbench` itself, painted under the parts in the 4px margins the floating cards leave.
+**Window edge (1.1.0):** no lens. An earlier build bent the title bar and status bar text with one-sided
+`edge-top`/`edge-bottom` strips on `.monaco-workbench::before`/`::after`; the owner read the bent UI text as a
+glitch, and there is nothing in-page behind those bars to refract anyway. The window edge is now one hairline
+rim ring following the 20px window corners (§4.2, §5). Likewise the base panes — side bars, panel, activity
+bar, title and status bars — carry no `backdrop-filter` over a see-through window (`--vsg-base-filter-*` = `none`;
+the wallpaper addon switches them back on over its opaque smoke). The `strip`, `sidebar`, `panel` and `column`
+classes therefore refract only in wallpaper mode; `widget`, `menu` and `capsule` are the ones that work over code.
 
 **Refraction needs an opaque in-page backdrop:** PROGRESS.md finding 6 — under a transparent window
 (Vibrancy, 20%-alpha editor) the displaced copy composites over the still-visible original and
@@ -421,12 +419,11 @@ masked to ~1px via `mask-composite: exclude` (`glass.css` §1/§4/§5). Alphas c
 `overlay: [0.72, 0.24, 0.06]`), tracking "thicker glass has more pronounced effects" (§7.3).
 `--vsg-light-angle` is fixed at `225deg` for every variant.
 
-Just inside that hairline sits a separate **bevel band** (`--vsg-bevel`, §4.3), now a lit chamfer rather
-than a groove: a bright hairline, a faint *light* band just inside it, then a soft shade fading into the
-body — no hard dark line. It gives an edge the read of thick material even where there is nothing
-behind it for the lens to bend — wallpaper mode's smoke is a real backdrop to refract, but a transparent
-window's OS-blurred desktop is not (§4.1, §5) — so the bevel is what keeps a rim looking like glass
-rather than a flat line in that case.
+That hairline is the *only* painted light on the glass. Earlier builds added a bevel band just inside it
+and a radial "sheen" across the body; the owner read both as Windows-XP/Vista chrome ("gradients and fake
+ass effects") and they are gone (1.1.0). Where there is nothing behind a pane for the lens to bend — a
+transparent window's OS-blurred desktop is not in-page content (§4.1, §5) — the edge is a plain hairline,
+which is what a real sheet of clear glass on a flat backdrop looks like.
 
 **Real vs. simulated:** the shape is a faithful static approximation. **Impossible, not
 unimplemented:** device-motion response — Electron has no accelerometer.
@@ -435,37 +432,37 @@ unimplemented:** device-motion response — Electron has no accelerometer.
 
 **Apple:** thickness scales with current size; shadow opacity is content-aware.
 
-**VS Glass:** a fixed layered `box-shadow` per elevation (`--vsg-thickness-chrome`/`-widget`), built on
-a shared **bevel** (`--vsg-bevel`) every rim carries first:
+**VS Glass (1.1.0):** deliberately minimal. Two fixed `box-shadow` recipes:
 
 ```css
---vsg-bevel:
-  inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.07),
-  inset 0 0 0 2px rgba(var(--vsg-spec-rgb), 0.035),
-  inset 0 0 6px 3px rgba(var(--vsg-shadow-rgb), 0.12);
---vsg-thickness-widget:
-  var(--vsg-bevel),
-  inset 0 1px 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-widget-spec-mid) * 0.9)),
-  inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.30),
-  inset 0 0 18px rgba(var(--vsg-shadow-rgb), 0.08),
-  0 18px 48px rgba(var(--vsg-shadow-rgb), 0.45),
-  0 2px 8px rgba(var(--vsg-shadow-rgb), 0.35);
+--vsg-thickness-chrome:                                   /* side bars, panel, activity bar, cards */
+  inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),   /* top rim catches the light */
+  inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)),    /* left rim, fainter */
+  inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.12);                       /* contact line */
+--vsg-thickness-widget:                                   /* palette, menus, hovers, notifications, dialogs */
+  inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)),
+  inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)),
+  inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18),
+  0 16px 48px rgba(var(--vsg-shadow-rgb), 0.28);                          /* the one shadow: widgets float over code */
 ```
 
-The bevel is a lit chamfer, all inset: a bright hairline, then a faint light band just inside it, then
-a soft shade fading into the body — no hard dark groove, which an earlier pass had and which read as a
-line rather than bent material. It's the part that reads as "thick glass" independent of anything
-behind the element. `--vsg-bevel` composes into `--vsg-thickness-chrome`/`-widget` (so every chrome
-card and widget carries it) and the window slab's own box-shadow carries an equivalent chamfer directly
-— its bottom edge brightened to about the same order as the top, after review found a dim bottom rim
-let the window's silhouette dissolve into the desktop below it; capsule buttons and pills carry a
-smaller inline version of the same pattern (§4.2).
-
-Widget shadows (`0 18px 48px`) are deeper/wider than chrome's (`0 10px 30px`) — a fixed per-tier
-choice standing in for "thickness scales with size," not a live function of rendered size.
+Base cards cast **no** shadow: a shadow under a pane that sits on the same sheet of glass reads as a
+floating window frame (and the editor card's shadow fell onto the panel below it as a dark band — the
+owner's "these shadows still look like shit"). The earlier bevel band, inner shading gradients and layered
+contact shadows are gone for the same reason. Buttons and pills carry a hairline rim and, for buttons, one
+small `0 2px 8px` shadow; nothing else.
 
 **Real vs. simulated:** fully simulated — `box-shadow` has no notion of what's behind an element, so
-content-aware shadow opacity has no CSS path (§9).
+content-aware shadow opacity has no CSS path (§9). The thickness cue that *is* real is the lens: the rim
+of every inside element bends the code beneath it (§4.1), which reads as material far better than any
+painted band did.
+
+**Where the lens may live (1.1.0):** only where there is in-page content behind the glass. Floating widgets
+over code, buttons and pills refract; the base panes — side bars, panel, activity bar, title and status bars —
+carry `backdrop-filter: none` over a see-through window (`--vsg-base-filter-*` tokens default to `none`; the
+wallpaper addon switches them back on, because its in-page smoke is a real opaque backdrop). There is nothing
+behind a base pane to bend, and a filter over a see-through region can only re-sample pixels that are not the
+desktop — at best nothing, at worst stale frames.
 
 ### 4.4 Vibrancy
 
@@ -489,12 +486,9 @@ body text.
 **VS Glass:** VS Code 1.136's `workbench.experimental.modernUI`/`floatingPanels` adds
 `.floating-panels.modern-ui` with real margins and rounded corners (PROGRESS.md finding 10) — the
 substrate `glass.css` §4 applies chrome material, lens filters, thickness shadow, and specular ring
-to. The window itself is painted as one slab: `.monaco-workbench::before`/`::after` are one-sided
-`edge-top`/`edge-bottom` lens strips (§4.1) — 40px, clear glass, no frost — that genuinely bend
-whatever sits just inside the top and bottom window edges (title bar, status bar) toward the window
-centre, plus the specular hairline and bevel (§4.2/§4.3), following the `--vsg-radius-window` (20px)
-window corners. The window's *side* rim is a separate plain inset ring painted directly on
-`.monaco-workbench` (a straight edge doesn't need a lens). Together these make every floating card sit
+to. The window itself is painted as one slab: `.monaco-workbench::before` draws a single hairline rim ring
+(no lens, no bevel) following the `--vsg-radius-window` (20px) corners, brightest along the top where the
+light enters (§4.2); the earlier `edge-top`/`edge-bottom` lens strips are gone in 1.1.0 (§4.1, §5). Together these make every floating card sit
 inside a single glass pane rather than on a flat rectangle. Cards, widgets, and controls nest inside
 that slab on one concentric radius ladder — window 20 > card 16 > widget 14 > control 9 > inner row 7
 (`radius` in `src/palette.ts`) — window is exactly card + VS Code's own 4px floating-card margin, so no
@@ -573,14 +567,12 @@ confirmed spring/elastic.
 An earlier build drifted the specular sheen's position on hover (`@property`-typed `--vsg-hl-x/-y/-a`,
 transitioned toward a new value under the cursor); the owner rejected it a second time ("buttons shine
 animations look like shit, make them just glass") and it is now gone everywhere, not just on buttons.
-The sheen on cards, widgets and buttons alike is a **static** highlight — `--vsg-hl-x/-y/-a` still
-exist as typed custom properties with a `transition` declared, but nothing ever writes a new value to
-them on `:hover`, so in practice they never move. What *does* still respond:
+In 1.1.0 the sheen itself went too — no painted highlight on cards, widgets or buttons at all, only the
+rim hairline and the lens (the owner: "no gradients and fake ass effects"). What *does* still respond:
 
-- **Buttons** (`.monaco-text-button` pills): a capsule shape, a bright hairline rim, a darker
-  refraction band just inside it, a faint static top light, a soft drop shadow, and the backdrop bent
-  at the rim by the lens filter (§4.1); primary buttons carry a light accent tint, secondary buttons
-  are clear glass. Nothing moves on hover (`:hover { filter: none }`, stated explicitly to keep it that
+- **Buttons** (`.monaco-text-button` pills): a capsule shape, a hairline rim, a bright 1 px top light
+  where the curved body catches the room, one small shadow, and the backdrop bent at the rim by the lens
+  filter (§4.1); primary buttons carry a light accent tint, secondary buttons are clear glass. Nothing moves on hover (`:hover { filter: none }`, stated explicitly to keep it that
   way); the only response is a quick `:active { transform: scale(0.97) }` press. Icon buttons and
   toolbar actions follow the same press-only rule.
 - **Floating widgets** (quick input, suggest, parameter hints, hover, the action widget, context-view
@@ -612,16 +604,57 @@ transparency can only come from the OS (Vibrancy's native blur), which is in ten
 in-page refraction on the same surface.
 
 **Transparent-window mode** (`glass/glass.css` alone, default): assumes the window itself is
-see-through — Vibrancy Continued, `vscode_vibrancy.type: "under-window"`, theme `"Custom theme (use
-imports)"`. `--vsg-plane-content/-chrome/-dim` (the base planes, §3) are set thin — almost clear —
+see-through — since 1.1.0 VS Glass's own window hook provides that (§5.1 below); Vibrancy Continued is
+an alternative provider. `--vsg-plane-content/-chrome/-dim` (the base planes, §3) are set thin — almost clear —
 generated per variant from each palette's `window: { content, chrome, widget, dim }` knob, so the OS
 blur reads through the glass rather than fighting it; `--vsg-plane-widget` stays at its own fixed,
 readable level regardless (§3), since floating widgets need a legible body over whatever the OS is
 blurring. The window itself is painted as one rounded glass slab
-(`--vsg-radius-window`: 20px; `.monaco-workbench::before`/`::after` draw the window-edge lens strips
-and bevel, §4.1/§4.5). No in-page ground is painted, so refraction reads wherever glass overlaps
+(`--vsg-radius-window`: 20px; `.monaco-workbench::before` draws one hairline ring following the window
+corners, brightest along the top, §4.2 — the earlier lens strips along the top and bottom edges bent the
+title-bar and status-bar text and read as a glitch, so the window edge refracts nothing). No in-page ground is painted, so refraction reads wherever glass overlaps
 in-page content — widgets over code, sticky scroll, card rims over the editor seam, the window's own
 top/bottom edges — and cannot bend the desktop itself (§4.1, §9).
+
+### 5.1 The window hook (1.1.0): how the window becomes see-through, and why settings are live
+
+VS Code has no extension point for either a transparent window or workbench CSS. Every transparency
+extension patches a bootstrap file; VS Glass patches exactly one, `out/main.js` (the main-process entry,
+the one bootstrap file `product.json` does not checksum), with a marker-delimited block the extension
+writes, backs up once and removes byte-exact. The block runs in Electron's main process and:
+
+1. makes the window transparent **at creation**: VS Code builds its `BrowserWindow` options in the same
+   `out/main.js` (`{backgroundColor:…, …, experimentalDarkMode:!0}`), and the extension splices one spread into
+   that object — `...(globalThis.__vsGlassWindowOptions?…():{})` — which returns
+   `{ transparent: true, backgroundColor: '#00000000', hasShadow: true }` when `state.json` asks for
+   transparency and nothing otherwise. Creation-time matters: Electron's `transparent: true` is what makes the
+   browser compositor clear the frame to transparent every paint; a window made transparent afterwards (the
+   1.1.0 preview did `setBackgroundColor('#00000000')` on `browser-window-created`) keeps stale pixels wherever
+   the page paints nothing — closed panels ghost through the near-clear editor, and a `backdrop-filter` over such
+   a region re-samples its own previous output every frame until it is neon (Milos saw both). The hook still
+   sets the vibrancy material (`win.setVibrancy(material)`) per window and wraps `setBackgroundColor` so VS
+   Code's own theme-driven repaint keeps the window clear;
+2. on every `dom-ready`, inserts the composed glass CSS with `webContents.insertCSS`. An inserted sheet is
+   an *injected author stylesheet*: it cascades after all document stylesheets (so it wins ties against
+   the theme's dynamic `<style>`), and it does not appear in `document.styleSheets`;
+3. `fs.watch`es `<user-data>/vs-glass/`, where the extension writes `glass.css` (glass.css + tint, lens,
+   aberration and density) and `state.json` (material, transparency). Any change is re-applied within
+   ~120 ms to every window: `removeInsertedCSS` + `insertCSS`, `setVibrancy`. That is why Density, Tint,
+   Material, Lens and Aberration are live in the Settings UI.
+
+Two consequences worth stating. The OS material both blurs **and** darkens the desktop in a dark
+appearance — the "too dark" the owner saw was mostly the material, not the CSS, so the material is a
+live setting (19 values; `hud` lets the most through). And a perfectly clear, unblurred window is not
+reachable: VS Code creates its windows opaque, `transparent: true` is a creation-time option we cannot
+inject (the ESM/CJS interop snapshots `BrowserWindow` before our block runs), and only a vibrancy view
+makes an opaque window see-through afterwards.
+
+Webviews are the one surface the inserted CSS cannot reach: they are iframes that paint their own bodies
+from theme colours. While the effects are on, the extension therefore keeps theme-scoped `[Glass …]`
+blocks in `workbench.colorCustomizations` (generated with the CSS as `glass/webview-colors.json`) that
+give `editor.background`, `sideBar.background`, `panel.background` and the strip colours the same
+near-clear alphas as the planes, so Claude Code, Markdown preview and extension views sit in the glass
+rather than on it. Removed with the effects.
 
 **Why the editor needs its own clearing pass:** the directive above says "the whole window *and
 editor* visibly transparent," and the editor is the one part of the workbench VS Code makes hardest to
@@ -655,7 +688,7 @@ It also disables the window rim and sets `border-radius: 0` — the window is op
 `200` — each just set `--vsg-density` to a new number (`100` is the tuned default and needs no file, so
 there is no `glass-density-100.css`). `--vsg-density` scales only the **base** planes: the window film,
 editor content, and chrome cards/strips. `0` is fully clear — a plane of glass with only its rims,
-bevels, lensing and text left, no film at all; the tuned default (`1`) is now itself "almost clear," a
+lensing and text left, no film at all; the tuned default (`1`) is now itself "almost clear," a
 faint smoky film rather than a visible material; `200` is opaque-ish, the most legible over a bright or
 busy backdrop. **Floating widgets are deliberately exempt** (§3, §9): after review found a bodiless
 widget over a near-clear base window ghosts instead of reading as glass, `--vsg-plane-widget` was split
@@ -693,9 +726,9 @@ refuses to measure a hidden window; re-measured after the window-edge lensing, t
 | editor scroll | glass OFF | 8.3 ms | 8.5 ms |
 | scroll under open command palette | glass ON | 8.3 ms | 9.2 ms |
 
-Editor scrolling is effectively unaffected: the persistent glass surfaces sit beside the editor, not
-over it, and the window-edge/editor-edge strips (§4.1) are `blur: 0` — clear glass, nothing frosted to
-evaluate — so nothing heavy re-filters while code moves. The previously-heaviest case, scrolling code
+Editor scrolling is effectively unaffected: over a see-through window no base pane carries a filter at all
+(1.1.0), so nothing re-filters while code moves; the numbers below were taken with the earlier, filtered
+base panes and are therefore an upper bound. The previously-heaviest case, scrolling code
 *beneath an open command palette* (re-running the palette's displacement + 22 px blur over a 600×420
 CSS-px backdrop every frame), now lands at p95 9.2 ms — comfortably under the 16.7 ms (60 fps) budget,
 despite the stronger lens knobs, because the frost blur dropped in the same pass (§3) and the text
@@ -713,12 +746,11 @@ cost from adding it.
 
 **Backdrop budget:** `css-liquid-glass.md` §g — "budget SVG-displacement `backdrop-filter` for at
 most a handful of chrome surfaces... do NOT apply... per list row... or inside a scrolling list."
-Persistent-filter surfaces: **title bar, status bar, activity bar, sidebar, aux bar, panel, tab
-strip — seven** — plus, since the window-edge lensing landed, two more on the window slab itself
-(`edge-top`/`edge-bottom`, §4.1) and one on the editor card's bottom seam. All three of those extra
-strips are clear glass (`blur: 0`), so they add surfaces without adding a blur cost — consistent with
-the Numbers above showing no measurable regression. Widgets filter only while open (not in the DOM
-otherwise); nothing inside a scrolling list carries its own filter; the editor's text is never filtered
+Persistent-filter surfaces over a see-through window (1.1.0): **none** — the base panes (title bar,
+status bar, activity bar, side bars, panel, sticky scroll) carry `backdrop-filter: none` there, because a
+filter over a see-through region has nothing in-page to bend and re-samples stale pixels. In wallpaper mode
+(opaque window, in-page smoke) the seven base surfaces filter as before. Widgets filter only while open
+(not in the DOM otherwise); nothing inside a scrolling list carries its own filter; the editor's text is never filtered
 (it gets the text-shadow above instead). Every filtered rule also sets `isolation: isolate` (§g: scopes
 blend modes, gives the compositor a clean boundary) and none of these nests inside another's
 backdrop-affected subtree, avoiding the "exponential degradation" nesting risk §g warns about.
@@ -797,20 +829,20 @@ is what the fallback produces.
 | Optic | Real | Simulated / approximated |
 |---|---|---|
 | 1. Lensing | `feDisplacementMap` genuinely bends backdrop pixels | Static, low-res, shape-generic map per class, not per-frame Metal geometry; bends only in-page content — refracting what's actually behind the window (desktop, other windows, video) is impossible from CSS, not a gap to close (§9) |
-| 2. Specular highlight | Rendered conic-gradient ring, per-elevation ramp | Fixed 225° light; no device-motion response (impossible — no accelerometer) |
-| 3. Thickness | Rendered layered `box-shadow` | Fixed per-elevation recipe; no content-aware shadow opacity |
+| 2. Specular highlight | Rendered conic-gradient hairline, per-elevation ramp | Fixed 225° light; no device-motion response (impossible — no accelerometer); no painted sheen by design |
+| 3. Thickness | The lens bending code under every rim; a rim hairline and contact line | One fixed soft shadow on floating widgets only; no content-aware shadow opacity; no bevel/shading bands by design |
 | 4. Vibrancy | Real alpha compositing of label tiers | No per-instance light/dark flip; one fixed direction per theme |
 | 5. Floating panes | Real floating-card geometry, shadows, gaps | No `GlassEffectContainer`-style shared sampling/merging |
 | 6. Concentric geometry | Real nested rounded corners | Hand-authored per-selector radii, not computed from padding |
 | 7. Adaptive tint | In transparent-window mode, the OS genuinely blurs the user's real desktop (outside VS Glass's own CSS); in wallpaper mode, real saturate/backdrop processing of the neutral smoke | Wallpaper mode's smoke is synthetic and colourless, not the user's real desktop; tint addons are a fixed film, not adaptive sampling |
-| 8. Liquid response | Real interpolated CSS transitions for press scale, widget pop-in, and list-row focus glow | Deliberately minimal by owner direction: static sheen, no hover motion anywhere; fixed-duration ease, not a physical spring; no cross-element illumination propagation |
+| 8. Liquid response | Real interpolated CSS transitions for press scale, widget pop-in, and list-row focus glow | Deliberately minimal by owner direction: no sheen, no hover motion anywhere; fixed-duration ease, not a physical spring; no cross-element illumination propagation |
 
 ---
 
 ## 9. Open problems / future work
 
 - **Refracting what's actually behind the window is impossible from CSS, not unimplemented, and stated
-  plainly here because it is the single biggest gap between VS Glass and real Liquid Glass.** The
+  plainly here because it is the single biggest gap between VS Glass and Apple's real material.** The
   renderer never receives those pixels at all — not "can't access them efficiently," literally never
   receives them. `backdrop-filter` only ever sees what the page itself painted; the desktop, another
   window, or a video playing underneath VS Code are not in that paint. macOS composites whatever is

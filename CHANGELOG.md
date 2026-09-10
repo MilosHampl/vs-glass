@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-10
+
+### Added
+
+- **Standalone see-through window and live settings.** VS Glass is now an extension host, not only a theme. It adds
+  one marker-delimited hook to VS Code's main-process bootstrap (`out/main.js`, the one bootstrap file VS Code does
+  not checksum). The hook makes every workbench window see-through (transparent window background + a macOS
+  vibrancy material), inserts the glass CSS into each window with Electron's `insertCSS`, and watches
+  `<user-data>/vs-glass/{glass.css,state.json}` so every VS Glass setting applies the moment it changes — no
+  reload, no other extension. `VS Glass: Remove` restores `main.js` byte-exact and deletes the folder.
+- Settings in the VS Code Settings UI: **Effects**, **Window Transparency**, **Window Material** (19 macOS
+  materials, switchable live), **Density** (0 = absolutely clear, 100 = default, 200 = opaque), **Widget Density**,
+  **Tint**, **Lens**, **Aberration**, **Wallpaper**, **Auto Apply**; commands **Apply**, **Remove**, **Status**,
+  **Open Settings**. A one-time consent prompt precedes the first write.
+- Theme-scoped `[Glass …]` blocks in `workbench.colorCustomizations` while the effects are on, so webviews (Claude
+  Code, Markdown preview, extension views), which paint their bodies from theme colours no CSS can reach, carry the
+  same near-clear alphas as the planes. Generated with the CSS (`glass/webview-colors.json`); removed with Remove.
+- A durable extension log (`vs-glass.log` in the extension's log folder) next to the "VS Glass" output channel.
+- After a VS Code update replaces `out/main.js` (and the hook with it), VS Glass notices at startup — the state
+  folder is still there, the hook is not — and asks once per VS Code version whether to apply again.
+- A `vscode:uninstall` hook restores `out/main.js` and deletes the state folder when the extension is uninstalled
+  without running Remove first (it stands down on an update, when a newer VS Glass folder is present).
+- All file patching lives in `out/patch.js`, shared with the uninstall hook and the release verifier: the strip is the
+  byte-exact inverse of the apply, writes are atomic, and the pristine backup is refreshed after VS Code updates.
+- Requires VS Code 1.94 or newer (the startup file must be an ES module); older builds are refused untouched.
+- Dev tools: `scripts/wincap.swift` captures a VS Code window as the OS composites it (ScreenCaptureKit);
+  `scripts/dev-relaunch-bed.sh` restarts a scratch test bed.
+
+### Changed
+
+- **The material is now clear glass, not frosted chrome.** Base planes dropped from ~20 % to ~7 % (editor) and 6 %
+  (side bars, panel, strips); the window film from 16 % to 5 %. The OS material supplies the frost; the workbench
+  paints almost nothing of its own. Density 200 is now genuinely opaque (piecewise ramp: 0 → clear, 1 → base,
+  2 → opaque) instead of "twice the base".
+- Edges are a single hairline of light where the curved rim catches the room (top and left), a faint contact line
+  at the bottom, and nothing else. Buttons lost their inner "refraction band"; activity and status pills lost their
+  drop shadows; the title and status bars lost their lens strips (there is nothing in-page behind them to bend).
+- Lensing and chromatic aberration stay on every inside element: command palette, menus, hovers, suggest,
+  notifications, dialogs, modal editors, buttons and capsule pills. The base panes (side bars, panel, activity
+  bar, title and status bars) carry no backdrop filter over the see-through window — nothing in-page sits behind
+  them, and a filter over a see-through region re-samples stale pixels (the neon side bar). The wallpaper addon
+  switches their lens back on over its opaque in-page smoke.
+- Windows are created transparent (a spread spliced into VS Code's window options in `out/main.js`, read from the
+  state file at creation) instead of being made transparent afterwards: only a creation-time transparent window
+  gets its frame cleared every paint; the earlier approach left ghosts of closed panels in the near-clear editor.
+- The window edge is one ring following the window corners (brightest along the top) instead of two 40 px strips.
+- Palette: window alphas per variant (`window` knobs) and `--vsg-window-film-a` retuned for the clear material.
+
+### Removed
+
+- All painted gradients: the radial "sheen" highlights inside cards and widgets, the button top-light gradient,
+  the bevel bands inside every rim, the inner shading gradients and the layered drop shadows under base cards. A
+  shaded band inside a rim reads as a bevelled window frame, not as glass.
+- The 1.1.0 preview's patch of `workbench.desktop.main.css` + `product.json` checksum fix. `Apply` and `Remove`
+  restore those files if a preview left them patched. `scripts/inject.sh` still offers that route by hand for
+  people who inject CSS by other means.
+
 ## [1.0.0] - 2026-09-10
 
 ### Added
@@ -78,4 +135,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Project documentation: README, DESIGN.md, and this CHANGELOG.
 
 [Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.0.0...HEAD
+[1.1.0]: https://github.com/MilosHampl/vs-glass/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/MilosHampl/vs-glass/releases/tag/v1.0.0

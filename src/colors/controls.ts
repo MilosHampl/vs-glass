@@ -158,7 +158,7 @@ export default function controls(p: Palette): Record<string, string> {
     // ---------------------------------------------------------------------------------------
     // Welcome page / Walkthrough
     // ---------------------------------------------------------------------------------------
-    'welcomePage.background': p.content.bg,
+    'welcomePage.background': p.content.bgTheme,
     'welcomePage.tileBackground': p.glass.raised.bg,
     'welcomePage.tileHoverBackground': p.glass.widget.bg,
     'welcomePage.tileBorder': p.glass.raised.border,
@@ -307,7 +307,7 @@ export default function controls(p: Palette): Record<string, string> {
     'peekViewResult.matchHighlightBackground': p.content.findMatchHighlight,
     'peekViewResult.selectionBackground': p.ui.selectionBg,
     'peekViewResult.selectionForeground': p.label.primary,
-    'peekViewEditor.background': p.content.bg,
+    'peekViewEditor.background': p.content.bgTheme,
     'peekViewEditor.matchHighlightBackground': p.content.findMatchHighlight,
     'peekViewEditorGutter.background': p.content.bg,
     'peekViewEditorStickyScroll.background': p.glass.raised.bg,

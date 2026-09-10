@@ -109,9 +109,19 @@ performance trace. Run `node scripts/cdp.mjs` with no arguments to see the full 
 ## Layer 2 development
 
 Layer 2 (`glass/glass.css`, generated from `src/glass/glass.css`) is the pure-CSS effects layer:
-lensing via an SVG `feDisplacementMap` in `backdrop-filter`, specular rings, thickness shadows,
-vibrancy blend, concentric radii, the bevelled window slab and a press-only response. It never modifies a theme
-key -- it only reads the CSS custom properties a theme sets and layers visual effects on top.
+lensing via an SVG `feDisplacementMap` in `backdrop-filter`, a hairline rim light, near-clear planes,
+vibrancy blend, concentric radii, the window slab's single rim ring and a press-only response. It never modifies a theme
+key -- it only reads the CSS custom properties a theme sets and layers visual effects on top. Two rules the owner
+set and reviews against: no painted gradients, sheens, bevel bands or shadows under base planes (they read as
+bevelled window chrome), and lensing/aberration only where there is in-page content behind the glass.
+
+The extension (`src/ext/extension.ts`, compiled to `out/extension.js` by `npm run compile`) is the installer:
+it writes one hook into VS Code's `out/main.js`, composes `glass.css` + addons + settings into
+`<user-data>/vs-glass/glass.css`, and the hook `insertCSS`es that file into every window and re-applies it
+live when it changes. So the fastest loop against a bed that already has the hook is: edit
+`src/glass/glass.css` → `npm run build` → run **VS Glass: Apply** in the bed (or change any VS Glass setting)
+→ the window restyles in about a second, no reload. Note the inserted sheet is an injected author stylesheet:
+it is not in `document.styleSheets`, so check computed styles rather than counting rules.
 
 To iterate on it against a running VS Code:
 
@@ -129,27 +139,32 @@ To iterate on it against a running VS Code:
 5. Repeat 2-4. Use `node scripts/cdp.mjs --port 9334 shot screenshots/dev.png` to capture the
    result at 2x for comparison against the previous iteration or against reference imagery.
 
-For the actual injection routes end users have available (Custom CSS and JS Loader, Vibrancy
-Continued's `imports`, or this project's own `scripts/inject.sh install`), see the README.
+For the routes end users have (VS Glass's own **Apply** command, or, for manual CSS injection, Custom CSS and
+JS Loader, Vibrancy Continued's `imports`, or `scripts/inject.sh install`), see the README.
 
 ### Screenshot matrix and the two test beds
 
-The screenshots in `screenshots/` come from two isolated VS Code instances, never from a personal
-install:
+The screenshots in `screenshots/` come from isolated VS Code instances (a downloaded copy of VS Code under
+`scratch/`, with its own `--user-data-dir` and `--extensions-dir`), never from a personal install:
 
-- an unpatched VS Code with an opaque window (wallpaper mode): `node scripts/screenshots.mjs --port 9334
-  --profile <profile> --layer2 both --addons glass/glass-wallpaper.css` writes the whole matrix
-  (variants x scenes x Layer 2 on/off) at 2x;
-- a Vibrancy Continued instance with a see-through window (the default mode): `scripts/transparent-shots.sh
-  --port 9335 --profile <profile> --wall <desktop picture> --tints` captures each scene with a transparent
+- wallpaper mode: `node scripts/screenshots.mjs --port 9334 --profile <profile> --layer2 both --addons
+  glass/glass-wallpaper.css` writes the whole matrix (variants x scenes x Layer 2 on/off) at 2x. On a bed with
+  the VS Glass hook, "off" adds the `vs-glass-off` class to the workbench, which the guard selector honours;
+- the see-through window (the default mode) on a bed with the hook applied: `scripts/transparent-shots.sh
+  --port 9334 --profile <profile> --wall <desktop picture> --tints` captures each scene with a transparent
   page background and composites it over the blurred desktop picture with
-  `scripts/composite-transparent.mjs` into `screenshots/transparent/` (captions say "simulated compositing").
+  `scripts/composite-transparent.mjs` into `screenshots/transparent/` (captions say "simulated compositing");
+- to see a bed the way the OS composites it (material and all), `scripts/wincap.swift` captures a window with
+  ScreenCaptureKit (`xcrun swiftc -O -o scratch/wincap scripts/wincap.swift`, then `scratch/wincap <pid> out.png`);
+  `scripts/dev-relaunch-bed.sh 9334|9337` quits and relaunches a bed after `npm run build` when the hook itself
+  changed (CSS-only changes never need a relaunch).
 
 Two things bite here. Chromium pauses `requestAnimationFrame` in an occluded window, so Monaco stops
 rendering and every capture goes stale: launch the instances with `--disable-backgrounding-occluded-windows
---disable-renderer-backgrounding` (the script refuses to run when rAF is paused). And Vibrancy inlines its
-`imports` into the app at patch time, so after every `npm run build` run **Reload Vibrancy** in that
-instance and restart it, or you are looking at yesterday's CSS. Context menus are the one surface you
+--disable-renderer-backgrounding --disable-features=CalculateNativeWinOcclusion` (the script refuses to run
+when rAF is paused). And two profiles that share one app copy each keep their own `<user-data>/vs-glass/`
+folder: whichever profile applied last wrote the CSS the *other* one's next launch inserts until its own
+extension re-applies, so keep the vsGlass settings of shared beds identical. Context menus are the one surface you
 cannot screenshot through the DOM without `"window.menuStyle": "custom"` in the test profile; they render
 in a shadow root and only take the theme's colours.
 

@@ -11,14 +11,11 @@
  *  - one backdrop-filter per surface, on a small fixed set of surfaces (perf);
  *  - specular ring = ::before, sheen + Clear dimming = ::after (below content via isolation);
  *  - radii are concentric: window > card > widget > control > inner (parent radius − padding);
- *  - the default mode assumes a see-through window (Vibrancy Continued): planes are thin and the OS blur supplies
- *    legibility. glass-wallpaper.css (opaque window) and glass/tints/*.css (coloured film) are optional addons.
+ *  - the default mode assumes a see-through window (the VS Glass window hook): planes are near-clear and the OS
+ *    material supplies the frost. glass-wallpaper.css (opaque window) and glass/tints/*.css (coloured film) are addons;
+ *  - no inner gradients, no bevel bands, no frames: a shaded band inside a rim reads as a bevelled window frame, not as
+ *    glass. Edges are a hairline of light where the curved rim catches the room, nothing more.
  */
-
-/* ---------- 0. Typed custom properties for the liquid response ---------- */
-@property --vsg-hl-x { syntax: '<percentage>'; inherits: false; initial-value: 22%; }
-@property --vsg-hl-y { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
-@property --vsg-hl-a { syntax: '<number>'; inherits: false; initial-value: 0.10; }
 
 /* ---------- 1. Tokens derived for this layer ---------- */
 @G {
@@ -33,34 +30,30 @@
   /* tint film (colourless unless a glass/tints/*.css addon is loaded) */
   --vsg-tint-film: rgba(var(--vsg-tint-rgb), var(--vsg-tint-a));
   --vsg-tint-film-soft: rgba(var(--vsg-tint-rgb), calc(var(--vsg-tint-a) * 0.6));
-  /* backdrop filter stacks */
+  /* backdrop filter stacks. Base panes (side bars, panel, activity bar, title and status bars) carry NO backdrop filter in
+     the see-through window: there is nothing in-page behind them to bend or saturate, and a filter over a see-through
+     region re-samples stale pixels (neon, smears). glass-wallpaper.css turns their filters on again — there the in-page
+     smoke is a real, opaque backdrop. Floating widgets keep theirs: they sit over code and have a frosted body. */
   --vsg-filter-chrome: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
   --vsg-filter-widget: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
-  /* material thickness: inset light on top, inset shade at the bottom, interior falloff, contact shadows */
-  /* bevel: the band just inside the rim where thick glass bends light — dark, then a faint light line — so the edge
-     reads as material even over a flat backdrop (Vibrancy blurs the desktop; there is nothing in-page to bend there) */
-  --vsg-bevel:
-    inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.07),
-    inset 0 0 0 2px rgba(var(--vsg-spec-rgb), 0.035),
-    inset 0 0 6px 3px rgba(var(--vsg-shadow-rgb), 0.12);
+  --vsg-base-filter-strip: none;
+  --vsg-base-filter-sidebar: none;
+  --vsg-base-filter-panel: none;
+  --vsg-base-filter-column: none;
+  /* material thickness — light enters from the top-left, so the upper and left edges carry a bright hairline (the
+     curved rim catching the room), the lower edge only a faint contact line, and the body has NO inner gradients or
+     bevel bands (those read as a bevelled window frame, not as glass). Base cards cast NO shadow — a shadow under a
+     pane of glass sitting on the same sheet reads as a floating window frame; only widgets that really float over
+     code get one soft, wide shadow. */
   --vsg-thickness-chrome:
-    var(--vsg-bevel),
     inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),
-    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.45),
-    inset 1px 0 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-lo) * 1.5)),
-    inset -1px 0 0 rgba(var(--vsg-shadow-rgb), 0.25),
-    inset 0 -14px 24px -14px rgba(var(--vsg-shadow-rgb), 0.35),
-    inset 0 0 28px rgba(var(--vsg-shadow-rgb), 0.16),
-    0 18px 44px rgba(var(--vsg-shadow-rgb), 0.55),
-    0 2px 6px rgba(var(--vsg-shadow-rgb), 0.45);
+    inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)),
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.12);
   --vsg-thickness-widget:
-    var(--vsg-bevel),
     inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)),
-    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.5),
-    inset 0 -16px 28px -16px rgba(var(--vsg-shadow-rgb), 0.4),
-    inset 0 0 24px rgba(var(--vsg-shadow-rgb), 0.14),
-    0 28px 70px rgba(var(--vsg-shadow-rgb), 0.6),
-    0 4px 12px rgba(var(--vsg-shadow-rgb), 0.45);
+    inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)),
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18),
+    0 16px 48px rgba(var(--vsg-shadow-rgb), 0.28);
   --vsg-ring-chrome: conic-gradient(from 300deg at 22% 12%,
     rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 0deg,
     rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 50deg,
@@ -119,58 +112,28 @@
 @G .part.editor .settings-editor .settings-body { background: transparent !important; }
 
 /* ---------- 2. Window slab: the window itself is one sheet of glass ---------- */
-/* Default mode = see-through window. The workbench paints only a smoky film (+ optional tint) so the OS-blurred
-   desktop shows through every plane; the slab gets a rim ring and inset thickness like every other pane. With an
-   opaque window this shows the Electron window colour — load glass-wallpaper.css for an in-page smoke backdrop. */
+/* Default mode = see-through window. The workbench paints only a whisper of film (+ optional tint) so the OS material
+   shows through every plane. With an opaque window this shows the Electron window colour — load glass-wallpaper.css
+   for an in-page smoke backdrop. */
 @G {
   background: linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)), var(--vsg-window-film) !important;
   border-radius: var(--vsg-radius-window);
   overflow: hidden;
-  /* side rim + bevel of the slab (painted under the parts; visible in the 4 px margins the floating cards leave) */
-  box-shadow:
-    inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),
-    inset -1px 0 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-lo) * 1.5)),
-    inset 0 0 0 2px rgba(var(--vsg-spec-rgb), 0.035),
-    inset 0 0 40px rgba(var(--vsg-shadow-rgb), 0.1);
 }
 @G > .monaco-grid-view { background: transparent !important; }
-/* slab rim at the top and bottom: one-sided lens strips that bend what sits just inside the window edge (title bar,
-   status bar) toward the centre — the thick edge of the sheet — plus the specular hairline and bevel, following the
-   window corners. Clear glass: no frost, UI text underneath is bent, never blurred. */
-@G::before,
-@G::after {
+/* the slab's edge: one hairline ring following the window corners, brightest along the top where the light enters.
+   (A lens here bent the title-bar and status-bar text and read as a glitch, so the window edge refracts nothing;
+   refraction lives on the widgets and capsules that float over code.) */
+@G::before {
   content: "";
   position: absolute;
-  left: 0; right: 0;
-  height: 40px;
+  inset: 0;
+  border-radius: var(--vsg-radius-window);
   pointer-events: none;
   z-index: 100000;
-  border: 1px solid rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
-}
-@G::before {
-  top: 0;
-  border-bottom: none;
-  border-top-color: rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi));
-  border-left-color: rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
-  border-radius: var(--vsg-radius-window) var(--vsg-radius-window) 0 0;
-  -webkit-backdrop-filter: var(--vsg-lens-edge-top);
-  backdrop-filter: var(--vsg-lens-edge-top);
   box-shadow:
-    inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.08),
-    inset 0 2px 0 rgba(var(--vsg-spec-rgb), 0.04),
-    inset 0 8px 10px -8px rgba(var(--vsg-shadow-rgb), 0.14);
-}
-@G::after {
-  bottom: 0;
-  border-top: none;
-  border-bottom-color: rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-mid) * 0.9));
-  border-radius: 0 0 var(--vsg-radius-window) var(--vsg-radius-window);
-  -webkit-backdrop-filter: var(--vsg-lens-edge-bottom);
-  backdrop-filter: var(--vsg-lens-edge-bottom);
-  box-shadow:
-    inset 0 -1px 0 rgba(var(--vsg-spec-rgb), 0.07),
-    inset 0 -2px 0 rgba(var(--vsg-spec-rgb), 0.035),
-    inset 0 -8px 10px -8px rgba(var(--vsg-shadow-rgb), 0.16);
+    inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)),
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi));
 }
 
 /* ---------- 3. Strips: title bar, status bar, tab strip ---------- */
@@ -180,14 +143,14 @@
 }
 @G .part.titlebar {
   background: var(--vsg-plane-chrome) !important;
-  -webkit-backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
-  backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
+  -webkit-backdrop-filter: var(--vsg-base-filter-strip);
+  backdrop-filter: var(--vsg-base-filter-strip);
   box-shadow: inset 0 -1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
 }
 @G .part.statusbar {
   background: var(--vsg-plane-chrome) !important;
-  -webkit-backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
-  backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
+  -webkit-backdrop-filter: var(--vsg-base-filter-strip);
+  backdrop-filter: var(--vsg-base-filter-strip);
   border-top: none !important;
   box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
 }
@@ -206,24 +169,24 @@
   background: var(--vsg-plane-chrome) !important;
   border-color: transparent !important;
   box-shadow: var(--vsg-thickness-chrome);
-  -webkit-backdrop-filter: var(--vsg-lens-sidebar) var(--vsg-filter-chrome);
-  backdrop-filter: var(--vsg-lens-sidebar) var(--vsg-filter-chrome);
+  -webkit-backdrop-filter: var(--vsg-base-filter-sidebar);
+  backdrop-filter: var(--vsg-base-filter-sidebar);
   transition: box-shadow var(--vsg-motion-slow) var(--vsg-ease);
 }
 @G .part.panel {
-  -webkit-backdrop-filter: var(--vsg-lens-panel) var(--vsg-filter-chrome);
-  backdrop-filter: var(--vsg-lens-panel) var(--vsg-filter-chrome);
+  -webkit-backdrop-filter: var(--vsg-base-filter-panel);
+  backdrop-filter: var(--vsg-base-filter-panel);
 }
 @G .part.activitybar {
-  -webkit-backdrop-filter: var(--vsg-lens-column) var(--vsg-filter-chrome);
-  backdrop-filter: var(--vsg-lens-column) var(--vsg-filter-chrome);
+  -webkit-backdrop-filter: var(--vsg-base-filter-column);
+  backdrop-filter: var(--vsg-base-filter-column);
 }
 /* classic (non-floating) layout: the cards butt against the editor; give them a soft seam instead of a ring */
 @G:not(.floating-panels) .part.sidebar,
 @G:not(.floating-panels) .part.auxiliarybar,
 @G:not(.floating-panels) .part.panel,
 @G:not(.floating-panels) .part.activitybar {
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)), 0 0 24px rgba(var(--vsg-shadow-rgb), 0.25);
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
 }
 /* the sidebar's own inner surfaces must not paint over the glass */
 @G .part.sidebar > .content,
@@ -268,18 +231,16 @@
 @G.floating-panels:not(.noactivitybar) .part.sidebar.right::before { inset: 0 -3px 0 0; }
 @G.floating-panels:not(.noactivitybar) .part.activitybar.left,
 @G.floating-panels:not(.noactivitybar) .part.sidebar.left {
-  /* one pane: no bevel on the seam edges, shared shadow, identical sheen origin */
+  /* one pane: no side hairline on the seam edges, shared shadow, identical sheen origin */
   box-shadow:
     inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),
-    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.45),
-    inset 0 -14px 24px -14px rgba(var(--vsg-shadow-rgb), 0.35),
-    0 18px 44px rgba(var(--vsg-shadow-rgb), 0.55),
-    0 2px 6px rgba(var(--vsg-shadow-rgb), 0.45);
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.12);
 }
 @G.floating-panels:not(.noactivitybar) .part.activitybar.left { clip-path: inset(-60px 0 -60px -60px); }
 @G.floating-panels:not(.noactivitybar) .part.sidebar.left { clip-path: inset(-60px -60px -60px 0); }
 @G.floating-panels:not(.noactivitybar) .part.activitybar.left::after { background: linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)), rgba(0, 0, 0, var(--vsg-plane-dim)); }
-/* sheen + Clear dimming (::after) — sits between the glass and its content */
+/* tint film + Clear dimming (::after) — a flat film between the glass and its content; no painted highlights (the only
+   light on the glass is the real rim light and what the lens bends) */
 @G .part.sidebar::after,
 @G .part.auxiliarybar::after,
 @G .part.panel::after,
@@ -289,19 +250,17 @@
   inset: 0;
   border-radius: inherit;
   background:
-    radial-gradient(120% 60% at var(--vsg-hl-x) var(--vsg-hl-y), rgba(var(--vsg-spec-rgb), var(--vsg-hl-a)), transparent 60%),
     linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)),
     rgba(0, 0, 0, var(--vsg-plane-dim));
   pointer-events: none;
   z-index: -1;
-  transition: --vsg-hl-x var(--vsg-motion-slow) var(--vsg-ease), --vsg-hl-y var(--vsg-motion-slow) var(--vsg-ease), --vsg-hl-a var(--vsg-motion-slow) var(--vsg-ease);
 }
 
 /* editor card: the content plane — a translucent sheet the desktop shows through; text stays crisp (no filter).
    Monaco's own backgrounds go fully transparent so only the card paints the plane (no double compositing). */
 @G.floating-panels .part.editor > .content {
   background: linear-gradient(var(--vsg-tint-film-soft), var(--vsg-tint-film-soft)), var(--vsg-plane-content) !important;
-  box-shadow: 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) inset, 0 8px 28px rgba(var(--vsg-shadow-rgb), 0.28);
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
 }
 @G .part.editor .monaco-editor,
 @G .part.editor .monaco-editor .monaco-editor-background,
@@ -333,15 +292,20 @@
 @G .part.editor .monaco-editor .margin-view-overlays .line-numbers,
 @G .part.panel .xterm-rows,
 @G .part.editor .monaco-editor .sticky-widget .sticky-line-content { text-shadow: 0 1px 2px rgba(var(--vsg-shadow-rgb), 0.45); }
-@G.floating-panels .part.editor > .content::after {
-  content: "";
-  position: absolute; left: 0; right: 0; bottom: 0; height: 56px;
-  border-radius: 0 0 var(--vsg-radius-card) var(--vsg-radius-card);
-  -webkit-backdrop-filter: var(--vsg-lens-edge-bottom);
-  backdrop-filter: var(--vsg-lens-edge-bottom);
-  box-shadow: inset 0 -3px 0 rgba(var(--vsg-shadow-rgb), 0.14), inset 0 -4px 0 rgba(var(--vsg-spec-rgb), 0.04);
-  pointer-events: none; z-index: 49;
+
+/* modal editors (Settings, and anything VS Code opens in its modal editor part) float OVER other editors: they are
+   widgets, not base planes — a frosted body and a rim, so nothing underneath bleeds into their text */
+@G .part.editor.modal-editor-part > .content {
+  isolation: isolate;
+  background: linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)), var(--vsg-plane-widget) !important;
+  border-radius: var(--vsg-radius-widget) !important;
+  box-shadow: var(--vsg-thickness-widget) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-widget) var(--vsg-filter-widget);
+  backdrop-filter: var(--vsg-lens-widget) var(--vsg-filter-widget);
 }
+@G .part.editor.modal-editor-part > .content::before { background: var(--vsg-ring-widget); }
+@G .part.editor.modal-editor-part > .content::after { display: none; }
+@G .monaco-modal-editor-block { background: rgba(var(--vsg-shadow-rgb), 0.35) !important; }
 
 /* ---------- 5. Floating widgets (overlap code → real refraction) ---------- */
 @G .quick-input-widget,
@@ -434,7 +398,7 @@
   pointer-events: none;
   z-index: 100;
 }
-/* widget sheen (+ Clear dimming), animated highlight position = the liquid response */
+/* widget tint film (+ Clear dimming): flat, no painted highlights */
 @G .quick-input-widget::after,
 @G .monaco-hover::after,
 @G .monaco-editor .suggest-widget::after,
@@ -448,20 +412,18 @@
   inset: 0;
   border-radius: inherit;
   background:
-    radial-gradient(90% 55% at var(--vsg-hl-x) var(--vsg-hl-y), rgba(var(--vsg-spec-rgb), calc(var(--vsg-hl-a) * 1.6)), transparent 62%),
     linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)),
     rgba(0, 0, 0, var(--vsg-plane-dim));
   pointer-events: none;
   z-index: -1;
-  transition: --vsg-hl-x var(--vsg-motion-base) var(--vsg-ease), --vsg-hl-y var(--vsg-motion-base) var(--vsg-ease), --vsg-hl-a var(--vsg-motion-base) var(--vsg-ease);
 }
 
 /* sticky scroll: glass strip over the code that scrolls beneath it */
 @G .monaco-editor .sticky-widget {
-  background: rgba(var(--vsg-plane-widget-rgb), 0.35) !important;
-  -webkit-backdrop-filter: var(--vsg-lens-strip) saturate(var(--vsg-saturate));
-  backdrop-filter: var(--vsg-lens-strip) saturate(var(--vsg-saturate));
-  box-shadow: inset 0 -1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)), 0 6px 18px rgba(var(--vsg-shadow-rgb), 0.35) !important;
+  background: rgba(var(--vsg-plane-widget-rgb), 0.5) !important;
+  -webkit-backdrop-filter: var(--vsg-base-filter-strip);
+  backdrop-filter: var(--vsg-base-filter-strip);
+  box-shadow: inset 0 -1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)) !important;
 }
 @G .monaco-editor .sticky-widget .sticky-widget-lines-scrollable,
 @G .monaco-editor .sticky-widget .sticky-widget-line-numbers {
@@ -591,9 +553,9 @@
 }
 
 /* ---------- 10. Buttons: clear glass pills, no shine animation ---------- */
-/* Modelled on a clear glass pill: a bright hairline rim, a darker refraction band just inside it, a faint top light,
-   a soft drop shadow, and the backdrop bent at the rim. Nothing moves on hover (the owner rejected sheen sweeps,
-   drifting highlights, lifts and glows twice); the only response is the physical press. */
+/* Modelled on a clear glass pill: a hairline rim, a bright top light where the curved body catches the room, a soft
+   drop shadow, and the backdrop bent at the rim — no inner bands (they read as an Aqua/XP button). Nothing moves on
+   hover (the owner rejected sheen sweeps, drifting highlights, lifts and glows twice); the only response is the press. */
 @G .monaco-button.monaco-text-button,
 @G .monaco-button-dropdown > .monaco-button,
 @G .monaco-button-dropdown > .monaco-dropdown-button {
@@ -602,34 +564,25 @@
   overflow: hidden;
   border: none !important;
   border-radius: 999px !important;
-  background: color-mix(in srgb, var(--vsg-accent) 46%, transparent) !important;
+  background: color-mix(in srgb, var(--vsg-accent) 52%, transparent) !important;
   -webkit-backdrop-filter: var(--vsg-lens-menu) saturate(1.2);
   backdrop-filter: var(--vsg-lens-menu) saturate(1.2);
   box-shadow:
-    inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.34),
-    inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.5),
-    inset 0 0 0 3px rgba(var(--vsg-shadow-rgb), 0.16),
-    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.28),
-    0 4px 10px rgba(var(--vsg-shadow-rgb), 0.28),
-    0 1px 2px rgba(var(--vsg-shadow-rgb), 0.3) !important;
+    inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.22),
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.45),
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18),
+    0 2px 8px rgba(var(--vsg-shadow-rgb), 0.14) !important;
   transition: transform 60ms var(--vsg-ease);
 }
 @G .monaco-button.monaco-text-button.secondary,
 @G .monaco-button.monaco-text-button.secondary:hover {
   background: linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)), rgba(var(--vsg-spec-rgb), 0.10) !important;
 }
-/* static top light inside the material (glass catches the room light along its upper body) */
-@G .monaco-button.monaco-text-button::after {
-  content: "";
-  position: absolute; inset: 0; border-radius: inherit;
-  background: linear-gradient(to bottom, rgba(var(--vsg-spec-rgb), 0.16), rgba(var(--vsg-spec-rgb), 0) 55%);
-  pointer-events: none; z-index: 1;
-}
 @G .monaco-button.monaco-text-button:hover { filter: none; }
 @G .monaco-button.monaco-text-button:active { transform: scale(0.97); }
 @G .monaco-button.monaco-text-button:focus-visible {
   outline: none !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 40%, transparent), inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.34) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 40%, transparent), inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.22) !important;
 }
 /* icon buttons & toolbar actions: press only */
 @G .monaco-action-bar .action-item .action-label.codicon,
@@ -658,8 +611,7 @@
   border-radius: calc(var(--vsg-radius-card) - 4px) !important;
   box-shadow:
     inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
-    0 2px 8px rgba(var(--vsg-shadow-rgb), 0.35);
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12);
   /* convex capsule lens: the whole pill refracts (icon-only, no text underneath) */
   -webkit-backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
   backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
@@ -689,7 +641,7 @@
 @G .part.statusbar .statusbar-item:hover > .statusbar-item-label,
 @G .part.statusbar .statusbar-item:hover > a {
   background: rgba(var(--vsg-spec-rgb), 0.12) !important;
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)), inset 0 -1px 0 rgba(0, 0, 0, 0.2), 0 2px 6px rgba(var(--vsg-shadow-rgb), 0.3);
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)), inset 0 -1px 0 rgba(0, 0, 0, 0.12);
   -webkit-backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
   backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
 }
@@ -699,6 +651,6 @@
 @G .part.statusbar .statusbar-item.error-kind > a,
 @G .part.statusbar .statusbar-item.warning-kind > a,
 @G .part.statusbar .statusbar-item.prominent-kind > a {
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.35), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.12);
   border-radius: var(--vsg-radius-control) !important;
 }

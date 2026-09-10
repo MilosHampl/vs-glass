@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Transparent-window evidence: capture the Vibrancy test bed (transparent page background) and composite each capture
-# over a desktop picture blurred the way Vibrancy's under-window material blurs it. Simulated compositing (the build
+# Transparent-window evidence: capture a test bed with the VS Glass window hook (transparent page background) and composite
+# each capture over a desktop picture blurred roughly the way the OS material blurs it. Simulated compositing (the build
 # tooling cannot screen-record the real desktop); the window pixels are real.
 #
-#   scripts/transparent-shots.sh --port 9335 --profile scratch/profile-vib/user --wall scratch/wall-cliffs-2880.jpg \
+#   scripts/transparent-shots.sh --port 9334 --profile scratch/profile-clean/user --wall scratch/wall-cliffs-2880.jpg \
 #        [--variants glass-regular-dark,glass-clear] [--scenes hero,palette,sidebar,notification,settings,terminal,hover,suggest] [--tints]
 set -euo pipefail
 PORT=9335; PROFILE=scratch/profile-vib/user; WALL=""; VARIANTS="glass-regular-dark,glass-clear"; SCENES="hero,palette,sidebar,notification,settings,terminal,hover,suggest"; TINTS=0
@@ -14,7 +14,7 @@ TMP=scratch/transparent-raw; OUT=screenshots/transparent; mkdir -p "$TMP" "$OUT"
 node scripts/screenshots.mjs --port "$PORT" --profile "$PROFILE" --variants "$VARIANTS" --layer2 on --scenes "$SCENES" --alpha --out "$TMP"
 for f in "$TMP"/*.png; do
   b="$(basename "$f")"; [[ "$b" == *-alpha-tint-* ]] && continue
-  node scripts/composite-transparent.mjs --in "$f" --wall "$WALL" --out "$OUT/$b" --label "Transparent-window mode (glass.css, Vibrancy Continued under-window). Window pixels captured over CDP, composited over the desktop picture blurred as the OS material blurs it. Simulated compositing, not a screen recording."
+  node scripts/composite-transparent.mjs --in "$f" --wall "$WALL" --out "$OUT/$b" --label "Transparent-window mode (VS Glass window hook, hud material). Window pixels captured over CDP, composited over the desktop picture blurred roughly as the OS material blurs it. Simulated compositing, not a screen recording."
 done
 if [ "$TINTS" = "1" ]; then
   for t in glass/tints/glass-tint-*.css; do

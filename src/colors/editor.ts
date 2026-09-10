@@ -106,7 +106,7 @@ export default function editor(p: Palette): Record<string, string> {
     // ============================================================================
     // Content plane
     // ============================================================================
-    'editor.background': c.bg, // opaque — text legibility is sacred (Layer 2 handles translucency)
+    'editor.background': c.bgTheme, // translucent in the see-through variants (webviews paint this themselves); contrast is audited on the composited value
     'editor.foreground': p.syntax.variable,
     'editor.border': p.separator.hairline, // "modern layout" editor-surface edge
     'editor.compositionBorder': p.ui.focus, // IME composition underline

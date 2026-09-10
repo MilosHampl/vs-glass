@@ -1,0 +1,47 @@
+{
+  "Glass Regular Dark": {
+    "editor.background": "#13171f12",
+    "editorPane.background": "#00000000",
+    "sideBar.background": "#1e232d0f",
+    "panel.background": "#1e232d0f",
+    "activityBar.background": "#1e232d0f",
+    "statusBar.background": "#1e232d0f",
+    "statusBar.noFolderBackground": "#1e232d0f",
+    "titleBar.activeBackground": "#1e232d0f",
+    "titleBar.inactiveBackground": "#1e232d0f",
+    "editorGroupHeader.tabsBackground": "#00000000",
+    "sideBarSectionHeader.background": "#00000000",
+    "sideBarTitle.background": "#00000000",
+    "terminal.background": "#00000000"
+  },
+  "Glass Regular Light": {
+    "editor.background": "#f8fafe33",
+    "editorPane.background": "#00000000",
+    "sideBar.background": "#e5eaf229",
+    "panel.background": "#e5eaf229",
+    "activityBar.background": "#e5eaf229",
+    "statusBar.background": "#e5eaf229",
+    "statusBar.noFolderBackground": "#e5eaf229",
+    "titleBar.activeBackground": "#e5eaf229",
+    "titleBar.inactiveBackground": "#e5eaf229",
+    "editorGroupHeader.tabsBackground": "#00000000",
+    "sideBarSectionHeader.background": "#00000000",
+    "sideBarTitle.background": "#00000000",
+    "terminal.background": "#00000000"
+  },
+  "Glass Clear": {
+    "editor.background": "#10141c09",
+    "editorPane.background": "#00000000",
+    "sideBar.background": "#191e2808",
+    "panel.background": "#191e2808",
+    "activityBar.background": "#191e2808",
+    "statusBar.background": "#191e2808",
+    "statusBar.noFolderBackground": "#191e2808",
+    "titleBar.activeBackground": "#191e2808",
+    "titleBar.inactiveBackground": "#191e2808",
+    "editorGroupHeader.tabsBackground": "#00000000",
+    "sideBarSectionHeader.background": "#00000000",
+    "sideBarTitle.background": "#00000000",
+    "terminal.background": "#00000000"
+  }
+}

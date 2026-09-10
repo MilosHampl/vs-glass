@@ -162,11 +162,11 @@ export default function chrome(p: Palette): Record<string, string> {
     'editorGroup.dropIntoPromptBackground': p.glass.widget.bg,
     'editorGroup.dropIntoPromptForeground': p.label.primary,
     'editorGroup.dropIntoPromptBorder': p.glass.widget.border,
-    'editorGroup.emptyBackground': p.content.bg,
+    'editorGroup.emptyBackground': p.content.bgTheme,
     'editorGroup.focusedEmptyBorder': p.ui.accent,
     'editorGroupHeader.border': '#00000000',
     'editorGroupHeader.tabsBorder': '#00000000',
-    'editorPane.background': p.content.bg,
+    'editorPane.background': p.content.bgTheme,
     'sideBySideEditor.horizontalBorder': p.separator.hairline,
     'sideBySideEditor.verticalBorder': p.separator.hairline,
 
@@ -176,7 +176,7 @@ export default function chrome(p: Palette): Record<string, string> {
     // transparent) — the background match to the editor is what reads as "active" here, Apple-style;
     // an accent hairline would compete with `tab.selectedBorderTop` (keyboard/mouse selection).
     // ---------------------------------------------------------------------------------------
-    'tab.activeBackground': p.content.bg,
+    'tab.activeBackground': p.content.bgTheme,
     'tab.activeForeground': p.label.primary,
     'tab.activeBorder': '#00000000',
     'tab.activeBorderTop': '#00000000',
@@ -193,7 +193,7 @@ export default function chrome(p: Palette): Record<string, string> {
     'tab.selectedBackground': p.glass.raised.bg,
     'tab.selectedBorderTop': p.ui.accent,
     'tab.selectedForeground': p.label.primary,
-    'tab.unfocusedActiveBackground': p.content.bg,
+    'tab.unfocusedActiveBackground': p.content.bgTheme,
     'tab.unfocusedActiveBorder': '#00000000',
     'tab.unfocusedActiveBorderTop': '#00000000',
     'tab.unfocusedActiveForeground': p.label.primary, // one tier dimmer than the focused-group active tab
@@ -212,7 +212,7 @@ export default function chrome(p: Palette): Record<string, string> {
     'modernTab.hoverForeground': p.label.primary,
 
     // Modern editor-tab redesign (undocumented) — the flat, borderless tab style.
-    'modernEditorTab.activeBackground': p.content.bg,
+    'modernEditorTab.activeBackground': p.content.bgTheme,
     'modernEditorTab.activeForeground': p.label.primary,
     'modernEditorTab.activeActionBackground': p.content.bg, // already opaque; compositing is a no-op
     'modernEditorTab.activeHoverBackground': p.ui.hover,

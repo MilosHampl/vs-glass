@@ -66,7 +66,9 @@ function planeVars(name: string, color: string, wallAlpha: number, minAlpha = 0,
   // minAlpha: a floor the density knob cannot go below. Widgets over code need one: a backdrop-filtered copy of
   // text on a transparent page is too thin to hide the sharp original beneath it (PROGRESS.md finding 6), so a
   // bodiless widget ghosts instead of frosting. The editor and chrome planes have no floor (density 0 = clear glass).
-  const a = `var(--vsg-plane-${name}-a) * var(${densityVar})`;
+  // density D runs 0 → 2: alpha climbs linearly from 0 to the tuned base at D = 1, then on to fully opaque at D = 2, so the
+  // one slider really spans "absolutely clear" to "opaque" whatever the base is
+  const a = densityRamp(`var(--vsg-plane-${name}-a)`, `var(${densityVar})`);
   return {
     [`--vsg-plane-${name}-rgb`]: rgbOf(color),
     [`--vsg-plane-${name}-a`]: alphaOf(color).toFixed(3),
@@ -76,6 +78,9 @@ function planeVars(name: string, color: string, wallAlpha: number, minAlpha = 0,
       : `rgba(var(--vsg-plane-${name}-rgb), calc(${a}))`,
   };
 }
+
+/** CSS expression: base alpha `a` at density 1, 0 at density 0, 1 at density 2 (piecewise linear). */
+const densityRamp = (a: string, d: string) => `${a} * min(1, ${d}) + (1 - ${a}) * max(0, ${d} - 1)`;
 
 function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
   const e = p.effects, g = p.glass;
@@ -114,7 +119,7 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     '--vsg-exaggeration': String(e.exaggeration),
     // planes — default = transparent-window mode (the OS shows the desktop through the window; the in-page planes
     // stay thin). Every plane alpha is a base value × --vsg-density, one knob from 0 (absolutely clear: only rims,
-    // bevels and lensing remain) to ~2 (opaque-ish); glass/density/*.css presets set it, or set it yourself.
+    // lensing remains) to 2 (opaque); glass/density/*.css presets set it, or set it yourself.
     // glass-wallpaper.css swaps the base alphas for the denser wallpaper-mode materials (same rgb).
     '--vsg-density': '1',
     ...planeVars('content', p.planes.content, p.opaqueMode ? 1 : alphaOf(p.content.bgGlass)),
@@ -128,8 +133,8 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     '--vsg-plane-dim': 'calc(var(--vsg-plane-dim-a) * min(1, var(--vsg-density)))',
     // the window slab's own smoky film (dark: a little shadow colour; light: a little white), also × density
     '--vsg-window-film-rgb': p.isDark ? rgbOf(p.groundDeep) : '255, 255, 255',
-    '--vsg-window-film-a': String(p.opaqueMode ? 1 : p.isDark ? (p.variant === 'clear' ? 0.01 : 0.02) : 0.2),
-    '--vsg-window-film': 'rgba(var(--vsg-window-film-rgb), calc(var(--vsg-window-film-a) * var(--vsg-density)))',
+    '--vsg-window-film-a': String(p.opaqueMode ? 1 : p.isDark ? (p.variant === 'clear' ? 0.02 : 0.05) : 0.1),
+    '--vsg-window-film': `rgba(var(--vsg-window-film-rgb), calc(${densityRamp('var(--vsg-window-film-a)', 'var(--vsg-density)')}))`,
     // tint film: colourless by default; glass/tints/*.css set these
     '--vsg-tint-rgb': '0, 0, 0',
     '--vsg-tint-a': '0',
@@ -146,10 +151,39 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     v[`--vsg-${level}-spec-mid`] = String(el.specular.mid);
     v[`--vsg-${level}-spec-lo`] = String(el.specular.lo);
   }
+  Object.assign(v, materialOverrides(p));
   const lens = lensVars(p);
   Object.assign(v, lens.vars);
   const body = Object.entries(v).map(([k, val]) => `  ${k}: ${val};`).join('\n');
   return { css: body, filtersSvg: lens.filtersSvg };
+}
+
+/**
+ * Same material → same plane. Layer 1 has to give every surface a standalone colour; under Layer 2 those colours are
+ * re-pointed to the plane variables so every surface built from the same material (chrome bars, raised headers and
+ * inputs, floating widgets, the editor content plane, the window ground) is one sheet of glass that follows the density
+ * knob. Keys that are not surfaces (cursors, badges, drop targets, avatars, progress, shadow-DOM menus) are left alone.
+ */
+function materialOverrides(p: Palette): Record<string, string> {
+  const colors = buildColors(p);
+  const norm = (h: string) => h.toLowerCase();
+  const map = new Map<string, string>();
+  const put = (hex: string, val: string) => map.set(norm(hex), val);
+  put(p.content.bg, 'var(--vsg-plane-content)'); put(p.content.bgTheme, 'var(--vsg-plane-content)'); put(p.content.bgGlass, 'var(--vsg-plane-content)');
+  put(p.glass.chrome.bg, 'var(--vsg-plane-chrome)'); put(p.glass.chrome.solid, 'var(--vsg-plane-chrome)');
+  put(p.glass.raised.bg, 'var(--vsg-film-raised)'); put(p.glass.raised.solid, 'var(--vsg-film-raised)');
+  put(p.glass.widget.bg, 'var(--vsg-plane-widget)'); put(p.glass.widget.solid, 'var(--vsg-plane-widget)');
+  put(p.glass.overlay.bg, 'var(--vsg-plane-widget)'); put(p.glass.overlay.solid, 'var(--vsg-plane-widget)');
+  put(p.ground, 'transparent'); put(p.groundDeep, 'transparent');
+  const skip = /cursor|dropBackground|drop\b|avatar|badge|progress|stateLabel|keybindingLabel|requestBubble|historyItem|scmGraph|button\.|checkbox|banner|Border|border|shadow|Shadow|^menu\.|^menubar|Foreground|foreground|statusBarItem\.prominent|profileBadge|editorMultiCursor|Cursor|Strong|selection|Selection|match|Match|highlight|Highlight|guide|ruler|Ruler|indent|whitespace|line\.|Line\.|lineHighlight|word|bracket|fold|range|find|Find|icon|Icon|slider|Slider|decoration|Decoration|marker|Marker|diff|Diff|merge|Merge|inserted|removed|Inserted|Removed|error|warning|info|Error|Warning|Info|debug|Debug|testing|git|scm|charts|terminal\.ansi|minimap|Minimap|overview|Overview|sash|Sash|breadcrumb\.|activeItemIndicator|Indicator|hover|Hover|active|Active|focus|Focus|inactive|Inactive|unfocused|Unfocused|Item|item|entry|Entry|filter|Filter|input|Input|dropdown|Dropdown|textPreformat|textBlockQuote|textCodeBlock|list\.|tree\.|editorGutter|gutter|Gutter|stickyScroll|StickyScroll|overlay|Overlay|welcomePage\.tile|tile|editorGroupHeader|tab\.|modernTab|modernEditorTab|editorStickyScroll|peekViewEditorStickyScroll|outputViewStickyScroll|panelStickyScroll|sideBarStickyScroll|terminalStickyScroll|editorWidget\.resizeBorder|surface\./;
+  const out: Record<string, string> = {};
+  for (const [key, hex] of Object.entries(colors)) {
+    const val = map.get(norm(hex));
+    if (!val || skip.test(key)) continue;
+    out[`--vscode-${key.replace(/\./g, '-')}`] = val;
+  }
+  out['--vsg-film-raised'] = 'rgba(var(--vsg-spec-rgb), 0.08)';
+  return out;
 }
 
 /** Lens filter variables (one data-URI filter per aspect class). lensMul scales displacement and rim width together
@@ -239,6 +273,31 @@ function main() {
   // lens strength and chromatic-aberration presets (each re-emits the filters with a multiplier)
   fs.mkdirSync(path.join(ROOT, 'glass', 'lens'), { recursive: true });
   fs.mkdirSync(path.join(ROOT, 'glass', 'aberration'), { recursive: true });
+  // Theme-scoped colour customizations the extension applies while Layer 2 is on. Webviews (Claude Code, Markdown
+  // preview, extension views) paint their own bodies from the THEME colours, which our CSS cannot reach, so those
+  // colours must carry the same near-clear alphas as the planes — or a webview sits as an opaque slab in a see-through
+  // window. Scoped to the Glass themes, so no other theme is touched; removed with "VS Glass: Remove".
+  const webview: Record<string, Record<string, string>> = {};
+  for (const p of palettes) {
+    if (p.opaqueMode) continue;
+    const none = '#00000000';
+    webview[p.name] = {
+      'editor.background': p.planes.content,
+      'editorPane.background': none,
+      'sideBar.background': p.planes.chrome,
+      'panel.background': p.planes.chrome,
+      'activityBar.background': p.planes.chrome,
+      'statusBar.background': p.planes.chrome,
+      'statusBar.noFolderBackground': p.planes.chrome,
+      'titleBar.activeBackground': p.planes.chrome,
+      'titleBar.inactiveBackground': p.planes.chrome,
+      'editorGroupHeader.tabsBackground': none,
+      'sideBarSectionHeader.background': none,
+      'sideBarTitle.background': none,
+      'terminal.background': none,
+    };
+  }
+  fs.writeFileSync(path.join(ROOT, 'glass', 'webview-colors.json'), JSON.stringify(webview, null, 2) + '\n');
   for (const l of LENS_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'lens', `glass-lens-${l.id}.css`), lensPresetCss('lens', l.id, l.mul, l.description));
   for (const a of ABERRATION_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'aberration', `glass-aberration-${a.id}.css`), lensPresetCss('aberration', a.id, a.mul, a.description));
   console.log(`✓ glass/glass.css (${(css.length / 1024).toFixed(0)} KB) · glass/glass-wallpaper.css (${(wallpaper.length / 1024).toFixed(0)} KB) · glass/tints/ (${TINTS.length}) · glass/density/ (${DENSITY_PRESETS.length}) · glass/lens/ (${LENS_PRESETS.length}) · glass/aberration/ (${ABERRATION_PRESETS.length}) · glass/glass-filters.svg (${(svg.length / 1024).toFixed(0)} KB)`);

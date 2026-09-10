@@ -240,7 +240,7 @@ export default function panels(p: Palette): Record<string, string> {
     'notebook.cellBorderColor': p.separator.hairline,
     // dark and light both read fine against raised glass; keeps notebook cells visually "elevated".
     'notebook.cellEditorBackground': p.glass.raised.bg,
-    'notebook.editorBackground': p.content.bg,
+    'notebook.editorBackground': p.content.bgTheme,
     'notebook.focusedCellBorder': p.ui.accent,
     'notebook.focusedEditorBorder': p.ui.focus,
     'notebook.inactiveFocusedCellBorder': p.separator.strong,

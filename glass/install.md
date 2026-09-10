@@ -1,9 +1,35 @@
 # Installing Layer 2 (the glass effects)
 
+## 0. The extension does it all (recommended)
+
+Since 1.1.0 the `.vsix` is both the theme and the installer for Layer 2. Install it, pick **Glass Regular
+Dark**, answer **Apply** to the one-time prompt, quit and reopen VS Code once. That is the whole install.
+
+What it writes (and what **VS Glass: Remove** reverses):
+
+- one marker-delimited hook at the end of `out/main.js` inside the VS Code app (the main-process bootstrap;
+  the one bootstrap file VS Code does not checksum), plus one spread spliced into VS Code's window options in
+  the same file, backed up first as `main.js.vs-glass-backup`. Together they create every workbench window
+  transparent with a macOS vibrancy material, insert the glass CSS with Electron's `insertCSS`, and watch the
+  folder below so changes apply live;
+- `<user-data>/vs-glass/glass.css` and `state.json` — the composed CSS (glass.css + your tint, lens,
+  aberration and density choices) and the window state (material, transparency). The user-data folder is the
+  parent of `User/`, e.g. `~/Library/Application Support/Code/`;
+- theme-scoped `[Glass …]` blocks in `workbench.colorCustomizations`, so webviews (Claude Code, Markdown
+  preview, extension views), which paint from theme colours no CSS can reach, carry the same near-clear alphas
+  as the planes.
+
+Every setting under **VS Glass** in the Settings UI is live from then on. VS Code updates overwrite `main.js`;
+VS Glass notices at startup and offers to re-apply. **VS Glass: Status** prints where everything stands.
+
+The routes below are for people who inject CSS by other means (CLI-only setups, or anyone who would rather not
+let an extension write into the app). None of them can make the window see-through on its own: pair them with
+`glass-wallpaper.css` (an in-page smoke backdrop) or with Vibrancy Continued (Route C).
+
 ## 1. What Layer 2 is
 
 VS Glass ships in two layers. **Layer 1** is the color theme (`Glass Regular Dark`, `Glass Regular Light`,
-`Glass Clear`, `Glass Opaque`) — installed the normal way, from the Marketplace or a `.vsix`, no extra steps.
+`Glass Clear`, `Glass Opaque`) — installed the normal way, from a downloaded `.vsix` (not on the Marketplace), no extra steps.
 **Layer 2** is `glass/glass.css`: injected CSS that produces the refraction (lensing at the edges of
 widgets), specular highlights, material-thickness shadows, and a restrained press response (§5 of
 `DESIGN.md` — nothing moves on hover, by the owner's explicit direction). The theme alone gives you the
@@ -11,8 +37,9 @@ right *colors*; without Layer 2 those colors sit on flat rectangles — no bendi
 all you want is the palette, stop after installing the theme. If you want the glass to actually look like
 glass, keep reading.
 
-**`glass.css` is transparent-first.** Loaded alone, it assumes the window itself is see-through (Vibrancy
-Continued) and paints only a thin smoky film plus the optional tint; the window is one rounded glass slab.
+**`glass.css` is transparent-first.** Loaded alone, it assumes the window itself is see-through (the VS Glass
+hook, or Vibrancy Continued) and paints only a whisper of film plus the optional tint; the window is one rounded
+glass slab with a hairline rim, and the OS material supplies the frost.
 Five optional addon families, all loaded after `glass.css`: `glass/glass-wallpaper.css` (a neutral smoke
 backdrop, no hue, for a window that is NOT transparent), `glass/tints/glass-tint-<id>.css` (a thin
 coloured film — eight choices: `graphite`, `blue`, `indigo`, `violet`, `teal`, `mint`, `rose`, `amber`),
@@ -45,7 +72,7 @@ base value multiplied by a single CSS variable, `--vsg-density` (default `1`). S
 
 | File | `--vsg-density` | Look |
 |---|---|---|
-| `glass-density-0.css` | `0` | fully clear — a plane of glass with only its rims, bevels, lensing and text |
+| `glass-density-0.css` | `0` | fully clear — a plane of glass with only its rims, lensing and text |
 | `glass-density-25.css` | `0.25` | a breath of smoke |
 | `glass-density-50.css` | `0.5` | half the default film |
 | `glass-density-75.css` | `0.75` | a little thinner than the default |
@@ -90,7 +117,7 @@ it go away. Pick one route — they can coexist, but there's no reason to run mo
 
 ---
 
-## 2. Route C — Vibrancy Continued (the intended setup)
+## 2. Route C — Vibrancy Continued (an alternative window-transparency provider)
 
 **Extension:** [`illixion.vscode-vibrancy-continued`](https://marketplace.visualstudio.com/items?itemName=illixion.vscode-vibrancy-continued).
 This is the setup Layer 2 is designed around: `glass.css` alone already assumes the window itself is
@@ -408,9 +435,11 @@ equivalent.
 
 ## 7. Updating after a VS Code upgrade
 
-VS Code's updater replaces the exact files every route patches. **All three routes need to be re-applied
+VS Code's updater replaces the exact files every route patches. **Every route needs to be re-applied
 after every VS Code update** — this is not a one-time setup step, it's ongoing maintenance:
 
+- **The extension:** nothing to do by hand — at startup it notices the hook is gone and offers to re-apply
+  (one quit-and-reopen); `VS Glass: Status` shows where things stand.
 - **Route C:** re-run `Reload Vibrancy`, then fully restart VS Code.
 - **Route B:** re-run `bash scripts/inject.sh install` (add `--wallpaper`/`--tint NAME` again if you were
   using them). Run `bash scripts/inject.sh status` first if you want to confirm drift before re-installing
@@ -418,6 +447,10 @@ after every VS Code update** — this is not a one-time setup step, it's ongoing
 - **Route A:** re-run `Enable Custom CSS and JS`.
 
 ## Full uninstall
+
+If you used the extension: run **VS Glass: Remove** (restores `out/main.js` byte-exact, deletes `<user-data>/vs-glass/`,
+removes the `[Glass …]` colour blocks), then uninstall the extension. The steps below cover the manual routes.
+
 
 To remove Layer 2 entirely:
 

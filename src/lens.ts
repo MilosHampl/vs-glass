@@ -34,13 +34,15 @@ export interface LensClass {
   sides?: { top?: boolean; bottom?: boolean; left?: boolean; right?: boolean };
   /** override the frost blur (px) for this class; 0 = clear glass (never blur UI text under a window-edge strip) */
   blur?: number;
+  /** corner radius (CSS px at the representative size) — the rim follows a rounded-rect SDF, so corners bend radially */
+  radius?: number;
 }
 
 export const LENS_CLASSES: LensClass[] = [
-  { name: 'widget', w: 560, h: 360, mw: 112, mh: 72, axes: 'xy', rim: 0.8 },   // quick input, suggest, hovers, notifications
-  { name: 'menu', w: 240, h: 320, mw: 48, mh: 64, axes: 'xy', rim: 0.6 },      // context menus, dropdown lists
-  { name: 'sidebar', w: 300, h: 820, mw: 48, mh: 128, axes: 'xy', rim: 0.9 },  // side bar / auxiliary bar cards
-  { name: 'panel', w: 1100, h: 320, mw: 128, mh: 40, axes: 'xy', rim: 0.9 },   // bottom panel card
+  { name: 'widget', w: 560, h: 360, mw: 140, mh: 90, axes: 'xy', rim: 0.8, radius: 14 },   // quick input, suggest, hovers, notifications
+  { name: 'menu', w: 240, h: 320, mw: 60, mh: 80, axes: 'xy', rim: 0.6, radius: 14 },      // dropdown lists, capsule buttons
+  { name: 'sidebar', w: 300, h: 820, mw: 60, mh: 164, axes: 'xy', rim: 0.9, radius: 16 },  // side bar / auxiliary bar cards
+  { name: 'panel', w: 1100, h: 320, mw: 160, mh: 48, axes: 'xy', rim: 0.9, radius: 16 },   // bottom panel card
   { name: 'column', w: 48, h: 820, mw: 12, mh: 128, axes: 'x', rim: 0.5 },     // activity bar
   { name: 'strip', w: 1400, h: 36, mw: 128, mh: 12, axes: 'y', rim: 0.35 },    // title bar, status bar, tab strip, sticky scroll
   { name: 'capsule', w: 32, h: 32, mw: 32, mh: 32, axes: 'xy', rim: 0.6, convex: true }, // icon-only pills (activity/status items) — never under text
@@ -50,14 +52,22 @@ export const LENS_CLASSES: LensClass[] = [
   { name: 'edge-bottom', w: 1400, h: 40, mw: 64, mh: 40, axes: 'y', rim: 0.6, sides: { bottom: true }, blur: 0 },
 ];
 
-/** Displacement profile: 0 in the flat centre, rising to 1 at the edge over `edge` px (eased). */
+/**
+ * Displacement profile: 0 on the flat top, rising to 1 at the edge over `edge` px.
+ * power > 0 → a power curve; power <= 0 → the circular bevel of a curved glass edge: the surface normal tilts
+ * like a quarter circle (k caps the arc so the slope at the very edge stays finite), which concentrates the bend
+ * in the outer third of the rim — the look of the reference pens (ruri.design glass, the "Generate" pill).
+ */
+const BEVEL_K = 0.85;
 function profile(distToEdge: number, edge: number, power: number): number {
   if (distToEdge >= edge) return 0;
   const t = 1 - distToEdge / edge; // 0 at inner boundary → 1 at the edge
-  return Math.pow(t, power);
+  if (power > 0) return Math.pow(t, power);
+  const arc = (x: number) => 1 - Math.sqrt(1 - (BEVEL_K * x) * (BEVEL_K * x));
+  return arc(t) / arc(1);
 }
 
-export function makeMap(cls: LensClass, edgePx: number, power = 2): { uri: string; ampX: number; ampY: number } {
+export function makeMap(cls: LensClass, edgePx: number, power = 0): { uri: string; ampX: number; ampY: number } {
   const { mw, mh, w, h } = cls;
   const sx = w / mw, sy = h / mh; // CSS px per map px
   const data = new Uint8Array(mw * mh * 4);
@@ -70,16 +80,27 @@ export function makeMap(cls: LensClass, edgePx: number, power = 2): { uri: strin
       const sd = cls.sides ?? { top: true, bottom: true, left: true, right: true };
       const far = 1e9; // a disabled side is infinitely far away → no displacement, no rim from it
       const dl = sd.left ? cx : far, dr = sd.right ? w - cx : far, dt = sd.top ? cy : far, db = sd.bottom ? h - cy : far;
-      const px = profile(Math.min(dl, dr), edgePx, power) * (dl < dr ? 1 : -1); // toward centre
-      const py = profile(Math.min(dt, db), edgePx, power) * (dt < db ? 1 : -1);
+      let px: number, py: number;
+      const rad = cls.radius ?? 0;
+      const nearX = Math.min(dl, dr), nearY = Math.min(dt, db);
+      if (rad > 0 && !cls.sides && nearX < rad && nearY < rad) {
+        // inside a corner: distance and direction from the rounded-rect SDF (radial around the corner centre)
+        const qx = rad - nearX, qy = rad - nearY;           // offset from the corner circle's centre
+        const len = Math.hypot(qx, qy) || 1;
+        const dist = rad - len;                             // distance to the curved edge (negative outside the arc)
+        const pr = profile(Math.max(0, dist), edgePx, power);
+        px = pr * (qx / len) * (dl < dr ? 1 : -1);          // toward the corner centre (i.e. toward the surface centre)
+        py = pr * (qy / len) * (dt < db ? 1 : -1);
+      } else {
+        px = profile(nearX, edgePx, power) * (dl < dr ? 1 : -1); // toward centre
+        py = profile(nearY, edgePx, power) * (dt < db ? 1 : -1);
+      }
       const i = (y * mw + x) * 4;
       // rim weight (0 centre → 1 edge). Steep: the displaced copy fully replaces the frosted body wherever the
       // displacement is more than a quarter of its maximum, and only fades in the innermost part of the rim, where
       // the displacement is already tiny. A gentle ramp here shows the undisplaced body under the displaced copy
       // (a double image) — review round 3, F3/F4.
-      const profX = cls.axes === 'y' ? 0 : profile(Math.min(dl, dr), edgePx, power);
-      const profY = cls.axes === 'x' ? 0 : profile(Math.min(dt, db), edgePx, power);
-      const rim = cls.convex ? 1 : Math.min(1, Math.max(profX, profY) * 4);
+      const rim = cls.convex ? 1 : Math.min(1, Math.hypot(cls.axes === 'y' ? 0 : px, cls.axes === 'x' ? 0 : py) * 4);
       data[i] = Math.round(128 + px * ampX * 127);
       data[i + 1] = Math.round(128 + py * ampY * 127);
       data[i + 2] = Math.round(rim * 255);
@@ -125,7 +146,13 @@ export function filterSvg(id: string, cls: LensClass, mapUri: string, displacePx
     `<feGaussianBlur in='lens' stdDeviation='${sx} ${sy}' result='lensSoft'/>`,
     // light concentrates at the edge: a small lift only (a strong lift reads as a bright wash on a transparent page)
     `<feComponentTransfer in='lensSoft' result='lensLit'><feFuncR type='linear' slope='1.05' intercept='0.006'/><feFuncG type='linear' slope='1.05' intercept='0.006'/><feFuncB type='linear' slope='1.05' intercept='0.009'/></feComponentTransfer>`,
-    `<feComposite in='lensLit' in2='rimA' operator='in' result='rim'/>`,
+    // curvature specular: the map's R/G channels are the bend direction (= the surface normal, projected); a light from
+    // the top-left lights every part of the rim whose normal tilts toward it — brightest along the top and left arcs,
+    // dark along the bottom and right — the way a real curved glass edge catches the room light
+    `<feColorMatrix in='map' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.6 1.6 0 0 -1.6' result='specA'/>`,
+    `<feComponentTransfer in='specA' result='specSoft'><feFuncA type='linear' slope='0.55' intercept='0'/></feComponentTransfer>`,
+    `<feComposite in='specSoft' in2='lensLit' operator='over' result='lensSpec'/>`,
+    `<feComposite in='lensSpec' in2='rimA' operator='in' result='rim'/>`,
     `<feComposite in='rim' in2='frost' operator='over'/>`,
     `</filter>`,
   ].join('');

@@ -1,8 +1,8 @@
 {
   "name": "vs-glass",
   "displayName": "VS Glass",
-  "description": "Apple Liquid Glass for VS Code — refractive edges, specular highlights, and layered glass materials.",
-  "version": "1.0.0",
+  "description": "Glass optics for VS Code: a see-through window, refracting edges, specular rims and layered translucent planes, with density, tint, lens and aberration settings.",
+  "version": "1.1.0",
   "publisher": "MilosHampl",
   "author": {
     "name": "Milos Hampl"
@@ -18,7 +18,7 @@
     "url": "https://github.com/MilosHampl/vs-glass/issues"
   },
   "engines": {
-    "vscode": "^1.90.0"
+    "vscode": "^1.94.0"
   },
   "categories": [
     "Themes"
@@ -61,21 +61,186 @@
         "uiTheme": "vs-dark",
         "path": "./themes/glass-opaque-color-theme.json"
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "vsGlass.apply",
+        "title": "Apply (write the glass effects into VS Code)",
+        "category": "VS Glass"
+      },
+      {
+        "command": "vsGlass.remove",
+        "title": "Remove (restore VS Code's original file and clean up)",
+        "category": "VS Glass"
+      },
+      {
+        "command": "vsGlass.status",
+        "title": "Status",
+        "category": "VS Glass"
+      },
+      {
+        "command": "vsGlass.openSettings",
+        "title": "Open Settings",
+        "category": "VS Glass"
+      }
+    ],
+    "configuration": {
+      "title": "VS Glass",
+      "properties": {
+        "vsGlass.effects": {
+          "type": "boolean",
+          "default": true,
+          "order": 1,
+          "markdownDescription": "Apply the glass effects (refracting rims, specular edges, near-clear planes) and, on macOS, the see-through window. VS Code has no extension point for either, so VS Glass adds one small, reversible hook to VS Code's own startup file (out/main.js); after one quit-and-reopen every VS Glass setting applies live. Reversible with **VS Glass: Remove**."
+        },
+        "vsGlass.windowTransparency": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "default": "auto",
+          "order": 2,
+          "enumDescriptions": [
+            "On macOS: make the window itself see-through (desktop blurred behind it). Elsewhere: off.",
+            "Force the see-through window hook.",
+            "Keep an opaque window; the wallpaper backdrop is used instead."
+          ],
+          "markdownDescription": "See-through window (macOS only — Electron's vibrancy materials). `auto` and `on` make every workbench window transparent at creation and blend the desktop behind it with `#vsGlass.windowMaterial#`; `off` keeps a normal opaque window (the wallpaper addon then paints an in-page backdrop). Switches live once the hook runs; a newly created window picks the setting up at creation."
+        },
+        "vsGlass.windowMaterial": {
+          "type": "string",
+          "enum": [
+            "hud",
+            "fullscreen-ui",
+            "popover",
+            "menu",
+            "sidebar",
+            "selection",
+            "titlebar",
+            "header",
+            "sheet",
+            "window",
+            "tooltip",
+            "content",
+            "under-window",
+            "under-page",
+            "appearance-based",
+            "light",
+            "dark",
+            "medium-light",
+            "ultra-dark"
+          ],
+          "default": "hud",
+          "order": 2,
+          "markdownDescription": "The macOS material the OS blends with the desktop behind the see-through window (VS Glass paints almost nothing of its own, so this sets how much desktop you see). Switches live. `hud` and `fullscreen-ui` let the most desktop through; `menu`, `popover` and `sidebar` are medium frosted; `under-window` is the heavy, near-opaque one other transparency extensions default to. `light` and `medium-light` are bright frosted materials (pair them with Glass Regular Light); `dark` and `ultra-dark` are the classic vibrant-dark ones."
+        },
+        "vsGlass.density": {
+          "type": "number",
+          "default": 100,
+          "minimum": 0,
+          "maximum": 200,
+          "order": 3,
+          "markdownDescription": "How much the base planes (window film, editor, side bars, panel, strips) are frosted, in percent: 0 is absolutely clear glass (only rims, lensing and text), 100 is the tuned default, 200 is opaque. Floating widgets are separate (see `#vsGlass.widgetDensity#`). Applies live."
+        },
+        "vsGlass.widgetDensity": {
+          "type": "number",
+          "default": 100,
+          "minimum": 0,
+          "maximum": 200,
+          "order": 4,
+          "markdownDescription": "How frosted the floating widgets are (command palette, hovers, menus, notifications, dialogs), in percent. They keep a readable floor whatever the base density. Applies live."
+        },
+        "vsGlass.tint": {
+          "type": "string",
+          "enum": [
+            "none",
+            "graphite",
+            "blue",
+            "indigo",
+            "violet",
+            "teal",
+            "mint",
+            "rose",
+            "amber"
+          ],
+          "default": "none",
+          "order": 5,
+          "markdownDescription": "A thin coloured film laid into every plane. `graphite` is a neutral grey that also adds legibility over bright desktops. Applies live."
+        },
+        "vsGlass.lens": {
+          "type": "string",
+          "enum": [
+            "soft",
+            "default",
+            "strong"
+          ],
+          "default": "default",
+          "order": 6,
+          "markdownDescription": "How far the rims bend what is behind them (displacement and rim width scale together, so nothing folds). Applies live."
+        },
+        "vsGlass.aberration": {
+          "type": "string",
+          "enum": [
+            "off",
+            "subtle",
+            "default",
+            "strong"
+          ],
+          "default": "default",
+          "order": 7,
+          "markdownDescription": "Chromatic aberration at the rims: red-to-blue fringing like a curved glass edge. Applies live."
+        },
+        "vsGlass.wallpaper": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "default": "auto",
+          "order": 8,
+          "enumDescriptions": [
+            "Paint a neutral smoke backdrop only when the window is not see-through.",
+            "Always paint the smoke backdrop (opaque window look).",
+            "Never paint it."
+          ],
+          "markdownDescription": "The in-page backdrop for an opaque window: neutral smoke (no hue) that gives every rim something to bend. Applies live."
+        },
+        "vsGlass.autoApply": {
+          "type": "boolean",
+          "default": true,
+          "order": 9,
+          "markdownDescription": "Re-apply automatically whenever a VS Glass setting changes (the change is live). Turn off to apply by hand with **VS Glass: Apply**."
+        }
+      }
+    }
   },
   "scripts": {
-    "build": "tsx src/build.ts",
+    "build": "tsx src/build.ts && npm run compile",
     "audit": "npm run audit:coverage && npm run audit:contrast",
     "audit:coverage": "node scripts/audit-coverage.mjs",
     "audit:contrast": "node scripts/audit-contrast.mjs",
     "validate": "node scripts/validate-schema.mjs",
     "package": "vsce package --no-dependencies",
-    "check": "npm run build && npm run validate && npm run audit && npm run package"
+    "check": "npm run build && npm run validate && npm run audit && npm run package",
+    "compile": "tsc -p tsconfig.extension.json",
+    "vscode:prepublish": "npm run compile",
+    "vscode:uninstall": "node ./out/uninstall.js"
   },
   "devDependencies": {
     "@types/node": "^22.20.2",
+    "@types/vscode": "^1.90.0",
     "@vscode/vsce": "^3.9.2",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
-  }
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "extensionKind": [
+    "ui"
+  ]
 }

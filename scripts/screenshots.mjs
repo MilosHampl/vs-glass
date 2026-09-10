@@ -109,7 +109,9 @@ const runCommand = async (cmd) => {
 };
 const closeAll = async () => { await key('escape'); await sleep(150); await key('escape'); await sleep(150); };
 const setTheme = async (variant) => {
-  const file = path.join(profile, 'User', 'settings.json'); const s = JSON.parse(fs.readFileSync(file, 'utf8')); s['workbench.colorTheme'] = NAMES[variant]; fs.writeFileSync(file, JSON.stringify(s, null, 2));
+  const file = path.join(profile, 'User', 'settings.json');
+  const s = JSON.parse(fs.readFileSync(file, 'utf8').replace(/^\s*\/\/.*$/gm, '').replace(/,(\s*[}\]])/g, '$1')); // VS Code writes comments/trailing commas
+  s['workbench.colorTheme'] = NAMES[variant]; fs.writeFileSync(file, JSON.stringify(s, null, 2));
   for (let i = 0; i < 40; i++) { await sleep(250); const cls = await evalJs(`document.querySelector('.monaco-workbench').className`); if (cls.includes(`-themes-${variant}-`)) return; }
   throw new Error('theme did not apply: ' + variant);
 };

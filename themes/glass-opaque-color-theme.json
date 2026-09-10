@@ -997,7 +997,7 @@
         "punctuation.definition.comment"
       ],
       "settings": {
-        "foreground": "#7c808d",
+        "foreground": "#7e8390",
         "fontStyle": ""
       }
     },
@@ -1008,7 +1008,7 @@
         "comment.line.documentation"
       ],
       "settings": {
-        "foreground": "#7b7f8d",
+        "foreground": "#7e8290",
         "fontStyle": ""
       }
     },
@@ -1708,7 +1708,7 @@
         "constant.other.option.shell"
       ],
       "settings": {
-        "foreground": "#7c808d"
+        "foreground": "#7e8390"
       }
     },
     {
@@ -2007,7 +2007,7 @@
     "method": "#54DFCB",
     "macro": "#EA8DFF",
     "label": "#EA8DFF",
-    "comment": "#7c808d",
+    "comment": "#7e8390",
     "string": "#FFA056",
     "keyword": "#FF8AC4",
     "number": "#FEDF43",
@@ -2017,7 +2017,7 @@
     "*.deprecated": {
       "strikethrough": true
     },
-    "*.documentation": "#7b7f8d",
+    "*.documentation": "#7e8290",
     "selfParameter": {
       "foreground": "#FF8AC4",
       "fontStyle": "italic"

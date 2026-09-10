@@ -69,8 +69,11 @@ export interface Palette {
   planes: { content: Hex; chrome: Hex; widget: Hex; dim: number };
 
   content: {
-    bg: Hex;              // editor background (opaque in Layer 1)
-    bgGlass: Hex;         // editor background under Layer 2 (slight translucency)
+    bg: Hex;              // editor plane, opaque — the ground truth for contrast math
+    bgTheme: Hex;         // what Layer 1 writes for the editor surfaces: translucent in the see-through variants so
+                          // webviews (Claude Code, extension pages, previews), which paint --vscode-editor-background
+                          // themselves, read as the same glass; opaque in Glass Opaque
+    bgGlass: Hex;         // editor background under Layer 2 wallpaper mode (slight translucency)
     lineHighlight: Hex;
     selection: Hex;
     selectionInactive: Hex;
@@ -233,7 +236,7 @@ const ansiDark = (a: Record<SystemColor, Hex>, c: Record<SystemColor, Hex>, blac
 interface Knobs {
   id: VariantId; name: string; isDark: boolean; variant: Palette['variant'];
   ladder: { ground: number; groundDeep: number; content: number; chrome: number; raised: number; widget: number; overlay: number };
-  alphas: { chrome: number; raised: number; widget: number; overlay: number; chromeGlass: number; widgetGlass: number; content: number };
+  alphas: { chrome: number; raised: number; widget: number; overlay: number; chromeGlass: number; widgetGlass: number; content: number; contentTheme: number };
   labelBoost: number;
   wallpaperVividness: number;
   /** transparent-window plane alphas (content = editor, chrome = bars/cards, widget = overlays) + dim behind chrome text */
@@ -324,8 +327,8 @@ function build(k: Knobs): Palette {
   const fg = ensureContrast(composite(label.primary, contentBg), contentBg, 7);
   const dimFg = composite(label.secondary, contentBg);
   const syntax: Palette['syntax'] = {
-    comment: ensureContrast(composite(alpha(isDark ? '#c9cee0' : '#3d4258', isDark ? 0.5 : 0.62), contentBg), contentBg, 4.5),
-    docComment: ensureContrast(composite(alpha(isDark ? '#c9cee0' : '#3d4258', isDark ? 0.56 : 0.68), contentBg), contentBg, 4.5),
+    comment: ensureContrast(composite(alpha(isDark ? '#c9cee0' : '#3d4258', isDark ? 0.5 : 0.62), contentBg), contentBg, 4.75),
+    docComment: ensureContrast(composite(alpha(isDark ? '#c9cee0' : '#3d4258', isDark ? 0.56 : 0.68), contentBg), contentBg, 4.75),
     docTag: t.teal,
     keyword: t.pink, storage: t.pink, control: t.pink,
     operator: ensureContrast(dimFg, contentBg, 4.5), punctuation: ensureContrast(mix(dimFg, fg, 0.35), contentBg, 4.5),
@@ -409,6 +412,7 @@ function build(k: Knobs): Palette {
 
   const content: Palette['content'] = {
     bg: contentBg,
+    bgTheme: opaqueMode ? contentBg : translucent(contentBg, ground, k.alphas.contentTheme),
     bgGlass: opaqueMode ? contentBg : alpha(contentBg, k.alphas.content),
     lineHighlight: alpha(sep, isDark ? 0.045 : 0.035),
     selection: ui.selectionBg,
@@ -447,31 +451,31 @@ const radius = { window: 20, card: 16, widget: 14, control: 9, inner: 7, pill: 9
 export const regularDark = build({
   id: 'glass-regular-dark', name: 'Glass Regular Dark', isDark: true, variant: 'regular',
   ladder: { ground: 0.165, groundDeep: 0.11, content: 0.205, chrome: 0.255, raised: 0.295, widget: 0.335, overlay: 0.375 },
-  alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.42, widgetGlass: 0.62, content: 0.78 },
-  labelBoost: 0, wallpaperVividness: 1.6, window: { content: 0.06, chrome: 0.06, widget: 0.6, dim: 0.06 },
-  effects: { blur: 14, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 20, lensEdge: 56, aberration: 1.0, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
+  alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.42, widgetGlass: 0.62, content: 0.78, contentTheme: 0.72 },
+  labelBoost: 0, wallpaperVividness: 1.6, window: { content: 0.07, chrome: 0.06, widget: 0.72, dim: 0.015 },
+  effects: { blur: 14, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 14, lensEdge: 56, aberration: 1.6, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
 
 export const regularLight = build({
   id: 'glass-regular-light', name: 'Glass Regular Light', isDark: false, variant: 'regular',
   ladder: { ground: 0.9, groundDeep: 0.8, content: 0.985, chrome: 0.935, raised: 0.95, widget: 0.97, overlay: 0.985 },
-  alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.55, widgetGlass: 0.74, content: 0.92 },
-  labelBoost: 0, wallpaperVividness: 1, window: { content: 0.3, chrome: 0.26, widget: 0.7, dim: 0.04 },
-  effects: { blur: 16, blurWidget: 24, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 18, lensEdge: 50, aberration: 1.2, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
+  alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.55, widgetGlass: 0.74, content: 0.92, contentTheme: 0.8 },
+  labelBoost: 0, wallpaperVividness: 1, window: { content: 0.2, chrome: 0.16, widget: 0.78, dim: 0.015 },
+  effects: { blur: 16, blurWidget: 24, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 12, lensEdge: 50, aberration: 1.4, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
 });
 
 export const clear = build({
   id: 'glass-clear', name: 'Glass Clear', isDark: true, variant: 'clear',
   ladder: { ground: 0.15, groundDeep: 0.1, content: 0.19, chrome: 0.235, raised: 0.275, widget: 0.32, overlay: 0.36 },
-  alphas: { chrome: 0.34, raised: 0.42, widget: 0.9, overlay: 0.94, chromeGlass: 0.26, widgetGlass: 0.62, content: 0.86 },
-  labelBoost: 0.1, wallpaperVividness: 1.7, window: { content: 0.03, chrome: 0.03, widget: 0.5, dim: 0.05 },
-  effects: { blur: 6, blurWidget: 16, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 26, lensEdge: 74, aberration: 1.6, exaggeration: 0.5, dim: 0.42, radius, shadowColor: '#02030a', lightAngle: 225, motion },
+  alphas: { chrome: 0.34, raised: 0.42, widget: 0.9, overlay: 0.94, chromeGlass: 0.26, widgetGlass: 0.62, content: 0.86, contentTheme: 0.56 },
+  labelBoost: 0.1, wallpaperVividness: 1.7, window: { content: 0.035, chrome: 0.03, widget: 0.62, dim: 0 },
+  effects: { blur: 6, blurWidget: 16, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 18, lensEdge: 74, aberration: 2.2, exaggeration: 0.5, dim: 0.42, radius, shadowColor: '#02030a', lightAngle: 225, motion },
 });
 
 export const opaqueTheme = build({
   id: 'glass-opaque', name: 'Glass Opaque', isDark: true, variant: 'opaque',
   ladder: { ground: 0.15, groundDeep: 0.1, content: 0.19, chrome: 0.245, raised: 0.29, widget: 0.335, overlay: 0.38 },
-  alphas: { chrome: 1, raised: 1, widget: 1, overlay: 1, chromeGlass: 1, widgetGlass: 1, content: 1 },
+  alphas: { chrome: 1, raised: 1, widget: 1, overlay: 1, chromeGlass: 1, widgetGlass: 1, content: 1, contentTheme: 1 },
   labelBoost: 0.1, wallpaperVividness: 0, window: { content: 1, chrome: 1, widget: 1, dim: 0 },
   effects: { blur: 0, blurWidget: 0, saturate: 1, brightness: 1, contrastBoost: 1, lensScale: 0, lensEdge: 30, aberration: 0, exaggeration: 0, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
@@ -485,16 +489,16 @@ export const palettes: Palette[] = [regularDark, regularLight, clear, opaqueThem
  */
 /**
  * Density presets (glass/density/glass-density-<percent>.css): one multiplier on every plane alpha and the window film.
- * 0 = absolutely clear (only rims, bevels, lensing and text remain), 100 = the tuned default, 200 = opaque-ish.
+ * 0 = absolutely clear (only rims, lensing and text remain), 100 = the tuned default, 200 = opaque.
  * Any value works: set `--vsg-density` yourself on .monaco-workbench.
  */
 export const DENSITY_PRESETS: { percent: number; description: string }[] = [
-  { percent: 0, description: 'absolutely clear: a plane of glass with only its rims, bevels and lensing' },
+  { percent: 0, description: 'absolutely clear: a plane of glass with only its rims and lensing' },
   { percent: 25, description: 'a breath of smoke' },
   { percent: 50, description: 'half the default film' },
   { percent: 75, description: 'a little thinner than the default' },
   { percent: 150, description: 'denser, for bright desktops' },
-  { percent: 200, description: 'opaque-ish, the most legible' },
+  { percent: 200, description: 'opaque, the most legible' },
 ];
 
 /** Lens presets (glass/lens/*.css): multiply rim displacement AND rim width together (the slope, and so the folding

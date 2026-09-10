@@ -6,7 +6,7 @@
 #   4. apply Layer 2 from a clean state with scripts/inject.sh against a pristine VS Code copy and confirm the marker block
 # Usage: bash scripts/verify-release.sh v1.0.0 [/path/to/pristine/Visual Studio Code.app]
 set -euo pipefail
-TAG="${1:-v1.0.0}"; VER="${TAG#v}"
+TAG="${1:-v1.1.0}"; VER="${TAG#v}"
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"   # resolved before we cd into the temp dir
 PRISTINE="${2:-$REPO/scratch/VSCode-pristine.app}"
 CODE_CLI="$PRISTINE/Contents/Resources/app/bin/code"
@@ -31,12 +31,31 @@ mkdir -p profile/user profile/ext
 
 say "3. themes contributed by the installed extension"
 unzip -p "curl/vs-glass-$VER.vsix" extension/package.json | python3 -c "import json,sys; t=json.load(sys.stdin)['contributes']['themes']; [print('  ', x['label'], '->', x['path'], x['uiTheme']) for x in t]; assert len(t)==4, 'expected 4 themes'"
-for f in glass-regular-dark glass-regular-light glass-clear glass-opaque; do unzip -l "curl/vs-glass-$VER.vsix" | grep -q "themes/$f-color-theme.json" && echo "   ok themes/$f-color-theme.json"; done
+for f in glass-regular-dark glass-regular-light glass-clear glass-opaque; do unzip -l "curl/vs-glass-$VER.vsix" | grep -q "themes/$f-color-theme.json" && echo "   ok themes/$f-color-theme.json" || { echo "   FAIL: themes/$f-color-theme.json missing"; exit 1; }; done
 
-say "4. Layer 2 from a clean state (scripts/inject.sh against the pristine app copy)"
-VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" status || true
+say "4. Manual CSS route (scripts/inject.sh) round-trips against the pristine app copy and leaves it byte-exact"
+CSS="$PRISTINE/Contents/Resources/app/out/vs/workbench/workbench.desktop.main.css"
+before="$(shasum -a 256 "$CSS" | cut -d' ' -f1)"
 VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" install --wallpaper --tint indigo --density 150 --aberration strong
-grep -c "VS-GLASS-START" "$PRISTINE/Contents/Resources/app/out/vs/workbench/workbench.desktop.main.css"
-VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" status
+[ "$(grep -c "VS-GLASS-START" "$CSS")" = "1" ] && echo "   ok marker block present after install" || { echo "   FAIL: marker block missing after install"; exit 1; }
+VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" uninstall
+[ "$(shasum -a 256 "$CSS" | cut -d' ' -f1)" = "$before" ] && echo "   ok workbench stylesheet byte-exact after uninstall" || { echo "   FAIL: stylesheet differs after uninstall"; exit 1; }
+say "5. Extension hook assets are in the package"
+unzip -l "curl/vs-glass-$VER.vsix" | grep -q "extension/out/extension.js" && echo "   ok out/extension.js" || { echo "   FAIL: out/extension.js missing from the vsix"; exit 1; }
+unzip -l "curl/vs-glass-$VER.vsix" | grep -q "extension/glass/webview-colors.json" && echo "   ok glass/webview-colors.json" || { echo "   FAIL: glass/webview-colors.json missing from the vsix"; exit 1; }
+unzip -l "curl/vs-glass-$VER.vsix" | grep -q "extension/out/patch.js" && echo "   ok out/patch.js" || { echo "   FAIL: out/patch.js missing from the vsix"; exit 1; }
+say "6. The window hook round-trips byte-exact against the pristine app's out/main.js"
+MAIN="$PRISTINE/Contents/Resources/app/out/main.js"
+node -e '
+const fs = require("fs"); const p = require(process.argv[1]); const main = process.argv[2];
+const orig = fs.readFileSync(main, "utf8"); const clean = p.stripHook(orig);
+const anchors = clean.split(p.OPTIONS_ANCHOR).length - 1;
+if (anchors !== 1) { console.log("   FAIL: window-options anchor found " + anchors + " times in the pristine main.js (expected 1)"); process.exit(1); }
+const patched = p.applyHook(clean, p.hookText("verify")); if (!patched.spliced) { console.log("   FAIL: splice not applied"); process.exit(1); }
+if (p.stripHook(patched.text) !== clean) { console.log("   FAIL: stripHook(applyHook(x)) !== x"); process.exit(1); }
+fs.writeFileSync("/tmp/vsg-verify-hook.mjs", p.hookText("verify")); fs.writeFileSync("/tmp/vsg-verify-hook.cjs", p.hookText("verify"));
+console.log("   ok anchor ×1, splice applied, strip is the byte-exact inverse");
+' "$REPO/out/patch.js" "$MAIN" || exit 1
+node --check /tmp/vsg-verify-hook.mjs && node --check /tmp/vsg-verify-hook.cjs && echo "   ok hook parses as ES module and as CommonJS" || { echo "   FAIL: hook does not parse"; exit 1; }
 echo
 echo "Temp dir kept for inspection: $TMP (profile can be launched with the pristine app + --user-data-dir/--extensions-dir above)"

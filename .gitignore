@@ -12,3 +12,7 @@ research/reference/*.png
 research/reference/*.jpg
 research/reference/*.jpeg
 research/reference/*.webp
+out/
+
+# written by the extension into its own folder at runtime (the 9334 bed symlinks this repo)
+.vs-glass-paths.json

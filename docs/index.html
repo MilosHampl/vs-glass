@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VS Glass — Apple Liquid Glass for VS Code</title>
-<meta name="description" content="VS Glass reproduces Apple's Liquid Glass material for VS Code: refractive edges, specular highlights, and layered glass materials, built from a real SVG lensing filter — not a CSS blur trick.">
-<meta property="og:title" content="VS Glass — Apple Liquid Glass for VS Code">
+<title>VS Glass — Glass optics for VS Code</title>
+<meta name="description" content="VS Glass: glass optics for VS Code — a see-through window, refracting edges, a hairline of specular light and near-clear planes, built from a real SVG lensing filter, not a CSS blur trick. One extension, every setting live.">
+<meta property="og:title" content="VS Glass — Glass optics for VS Code">
 <meta property="og:description" content="Refractive edges, specular highlights, and layered glass materials for VS Code.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://miloshampl.github.io/vs-glass/">
@@ -420,18 +420,18 @@
   <header class="hero container" id="top">
     <img class="icon" src="assets/icon-512.png" alt="VS Glass icon" width="84" height="84">
     <h1>VS Glass</h1>
-    <p class="subtitle">Colourless, multilayer Apple Liquid Glass for VS Code, built for a transparent window first — refractive edges, specular highlights, and layered glass planes; tint is optional.</p>
+    <p class="subtitle">Colourless, multilayer Glass optics for VS Code, built for a transparent window first — refractive edges, specular highlights, and layered glass planes; tint is optional.</p>
     <div class="ctas">
-      <a class="btn btn--primary" href="https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.0.0.vsix">
+      <a class="btn btn--primary" href="https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.1.0.vsix">
         ⬇ Download .vsix
       </a>
       <a class="btn btn--ghost" href="https://github.com/MilosHampl/vs-glass" target="_blank" rel="noopener">View on GitHub</a>
     </div>
 
     <div class="code-block glass">
-      <pre id="installCmd">curl -L -o vs-glass-1.0.0.vsix <span class="dim">\</span>
-  https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.0.0.vsix
-code --install-extension vs-glass-1.0.0.vsix</pre>
+      <pre id="installCmd">curl -L -o vs-glass-1.1.0.vsix <span class="dim">\</span>
+  https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.1.0.vsix
+code --install-extension vs-glass-1.1.0.vsix</pre>
       <button class="copy-btn" id="copyBtn" type="button" aria-label="Copy install commands">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
       </button>
@@ -442,7 +442,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
         <img src="assets/transparent-glass-regular-dark-hero.png" alt="VS Glass Regular Dark theme running in VS Code with a transparent window, Layer 2 refraction, specular rings and floating panes active" loading="eager" onerror="this.closest('.shot').classList.add('shot--missing')">
       </div>
     </div>
-    <p style="max-width:640px;margin:14px auto 0;font-size:.82rem;color:var(--label-tertiary);">Transparent-window mode, simulated: a CDP capture of the window's own pixels composited over a desktop picture blurred the way Vibrancy's under-window material blurs it. Not a screen recording.</p>
+    <p style="max-width:640px;margin:14px auto 0;font-size:.82rem;color:var(--label-tertiary);">Transparent-window mode, simulated: a CDP capture of the window's own pixels composited over a desktop picture blurred roughly the way the OS material blurs it. Not a screen recording.</p>
   </header>
 
   <!-- ========================= LIVE DEMO =============================== -->
@@ -545,14 +545,14 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
     <div class="section-head">
       <p class="eyebrow">Optical signature</p>
       <h2>The eight optics</h2>
-      <p>Apple names eight optical properties that define Liquid Glass (HIG Materials + WWDC25 "Meet Liquid Glass" / "Build a SwiftUI app with the new design"). Here's Apple's own language for each, next to how VS Glass reproduces it in a text editor that has no z-depth renderer, no light source, and no access to what's behind the window.</p>
+      <p>Apple names eight optical properties that define its glass material (HIG Materials + WWDC25 "Meet Liquid Glass" / "Build a SwiftUI app with the new design"). Here's Apple's own language for each, next to how VS Glass reproduces it in a text editor that has no z-depth renderer, no light source, and no access to what's behind the window.</p>
     </div>
 
     <div class="optics-grid">
       <article class="optic-card glass">
         <div class="optic-card__head"><h3>1. Lensing / refraction</h3><span class="badge badge--reproduced">Reproduced</span></div>
         <blockquote>"Lensing… dynamically bends, shapes, and concentrates light in real time."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
-        <p><strong>How:</strong> a canvas-generated displacement map feeds an SVG <code>feDisplacementMap</code> (the same technique as the demo above) on every overlay that overlaps code — quick input, suggest, hovers, dropdown lists, notifications, find, sticky scroll — and on the floating chrome cards (context menus are the one overlay VS Code isolates in a shadow root, so they keep the theme's colours only). The refracted rim replaces what's behind it rather than adding a second copy, so there's no double image. The window's own top and bottom edges bend the title bar and status bar toward the window centre the same way, and the editor card's bottom edge bends the last visible code lines.</p>
+        <p><strong>How:</strong> a canvas-generated displacement map feeds an SVG <code>feDisplacementMap</code> (the same technique as the demo above) on every overlay that overlaps code — quick input, suggest, hovers, dropdown lists, notifications, find, sticky scroll — and on the floating chrome cards (context menus are the one overlay VS Code isolates in a shadow root, so they keep the theme's colours only). The refracted rim replaces what's behind it rather than adding a second copy, so there's no double image. The window's own edge is a hairline rim ring, not a lens — nothing in-page sits behind the title or status bar for a filter to bend.</p>
       </article>
 
       <article class="optic-card glass">
@@ -562,9 +562,9 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
       </article>
 
       <article class="optic-card glass">
-        <div class="optic-card__head"><h3>3. Material thickness</h3><span class="badge badge--reproduced">Reproduced</span></div>
+        <div class="optic-card__head"><h3>3. Material thickness</h3><span class="badge badge--approximated">Approximated</span></div>
         <blockquote>"It casts deeper, richer shadows… and a softer scattering of light."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
-        <p><strong>How:</strong> layered <code>box-shadow</code> — inset top light, inset bottom dark, soft + tight outer contact shadows — keyed to the palette's shadow colour per elevation level, plus a bevel band (light hairline, dark band, faint light line) just inside every rim so edges read as thick glass even over a flat backdrop.</p>
+        <p><strong>How:</strong> deliberately minimal. A 1 px rim light along the top and left where the curved edge catches the room, a faint contact line at the bottom, and one soft shadow under floating widgets only. No bevel bands, no inner shading, no shadows under the base panes — they read as bevelled window frames, not glass. The thickness cue that is real is the lens bending the code under every rim.</p>
       </article>
 
       <article class="optic-card glass">
@@ -594,7 +594,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
       <article class="optic-card glass">
         <div class="optic-card__head"><h3>8. Liquid response</h3><span class="badge badge--approximated">Approximated</span></div>
         <blockquote>"Liquid Glass responds to interaction by instantly flexing and energizing with light… gel-like flexibility."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
-        <p><strong>How:</strong> deliberately minimal, by the owner's explicit direction — the specular sheen on every surface is static, nothing moves on hover. The only response anywhere in Layer 2 is a quick press scale on buttons and pills, a pop-in entrance on floating widgets, and a focus glow on list rows: real CSS transitions, not a physics-based spring; disabled under <code>prefers-reduced-motion</code>.</p>
+        <p><strong>How:</strong> deliberately minimal, by the owner's explicit direction — no painted sheen anywhere, nothing moves on hover. The only response anywhere in Layer 2 is a quick press scale on buttons and pills, a pop-in entrance on floating widgets, and a focus glow on list rows: real CSS transitions, not a physics-based spring; disabled under <code>prefers-reduced-motion</code>.</p>
       </article>
     </div>
   </section>
@@ -610,7 +610,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
       <figure class="variant-card glass">
         <div class="shot"><img src="assets/glass-regular-dark-hero.png" alt="Glass Regular Dark variant" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
         <h3>Regular Dark</h3>
-        <p>The flagship variant — balanced blur, saturation and lensing tuned against Apple's own Liquid Glass renders.</p>
+        <p>The flagship variant — near-clear planes, lensing and rim light tuned against Apple's own renders of the material.</p>
       </figure>
       <figure class="variant-card glass">
         <div class="shot"><img src="assets/glass-clear-hero.png" alt="Glass Clear variant" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
@@ -636,7 +636,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
     <div class="variants-grid" style="margin-bottom: 24px;">
       <div class="variant-card glass">
         <h3 style="margin-top:2px;">Transparent window (default)</h3>
-        <p><code>glass.css</code> alone. Assumes the window itself is see-through (Vibrancy Continued) — the workbench paints only a thin smoky film plus any tint; the window is one rounded glass slab.</p>
+        <p><code>glass.css</code> alone. Assumes the window itself is see-through (the VS Glass hook makes it so) — the workbench paints almost nothing of its own: near-clear planes, a whisper of film plus any tint, one rounded glass slab with a hairline rim. Density runs live from absolutely clear to opaque.</p>
       </div>
       <div class="variant-card glass">
         <h3 style="margin-top:2px;">Wallpaper (addon)</h3>
@@ -684,7 +684,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
         <figcaption>Layer 1 + Layer 2 — refraction, specular rings, thickness shadows.</figcaption>
       </figure>
     </div>
-    <p class="layers-caption">Same theme, same colors, same window — the only difference is whether <code>glass/glass.css</code> is injected. Layer 2 adds the lensing at every edge, a specular ring keyed to a virtual top-left light, layered contact shadows for material thickness, and one glass slab around the whole window that the floating cards nest inside.</p>
+    <p class="layers-caption">Same theme, same colors, same window — the only difference is whether <code>glass/glass.css</code> is injected. Layer 2 adds the lensing at every edge, a specular ring keyed to a virtual top-left light, a rim highlight and a single contact line for material thickness (no shadows under base panes), and one glass slab around the whole window that the floating cards nest inside.</p>
   </section>
 
   <!-- ========================= PALETTE ============================= -->
@@ -725,7 +725,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
         <h3>1. The theme</h3>
         <ol>
           <li>Open the Extensions view in VS Code, search "VS Glass", click Install — once it's on the Marketplace.</li>
-          <li>Or download the <code>.vsix</code> from <a href="https://github.com/MilosHampl/vs-glass/releases/latest">Releases</a> and run <code>code --install-extension vs-glass-1.0.0.vsix</code>.</li>
+          <li>Or download the <code>.vsix</code> from <a href="https://github.com/MilosHampl/vs-glass/releases/latest">Releases</a> and run <code>code --install-extension vs-glass-1.1.0.vsix</code>.</li>
           <li>Or, in the Extensions view, use <strong>Install from VSIX…</strong> and pick the downloaded file.</li>
         </ol>
       </div>
@@ -741,8 +741,15 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
 
     <div class="section-head" style="margin-top: 8px;">
       <h3 style="font-size:1.15rem;color:var(--label-primary);">Enable the glass effects (Layer 2)</h3>
-      <p>The theme gives you colors; Layer 2 (<code>glass/glass.css</code>) gives you the actual lensing, specular rings and thickness. VS Code has no supported extension point for CSS injection, so every route works by patching a file inside VS Code's own installation. Full instructions: <a class="install-link" href="https://github.com/MilosHampl/vs-glass/blob/main/glass/install.md" target="_blank" rel="noopener">glass/install.md ↗</a>.</p>
+      <p>The theme gives you colors; Layer 2 (<code>glass/glass.css</code>) gives you the see-through window, the lensing and the rim light. Since 1.1.0 the extension does it all: answer <strong>Apply</strong> to its one-time prompt, quit and reopen once, and every VS Glass setting is live from then on. Full instructions: <a class="install-link" href="https://github.com/MilosHampl/vs-glass/blob/main/glass/install.md" target="_blank" rel="noopener">glass/install.md</a>.</p>
     </div>
+
+    <div class="route-card glass">
+      <span class="route-tag">Recommended</span>
+      <h4>The extension itself</h4>
+      <p>VS Code has no extension point for a see-through window or workbench CSS, so VS Glass adds one marker-delimited, backed-up hook to VS Code's main-process bootstrap (<code>out/main.js</code>). It makes every window see-through with a macOS vibrancy material, inserts the glass CSS with Electron's <code>insertCSS</code> and watches the settings it composes, so Density, Tint, Material, Lens and Aberration apply the moment you change them. <strong>VS Glass: Remove</strong> restores the file byte-exact. Nothing else to install.</p>
+    </div>
+    <p style="margin:6px 0 10px;color:var(--label-tertiary);font-size:.9rem;">Manual routes, for people who inject CSS by other means (none of these makes the window see-through by itself):</p>
 
     <div class="route-card glass">
       <span class="route-tag">Route A</span>
@@ -757,11 +764,11 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
     <div class="route-card glass">
       <span class="route-tag">Route C</span>
       <h4>Vibrancy Continued</h4>
-      <p>The intended setup: the only route that makes the whole VS Code window genuinely see-through, using native OS blur — <code>glass.css</code> alone is built for it. Lensing still only shows where glass overlaps content VS Code itself painted — CSS can't bend the desktop behind a transparent window.</p>
+      <p>An alternative window-transparency provider: pairs with <code>glass.css</code> alone if you already use it. Lensing still only shows where glass overlaps content VS Code itself painted — CSS can't bend the desktop behind a transparent window.</p>
     </div>
 
     <p class="risk-note">
-      <strong>Honestly:</strong> all three routes patch a file inside your VS Code.app installation — there's no supported extension point for this kind of CSS injection — and every one trips VS Code's own file-integrity check, which shows a harmless "Your Code installation appears to be corrupt" notice the first time (each route explains how to dismiss it permanently). All three need to be re-applied after every VS Code update, since the updater overwrites the patched files. Route A additionally removes the workbench's Content-Security-Policy for the life of the window while it's enabled, to let its injected styles run without a trusted-types policy — a real, if narrow, reduction in defense-in-depth that's reasonable to accept deliberately, just not by accident. Route B needs no CSP change at all. <code>Glass Opaque</code> never applies Layer 2, by design — it's the flat, distraction-free option if you'd rather skip all of this.
+      <strong>Honestly:</strong> the hook lives in a file inside your VS Code.app installation — there's no supported extension point for this — as does every manual route. It is reversible (byte-exact backup, <strong>VS Glass: Remove</strong>), but real, and each VS Code update overwrites it until VS Glass re-applies (it offers to). The manual routes also trip VS Code's file-integrity check once; <code>inject.sh</code> fixes the checksum for you.
     </p>
   </section>
 
