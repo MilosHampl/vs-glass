@@ -30,8 +30,9 @@ mkdir -p profile/user profile/ext
 "$CODE_CLI" --user-data-dir "$TMP/profile/user" --extensions-dir "$TMP/profile/ext" --list-extensions --show-versions | grep -i vs-glass
 
 say "3. themes contributed by the installed extension"
+unzip -l "curl/vs-glass-$VER.vsix" > "$TMP/vsix-list.txt"
 unzip -p "curl/vs-glass-$VER.vsix" extension/package.json | python3 -c "import json,sys; t=json.load(sys.stdin)['contributes']['themes']; [print('  ', x['label'], '->', x['path'], x['uiTheme']) for x in t]; assert len(t)==4, 'expected 4 themes'"
-for f in glass-regular-dark glass-regular-light glass-clear glass-opaque; do unzip -l "curl/vs-glass-$VER.vsix" | grep -q "themes/$f-color-theme.json" && echo "   ok themes/$f-color-theme.json" || { echo "   FAIL: themes/$f-color-theme.json missing"; exit 1; }; done
+for f in glass-regular-dark glass-regular-light glass-clear glass-opaque; do grep -q "themes/$f-color-theme.json" "$TMP/vsix-list.txt" && echo "   ok themes/$f-color-theme.json" || { echo "   FAIL: themes/$f-color-theme.json missing"; exit 1; }; done
 
 say "4. Manual CSS route (scripts/inject.sh) round-trips against the pristine app copy and leaves it byte-exact"
 CSS="$PRISTINE/Contents/Resources/app/out/vs/workbench/workbench.desktop.main.css"
@@ -41,9 +42,9 @@ VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" install --wallpaper -
 VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" uninstall
 [ "$(shasum -a 256 "$CSS" | cut -d' ' -f1)" = "$before" ] && echo "   ok workbench stylesheet byte-exact after uninstall" || { echo "   FAIL: stylesheet differs after uninstall"; exit 1; }
 say "5. Extension hook assets are in the package"
-unzip -l "curl/vs-glass-$VER.vsix" | grep -q "extension/out/extension.js" && echo "   ok out/extension.js" || { echo "   FAIL: out/extension.js missing from the vsix"; exit 1; }
-unzip -l "curl/vs-glass-$VER.vsix" | grep -q "extension/glass/webview-colors.json" && echo "   ok glass/webview-colors.json" || { echo "   FAIL: glass/webview-colors.json missing from the vsix"; exit 1; }
-unzip -l "curl/vs-glass-$VER.vsix" | grep -q "extension/out/patch.js" && echo "   ok out/patch.js" || { echo "   FAIL: out/patch.js missing from the vsix"; exit 1; }
+grep -q "extension/out/extension.js" "$TMP/vsix-list.txt" && echo "   ok out/extension.js" || { echo "   FAIL: out/extension.js missing from the vsix"; exit 1; }
+grep -q "extension/glass/webview-colors.json" "$TMP/vsix-list.txt" && echo "   ok glass/webview-colors.json" || { echo "   FAIL: glass/webview-colors.json missing from the vsix"; exit 1; }
+grep -q "extension/out/patch.js" "$TMP/vsix-list.txt" && echo "   ok out/patch.js" || { echo "   FAIL: out/patch.js missing from the vsix"; exit 1; }
 say "6. The window hook round-trips byte-exact against the pristine app's out/main.js"
 MAIN="$PRISTINE/Contents/Resources/app/out/main.js"
 node -e '
