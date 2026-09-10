@@ -66,7 +66,9 @@ const openFile = async (name) => {
   const idx = await evalJs(`(() => { const rows = [...document.querySelectorAll('.quick-input-widget .monaco-list-row')]; return rows.findIndex(r => (r.querySelector('.label-name')?.textContent || '').trim() === ${JSON.stringify(name)}); })()`);
   for (let i = 0; i < Math.max(0, idx); i++) { await key('down'); await sleep(60); }
   await key('enter');
+  if (process.env.VSG_DEBUG) console.log(`    openFile(${name}): row idx ${idx}`);
   for (let i = 0; i < 24; i++) { await sleep(250); const ok = await evalJs(`(() => { const t = document.querySelector('.part.editor .tab.active .label-name'); return t && t.textContent.trim() === ${JSON.stringify(name)} && document.querySelectorAll('.monaco-editor .view-lines .view-line').length > 3; })()`); if (ok) break; }
+  if (process.env.VSG_DEBUG) console.log('    state:', await evalJs(`JSON.stringify({ tab: document.querySelector('.part.editor .tab.active .label-name')?.textContent, lines: document.querySelectorAll('.monaco-editor .view-lines .view-line').length, editors: document.querySelectorAll('.monaco-editor').length, quickOpen: getComputedStyle(document.querySelector('.quick-input-widget')).display })`));
   await sleep(500);
 };
 const runCommand = async (cmd) => { await key('meta+shift+p'); await sleep(350); await type(cmd); await sleep(700); await key('enter'); await sleep(900); };
