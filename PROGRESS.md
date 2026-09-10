@@ -65,6 +65,10 @@ These override anything a research agent claimed to the contrary.
 12. **`requestAnimationFrame` is paused for occluded windows.** Chromium reports `document.visibilityState === 'hidden'` for a VS Code window covered by another window; rAF stops entirely while CDP screenshots keep working. `scripts/perf.mjs` now calls `Page.bringToFront` and refuses to measure a hidden window — the earlier "no frames sampled" palette result was this, not the quick input.
 11. DOM: `.part.sidebar` is `overflow:hidden; position:static` inside `.split-view-view` (`position:absolute; overflow:visible`) inside `.split-view-container` (`overflow:hidden`). Sidebar and editor are siblings, not overlapping — a sidebar `backdrop-filter` sees only the ground (grid view) behind it, not editor content. Overlays (quick input, hovers, suggest, notifications, menus, sticky scroll, find widget) genuinely overlap code and are where lensing is most visible.
 
+## CI gating — proven locally (2026-09-10)
+
+Ran the exact CI steps, then broke things on purpose: deleting `sideBar.background` from a generated theme → `audit-coverage` exit 1 ("1 unintentional gap"); setting `sideBar.foreground` to #2a2f3a → `audit-contrast` exit 1 (1.17:1); any hand edit of `themes/` or `glass/` → `git diff --exit-code -- themes glass` exit 1. `npm run build` restores everything and all gates pass (exit 0). `vsce package` produces 15 files / 90 KB with zero warnings.
+
 ## Phase 1 — synthesis: which layer implements each optical-signature item
 
 | # | Optic | Layer | How |
