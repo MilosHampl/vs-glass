@@ -47,6 +47,9 @@ async function run(label) {
 
 const key = async (k, mods = 0, code = k, vk = 0) => { const base = { modifiers: mods, key: k, code, windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk }; await send('Input.dispatchKeyEvent', { type: 'keyDown', ...base }); await send('Input.dispatchKeyEvent', { type: 'keyUp', ...base }); };
 
+await send('Page.bringToFront').catch(() => {}); await sleep(400);
+const vis = await evalJs('document.visibilityState');
+if (vis !== 'visible') { console.log(`window is ${vis} — Chromium pauses requestAnimationFrame for hidden/occluded windows; bring the VS Code window to the front and re-run.`); process.exit(2); }
 console.log(`scenario: ${scenario}, ${seconds}s each, wheel-scrolling the editor (~60 events/s)`);
 if (scenario === 'palette') { await key('p', 12, 'KeyP', 80); await sleep(600); const open = await evalJs(`!!document.querySelector('.quick-input-widget') && getComputedStyle(document.querySelector('.quick-input-widget')).display !== 'none'`); if (!open) console.log('  (palette did not open via CDP key; open it manually first)'); else { await send('Input.insertText', { text: 'view' }); await sleep(600); } }
 await evalJs(`document.querySelector('.monaco-workbench').classList.remove('vs-glass-off'); 'on'`); await sleep(300);

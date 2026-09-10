@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VS Glass — Apple Liquid Glass for VS Code</title>
+<meta name="description" content="VS Glass reproduces Apple's Liquid Glass material for VS Code: refractive edges, specular highlights, and layered glass materials, built from a real SVG lensing filter — not a CSS blur trick.">
+<meta property="og:title" content="VS Glass — Apple Liquid Glass for VS Code">
+<meta property="og:description" content="Refractive edges, specular highlights, and layered glass materials for VS Code.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://miloshampl.github.io/vs-glass/">
+<meta property="og:image" content="https://miloshampl.github.io/vs-glass/assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/icon-512.png">
+<style>
+  /* ---------------------------------------------------------------------
+     Tokens — pulled verbatim from src/palette.ts (glass-regular-dark) and
+     themes/glass-regular-dark-color-theme.json. See PROGRESS.md for the
+     provenance of every hex value used here.
+  --------------------------------------------------------------------- */
+  :root {
+    color-scheme: dark;
+    --font-sans: -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, system-ui, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+    --ground: #0a0e17;
+    --ground-deep: #02040b;
+    --content-bg: #13171f;
+    --chrome: #1e232d;
+    --raised: #272d37;
+    --widget: #313741;
+    --overlay: #3b414c;
+
+    --border-hairline: rgba(255,255,255,.10);
+    --border-strong: rgba(255,255,255,.20);
+
+    --label-primary: rgba(248,250,254,.92);
+    --label-secondary: rgba(248,250,254,.62);
+    --label-tertiary: rgba(248,250,254,.46);
+    --label-quaternary: rgba(248,250,254,.18);
+
+    --accent-blue:#0091FF; --accent-indigo:#6D7CFF; --accent-purple:#DB34F2; --accent-pink:#FF375F;
+    --accent-red:#FF4245; --accent-orange:#FF9230; --accent-yellow:#FFD600; --accent-green:#30D158;
+    --accent-mint:#00DAC3; --accent-teal:#00D2E0; --accent-cyan:#3CD3FE; --accent-brown:#B78A66;
+
+    --radius-card: 20px;
+    --radius-widget: 14px;
+    --radius-control: 10px;
+    --radius-pill: 999px;
+
+    --shadow-1: 0 1px 0 rgba(255,255,255,.07) inset, 0 -1px 0 rgba(0,0,0,.35) inset,
+                0 18px 46px -20px rgba(2,3,10,.7), 0 4px 14px -6px rgba(2,3,10,.55);
+    --ease: cubic-bezier(.2,.8,.2,1);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--label-primary);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  h1,h2,h3,h4 { font-weight: 650; letter-spacing: -.01em; margin: 0 0 .5em; }
+  p { margin: 0 0 1em; color: var(--label-secondary); }
+  code, pre { font-family: var(--font-mono); }
+  .container { max-width: 1100px; margin-inline: auto; padding-inline: clamp(20px, 5vw, 32px); }
+  section { padding-block: clamp(56px, 9vw, 104px); position: relative; }
+  .eyebrow {
+    font-size: .78rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--accent-cyan); margin: 0 0 .6em;
+  }
+  .section-head { max-width: 700px; margin-bottom: clamp(28px, 4vw, 48px); }
+  .section-head h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); color: var(--label-primary); }
+  .section-head p { font-size: 1.02rem; }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute; left: -999px; top: 0; z-index: 1000;
+    background: var(--overlay); color: var(--label-primary); padding: .8em 1.2em;
+    border-radius: 0 0 10px 0; text-decoration: none;
+  }
+  .skip-link:focus { left: 0; }
+
+  /* ---------------------------------------------------------------------
+     Wallpaper mesh — the six radial blobs from Palette.wallpaper for
+     glass-regular-dark, computed by src/palette.ts (OKLCH -> hex).
+  --------------------------------------------------------------------- */
+  .wallpaper {
+    position: fixed; inset: 0; z-index: -1;
+    background:
+      radial-gradient(circle at 10% 6%,  rgba(77,87,183,.55)  0%, rgba(77,87,183,0)  62%),
+      radial-gradient(circle at 90% 94%, rgba(125,54,130,.45) 0%, rgba(125,54,130,0) 58%),
+      radial-gradient(circle at 94% 8%,  rgba(18,113,117,.40) 0%, rgba(18,113,117,0) 46%),
+      radial-gradient(circle at 18% 96%, rgba(4,84,146,.38)   0%, rgba(4,84,146,0)   52%),
+      radial-gradient(circle at 58% 34%, rgba(148,67,109,.24) 0%, rgba(148,67,109,0) 28%),
+      radial-gradient(circle at 38% 70%, rgba(18,116,91,.20)  0%, rgba(18,116,91,0)  26%),
+      var(--ground);
+  }
+
+  /* ---------------------------------------------------------------------
+     Reusable glass surface: CSS blur + saturate + specular ring + thickness
+     shadow. This is the everyday Layer-2 look used for chrome (nav, cards,
+     footer). The one *real* feDisplacementMap lens filter is reserved for
+     the live demo below, deliberately — see the "Live refraction demo".
+  --------------------------------------------------------------------- */
+  .glass {
+    position: relative;
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 40%), rgba(30,35,45,.58);
+    backdrop-filter: blur(18px) saturate(1.55);
+    -webkit-backdrop-filter: blur(18px) saturate(1.55);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-1);
+  }
+  .glass::before {
+    content: "";
+    position: absolute; inset: 0; border-radius: inherit;
+    padding: 1.25px; box-sizing: border-box;
+    background: conic-gradient(from 225deg at 28% 18%, rgba(255,255,255,.65), rgba(255,255,255,.06) 30%, rgba(255,255,255,0) 50%, rgba(255,255,255,.18) 78%, rgba(255,255,255,.65));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .glass { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--chrome); }
+  }
+
+  /* ---------------------------------------------------------------------
+     Nav
+  --------------------------------------------------------------------- */
+  .site-nav {
+    position: sticky; top: 0; z-index: 100;
+    margin: 12px auto 0; max-width: 1100px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 10px 18px; border-radius: var(--radius-pill);
+  }
+  .site-nav .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; }
+  .site-nav .brand img { width: 26px; height: 26px; border-radius: 7px; }
+  .site-nav .links { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .site-nav .links::-webkit-scrollbar { display: none; }
+  .site-nav .links a {
+    white-space: nowrap; text-decoration: none; font-size: .88rem; font-weight: 600;
+    color: var(--label-secondary); padding: 8px 12px; border-radius: var(--radius-pill);
+    transition: color .18s var(--ease), background-color .18s var(--ease);
+  }
+  .site-nav .links a:hover, .site-nav .links a:focus-visible { color: var(--label-primary); background: rgba(255,255,255,.08); }
+  .nav-wrap { padding-inline: clamp(12px, 3vw, 20px); }
+
+  /* ---------------------------------------------------------------------
+     Buttons
+  --------------------------------------------------------------------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+    font-family: var(--font-sans); font-weight: 650; font-size: .95rem;
+    padding: 13px 22px; border-radius: var(--radius-pill); border: 1px solid transparent;
+    cursor: pointer; transition: transform .15s var(--ease), background-color .15s var(--ease), filter .15s var(--ease);
+  }
+  .btn:active { transform: scale(.96); }
+  .btn--primary {
+    background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0)) , var(--accent-blue);
+    color: #fff; box-shadow: 0 10px 28px -10px rgba(0,145,255,.55), 0 1px 0 rgba(255,255,255,.35) inset;
+  }
+  .btn--primary:hover { filter: brightness(1.08); }
+  .btn--ghost {
+    background: rgba(255,255,255,.06); color: var(--label-primary); border-color: var(--border-hairline);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  .btn--ghost:hover { background: rgba(255,255,255,.12); }
+  .btn--sm { padding: 8px 14px; font-size: .82rem; border-radius: var(--radius-control); }
+
+  /* ---------------------------------------------------------------------
+     Hero
+  --------------------------------------------------------------------- */
+  .hero { padding-block: clamp(64px, 12vw, 120px) clamp(56px, 8vw, 96px); text-align: center; }
+  .hero .icon { width: 84px; height: 84px; border-radius: 22px; margin: 0 auto 22px; box-shadow: 0 18px 40px -14px rgba(0,0,0,.6); }
+  .hero h1 { font-size: clamp(2.4rem, 7vw, 4.2rem); margin-bottom: .3em; letter-spacing: -.02em; }
+  .hero .subtitle { max-width: 640px; margin: 0 auto 34px; font-size: clamp(1.02rem, 2vw, 1.2rem); color: var(--label-secondary); }
+  .hero .ctas { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 30px; }
+
+  .code-block {
+    position: relative; max-width: 560px; margin: 0 auto 56px; text-align: left;
+    padding: 18px 56px 18px 20px; border-radius: var(--radius-widget);
+  }
+  .code-block pre { margin: 0; font-size: .84rem; color: var(--accent-cyan); white-space: pre-wrap; word-break: break-all; }
+  .code-block pre span.dim { color: var(--label-tertiary); }
+  .copy-btn {
+    position: absolute; top: 12px; right: 12px; width: 34px; height: 34px;
+    display: grid; place-items: center; border-radius: 9px; border: 1px solid var(--border-hairline);
+    background: rgba(255,255,255,.07); color: var(--label-primary); cursor: pointer;
+    transition: background-color .15s var(--ease);
+  }
+  .copy-btn:hover { background: rgba(255,255,255,.14); }
+  .copy-btn.copied { background: rgba(48,209,88,.25); border-color: rgba(48,209,88,.5); }
+
+  .shot {
+    position: relative; aspect-ratio: 16 / 10; border-radius: var(--radius-card); overflow: hidden;
+    background: linear-gradient(135deg, var(--chrome), var(--raised));
+  }
+  .shot img { width: 100%; height: 100%; object-fit: cover; }
+  .shot--missing img { display: none; }
+  .shot--missing::after {
+    content: "Screenshot pending — generated at release time"; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center; text-align: center; padding: 1.4rem;
+    color: var(--label-tertiary); font-size: .82rem;
+  }
+  .hero-frame { max-width: 900px; margin: 0 auto; padding: 10px; }
+  .hero-frame .shot { border-radius: calc(var(--radius-card) - 6px); }
+
+  /* ---------------------------------------------------------------------
+     Live demo
+  --------------------------------------------------------------------- */
+  .demo-stage {
+    position: relative; overflow: hidden; border-radius: var(--radius-card);
+    aspect-ratio: 16 / 9; border: 1px solid var(--border-hairline);
+    box-shadow: var(--shadow-1);
+  }
+  .demo-backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(77,87,183,.5) 0%, rgba(77,87,183,0) 55%),
+      radial-gradient(circle at 85% 80%, rgba(18,113,117,.45) 0%, rgba(18,113,117,0) 55%),
+      radial-gradient(circle at 80% 15%, rgba(148,67,109,.3) 0%, rgba(148,67,109,0) 45%),
+      var(--content-bg);
+    padding: clamp(14px, 3vw, 32px);
+    overflow: hidden;
+  }
+  .code-backdrop {
+    margin: 0; font-size: clamp(.68rem, 1.4vw, .86rem); line-height: 1.65; white-space: pre;
+    user-select: none;
+  }
+  .tk-com { color: #8b90a8; }
+  .tk-kw  { color: #FF8AC4; }
+  .tk-fn  { color: #54DFCB; }
+  .tk-typ { color: #A7AAFF; }
+  .tk-num { color: #FEDF43; }
+  .tk-str { color: #FFA056; }
+  .tk-prop{ color: #6DD9FF; }
+  .tk-var { color: #E8EAF2; }
+
+  .demo-pane {
+    position: absolute; left: 18%; top: 26%;
+    width: clamp(170px, 34vw, 290px); height: clamp(120px, 22vw, 190px);
+    border-radius: 20px; cursor: grab; touch-action: none;
+    border: 1px solid rgba(255,255,255,.3);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.16) inset,
+      0 -14px 22px -16px rgba(0,0,0,.4) inset,
+      0 22px 46px -18px rgba(2,3,10,.75),
+      0 6px 18px -8px rgba(2,3,10,.6);
+    backdrop-filter: url("#lens") saturate(1.55);
+    -webkit-backdrop-filter: url("#lens") saturate(1.55);
+    outline-offset: 4px;
+  }
+  .demo-pane:active, .demo-pane.dragging { cursor: grabbing; }
+  .demo-pane:focus-visible { outline: 2px solid var(--accent-blue); }
+  .demo-pane.no-refraction {
+    backdrop-filter: blur(16px) saturate(1.55);
+    -webkit-backdrop-filter: blur(16px) saturate(1.55);
+  }
+  .demo-pane.aberration {
+    backdrop-filter: url("#lensAb") saturate(1.55);
+    -webkit-backdrop-filter: url("#lensAb") saturate(1.55);
+  }
+  .demo-pane.layer1 {
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+    background: var(--widget);
+    box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 12px 30px -14px rgba(2,3,10,.6);
+  }
+  .demo-pane__ring {
+    position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    padding: 1.5px; box-sizing: border-box;
+    background: conic-gradient(from 225deg at 26% 16%, rgba(255,255,255,.85), rgba(255,255,255,.05) 30%, rgba(255,255,255,0) 50%, rgba(255,255,255,.25) 78%, rgba(255,255,255,.85));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+  }
+  .demo-pane.layer1 .demo-pane__ring { opacity: .35; }
+  @media (prefers-reduced-transparency: reduce) {
+    .demo-pane { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--widget) !important; }
+    .demo-pane__ring { opacity: .35; }
+  }
+
+  .demo-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .toggle {
+    display: inline-flex; align-items: center; gap: 8px; font-size: .86rem; font-weight: 600;
+    padding: 9px 16px 9px 12px; border-radius: var(--radius-pill); border: 1px solid var(--border-hairline);
+    background: rgba(255,255,255,.05); cursor: pointer; user-select: none;
+  }
+  .toggle input { accent-color: var(--accent-blue); width: 16px; height: 16px; }
+  .demo-note { font-size: .85rem; color: var(--label-tertiary); margin-top: 14px; }
+  .demo-grab-hint { font-size: .8rem; color: var(--label-tertiary); margin-top: -8px; margin-bottom: 18px; }
+
+  /* ---------------------------------------------------------------------
+     Optics grid
+  --------------------------------------------------------------------- */
+  .optics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .optic-card { padding: 22px 22px 24px; }
+  .optic-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: .7em; }
+  .optic-card__head h3 { font-size: 1.02rem; margin: 0; }
+  .badge {
+    display: inline-flex; align-items: center; white-space: nowrap; flex-shrink: 0;
+    font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    padding: .32em .7em; border-radius: var(--radius-pill); border: 1px solid transparent;
+  }
+  .badge--reproduced { background: rgba(48,209,88,.15); color: #4AD968; border-color: rgba(48,209,88,.35); }
+  .badge--approximated { background: rgba(255,214,0,.13); color: #FEDF43; border-color: rgba(255,214,0,.35); }
+  .optic-card blockquote {
+    margin: 0 0 .9em; padding-left: 12px; border-left: 2px solid var(--border-strong);
+    font-size: .88rem; font-style: italic; color: var(--label-secondary);
+  }
+  .optic-card blockquote cite { display: block; margin-top: .4em; font-style: normal; font-size: .74rem; color: var(--label-tertiary); }
+  .optic-card p { font-size: .88rem; margin: 0; }
+  .optic-card p strong { color: var(--label-primary); }
+
+  /* ---------------------------------------------------------------------
+     Variants gallery
+  --------------------------------------------------------------------- */
+  .variants-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
+  .variant-card { padding: 14px; }
+  .variant-card h3 { font-size: .98rem; margin: 14px 2px .3em; }
+  .variant-card p { font-size: .84rem; margin: 0 2px; }
+
+  /* ---------------------------------------------------------------------
+     Layer comparison
+  --------------------------------------------------------------------- */
+  .layers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 700px) { .layers-grid { grid-template-columns: 1fr; } }
+  .layer-frame { padding: 12px; }
+  .layer-frame figcaption { font-size: .82rem; font-weight: 650; margin-top: 10px; padding: 0 4px; }
+  .layers-caption { margin-top: 22px; font-size: .92rem; max-width: 680px; }
+
+  /* ---------------------------------------------------------------------
+     Palette swatches
+  --------------------------------------------------------------------- */
+  .palette-block { margin-bottom: 40px; }
+  .palette-block h3 { font-size: .95rem; color: var(--label-secondary); font-weight: 650; margin-bottom: 14px; }
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 12px; }
+  .swatch { text-align: left; }
+  .swatch__chip {
+    display: block; width: 100%; aspect-ratio: 1.4; border-radius: 12px; border: 1px solid var(--border-hairline);
+    box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
+  }
+  .swatch__label { display: block; margin-top: 6px; font-size: .74rem; color: var(--label-secondary); }
+  .swatch__label code { display: block; font-size: .7rem; color: var(--label-tertiary); }
+
+  /* ---------------------------------------------------------------------
+     Install
+  --------------------------------------------------------------------- */
+  .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+  @media (max-width: 760px) { .install-grid { grid-template-columns: 1fr; } }
+  .install-card { padding: 24px; }
+  .install-card h3 { font-size: 1.05rem; }
+  .install-card ol { margin: 0; padding-left: 1.2em; font-size: .9rem; color: var(--label-secondary); }
+  .install-card ol li { margin-bottom: .5em; }
+  .route-card { padding: 20px; margin-bottom: 14px; }
+  .route-card h4 { margin: 0 0 .4em; font-size: .96rem; }
+  .route-card p { font-size: .87rem; margin: 0; }
+  .route-card .route-tag { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--accent-cyan); margin-bottom: .35em; display: block; }
+  .risk-note { font-size: .87rem; padding: 18px 20px; border-radius: var(--radius-widget); background: rgba(255,146,48,.08); border: 1px solid rgba(255,146,48,.25); }
+  .risk-note strong { color: var(--label-primary); }
+  .install-link { font-size: .88rem; }
+
+  /* ---------------------------------------------------------------------
+     Footer
+  --------------------------------------------------------------------- */
+  .site-footer { padding: 36px 0 56px; border-top: 1px solid var(--border-hairline); margin-top: 20px; }
+  .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+  .footer-inner p { font-size: .8rem; color: var(--label-tertiary); margin: 0; max-width: 680px; }
+  .footer-links { display: flex; gap: 18px; }
+  .footer-links a { font-size: .85rem; font-weight: 600; text-decoration: none; color: var(--label-secondary); }
+  .footer-links a:hover { color: var(--label-primary); }
+
+  noscript .demo-stage-wrap { display: none; }
+  .noscript-note { padding: 16px 20px; border-radius: var(--radius-widget); font-size: .88rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link glass" href="#main">Skip to content</a>
+<div class="wallpaper" aria-hidden="true"></div>
+
+<div class="nav-wrap">
+  <nav class="site-nav glass" aria-label="Primary">
+    <a class="brand" href="#top">
+      <img src="assets/icon-512.png" alt="" width="26" height="26">
+      VS Glass
+    </a>
+    <div class="links">
+      <a href="#demo">Demo</a>
+      <a href="#optics">Optics</a>
+      <a href="#variants">Variants</a>
+      <a href="#palette">Palette</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/MilosHampl/vs-glass" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </nav>
+</div>
+
+<main id="main">
+
+  <!-- ============================== HERO ============================== -->
+  <header class="hero container" id="top">
+    <img class="icon" src="assets/icon-512.png" alt="VS Glass icon" width="84" height="84">
+    <h1>VS Glass</h1>
+    <p class="subtitle">Apple Liquid Glass for VS Code — refractive edges, specular highlights, and layered glass materials.</p>
+    <div class="ctas">
+      <a class="btn btn--primary" href="https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.0.0.vsix">
+        ⬇ Download .vsix
+      </a>
+      <a class="btn btn--ghost" href="https://github.com/MilosHampl/vs-glass" target="_blank" rel="noopener">View on GitHub</a>
+    </div>
+
+    <div class="code-block glass">
+      <pre id="installCmd">curl -L -o vs-glass-1.0.0.vsix <span class="dim">\</span>
+  https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.0.0.vsix
+code --install-extension vs-glass-1.0.0.vsix</pre>
+      <button class="copy-btn" id="copyBtn" type="button" aria-label="Copy install commands">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </button>
+    </div>
+
+    <div class="hero-frame glass">
+      <div class="shot">
+        <img src="assets/glass-regular-dark-hero.png" alt="VS Glass Regular Dark theme running in VS Code with Layer 2 refraction, specular rings and floating panes active" loading="eager" onerror="this.closest('.shot').classList.add('shot--missing')">
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================= LIVE DEMO =============================== -->
+  <section id="demo" class="container">
+    <div class="section-head">
+      <p class="eyebrow">The centrepiece</p>
+      <h2>Live refraction demo</h2>
+      <p>This pane is built exactly like Layer 2's real widgets: an SVG <code>feDisplacementMap</code>, driven by a displacement map generated on this page at runtime (canvas → data URL, mirroring <code>src/lens.ts</code>), bends the code underneath toward the pane's centre at the rim, with a frosted body and a specular ring on top. Drag it.</p>
+    </div>
+
+    <noscript>
+      <p class="noscript-note glass">JavaScript is required for the live demo below (it generates the SVG displacement map and makes the pane draggable). Everything else on this page works without it.</p>
+    </noscript>
+
+    <div class="demo-stage-wrap">
+      <div class="demo-stage" id="demoStage">
+        <div class="demo-backdrop">
+          <pre class="code-backdrop" aria-hidden="true"><code><span class="tk-com">// src/lens.ts — the displacement profile behind this exact demo</span>
+<span class="tk-kw">export function</span> <span class="tk-fn">profile</span>(<span class="tk-var">distToEdge</span>: <span class="tk-typ">number</span>, <span class="tk-var">edge</span>: <span class="tk-typ">number</span>, <span class="tk-var">power</span> = <span class="tk-num">2</span>) {
+  <span class="tk-kw">if</span> (<span class="tk-var">distToEdge</span> &gt;= <span class="tk-var">edge</span>) <span class="tk-kw">return</span> <span class="tk-num">0</span>;
+  <span class="tk-kw">const</span> <span class="tk-var">t</span> = <span class="tk-num">1</span> - <span class="tk-var">distToEdge</span> / <span class="tk-var">edge</span>;
+  <span class="tk-kw">return</span> <span class="tk-prop">Math</span>.<span class="tk-fn">pow</span>(<span class="tk-var">t</span>, <span class="tk-var">power</span>);
+}
+
+<span class="tk-com">// R = x-displacement, G = y, B = rim weight, 128 = neutral</span>
+<span class="tk-kw">for</span> (<span class="tk-kw">let</span> <span class="tk-var">y</span> = <span class="tk-num">0</span>; <span class="tk-var">y</span> &lt; <span class="tk-var">mh</span>; <span class="tk-var">y</span>++) {
+  <span class="tk-kw">for</span> (<span class="tk-kw">let</span> <span class="tk-var">x</span> = <span class="tk-num">0</span>; <span class="tk-var">x</span> &lt; <span class="tk-var">mw</span>; <span class="tk-var">x</span>++) {
+    <span class="tk-kw">const</span> <span class="tk-var">rim</span> = <span class="tk-prop">Math</span>.<span class="tk-fn">pow</span>(<span class="tk-var">rimRaw</span>, <span class="tk-num">0.8</span>);
+    <span class="tk-var">data</span>[<span class="tk-var">i</span>]   = <span class="tk-num">128</span> + <span class="tk-var">px</span> * <span class="tk-num">127</span>; <span class="tk-com">// R</span>
+    <span class="tk-var">data</span>[<span class="tk-var">i</span>+<span class="tk-num">1</span>] = <span class="tk-num">128</span> + <span class="tk-var">py</span> * <span class="tk-num">127</span>; <span class="tk-com">// G</span>
+    <span class="tk-var">data</span>[<span class="tk-var">i</span>+<span class="tk-num">2</span>] = <span class="tk-var">rim</span> * <span class="tk-num">255</span>;       <span class="tk-com">// B</span>
+  }
+}
+
+<span class="tk-kw">const</span> <span class="tk-var">glass</span>: <span class="tk-typ">Elevation</span> = {
+  <span class="tk-prop">solid</span>: <span class="tk-str">'#272d37'</span>,
+  <span class="tk-prop">specular</span>: { <span class="tk-prop">hi</span>: <span class="tk-num">0.5</span>, <span class="tk-prop">mid</span>: <span class="tk-num">0.16</span>, <span class="tk-prop">lo</span>: <span class="tk-num">0.04</span> },
+};</code></pre>
+        </div>
+
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+          <defs>
+            <filter id="lens" x="0" y="0" width="1" height="1" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+              <feImage id="lensImg" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="map"/>
+              <feColorMatrix in="map" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1 0 0" result="rimA"/>
+              <feGaussianBlur id="frostMain" in="SourceGraphic" stdDeviation="0.04 0.06" result="frost"/>
+              <feDisplacementMap id="dispMain" in="SourceGraphic" in2="map" scale="0.03" xChannelSelector="R" yChannelSelector="G" result="lensRaw"/>
+              <feGaussianBlur id="softMain" in="lensRaw" stdDeviation="0.002 0.003" result="lensSoft"/>
+              <feComponentTransfer in="lensSoft" result="lensLit">
+                <feFuncR type="linear" slope="1.07" intercept="0.01"/>
+                <feFuncG type="linear" slope="1.07" intercept="0.01"/>
+                <feFuncB type="linear" slope="1.07" intercept="0.012"/>
+              </feComponentTransfer>
+              <feComposite in="lensLit" in2="rimA" operator="in" result="rim"/>
+              <feComposite in="rim" in2="frost" operator="over"/>
+            </filter>
+
+            <filter id="lensAb" x="0" y="0" width="1" height="1" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+              <feImage id="lensImgAb" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="map"/>
+              <feColorMatrix in="map" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1 0 0" result="rimA"/>
+              <feGaussianBlur id="frostAb" in="SourceGraphic" stdDeviation="0.04 0.06" result="frost"/>
+              <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="cR"/>
+              <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="cG"/>
+              <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="cB"/>
+              <feDisplacementMap id="dispR" in="cR" in2="map" scale="0.04" xChannelSelector="R" yChannelSelector="G" result="dR"/>
+              <feDisplacementMap id="dispG" in="cG" in2="map" scale="0.03" xChannelSelector="R" yChannelSelector="G" result="dG"/>
+              <feDisplacementMap id="dispB" in="cB" in2="map" scale="0.02" xChannelSelector="R" yChannelSelector="G" result="dB"/>
+              <feComposite in="dR" in2="dG" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="dRG"/>
+              <feComposite in="dRG" in2="dB" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="lensRaw"/>
+              <feGaussianBlur id="softAb" in="lensRaw" stdDeviation="0.002 0.003" result="lensSoft"/>
+              <feComponentTransfer in="lensSoft" result="lensLit">
+                <feFuncR type="linear" slope="1.07" intercept="0.01"/>
+                <feFuncG type="linear" slope="1.07" intercept="0.01"/>
+                <feFuncB type="linear" slope="1.07" intercept="0.012"/>
+              </feComponentTransfer>
+              <feComposite in="lensLit" in2="rimA" operator="in" result="rim"/>
+              <feComposite in="rim" in2="frost" operator="over"/>
+            </filter>
+          </defs>
+        </svg>
+
+        <div class="demo-pane" id="demoPane" tabindex="0" role="img" aria-label="Draggable glass pane demonstrating live refraction of the code behind it. Use arrow keys to move it.">
+          <div class="demo-pane__ring" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <p class="demo-grab-hint">Drag the pane (or focus it and use arrow keys) to see the code bend under the rim as it moves.</p>
+
+      <div class="demo-controls" role="group" aria-label="Demo effect toggles">
+        <label class="toggle glass"><input type="checkbox" id="toggleRefraction" checked> Refraction</label>
+        <label class="toggle glass"><input type="checkbox" id="toggleAberration"> Aberration</label>
+        <label class="toggle glass"><input type="checkbox" id="toggleLayer1"> Layer 1 only</label>
+      </div>
+      <p class="demo-note">Chromium only — Safari/Firefox show the frosted fallback (<code>prefers-reduced-transparency</code> and browsers without SVG-filter <code>backdrop-filter</code> support both degrade the same way).</p>
+    </div>
+  </section>
+
+  <!-- ========================= EIGHT OPTICS ============================= -->
+  <section id="optics" class="container">
+    <div class="section-head">
+      <p class="eyebrow">Optical signature</p>
+      <h2>The eight optics</h2>
+      <p>Apple names eight optical properties that define Liquid Glass (HIG Materials + WWDC25 "Meet Liquid Glass" / "Build a SwiftUI app with the new design"). Here's Apple's own language for each, next to how VS Glass reproduces it in a text editor that has no z-depth renderer, no light source, and no access to what's behind the window.</p>
+    </div>
+
+    <div class="optics-grid">
+      <article class="optic-card glass">
+        <div class="optic-card__head"><h3>1. Lensing / refraction</h3><span class="badge badge--reproduced">Reproduced</span></div>
+        <blockquote>"Lensing… dynamically bends, shapes, and concentrates light in real time."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
+        <p><strong>How:</strong> a canvas-generated displacement map feeds an SVG <code>feDisplacementMap</code> (the same technique as the demo above) on every overlay that overlaps code — quick input, suggest, hovers, menus, notifications, find, sticky scroll — and on the floating chrome cards.</p>
+      </article>
+
+      <article class="optic-card glass">
+        <div class="optic-card__head"><h3>2. Specular edge highlight</h3><span class="badge badge--reproduced">Reproduced</span></div>
+        <blockquote>"Light sources… shine on the material producing highlights that respond to geometry… defining its silhouette."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
+        <p><strong>How:</strong> a <code>conic-gradient</code> ring from a virtual top-left light, cut to a hairline with <code>mask-composite: exclude</code>, with alpha tuned per elevation (chrome → overlay).</p>
+      </article>
+
+      <article class="optic-card glass">
+        <div class="optic-card__head"><h3>3. Material thickness</h3><span class="badge badge--reproduced">Reproduced</span></div>
+        <blockquote>"It casts deeper, richer shadows… and a softer scattering of light."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
+        <p><strong>How:</strong> layered <code>box-shadow</code> — inset top light, inset bottom dark, soft + tight outer contact shadows — keyed to the palette's shadow colour per elevation level.</p>
+      </article>
+
+      <article class="optic-card glass">
+        <div class="optic-card__head"><h3>4. Vibrancy</h3><span class="badge badge--approximated">Approximated</span></div>
+        <blockquote>"Symbols and glyphs on top of Liquid Glass… flip from light to dark… to maximize contrast."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
+        <p><strong>How:</strong> four static label alpha tiers (macOS's 85/55/26/10% ramp) that composite against whatever sits underneath — not a true per-pixel contrast flip, which VS Code's text renderer has no hook for.</p>
+      </article>
+
+      <article class="optic-card glass">
+        <div class="optic-card__head"><h3>5. Floating layered panes</h3><span class="badge badge--reproduced">Reproduced</span></div>
+        <blockquote>"Liquid Glass forms a distinct functional layer… that floats above the content layer."<cite>Apple HIG — Materials</cite></blockquote>
+        <p><strong>How:</strong> VS Code 1.136's <code>modernUI</code> floating-card layout (sidebar / panel / aux bar), <code>surface.*</code> tokens, elevation shadows and an outer glow, with the wallpaper ground showing through the gaps.</p>
+      </article>
+
+      <article class="optic-card glass">
+        <div class="optic-card__head"><h3>6. Concentric geometry</h3><span class="badge badge--reproduced">Reproduced</span></div>
+        <blockquote>"Concentric shapes calculate their radius by subtracting padding from the parent's."<cite>WWDC25 — Get to know the new design system</cite></blockquote>
+        <p><strong>How:</strong> <code>cornerRadius.*</code> tokens overridden window-wide; inner elements (list rows, inputs, tabs) get <code>radius = parent − padding</code> instead of a fixed value.</p>
+      </article>
+
+      <article class="optic-card glass">
+        <div class="optic-card__head"><h3>7. Adaptive tint</h3><span class="badge badge--approximated">Approximated</span></div>
+        <blockquote>"By default, Liquid Glass has no inherent color, and instead takes on colors from the content directly behind it."<cite>Apple HIG — Color</cite></blockquote>
+        <p><strong>How:</strong> a cool blue-violet hue baked into every gray, plus a wallpaper mesh under <code>saturate()</code> — a fixed tint impression, not real-time sampling of arbitrary content behind each pane.</p>
+      </article>
+
+      <article class="optic-card glass">
+        <div class="optic-card__head"><h3>8. Liquid response</h3><span class="badge badge--approximated">Approximated</span></div>
+        <blockquote>"Liquid Glass responds to interaction by instantly flexing and energizing with light… gel-like flexibility."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
+        <p><strong>How:</strong> transitioned highlight position/alpha plus a 1–1.5% micro-scale on hover/focus with a damped ease-out — CSS transitions, not a physics-based spring; disabled under <code>prefers-reduced-motion</code>.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ========================= VARIANTS ============================= -->
+  <section id="variants" class="container">
+    <div class="section-head">
+      <p class="eyebrow">Four looks, one material system</p>
+      <h2>Variants gallery</h2>
+      <p>One palette, four knob settings — blur, saturation, lens strength and aberration all scale together, the way Apple's own Regular/Clear split does.</p>
+    </div>
+    <div class="variants-grid">
+      <figure class="variant-card glass">
+        <div class="shot"><img src="assets/glass-regular-dark-hero.png" alt="Glass Regular Dark variant" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
+        <h3>Regular Dark</h3>
+        <p>The flagship variant — balanced blur, saturation and lensing tuned against Apple's own Liquid Glass renders.</p>
+      </figure>
+      <figure class="variant-card glass">
+        <div class="shot"><img src="assets/glass-regular-light-hero.png" alt="Glass Regular Light variant" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
+        <h3>Regular Light</h3>
+        <p>Same material stack, inverted for daylight — cooler shadows, a warmer specular ring.</p>
+      </figure>
+      <figure class="variant-card glass">
+        <div class="shot"><img src="assets/glass-clear-hero.png" alt="Glass Clear variant" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
+        <h3>Clear</h3>
+        <p>More transparent, more luminous: thinner blur, a dimming layer for legibility, and a stronger lens with visible chromatic aberration.</p>
+      </figure>
+      <figure class="variant-card glass">
+        <div class="shot"><img src="assets/glass-opaque-layer1-hero.png" alt="Glass Opaque variant" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
+        <h3>Opaque</h3>
+        <p>The Reduce Transparency equivalent — every alpha flattened to 1, zero blur, zero lensing, by design.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ========================= LAYER 1 vs LAYER 1+2 ============================= -->
+  <section id="layers" class="container">
+    <div class="section-head">
+      <p class="eyebrow">What Layer 2 actually adds</p>
+      <h2>Layer 1 vs. Layer 1 + 2</h2>
+      <p>The theme alone (Layer 1) gives you the right colors. Without Layer 2, those colors sit on flat rectangles — no bending, no shine, no depth. Layer 2 is what makes it look like glass.</p>
+    </div>
+    <div class="layers-grid">
+      <figure class="layer-frame glass">
+        <div class="shot"><img src="assets/glass-regular-dark-layer1-palette.png" alt="Glass Regular Dark with only Layer 1 (the color theme) installed — flat panels, no refraction or specular highlights" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
+        <figcaption>Layer 1 only — theme colors on flat panels.</figcaption>
+      </figure>
+      <figure class="layer-frame glass">
+        <div class="shot"><img src="assets/glass-regular-dark-palette.png" alt="Glass Regular Dark with Layer 1 + Layer 2 — refraction, specular rings and material thickness visible" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
+        <figcaption>Layer 1 + Layer 2 — refraction, specular rings, thickness shadows.</figcaption>
+      </figure>
+    </div>
+    <p class="layers-caption">Same theme, same colors, same window — the only difference is whether <code>glass/glass.css</code> is injected. Layer 2 adds the lensing at every edge, a specular ring keyed to a virtual top-left light, layered contact shadows for material thickness, and the floating-card gaps that let the wallpaper mesh show through.</p>
+  </section>
+
+  <!-- ========================= PALETTE ============================= -->
+  <section id="palette" class="container">
+    <div class="section-head">
+      <p class="eyebrow">Source of truth</p>
+      <h2>Palette swatches</h2>
+      <p>Apple's 12 system colors, dark and light, plus the material ladder every VS Glass surface is drawn from — both pulled directly from <code>src/palette.ts</code> and the generated theme JSON.</p>
+    </div>
+
+    <div class="palette-block">
+      <h3>Apple system colors — dark</h3>
+      <div class="swatch-grid" id="appleDark"></div>
+    </div>
+    <div class="palette-block">
+      <h3>Apple system colors — light</h3>
+      <div class="swatch-grid" id="appleLight"></div>
+    </div>
+    <div class="palette-block">
+      <h3>Material ladder — dark (ground → overlay)</h3>
+      <div class="swatch-grid" id="ladderDark"></div>
+    </div>
+    <div class="palette-block">
+      <h3>Material ladder — light (ground → overlay)</h3>
+      <div class="swatch-grid" id="ladderLight"></div>
+    </div>
+  </section>
+
+  <!-- ========================= INSTALL ============================= -->
+  <section id="install" class="container">
+    <div class="section-head">
+      <p class="eyebrow">Getting it running</p>
+      <h2>Install</h2>
+    </div>
+
+    <div class="install-grid">
+      <div class="install-card glass">
+        <h3>1. The theme</h3>
+        <ol>
+          <li>Open the Extensions view in VS Code, search "VS Glass", click Install — once it's on the Marketplace.</li>
+          <li>Or download the <code>.vsix</code> from <a href="https://github.com/MilosHampl/vs-glass/releases/latest">Releases</a> and run <code>code --install-extension vs-glass-1.0.0.vsix</code>.</li>
+          <li>Or, in the Extensions view, use <strong>Install from VSIX…</strong> and pick the downloaded file.</li>
+        </ol>
+      </div>
+      <div class="install-card glass">
+        <h3>2. Pick your theme</h3>
+        <ol>
+          <li>Open the Command Palette → <strong>Preferences: Color Theme</strong>.</li>
+          <li>Choose Glass Regular Dark, Regular Light, Clear, or Opaque.</li>
+          <li>This alone gives you the correct colors — no extra steps, no file patching.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top: 8px;">
+      <h3 style="font-size:1.15rem;color:var(--label-primary);">Enable the glass effects (Layer 2)</h3>
+      <p>The theme gives you colors; Layer 2 (<code>glass/glass.css</code>) gives you the actual lensing, specular rings and thickness. VS Code has no supported extension point for CSS injection, so every route works by patching a file inside VS Code's own installation. Full instructions: <a class="install-link" href="https://github.com/MilosHampl/vs-glass/blob/main/glass/install.md" target="_blank" rel="noopener">glass/install.md ↗</a>.</p>
+    </div>
+
+    <div class="route-card glass">
+      <span class="route-tag">Route A</span>
+      <h4>Custom CSS and JS Loader</h4>
+      <p>The <code>be5invis.vscode-custom-css</code> extension (1.19M+ installs). Point <code>vscode_custom_css.imports</code> at <code>glass/glass.css</code>, run <strong>Enable Custom CSS and JS</strong>, restart. Best if you're actively editing the CSS — fastest edit-reload-look loop.</p>
+    </div>
+    <div class="route-card glass">
+      <span class="route-tag">Route B</span>
+      <h4>scripts/inject.sh</h4>
+      <p>A bash script in this repo that appends <code>glass.css</code> straight into VS Code's own <code>workbench.desktop.main.css</code> and fixes the integrity checksum for you. No extension, no CSP change — the lowest-risk route for everyday use. Run <code>bash scripts/inject.sh install</code>, then fully quit and reopen VS Code.</p>
+    </div>
+    <div class="route-card glass">
+      <span class="route-tag">Route C</span>
+      <h4>Vibrancy Continued</h4>
+      <p>The only route that makes the whole VS Code window see-through, using native OS blur. Lensing still only shows where glass overlaps content VS Code itself painted — CSS can't bend the desktop behind a transparent window. Pairs with <code>glass-transparent.css</code>.</p>
+    </div>
+
+    <p class="risk-note">
+      <strong>Honestly:</strong> all three routes patch a file inside your VS Code.app installation — there's no supported extension point for this kind of CSS injection — and every one trips VS Code's own file-integrity check, which shows a harmless "Your Code installation appears to be corrupt" notice the first time (each route explains how to dismiss it permanently). All three need to be re-applied after every VS Code update, since the updater overwrites the patched files. Route A additionally removes the workbench's Content-Security-Policy for the life of the window while it's enabled, to let its injected styles run without a trusted-types policy — a real, if narrow, reduction in defense-in-depth that's reasonable to accept deliberately, just not by accident. Route B needs no CSP change at all. <code>Glass Opaque</code> never applies Layer 2, by design — it's the flat, distraction-free option if you'd rather skip all of this.
+    </p>
+  </section>
+
+</main>
+
+<!-- ============================== FOOTER ============================== -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>MIT © 2026 Milos Hampl · unofficial, not affiliated with Apple; Apple, macOS and Liquid Glass are trademarks of Apple Inc. · Design reference: Apple HIG &amp; WWDC25.</p>
+    <nav class="footer-links" aria-label="Footer">
+      <a href="https://github.com/MilosHampl/vs-glass" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/MilosHampl/vs-glass/releases" target="_blank" rel="noopener">Releases</a>
+      <a href="https://github.com/MilosHampl/vs-glass/issues" target="_blank" rel="noopener">Issues</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* --------------------------------------------------------------------
+     Copy-to-clipboard for the install code block
+  -------------------------------------------------------------------- */
+  var copyBtn = document.getElementById('copyBtn');
+  var installCmd = document.getElementById('installCmd');
+  if (copyBtn && installCmd) {
+    copyBtn.addEventListener('click', function () {
+      var text = installCmd.textContent.replace(/\s*\\\s*\n\s*/g, ' ');
+      var done = function () {
+        copyBtn.classList.add('copied');
+        copyBtn.setAttribute('aria-label', 'Copied');
+        setTimeout(function () {
+          copyBtn.classList.remove('copied');
+          copyBtn.setAttribute('aria-label', 'Copy install commands');
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallbackSelect(); });
+      } else {
+        fallbackSelect();
+      }
+      function fallbackSelect() {
+        var range = document.createRange();
+        range.selectNodeContents(installCmd);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        done();
+      }
+    });
+  }
+
+  /* --------------------------------------------------------------------
+     Palette swatches — rendered from the same hex values as
+     src/palette.ts (APPLE.dark/light) and the generated theme JSON
+     (material ladder). See PROGRESS.md for provenance.
+  -------------------------------------------------------------------- */
+  var APPLE_DARK = { Red:'#FF4245', Orange:'#FF9230', Yellow:'#FFD600', Green:'#30D158', Mint:'#00DAC3', Teal:'#00D2E0', Cyan:'#3CD3FE', Blue:'#0091FF', Indigo:'#6D7CFF', Purple:'#DB34F2', Pink:'#FF375F', Brown:'#B78A66' };
+  var APPLE_LIGHT = { Red:'#FF383C', Orange:'#FF8D28', Yellow:'#FFCC00', Green:'#34C759', Mint:'#00C8B3', Teal:'#00C3D0', Cyan:'#00C0E8', Blue:'#0088FF', Indigo:'#6155F5', Purple:'#CB30E0', Pink:'#FF2D55', Brown:'#AC7F5E' };
+  var LADDER_DARK = { Ground:'#0a0e17', Content:'#13171f', Chrome:'#1e232d', Raised:'#272d37', Widget:'#313741', Overlay:'#3b414c' };
+  var LADDER_LIGHT = { Ground:'#dadee6', Content:'#f8fafe', Chrome:'#ecf0f8', Raised:'#f1f5fe', Widget:'#f5f9ff', Overlay:'#fafcff' };
+
+  function renderSwatches(id, map) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var html = '';
+    for (var name in map) {
+      if (!Object.prototype.hasOwnProperty.call(map, name)) continue;
+      var hex = map[name];
+      html += '<div class="swatch"><span class="swatch__chip" style="background:' + hex + '"></span>' +
+              '<span class="swatch__label">' + name + '<code>' + hex + '</code></span></div>';
+    }
+    el.innerHTML = html;
+  }
+  renderSwatches('appleDark', APPLE_DARK);
+  renderSwatches('appleLight', APPLE_LIGHT);
+  renderSwatches('ladderDark', LADDER_DARK);
+  renderSwatches('ladderLight', LADDER_LIGHT);
+
+  /* --------------------------------------------------------------------
+     Live refraction demo
+  -------------------------------------------------------------------- */
+  var stage = document.getElementById('demoStage');
+  var pane = document.getElementById('demoPane');
+  if (!stage || !pane) return;
+
+  var lensImg = document.getElementById('lensImg');
+  var lensImgAb = document.getElementById('lensImgAb');
+  var frostMain = document.getElementById('frostMain');
+  var dispMain = document.getElementById('dispMain');
+  var softMain = document.getElementById('softMain');
+  var frostAb = document.getElementById('frostAb');
+  var dispR = document.getElementById('dispR');
+  var dispG = document.getElementById('dispG');
+  var dispB = document.getElementById('dispB');
+  var softAb = document.getElementById('softAb');
+
+  var EDGE_PX = 34;        // rim width — wider than regular-dark's 26px so the bend reads clearly at demo size
+  var DISPLACE_PX = 20;    // rim displacement — exaggerated vs. production's 10px for the same reason
+  var ABERRATION_PX = 5;   // exaggerated vs. production's 0.7px so it reads clearly at demo size
+  var FROST_PX = 10;       // frosted-body blur
+
+  function buildDisplacementMap(w, h) {
+    var mw = Math.max(24, Math.min(160, Math.round(w / 4)));
+    var mh = Math.max(24, Math.min(160, Math.round(h / 4)));
+    var canvas = document.createElement('canvas');
+    canvas.width = mw; canvas.height = mh;
+    var ctx = canvas.getContext('2d');
+    var img = ctx.createImageData(mw, mh);
+    var ampX = Math.min(1, h / w);
+    var ampY = Math.min(1, w / h);
+    var sx = w / mw, sy = h / mh;
+    var power = 2;
+
+    function ramp(d) {
+      if (d >= EDGE_PX) return 0;
+      var t = 1 - d / EDGE_PX;
+      return Math.pow(t, power);
+    }
+
+    for (var y = 0; y < mh; y++) {
+      for (var x = 0; x < mw; x++) {
+        var cx = (x + 0.5) * sx, cy = (y + 0.5) * sy;
+        var dl = cx, dr = w - cx, dt = cy, db = h - cy;
+        var px = ramp(Math.min(dl, dr)) * (dl < dr ? 1 : -1);
+        var py = ramp(Math.min(dt, db)) * (dt < db ? 1 : -1);
+        var rimX = Math.max(0, 1 - Math.min(dl, dr) / (EDGE_PX * 1.15));
+        var rimY = Math.max(0, 1 - Math.min(dt, db) / (EDGE_PX * 1.15));
+        var rim = Math.min(1, Math.max(rimX, rimY));
+        var i = (y * mw + x) * 4;
+        img.data[i]     = Math.round(128 + px * ampX * 127);
+        img.data[i + 1] = Math.round(128 + py * ampY * 127);
+        img.data[i + 2] = Math.round(Math.pow(rim, 0.8) * 255);
+        img.data[i + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    return canvas.toDataURL('image/png');
+  }
+
+  function updateLens() {
+    var rect = pane.getBoundingClientRect();
+    var w = Math.max(1, rect.width), h = Math.max(1, rect.height);
+    var uri = buildDisplacementMap(w, h);
+
+    if (lensImg) lensImg.setAttribute('href', uri);
+    if (lensImgAb) lensImgAb.setAttribute('href', uri);
+
+    var scale = DISPLACE_PX / w;
+    var scaleHi = (DISPLACE_PX + ABERRATION_PX) / w;
+    var scaleLo = Math.max(0, DISPLACE_PX - ABERRATION_PX) / w;
+    var bx = (FROST_PX / w).toFixed(5), by = (FROST_PX / h).toFixed(5);
+    var sx = (0.6 / w).toFixed(5), sy = (0.6 / h).toFixed(5);
+
+    if (frostMain) frostMain.setAttribute('stdDeviation', bx + ' ' + by);
+    if (dispMain) dispMain.setAttribute('scale', scale.toFixed(5));
+    if (softMain) softMain.setAttribute('stdDeviation', sx + ' ' + sy);
+
+    if (frostAb) frostAb.setAttribute('stdDeviation', bx + ' ' + by);
+    if (dispR) dispR.setAttribute('scale', scaleHi.toFixed(5));
+    if (dispG) dispG.setAttribute('scale', scale.toFixed(5));
+    if (dispB) dispB.setAttribute('scale', scaleLo.toFixed(5));
+    if (softAb) softAb.setAttribute('stdDeviation', sx + ' ' + sy);
+  }
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(updateLens, 150);
+  });
+  updateLens();
+
+  /* Toggles */
+  var tRefraction = document.getElementById('toggleRefraction');
+  var tAberration = document.getElementById('toggleAberration');
+  var tLayer1 = document.getElementById('toggleLayer1');
+
+  function applyMode() {
+    pane.classList.toggle('layer1', !!tLayer1.checked);
+    pane.classList.toggle('no-refraction', !tRefraction.checked && !tLayer1.checked);
+    pane.classList.toggle('aberration', !!tAberration.checked && !!tRefraction.checked && !tLayer1.checked);
+  }
+  [tRefraction, tAberration, tLayer1].forEach(function (el) {
+    if (el) el.addEventListener('change', applyMode);
+  });
+  applyMode();
+
+  /* Drag (pointer events) */
+  var dragging = false, offX = 0, offY = 0;
+
+  function clampAndSet(x, y) {
+    var sr = stage.getBoundingClientRect();
+    x = Math.max(0, Math.min(sr.width - pane.offsetWidth, x));
+    y = Math.max(0, Math.min(sr.height - pane.offsetHeight, y));
+    pane.style.left = x + 'px';
+    pane.style.top = y + 'px';
+  }
+
+  pane.addEventListener('pointerdown', function (e) {
+    dragging = true;
+    pane.classList.add('dragging');
+    try { pane.setPointerCapture(e.pointerId); } catch (err) {}
+    var r = pane.getBoundingClientRect();
+    offX = e.clientX - r.left;
+    offY = e.clientY - r.top;
+  });
+  pane.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    var sr = stage.getBoundingClientRect();
+    clampAndSet(e.clientX - sr.left - offX, e.clientY - sr.top - offY);
+  });
+  ['pointerup', 'pointercancel'].forEach(function (ev) {
+    pane.addEventListener(ev, function () {
+      dragging = false;
+      pane.classList.remove('dragging');
+    });
+  });
+
+  pane.addEventListener('keydown', function (e) {
+    var step = e.shiftKey ? 28 : 10;
+    var dx = 0, dy = 0;
+    if (e.key === 'ArrowLeft') dx = -step;
+    else if (e.key === 'ArrowRight') dx = step;
+    else if (e.key === 'ArrowUp') dy = -step;
+    else if (e.key === 'ArrowDown') dy = step;
+    else return;
+    e.preventDefault();
+    var curLeft = parseFloat(pane.style.left) || pane.offsetLeft;
+    var curTop = parseFloat(pane.style.top) || pane.offsetTop;
+    clampAndSet(curLeft + dx, curTop + dy);
+  });
+})();
+</script>
+</body>
+</html>
