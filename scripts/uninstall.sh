@@ -4,7 +4,7 @@
 # What the build changed, and what this script undoes (each step is skipped if the backup is absent):
 #   1. Installed the theme extension MilosHampl.vs-glass into the user's VS Code   → uninstalls it
 #   2. Edited ~/Library/Application Support/Code/User/settings.json               → restores .backup/settings.json.<ts>
-#      (theme, workbench.experimental.modernUI, vscode_vibrancy.* pointing at glass/glass.css + glass-transparent.css,
+#      (theme, workbench.experimental.modernUI, vscode_vibrancy.* pointing at glass/glass.css,
 #       removal of the old workbench.colorCustomizations block)
 #   3. Re-ran Vibrancy Continued's patch so the VS Glass CSS is inlined in the app's main.js  → restores the
 #      three checksummed files from .backup/app/ byte-exact (main.js, workbench.html, product.json), i.e. the

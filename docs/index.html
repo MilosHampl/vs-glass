@@ -88,18 +88,19 @@
   .skip-link:focus { left: 0; }
 
   /* ---------------------------------------------------------------------
-     Wallpaper mesh — the six radial blobs from Palette.wallpaper for
-     glass-regular-dark, computed by src/palette.ts (OKLCH -> hex).
+     Neutral smoke — page-backdrop decoration echoing glass-wallpaper.css's
+     colourless plumes/pockets (no hue, only luminance): src/palette.ts
+     wallpaper.blobs for glass-regular-dark.
   --------------------------------------------------------------------- */
   .wallpaper {
     position: fixed; inset: 0; z-index: -1;
     background:
-      radial-gradient(circle at 10% 6%,  rgba(77,87,183,.55)  0%, rgba(77,87,183,0)  62%),
-      radial-gradient(circle at 90% 94%, rgba(125,54,130,.45) 0%, rgba(125,54,130,0) 58%),
-      radial-gradient(circle at 94% 8%,  rgba(18,113,117,.40) 0%, rgba(18,113,117,0) 46%),
-      radial-gradient(circle at 18% 96%, rgba(4,84,146,.38)   0%, rgba(4,84,146,0)   52%),
-      radial-gradient(circle at 58% 34%, rgba(148,67,109,.24) 0%, rgba(148,67,109,0) 28%),
-      radial-gradient(circle at 38% 70%, rgba(18,116,91,.20)  0%, rgba(18,116,91,0)  26%),
+      radial-gradient(circle at 10% 6%,  rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 58%),
+      radial-gradient(circle at 90% 94%, rgba(255,255,255,.04) 0%, rgba(255,255,255,0) 56%),
+      radial-gradient(circle at 94% 8%,  rgba(0,0,0,.34)       0%, rgba(0,0,0,0)       44%),
+      radial-gradient(circle at 18% 96%, rgba(0,0,0,.30)       0%, rgba(0,0,0,0)       46%),
+      radial-gradient(circle at 58% 34%, rgba(255,255,255,.025) 0%, rgba(255,255,255,0) 22%),
+      radial-gradient(circle at 38% 70%, rgba(255,255,255,.02) 0%, rgba(255,255,255,0)  20%),
       var(--ground);
   }
 
@@ -419,7 +420,7 @@
   <header class="hero container" id="top">
     <img class="icon" src="assets/icon-512.png" alt="VS Glass icon" width="84" height="84">
     <h1>VS Glass</h1>
-    <p class="subtitle">Apple Liquid Glass for VS Code — refractive edges, specular highlights, and layered glass materials.</p>
+    <p class="subtitle">Colourless, multilayer Apple Liquid Glass for VS Code, built for a transparent window first — refractive edges, specular highlights, and layered glass planes; tint is optional.</p>
     <div class="ctas">
       <a class="btn btn--primary" href="https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.0.0.vsix">
         ⬇ Download .vsix
@@ -438,9 +439,10 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
 
     <div class="hero-frame glass">
       <div class="shot">
-        <img src="assets/glass-regular-dark-hero.png" alt="VS Glass Regular Dark theme running in VS Code with Layer 2 refraction, specular rings and floating panes active" loading="eager" onerror="this.closest('.shot').classList.add('shot--missing')">
+        <img src="assets/transparent-glass-regular-dark-hero.png" alt="VS Glass Regular Dark theme running in VS Code with a transparent window, Layer 2 refraction, specular rings and floating panes active" loading="eager" onerror="this.closest('.shot').classList.add('shot--missing')">
       </div>
     </div>
+    <p style="max-width:640px;margin:14px auto 0;font-size:.82rem;color:var(--label-tertiary);">Transparent-window mode, simulated: a CDP capture of the window's own pixels composited over a desktop picture blurred the way Vibrancy's under-window material blurs it. Not a screen recording.</p>
   </header>
 
   <!-- ========================= LIVE DEMO =============================== -->
@@ -550,7 +552,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
       <article class="optic-card glass">
         <div class="optic-card__head"><h3>1. Lensing / refraction</h3><span class="badge badge--reproduced">Reproduced</span></div>
         <blockquote>"Lensing… dynamically bends, shapes, and concentrates light in real time."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
-        <p><strong>How:</strong> a canvas-generated displacement map feeds an SVG <code>feDisplacementMap</code> (the same technique as the demo above) on every overlay that overlaps code — quick input, suggest, hovers, menus, notifications, find, sticky scroll — and on the floating chrome cards.</p>
+        <p><strong>How:</strong> a canvas-generated displacement map feeds an SVG <code>feDisplacementMap</code> (the same technique as the demo above) on every overlay that overlaps code — quick input, suggest, hovers, dropdown lists, notifications, find, sticky scroll — and on the floating chrome cards (context menus are the one overlay VS Code isolates in a shadow root, so they keep the theme's colours only). The refracted rim replaces what's behind it rather than adding a second copy, so there's no double image. The window's own top and bottom edges bend the title bar and status bar toward the window centre the same way, and the editor card's bottom edge bends the last visible code lines.</p>
       </article>
 
       <article class="optic-card glass">
@@ -562,7 +564,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
       <article class="optic-card glass">
         <div class="optic-card__head"><h3>3. Material thickness</h3><span class="badge badge--reproduced">Reproduced</span></div>
         <blockquote>"It casts deeper, richer shadows… and a softer scattering of light."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
-        <p><strong>How:</strong> layered <code>box-shadow</code> — inset top light, inset bottom dark, soft + tight outer contact shadows — keyed to the palette's shadow colour per elevation level.</p>
+        <p><strong>How:</strong> layered <code>box-shadow</code> — inset top light, inset bottom dark, soft + tight outer contact shadows — keyed to the palette's shadow colour per elevation level, plus a bevel band (light hairline, dark band, faint light line) just inside every rim so edges read as thick glass even over a flat backdrop.</p>
       </article>
 
       <article class="optic-card glass">
@@ -574,7 +576,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
       <article class="optic-card glass">
         <div class="optic-card__head"><h3>5. Floating layered panes</h3><span class="badge badge--reproduced">Reproduced</span></div>
         <blockquote>"Liquid Glass forms a distinct functional layer… that floats above the content layer."<cite>Apple HIG — Materials</cite></blockquote>
-        <p><strong>How:</strong> VS Code 1.136's <code>modernUI</code> floating-card layout (sidebar / panel / aux bar), <code>surface.*</code> tokens, elevation shadows and an outer glow, with the wallpaper ground showing through the gaps.</p>
+        <p><strong>How:</strong> VS Code 1.136's <code>modernUI</code> floating-card layout (sidebar / panel / aux bar), elevation shadows, and one window-wide glass slab — the whole workbench gets its own rounded rim, with cards, widgets and controls nested inside on one concentric radius ladder.</p>
       </article>
 
       <article class="optic-card glass">
@@ -586,13 +588,13 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
       <article class="optic-card glass">
         <div class="optic-card__head"><h3>7. Adaptive tint</h3><span class="badge badge--approximated">Approximated</span></div>
         <blockquote>"By default, Liquid Glass has no inherent color, and instead takes on colors from the content directly behind it."<cite>Apple HIG — Color</cite></blockquote>
-        <p><strong>How:</strong> a cool blue-violet hue baked into every gray, plus a wallpaper mesh under <code>saturate()</code> — a fixed tint impression, not real-time sampling of arbitrary content behind each pane.</p>
+        <p><strong>How:</strong> the default material is colourless. In transparent-window mode, the OS genuinely blurs your real desktop behind the window — real adaptive tint, just supplied outside VS Glass's own CSS. Over an opaque window, an optional neutral-smoke addon (no hue) gives <code>saturate()</code> real pixels to process instead; eight optional tint addons layer a fixed coloured film on top of either mode.</p>
       </article>
 
       <article class="optic-card glass">
         <div class="optic-card__head"><h3>8. Liquid response</h3><span class="badge badge--approximated">Approximated</span></div>
         <blockquote>"Liquid Glass responds to interaction by instantly flexing and energizing with light… gel-like flexibility."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
-        <p><strong>How:</strong> transitioned highlight position/alpha plus a 1–1.5% micro-scale on hover/focus with a damped ease-out — CSS transitions, not a physics-based spring; disabled under <code>prefers-reduced-motion</code>.</p>
+        <p><strong>How:</strong> deliberately minimal, by the owner's explicit direction — the specular sheen on every surface is static, nothing moves on hover. The only response anywhere in Layer 2 is a quick press scale on buttons and pills, a pop-in entrance on floating widgets, and a focus glow on list rows: real CSS transitions, not a physics-based spring; disabled under <code>prefers-reduced-motion</code>.</p>
       </article>
     </div>
   </section>
@@ -611,11 +613,6 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
         <p>The flagship variant — balanced blur, saturation and lensing tuned against Apple's own Liquid Glass renders.</p>
       </figure>
       <figure class="variant-card glass">
-        <div class="shot"><img src="assets/glass-regular-light-hero.png" alt="Glass Regular Light variant" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
-        <h3>Regular Light</h3>
-        <p>Same material stack, inverted for daylight — cooler shadows, a warmer specular ring.</p>
-      </figure>
-      <figure class="variant-card glass">
         <div class="shot"><img src="assets/glass-clear-hero.png" alt="Glass Clear variant" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
         <h3>Clear</h3>
         <p>More transparent, more luminous: thinner blur, a dimming layer for legibility, and a stronger lens with visible chromatic aberration.</p>
@@ -625,6 +622,48 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
         <h3>Opaque</h3>
         <p>The Reduce Transparency equivalent — every alpha flattened to 1, zero blur, zero lensing, by design.</p>
       </figure>
+      <figure class="variant-card glass">
+        <div class="shot"><img src="assets/glass-regular-light-hero.png" alt="Glass Regular Light variant" loading="lazy" onerror="this.closest('.shot').classList.add('shot--missing')"></div>
+        <h3>Regular Light</h3>
+        <p>Kept for completeness — the same pipeline generates it at no extra cost — but not tuned for the transparent window; not a headline variant.</p>
+      </figure>
+    </div>
+
+    <div class="section-head" style="margin-top: 40px;">
+      <h3 style="font-size:1.05rem;color:var(--label-primary);margin-bottom:.4em;">Modes &amp; tints</h3>
+      <p style="margin-bottom:0;">Layer 2 is one default plus five optional addon families, loaded after <code>glass.css</code>.</p>
+    </div>
+    <div class="variants-grid" style="margin-bottom: 24px;">
+      <div class="variant-card glass">
+        <h3 style="margin-top:2px;">Transparent window (default)</h3>
+        <p><code>glass.css</code> alone. Assumes the window itself is see-through (Vibrancy Continued) — the workbench paints only a thin smoky film plus any tint; the window is one rounded glass slab.</p>
+      </div>
+      <div class="variant-card glass">
+        <h3 style="margin-top:2px;">Wallpaper (addon)</h3>
+        <p><code>glass-wallpaper.css</code>, loaded after <code>glass.css</code>. A neutral smoke backdrop — no hue, only luminance — for a window that stays opaque.</p>
+      </div>
+      <div class="variant-card glass">
+        <h3 style="margin-top:2px;">Tints (addons)</h3>
+        <p>One of eight <code>tints/glass-tint-&lt;id&gt;.css</code> files, loaded after <code>glass.css</code> (and after <code>glass-wallpaper.css</code>, if used). A thin coloured film, combinable with either mode above.</p>
+      </div>
+      <div class="variant-card glass">
+        <h3 style="margin-top:2px;">Density (addons)</h3>
+        <p>One of six <code>density/glass-density-&lt;percent&gt;.css</code> presets (0, 25, 50, 75, 150, 200; 100 is the default, now itself almost clear), loaded after <code>glass.css</code>. One variable, <code>--vsg-density</code>, scales the base window — the window film, editor content, and chrome — from fully clear (0) to opaque-ish (200). Floating widgets (palette, hovers, suggest, notifications) are exempt on purpose and keep their own fixed, readable body. Combinable with any mode or tint above.</p>
+      </div>
+      <div class="variant-card glass">
+        <h3 style="margin-top:2px;">Lens &amp; aberration (addons)</h3>
+        <p>Two real, generated addon families that re-emit the same SVG lens filters at a different strength: <code>lens/glass-lens-soft.css</code> or <code>-strong.css</code> (a gentler or heavier rim bend), and <code>aberration/glass-aberration-off.css</code>, <code>-subtle.css</code> or <code>-strong.css</code> (no fringing up to heavy red-to-blue fringing). Load after <code>glass.css</code>; combinable with everything above.</p>
+      </div>
+    </div>
+    <div class="swatch-grid" aria-label="The eight tint addons">
+      <div class="swatch"><span class="swatch__chip" style="background:rgb(99,99,99)"></span><span class="swatch__label">Graphite<code>the smokiest glass</code></span></div>
+      <div class="swatch"><span class="swatch__chip" style="background:rgb(0,145,255)"></span><span class="swatch__label">Blue<code>system blue</code></span></div>
+      <div class="swatch"><span class="swatch__chip" style="background:rgb(109,124,255)"></span><span class="swatch__label">Indigo<code>system indigo</code></span></div>
+      <div class="swatch"><span class="swatch__chip" style="background:rgb(219,52,242)"></span><span class="swatch__label">Violet<code>system purple</code></span></div>
+      <div class="swatch"><span class="swatch__chip" style="background:rgb(0,210,224)"></span><span class="swatch__label">Teal<code>system teal</code></span></div>
+      <div class="swatch"><span class="swatch__chip" style="background:rgb(0,218,195)"></span><span class="swatch__label">Mint<code>system mint</code></span></div>
+      <div class="swatch"><span class="swatch__chip" style="background:rgb(255,55,95)"></span><span class="swatch__label">Rose<code>system pink</code></span></div>
+      <div class="swatch"><span class="swatch__chip" style="background:rgb(255,146,48)"></span><span class="swatch__label">Amber<code>system orange</code></span></div>
     </div>
   </section>
 
@@ -645,7 +684,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
         <figcaption>Layer 1 + Layer 2 — refraction, specular rings, thickness shadows.</figcaption>
       </figure>
     </div>
-    <p class="layers-caption">Same theme, same colors, same window — the only difference is whether <code>glass/glass.css</code> is injected. Layer 2 adds the lensing at every edge, a specular ring keyed to a virtual top-left light, layered contact shadows for material thickness, and the floating-card gaps that let the wallpaper mesh show through.</p>
+    <p class="layers-caption">Same theme, same colors, same window — the only difference is whether <code>glass/glass.css</code> is injected. Layer 2 adds the lensing at every edge, a specular ring keyed to a virtual top-left light, layered contact shadows for material thickness, and one glass slab around the whole window that the floating cards nest inside.</p>
   </section>
 
   <!-- ========================= PALETTE ============================= -->
@@ -718,7 +757,7 @@ code --install-extension vs-glass-1.0.0.vsix</pre>
     <div class="route-card glass">
       <span class="route-tag">Route C</span>
       <h4>Vibrancy Continued</h4>
-      <p>The only route that makes the whole VS Code window see-through, using native OS blur. Lensing still only shows where glass overlaps content VS Code itself painted — CSS can't bend the desktop behind a transparent window. Pairs with <code>glass-transparent.css</code>.</p>
+      <p>The intended setup: the only route that makes the whole VS Code window genuinely see-through, using native OS blur — <code>glass.css</code> alone is built for it. Lensing still only shows where glass overlaps content VS Code itself painted — CSS can't bend the desktop behind a transparent window.</p>
     </div>
 
     <p class="risk-note">

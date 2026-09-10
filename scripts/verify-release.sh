@@ -7,7 +7,8 @@
 # Usage: bash scripts/verify-release.sh v1.0.0 [/path/to/pristine/Visual Studio Code.app]
 set -euo pipefail
 TAG="${1:-v1.0.0}"; VER="${TAG#v}"
-PRISTINE="${2:-$(cd "$(dirname "$0")/.." && pwd)/scratch/VSCode-pristine.app}"
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"   # resolved before we cd into the temp dir
+PRISTINE="${2:-$REPO/scratch/VSCode-pristine.app}"
 CODE_CLI="$PRISTINE/Contents/Resources/app/bin/code"
 TMP="$(mktemp -d /tmp/vs-glass-verify.XXXXXX)"; cd "$TMP"
 say() { printf '\n\033[1m%s\033[0m\n' "$*"; }
@@ -17,6 +18,11 @@ env -u GITHUB_TOKEN gh release download "$TAG" --repo MilosHampl/vs-glass --patt
 say "1b. unauthenticated curl of the browser download URL"
 curl -sSL -o curl/vs-glass-$VER.vsix --create-dirs "https://github.com/MilosHampl/vs-glass/releases/download/$TAG/vs-glass-$VER.vsix" && ls -la curl/
 cmp gh/vs-glass-$VER.vsix curl/vs-glass-$VER.vsix && echo "identical bytes via gh and curl: $(shasum -a 256 curl/vs-glass-$VER.vsix | cut -c1-16)…"
+say "1c. Layer 2 assets attached to the release (glass.css, glass-wallpaper.css, 8 tints, 6 density, 2 lens, 3 aberration presets, glass-filters.svg)"
+env -u GITHUB_TOKEN gh release download "$TAG" --repo MilosHampl/vs-glass --pattern 'glass*' --dir assets >/dev/null && ls assets/
+n_css=$(ls assets/*.css | wc -l | tr -d ' '); [ "$n_css" -ge 21 ] || { echo "expected >= 21 CSS assets, got $n_css"; exit 1; }
+[ -f assets/glass-filters.svg ] || { echo "glass-filters.svg missing"; exit 1; }
+cmp assets/glass.css "$REPO/glass/glass.css" >/dev/null 2>&1 && echo "release glass.css is byte-identical to the working tree" || echo "note: release glass.css differs from the working tree (fine if the tree moved on)"
 
 say "2. install into an isolated profile"
 mkdir -p profile/user profile/ext
@@ -28,9 +34,8 @@ unzip -p "curl/vs-glass-$VER.vsix" extension/package.json | python3 -c "import j
 for f in glass-regular-dark glass-regular-light glass-clear glass-opaque; do unzip -l "curl/vs-glass-$VER.vsix" | grep -q "themes/$f-color-theme.json" && echo "   ok themes/$f-color-theme.json"; done
 
 say "4. Layer 2 from a clean state (scripts/inject.sh against the pristine app copy)"
-REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" status || true
-VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" install --transparent
+VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" install --wallpaper --tint indigo --density 150 --aberration strong
 grep -c "VS-GLASS-START" "$PRISTINE/Contents/Resources/app/out/vs/workbench/workbench.desktop.main.css"
 VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" status
 echo

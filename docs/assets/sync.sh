@@ -35,6 +35,24 @@ copy "screenshots/glass-opaque-layer1-hero.png"
 copy "screenshots/glass-regular-dark-palette.png"
 copy "screenshots/glass-regular-dark-layer1-palette.png"
 
+# transparent-window composites (simulated compositing over the blurred desktop picture) get a "transparent-" prefix
+copy_as() {
+  local src="$1" name="$2"
+  if [ -f "$REPO_ROOT/$src" ]; then
+    cp -f "$REPO_ROOT/$src" "$DEST_DIR/$name"
+    echo "copied  $src -> docs/assets/$name"
+  else
+    missing+=("$src")
+    echo "MISSING $src (not generated yet)"
+  fi
+}
+copy_as "screenshots/transparent/glass-regular-dark-hero.png" "transparent-glass-regular-dark-hero.png"
+copy_as "screenshots/transparent/glass-regular-dark-palette.png" "transparent-glass-regular-dark-palette.png"
+copy_as "screenshots/transparent/glass-clear-hero.png" "transparent-glass-clear-hero.png"
+for t in graphite blue indigo violet teal mint rose amber; do
+  copy_as "screenshots/transparent/tints/hero-$t.png" "transparent-tint-$t.png"
+done
+
 if [ "${#missing[@]}" -gt 0 ]; then
   echo
   echo "${#missing[@]} file(s) still missing; the landing page shows a 'Screenshot pending' placeholder for each until they exist and this script is re-run."

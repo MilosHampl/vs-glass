@@ -10,7 +10,9 @@
  *  - refraction/blur applies only to what is BEHIND glass, never to editor text;
  *  - one backdrop-filter per surface, on a small fixed set of surfaces (perf);
  *  - specular ring = ::before, sheen + Clear dimming = ::after (below content via isolation);
- *  - radii are concentric: parent radius − padding.
+ *  - radii are concentric: window > card > widget > control > inner (parent radius − padding);
+ *  - the default mode assumes a see-through window (Vibrancy Continued): planes are thin and the OS blur supplies
+ *    legibility. glass-wallpaper.css (opaque window) and glass/tints/*.css (coloured film) are optional addons.
  */
 
 /* ---------- 0. Typed custom properties for the liquid response ---------- */
@@ -28,11 +30,21 @@
   /* NOTE: the floating-card margins (--modern-ui-floating-card-*) are deliberately NOT overridden: VS Code's
      grid layout computes pane sizes in JS from its own constants, so CSS-only margin changes make list rows
      overflow their cards. */
+  /* tint film (colourless unless a glass/tints/*.css addon is loaded) */
+  --vsg-tint-film: rgba(var(--vsg-tint-rgb), var(--vsg-tint-a));
+  --vsg-tint-film-soft: rgba(var(--vsg-tint-rgb), calc(var(--vsg-tint-a) * 0.6));
   /* backdrop filter stacks */
   --vsg-filter-chrome: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
   --vsg-filter-widget: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
   /* material thickness: inset light on top, inset shade at the bottom, interior falloff, contact shadows */
+  /* bevel: the band just inside the rim where thick glass bends light — dark, then a faint light line — so the edge
+     reads as material even over a flat backdrop (Vibrancy blurs the desktop; there is nothing in-page to bend there) */
+  --vsg-bevel:
+    inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.07),
+    inset 0 0 0 2px rgba(var(--vsg-spec-rgb), 0.035),
+    inset 0 0 6px 3px rgba(var(--vsg-shadow-rgb), 0.12);
   --vsg-thickness-chrome:
+    var(--vsg-bevel),
     inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),
     inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.45),
     inset 1px 0 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-lo) * 1.5)),
@@ -42,6 +54,7 @@
     0 18px 44px rgba(var(--vsg-shadow-rgb), 0.55),
     0 2px 6px rgba(var(--vsg-shadow-rgb), 0.45);
   --vsg-thickness-widget:
+    var(--vsg-bevel),
     inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)),
     inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.5),
     inset 0 -16px 28px -16px rgba(var(--vsg-shadow-rgb), 0.4),
@@ -66,9 +79,99 @@
     rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 360deg);
 }
 
-/* ---------- 2. Ground: the wallpaper the glass floats over ---------- */
-@G { background: var(--vsg-wallpaper) !important; background-attachment: fixed !important; }
+/* ---------- 1b. Layer-1 paints that would cover the planes ----------
+   The theme (Layer 1) has to give every surface an opaque-ish colour so it stands alone. Under Layer 2 the planes
+   are painted here instead, so the workbench's own paint layers in the editor area go clear — otherwise the
+   editor container, gutter, breadcrumbs and tab strip would sit as opaque slabs on top of the glass. Overriding
+   the --vscode-* variables (they live on .monaco-workbench, lower specificity than the guard) reaches the places
+   VS Code paints from JS-computed styles as well as from CSS. */
+@G {
+  --vscode-editorPane-background: transparent;
+  --vscode-editorGutter-background: transparent;
+  --vscode-editorGroup-emptyBackground: transparent;
+  --vscode-editorGroupHeader-tabsBackground: transparent;
+  --vscode-editorGroupHeader-noTabsBackground: transparent;
+  --vscode-breadcrumb-background: transparent;
+  --vscode-tab-inactiveBackground: transparent;
+  --vscode-tab-unfocusedInactiveBackground: transparent;
+  --vscode-tab-activeBackground: rgba(var(--vsg-spec-rgb), 0.12);
+  --vscode-tab-unfocusedActiveBackground: rgba(var(--vsg-spec-rgb), 0.08);
+  --vscode-minimap-background: transparent;
+  --vscode-terminal-background: transparent;
+  --vscode-panel-background: transparent;
+  --vscode-sideBar-background: transparent;
+  --vscode-sideBarTitle-background: transparent;
+  --vscode-sideBarSectionHeader-background: transparent;
+  --vscode-activityBar-background: transparent;
+  --vscode-statusBar-background: transparent;
+  --vscode-statusBar-noFolderBackground: transparent;
+  --vscode-titleBar-activeBackground: transparent;
+  --vscode-titleBar-inactiveBackground: transparent;
+  --vscode-settings-headerBackground: transparent;
+  --vscode-editorOverviewRuler-background: transparent;
+}
+@G .part.editor,
+@G .part.editor .editor-container,
+@G .part.editor .editor-instance,
+@G .part.editor .editor-group-container > .editor-group-watermark,
+@G .part.editor .settings-editor,
+@G .part.editor .settings-editor .settings-header,
+@G .part.editor .settings-editor .settings-body { background: transparent !important; }
+
+/* ---------- 2. Window slab: the window itself is one sheet of glass ---------- */
+/* Default mode = see-through window. The workbench paints only a smoky film (+ optional tint) so the OS-blurred
+   desktop shows through every plane; the slab gets a rim ring and inset thickness like every other pane. With an
+   opaque window this shows the Electron window colour — load glass-wallpaper.css for an in-page smoke backdrop. */
+@G {
+  background: linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)), var(--vsg-window-film) !important;
+  border-radius: var(--vsg-radius-window);
+  overflow: hidden;
+  /* side rim + bevel of the slab (painted under the parts; visible in the 4 px margins the floating cards leave) */
+  box-shadow:
+    inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),
+    inset -1px 0 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-lo) * 1.5)),
+    inset 0 0 0 2px rgba(var(--vsg-spec-rgb), 0.035),
+    inset 0 0 40px rgba(var(--vsg-shadow-rgb), 0.1);
+}
 @G > .monaco-grid-view { background: transparent !important; }
+/* slab rim at the top and bottom: one-sided lens strips that bend what sits just inside the window edge (title bar,
+   status bar) toward the centre — the thick edge of the sheet — plus the specular hairline and bevel, following the
+   window corners. Clear glass: no frost, UI text underneath is bent, never blurred. */
+@G::before,
+@G::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  height: 40px;
+  pointer-events: none;
+  z-index: 100000;
+  border: 1px solid rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
+}
+@G::before {
+  top: 0;
+  border-bottom: none;
+  border-top-color: rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi));
+  border-left-color: rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
+  border-radius: var(--vsg-radius-window) var(--vsg-radius-window) 0 0;
+  -webkit-backdrop-filter: var(--vsg-lens-edge-top);
+  backdrop-filter: var(--vsg-lens-edge-top);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.08),
+    inset 0 2px 0 rgba(var(--vsg-spec-rgb), 0.04),
+    inset 0 8px 10px -8px rgba(var(--vsg-shadow-rgb), 0.14);
+}
+@G::after {
+  bottom: 0;
+  border-top: none;
+  border-bottom-color: rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-mid) * 0.9));
+  border-radius: 0 0 var(--vsg-radius-window) var(--vsg-radius-window);
+  -webkit-backdrop-filter: var(--vsg-lens-edge-bottom);
+  backdrop-filter: var(--vsg-lens-edge-bottom);
+  box-shadow:
+    inset 0 -1px 0 rgba(var(--vsg-spec-rgb), 0.07),
+    inset 0 -2px 0 rgba(var(--vsg-spec-rgb), 0.035),
+    inset 0 -8px 10px -8px rgba(var(--vsg-shadow-rgb), 0.16);
+}
 
 /* ---------- 3. Strips: title bar, status bar, tab strip ---------- */
 @G .part.titlebar,
@@ -76,20 +179,20 @@
   background: transparent !important;
 }
 @G .part.titlebar {
-  background: var(--vsg-chrome-glass) !important;
+  background: var(--vsg-plane-chrome) !important;
   -webkit-backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
   backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
   box-shadow: inset 0 -1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
 }
 @G .part.statusbar {
-  background: var(--vsg-chrome-glass) !important;
+  background: var(--vsg-plane-chrome) !important;
   -webkit-backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
   backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
   border-top: none !important;
   box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
 }
 @G .part.editor > .content .editor-group-container > .title {
-  background: var(--vsg-chrome-glass) !important;
+  background: var(--vsg-plane-chrome) !important;
   box-shadow: inset 0 -1px 0 var(--vsg-hairline);
 }
 
@@ -100,7 +203,7 @@
 @G .part.activitybar {
   position: relative;
   isolation: isolate;
-  background: var(--vsg-chrome-glass) !important;
+  background: var(--vsg-plane-chrome) !important;
   border-color: transparent !important;
   box-shadow: var(--vsg-thickness-chrome);
   -webkit-backdrop-filter: var(--vsg-lens-sidebar) var(--vsg-filter-chrome);
@@ -175,7 +278,7 @@
 }
 @G.floating-panels:not(.noactivitybar) .part.activitybar.left { clip-path: inset(-60px 0 -60px -60px); }
 @G.floating-panels:not(.noactivitybar) .part.sidebar.left { clip-path: inset(-60px -60px -60px 0); }
-@G.floating-panels:not(.noactivitybar) .part.activitybar.left::after { background: rgba(0, 0, 0, var(--vsg-dim)); }
+@G.floating-panels:not(.noactivitybar) .part.activitybar.left::after { background: linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)), rgba(0, 0, 0, var(--vsg-plane-dim)); }
 /* sheen + Clear dimming (::after) — sits between the glass and its content */
 @G .part.sidebar::after,
 @G .part.auxiliarybar::after,
@@ -187,29 +290,26 @@
   border-radius: inherit;
   background:
     radial-gradient(120% 60% at var(--vsg-hl-x) var(--vsg-hl-y), rgba(var(--vsg-spec-rgb), var(--vsg-hl-a)), transparent 60%),
-    rgba(0, 0, 0, var(--vsg-dim));
+    linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)),
+    rgba(0, 0, 0, var(--vsg-plane-dim));
   pointer-events: none;
   z-index: -1;
   transition: --vsg-hl-x var(--vsg-motion-slow) var(--vsg-ease), --vsg-hl-y var(--vsg-motion-slow) var(--vsg-ease), --vsg-hl-a var(--vsg-motion-slow) var(--vsg-ease);
 }
-@G .part.sidebar:hover::after,
-@G .part.auxiliarybar:hover::after,
-@G .part.panel:hover::after {
-  --vsg-hl-x: 40%;
-  --vsg-hl-y: 6%;
-  --vsg-hl-a: 0.14;
-}
 
-/* editor card: the content plane. Slight translucency = adaptive tint bleeding in; text stays crisp (no filter). */
+/* editor card: the content plane — a translucent sheet the desktop shows through; text stays crisp (no filter).
+   Monaco's own backgrounds go fully transparent so only the card paints the plane (no double compositing). */
 @G.floating-panels .part.editor > .content {
-  background: var(--vsg-content-bg-glass) !important;
+  background: linear-gradient(var(--vsg-tint-film-soft), var(--vsg-tint-film-soft)), var(--vsg-plane-content) !important;
   box-shadow: 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) inset, 0 8px 28px rgba(var(--vsg-shadow-rgb), 0.28);
 }
 @G .part.editor .monaco-editor,
 @G .part.editor .monaco-editor .monaco-editor-background,
 @G .part.editor .monaco-editor .margin {
-  --vscode-editor-background: var(--vsg-content-bg-glass);
+  --vscode-editor-background: transparent;
 }
+/* classic (non-floating) layout has no editor card: the editor part itself carries the plane */
+@G:not(.floating-panels) .part.editor > .content { background: linear-gradient(var(--vsg-tint-film-soft), var(--vsg-tint-film-soft)), var(--vsg-plane-content) !important; }
 @G .part.editor > .content .editor-group-container {
   background: transparent !important;
 }
@@ -226,7 +326,22 @@
   -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
   pointer-events: none; z-index: 50;
 }
-@G .monaco-editor .minimap { background-color: var(--vsg-content-bg-glass) !important; }
+@G .monaco-editor .minimap { background-color: transparent !important; }
+/* legibility shadow: text over a see-through plane gets a soft dark halo (Apple lifts labels off glass the same way);
+   cheap enough that scroll frame times are unchanged (scripts/perf.mjs) */
+@G .part.editor .monaco-editor .view-lines,
+@G .part.editor .monaco-editor .margin-view-overlays .line-numbers,
+@G .part.panel .xterm-rows,
+@G .part.editor .monaco-editor .sticky-widget .sticky-line-content { text-shadow: 0 1px 2px rgba(var(--vsg-shadow-rgb), 0.45); }
+@G.floating-panels .part.editor > .content::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0; height: 56px;
+  border-radius: 0 0 var(--vsg-radius-card) var(--vsg-radius-card);
+  -webkit-backdrop-filter: var(--vsg-lens-edge-bottom);
+  backdrop-filter: var(--vsg-lens-edge-bottom);
+  box-shadow: inset 0 -3px 0 rgba(var(--vsg-shadow-rgb), 0.14), inset 0 -4px 0 rgba(var(--vsg-spec-rgb), 0.04);
+  pointer-events: none; z-index: 49;
+}
 
 /* ---------- 5. Floating widgets (overlap code → real refraction) ---------- */
 @G .quick-input-widget,
@@ -247,7 +362,7 @@
 @G .monaco-dialog-box,
 @G .breadcrumbs-picker .monaco-list {
   isolation: isolate;
-  background: var(--vsg-widget-glass) !important;
+  background: var(--vsg-plane-widget) !important;
   border: 1px solid transparent !important;
   border-radius: var(--vsg-radius-widget) !important;
   box-shadow: var(--vsg-thickness-widget) !important;
@@ -334,26 +449,16 @@
   border-radius: inherit;
   background:
     radial-gradient(90% 55% at var(--vsg-hl-x) var(--vsg-hl-y), rgba(var(--vsg-spec-rgb), calc(var(--vsg-hl-a) * 1.6)), transparent 62%),
-    rgba(0, 0, 0, var(--vsg-dim));
+    linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)),
+    rgba(0, 0, 0, var(--vsg-plane-dim));
   pointer-events: none;
   z-index: -1;
   transition: --vsg-hl-x var(--vsg-motion-base) var(--vsg-ease), --vsg-hl-y var(--vsg-motion-base) var(--vsg-ease), --vsg-hl-a var(--vsg-motion-base) var(--vsg-ease);
 }
-@G .quick-input-widget:focus-within::after,
-@G .quick-input-widget:hover::after,
-@G .monaco-hover:hover::after,
-@G .monaco-editor .suggest-widget:hover::after,
-@G .notification-toast:hover::after,
-@G .context-view .monaco-menu-container:hover::after,
-@G .monaco-dialog-box:hover::after {
-  --vsg-hl-x: 55%;
-  --vsg-hl-y: 8%;
-  --vsg-hl-a: 0.16;
-}
 
 /* sticky scroll: glass strip over the code that scrolls beneath it */
 @G .monaco-editor .sticky-widget {
-  background: var(--vsg-raised-glass) !important;
+  background: rgba(var(--vsg-plane-widget-rgb), 0.35) !important;
   -webkit-backdrop-filter: var(--vsg-lens-strip) saturate(var(--vsg-saturate));
   backdrop-filter: var(--vsg-lens-strip) saturate(var(--vsg-saturate));
   box-shadow: inset 0 -1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)), 0 6px 18px rgba(var(--vsg-shadow-rgb), 0.35) !important;
@@ -373,6 +478,14 @@
 @G .monaco-editor .suggest-widget .monaco-list-row {
   border-radius: calc(var(--vsg-radius-widget) - 6px);
 }
+/* toast rows fill the toast: their corner must follow the toast's (radius − 1 px border), not a tight 6 px */
+@G .notifications-toasts .notification-list-item,
+@G .notifications-toasts .monaco-list-row,
+@G .notifications-toasts .monaco-list-row.focused { border-radius: calc(var(--vsg-radius-widget) - 1px) !important; }
+@G .notifications-toasts .monaco-list:focus .monaco-list-row.focused { outline-offset: -2px; }
+@G .settings-editor .suggest-input-container,
+@G .settings-editor .suggest-input-container .monaco-inputbox,
+@G .settings-editor .monaco-inputbox { border-radius: var(--vsg-radius-control) !important; }
 @G .monaco-inputbox,
 @G .monaco-button,
 @G .monaco-select-box,
@@ -387,7 +500,7 @@
 }
 @G .part.activitybar .monaco-action-bar .action-item.checked,
 @G .part.activitybar .monaco-action-bar .action-item:hover {
-  border-radius: var(--vsg-radius-control);
+  border-radius: calc(var(--vsg-radius-card) - 4px);
 }
 
 /* ---------- 7. Vibrancy: chrome text/icons take colour from behind the glass ---------- */
@@ -440,10 +553,8 @@
     transform var(--vsg-motion-fast) var(--vsg-ease),
     filter var(--vsg-motion-fast) var(--vsg-ease);
 }
-@G .monaco-button:hover,
-@G .monaco-text-button:hover { filter: brightness(1.08); }
 @G .monaco-button:active,
-@G .monaco-text-button:active { transform: scale(0.985); filter: brightness(0.96); }
+@G .monaco-text-button:active { transform: scale(0.97); }
 @G .monaco-inputbox.synthetic-focus,
 @G .monaco-inputbox:focus-within {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 32%, transparent) !important;
@@ -471,17 +582,18 @@
   }
   @G .part.sidebar, @G .part.auxiliarybar, @G .part.panel, @G .part.activitybar, @G .part.titlebar, @G .part.statusbar { background: var(--vsg-chrome-solid) !important; }
   @G { background: var(--vsg-ground) !important; }
-  @G.floating-panels .part.editor > .content { background: var(--vsg-content-bg) !important; }
+  @G::before, @G::after { display: none; }
+  @G .part.editor > .content { background: var(--vsg-content-bg) !important; }
   @G .part.editor .monaco-editor { --vscode-editor-background: var(--vsg-content-bg); }
 }
 @media (prefers-reduced-motion: reduce) {
   @G *, @G *::before, @G *::after { transition: none !important; animation: none !important; }
 }
 
-/* ---------- 10. Buttons: macOS Control Center glass — restrained ---------- */
-/* A Control Center toggle: capsule, frosted material, thin top specular, tinted fill when "on" (primary),
-   neutral frosted fill when "off" (secondary). Hover brightens the fill slightly; press scales down a touch
-   and eases back. No sheen sweeps, no lift, no glow. */
+/* ---------- 10. Buttons: clear glass pills, no shine animation ---------- */
+/* Modelled on a clear glass pill: a bright hairline rim, a darker refraction band just inside it, a faint top light,
+   a soft drop shadow, and the backdrop bent at the rim. Nothing moves on hover (the owner rejected sheen sweeps,
+   drifting highlights, lifts and glows twice); the only response is the physical press. */
 @G .monaco-button.monaco-text-button,
 @G .monaco-button-dropdown > .monaco-button,
 @G .monaco-button-dropdown > .monaco-dropdown-button {
@@ -490,74 +602,60 @@
   overflow: hidden;
   border: none !important;
   border-radius: 999px !important;
-  background: color-mix(in srgb, var(--vsg-accent) 72%, transparent) !important;
-  -webkit-backdrop-filter: var(--vsg-lens-menu) saturate(1.25);
-  backdrop-filter: var(--vsg-lens-menu) saturate(1.25);
+  background: color-mix(in srgb, var(--vsg-accent) 46%, transparent) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-menu) saturate(1.2);
+  backdrop-filter: var(--vsg-lens-menu) saturate(1.2);
   box-shadow:
-    inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.38),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-    0 1px 2px rgba(var(--vsg-shadow-rgb), 0.25) !important;
-  transition:
-    transform var(--vsg-motion-fast) var(--vsg-ease),
-    background-color var(--vsg-motion-fast) var(--vsg-ease),
-    box-shadow var(--vsg-motion-fast) var(--vsg-ease),
-    filter var(--vsg-motion-fast) var(--vsg-ease);
+    inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.34),
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.5),
+    inset 0 0 0 3px rgba(var(--vsg-shadow-rgb), 0.16),
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.28),
+    0 4px 10px rgba(var(--vsg-shadow-rgb), 0.28),
+    0 1px 2px rgba(var(--vsg-shadow-rgb), 0.3) !important;
+  transition: transform 60ms var(--vsg-ease);
 }
 @G .monaco-button.monaco-text-button.secondary,
 @G .monaco-button.monaco-text-button.secondary:hover {
-  background: var(--vsg-raised-glass) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.16),
-    0 1px 2px rgba(var(--vsg-shadow-rgb), 0.2) !important;
+  background: linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)), rgba(var(--vsg-spec-rgb), 0.10) !important;
 }
-@G .monaco-button.monaco-text-button.secondary:hover { filter: brightness(1.08); }
-/* the rim: a hairline ring, brightest at the top, fading around the capsule */
-@G .monaco-button.monaco-text-button::before {
-  content: "";
-  position: absolute; inset: 0; border-radius: inherit; padding: 1px;
-  background: var(--vsg-ring-widget);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
-  pointer-events: none; z-index: 2;
-}
-/* top-light inside the material + a small specular pool that drifts toward the pointer on hover */
+/* static top light inside the material (glass catches the room light along its upper body) */
 @G .monaco-button.monaco-text-button::after {
   content: "";
   position: absolute; inset: 0; border-radius: inherit;
-  --vsg-hl-x: 22%; --vsg-hl-y: 0%; --vsg-hl-a: 0.10;
-  background:
-    radial-gradient(120% 70% at var(--vsg-hl-x) var(--vsg-hl-y), rgba(var(--vsg-spec-rgb), var(--vsg-hl-a)), transparent 60%),
-    linear-gradient(to bottom, rgba(var(--vsg-spec-rgb), 0.16), rgba(var(--vsg-spec-rgb), 0) 55%);
+  background: linear-gradient(to bottom, rgba(var(--vsg-spec-rgb), 0.16), rgba(var(--vsg-spec-rgb), 0) 55%);
   pointer-events: none; z-index: 1;
-  transition: --vsg-hl-x var(--vsg-motion-base) var(--vsg-ease), --vsg-hl-y var(--vsg-motion-base) var(--vsg-ease), --vsg-hl-a var(--vsg-motion-base) var(--vsg-ease);
 }
-@G .monaco-button.monaco-text-button:hover::after { --vsg-hl-x: 36%; --vsg-hl-y: 10%; --vsg-hl-a: 0.16; }
-@G .monaco-button.monaco-text-button:hover { filter: brightness(1.05); }
-@G .monaco-button.monaco-text-button:active { transform: scale(0.96); filter: brightness(0.96); transition-duration: 60ms; }
+@G .monaco-button.monaco-text-button:hover { filter: none; }
+@G .monaco-button.monaco-text-button:active { transform: scale(0.97); }
 @G .monaco-button.monaco-text-button:focus-visible {
   outline: none !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 40%, transparent), inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.4) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 40%, transparent), inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.34) !important;
 }
-/* icon buttons & toolbar actions: gentle press only */
+/* icon buttons & toolbar actions: press only */
 @G .monaco-action-bar .action-item .action-label.codicon,
 @G .monaco-toolbar .action-label,
 @G .part.editor .tabs-container .tab .tab-actions .action-label {
-  transition: transform var(--vsg-motion-fast) var(--vsg-ease), background-color var(--vsg-motion-fast) var(--vsg-ease);
+  transition: transform 60ms var(--vsg-ease);
 }
 @G .monaco-action-bar .action-item:active .action-label.codicon,
-@G .monaco-toolbar .action-item:active .action-label { transform: scale(0.94); transition-duration: 50ms; }
+@G .monaco-toolbar .action-item:active .action-label { transform: scale(0.94); }
 
 /* ---------- 11. Activity bar & status bar items: small glass capsules ---------- */
 @G .part.activitybar .monaco-action-bar .action-item {
   position: relative;
   isolation: isolate;
 }
+/* pills are 36 px squares inset 4 px from the card's 16 px corners: radius = 16 − 4 = 12 keeps the first/last pill's
+   outer corner concentric with the card corner instead of poking a tighter 9 px arc into it */
+@G .part.activitybar .monaco-action-bar .action-item .action-label {
+  border-radius: calc(var(--vsg-radius-card) - 4px) !important;
+}
 @G .part.activitybar .monaco-action-bar .action-item.checked .action-label,
 @G .part.activitybar .monaco-action-bar .action-item:hover .action-label {
   position: relative;
-  background: var(--vsg-raised-glass) !important;
-  border-radius: var(--vsg-radius-control) !important;
+  /* a clear light film, not a grey body: the pill takes the colour behind it (owner: "inconsistent coloring") */
+  background: rgba(var(--vsg-spec-rgb), 0.12) !important;
+  border-radius: calc(var(--vsg-radius-card) - 4px) !important;
   box-shadow:
     inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)),
     inset 0 -1px 0 rgba(0, 0, 0, 0.22),
@@ -590,7 +688,7 @@
 }
 @G .part.statusbar .statusbar-item:hover > .statusbar-item-label,
 @G .part.statusbar .statusbar-item:hover > a {
-  background: var(--vsg-raised-glass) !important;
+  background: rgba(var(--vsg-spec-rgb), 0.12) !important;
   box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)), inset 0 -1px 0 rgba(0, 0, 0, 0.2), 0 2px 6px rgba(var(--vsg-shadow-rgb), 0.3);
   -webkit-backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
   backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);

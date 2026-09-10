@@ -110,7 +110,7 @@ performance trace. Run `node scripts/cdp.mjs` with no arguments to see the full 
 
 Layer 2 (`glass/glass.css`, generated from `src/glass/glass.css`) is the pure-CSS effects layer:
 lensing via an SVG `feDisplacementMap` in `backdrop-filter`, specular rings, thickness shadows,
-vibrancy blend, concentric radii, and the liquid hover/press response. It never modifies a theme
+vibrancy blend, concentric radii, the bevelled window slab and a press-only response. It never modifies a theme
 key -- it only reads the CSS custom properties a theme sets and layers visual effects on top.
 
 To iterate on it against a running VS Code:
@@ -131,6 +131,27 @@ To iterate on it against a running VS Code:
 
 For the actual injection routes end users have available (Custom CSS and JS Loader, Vibrancy
 Continued's `imports`, or this project's own `scripts/inject.sh install`), see the README.
+
+### Screenshot matrix and the two test beds
+
+The screenshots in `screenshots/` come from two isolated VS Code instances, never from a personal
+install:
+
+- an unpatched VS Code with an opaque window (wallpaper mode): `node scripts/screenshots.mjs --port 9334
+  --profile <profile> --layer2 both --addons glass/glass-wallpaper.css` writes the whole matrix
+  (variants x scenes x Layer 2 on/off) at 2x;
+- a Vibrancy Continued instance with a see-through window (the default mode): `scripts/transparent-shots.sh
+  --port 9335 --profile <profile> --wall <desktop picture> --tints` captures each scene with a transparent
+  page background and composites it over the blurred desktop picture with
+  `scripts/composite-transparent.mjs` into `screenshots/transparent/` (captions say "simulated compositing").
+
+Two things bite here. Chromium pauses `requestAnimationFrame` in an occluded window, so Monaco stops
+rendering and every capture goes stale: launch the instances with `--disable-backgrounding-occluded-windows
+--disable-renderer-backgrounding` (the script refuses to run when rAF is paused). And Vibrancy inlines its
+`imports` into the app at patch time, so after every `npm run build` run **Reload Vibrancy** in that
+instance and restart it, or you are looking at yesterday's CSS. Context menus are the one surface you
+cannot screenshot through the DOM without `"window.menuStyle": "custom"` in the test profile; they render
+in a shadow root and only take the theme's colours.
 
 ## Commit messages
 

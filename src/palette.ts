@@ -61,8 +61,12 @@ export interface Palette {
   /** Window ground (opaque). Painted by `titleBar.activeBackground` through the grid view. */
   ground: Hex;
   groundDeep: Hex;
-  /** Layer-2 wallpaper mesh: base + soft radial blobs in palette hues. */
+  /** Layer-2 optional in-page backdrop (glass-wallpaper.css addon): neutral smoke — a base + soft grey plumes,
+   *  no hue. Gives the lens luminance structure to bend when the window itself cannot be transparent. */
   wallpaper: { base: Hex; blobs: { color: Hex; alpha: number; x: string; y: string; size: string }[] };
+  /** Transparent-window planes (the default Layer-2 mode): what each plane paints when the OS shows the desktop
+   *  through the window. Thinner than the wallpaper-mode glass; the OS blur supplies legibility. */
+  planes: { content: Hex; chrome: Hex; widget: Hex; dim: number };
 
   content: {
     bg: Hex;              // editor background (opaque in Layer 1)
@@ -151,7 +155,8 @@ export interface Palette {
     aberration: number;    // chromatic aberration at the rim, CSS px (0 = off)
     exaggeration: number;  // 0..1 — how showy small controls (buttons) are allowed to be
     dim: number;           // Clear: dimming layer alpha behind text-bearing surfaces (0 = none)
-    radius: { card: number; widget: number; control: number; inner: number; pill: number };
+    /** concentric ladder — window > card > widget > control > inner; window = card + the 4 px floating-card margin */
+    radius: { window: number; card: number; widget: number; control: number; inner: number; pill: number };
     shadowColor: Hex;      // opaque base for shadows
     lightAngle: number;    // degrees, virtual light source for specular (from top-left)
     motion: { fast: number; base: number; slow: number; ease: string };
@@ -231,6 +236,8 @@ interface Knobs {
   alphas: { chrome: number; raised: number; widget: number; overlay: number; chromeGlass: number; widgetGlass: number; content: number };
   labelBoost: number;
   wallpaperVividness: number;
+  /** transparent-window plane alphas (content = editor, chrome = bars/cards, widget = overlays) + dim behind chrome text */
+  window: { content: number; chrome: number; widget: number; dim: number };
   effects: Palette['effects'];
 }
 
@@ -367,27 +374,38 @@ function build(k: Knobs): Palette {
   };
   const charts: Palette['charts'] = { red: accent.red, blue: accent.blue, yellow: accent.yellow, orange: accent.orange, green: accent.green, purple: accent.purple, foreground: fg, lines: alpha(sep, 0.2) };
 
+  // Neutral smoke: no hue, only luminance. Lighter plumes and darker pockets over the ground give the rim lens
+  // something to bend without introducing colour (tint is a separate, optional addon — see TINTS).
   const vivid = k.wallpaperVividness;
   const cap = (a: number) => Math.min(0.92, a);
+  const smoke = (L: number) => gray(L, 0.006);
   const wallpaper: Palette['wallpaper'] = isDark
     ? { base: ground, blobs: [
-        { color: oklch(0.56, 0.17, 275), alpha: cap(0.78 * vivid), x: '10%', y: '6%', size: '58%' },   // indigo, top-left
-        { color: oklch(0.52, 0.16, 325), alpha: cap(0.64 * vivid), x: '90%', y: '94%', size: '54%' },  // magenta-violet, bottom-right
-        { color: oklch(0.56, 0.13, 200), alpha: cap(0.58 * vivid), x: '94%', y: '8%', size: '42%' },   // teal, top-right
-        { color: oklch(0.5, 0.15, 250), alpha: cap(0.56 * vivid), x: '18%', y: '96%', size: '48%' },   // blue, bottom-left
-        { color: oklch(0.6, 0.15, 350), alpha: cap(0.4 * vivid), x: '58%', y: '34%', size: '22%' },    // pink core, centre-right
-        { color: oklch(0.6, 0.12, 170), alpha: cap(0.34 * vivid), x: '38%', y: '70%', size: '20%' },   // mint core, centre-left
-        { color: oklch(0.7, 0.1, 290), alpha: cap(0.3 * vivid), x: '28%', y: '22%', size: '10%' },     // bright violet core (structure for the lens)
-        { color: oklch(0.7, 0.09, 190), alpha: cap(0.26 * vivid), x: '74%', y: '62%', size: '9%' },    // bright teal core
+        { color: smoke(0.58), alpha: cap(0.6 * vivid), x: '12%', y: '8%', size: '58%' },   // broad plume, top-left
+        { color: smoke(0.52), alpha: cap(0.55 * vivid), x: '88%', y: '92%', size: '56%' },  // broad plume, bottom-right
+        { color: smoke(0.05), alpha: cap(0.5 * vivid), x: '92%', y: '10%', size: '44%' },  // dark pocket, top-right
+        { color: smoke(0.05), alpha: cap(0.45 * vivid), x: '16%', y: '94%', size: '46%' },  // dark pocket, bottom-left
+        { color: smoke(0.58), alpha: cap(0.42 * vivid), x: '56%', y: '36%', size: '22%' },  // bright core (structure for the lens)
+        { color: smoke(0.40), alpha: cap(0.36 * vivid), x: '38%', y: '70%', size: '20%' },  // mid core
+        { color: smoke(0.68), alpha: cap(0.34 * vivid), x: '28%', y: '22%', size: '9%' },   // small highlight
+        { color: smoke(0.62), alpha: cap(0.3 * vivid), x: '74%', y: '62%', size: '8%' },   // small highlight
       ] }
     : { base: ground, blobs: [
-        { color: oklch(0.84, 0.09, 275), alpha: cap(0.8 * vivid), x: '10%', y: '6%', size: '62%' },
-        { color: oklch(0.86, 0.08, 340), alpha: cap(0.7 * vivid), x: '90%', y: '94%', size: '58%' },
-        { color: oklch(0.88, 0.08, 190), alpha: cap(0.65 * vivid), x: '94%', y: '8%', size: '46%' },
-        { color: oklch(0.85, 0.08, 240), alpha: cap(0.6 * vivid), x: '18%', y: '96%', size: '52%' },
-        { color: oklch(0.88, 0.07, 20), alpha: cap(0.4 * vivid), x: '58%', y: '34%', size: '28%' },
-        { color: oklch(0.9, 0.07, 160), alpha: cap(0.35 * vivid), x: '38%', y: '70%', size: '26%' },
+        { color: smoke(0.995), alpha: cap(0.8 * vivid), x: '10%', y: '6%', size: '62%' },
+        { color: smoke(0.97), alpha: cap(0.7 * vivid), x: '90%', y: '94%', size: '58%' },
+        { color: smoke(0.78), alpha: cap(0.6 * vivid), x: '94%', y: '8%', size: '46%' },
+        { color: smoke(0.8), alpha: cap(0.55 * vivid), x: '18%', y: '96%', size: '52%' },
+        { color: smoke(0.99), alpha: cap(0.4 * vivid), x: '58%', y: '34%', size: '28%' },
+        { color: smoke(0.86), alpha: cap(0.35 * vivid), x: '38%', y: '70%', size: '26%' },
       ] };
+
+  // Transparent-window planes: the same materials at the alphas the OS-blurred desktop needs
+  const planes: Palette['planes'] = {
+    content: alpha(contentBg, opaqueMode ? 1 : k.window.content),
+    chrome: alpha(glass.chrome.solid, opaqueMode ? 1 : k.window.chrome),
+    widget: alpha(glass.widget.solid, opaqueMode ? 1 : k.window.widget),
+    dim: opaqueMode ? 0 : k.window.dim,
+  };
 
   const content: Palette['content'] = {
     bg: contentBg,
@@ -414,7 +432,7 @@ function build(k: Knobs): Palette {
 
   return {
     id: k.id, name: k.name, uiTheme: isDark ? 'vs-dark' : 'vs', type: isDark ? 'dark' : 'light', variant: k.variant, isDark, opaqueMode,
-    ground, groundDeep, wallpaper, content, glass, label, labelSolid,
+    ground, groundDeep, wallpaper, planes, content, glass, label, labelSolid,
     separator: { hairline: alpha(sep, isDark ? 0.09 : 0.1), strong: alpha(sep, isDark ? 0.18 : 0.2) },
     accent, accentText, ui, syntax, terminal, git, diagnostics, diff, merge, charts,
     effects: k.effects,
@@ -422,41 +440,86 @@ function build(k: Knobs): Palette {
 }
 
 const motion = { fast: 120, base: 240, slow: 320, ease: 'cubic-bezier(.2,.8,.2,1)' };
-const radius = { card: 18, widget: 16, control: 10, inner: 8, pill: 999 };
+// Concentric ladder. Cards sit 4 px inside the window (VS Code's floating-card margin), so window = card + 4;
+// widgets are one step tighter than cards; controls and inner rows step down again. No two nested radii collide.
+const radius = { window: 20, card: 16, widget: 14, control: 9, inner: 7, pill: 999 };
 
 export const regularDark = build({
   id: 'glass-regular-dark', name: 'Glass Regular Dark', isDark: true, variant: 'regular',
   ladder: { ground: 0.165, groundDeep: 0.11, content: 0.205, chrome: 0.255, raised: 0.295, widget: 0.335, overlay: 0.375 },
-  alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.5, widgetGlass: 0.7, content: 0.9 },
-  labelBoost: 0, wallpaperVividness: 1,
-  effects: { blur: 18, blurWidget: 30, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 13, lensEdge: 34, aberration: 0.9, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
+  alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.42, widgetGlass: 0.62, content: 0.78 },
+  labelBoost: 0, wallpaperVividness: 1.6, window: { content: 0.06, chrome: 0.06, widget: 0.6, dim: 0.06 },
+  effects: { blur: 14, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 20, lensEdge: 56, aberration: 1.0, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
 
 export const regularLight = build({
   id: 'glass-regular-light', name: 'Glass Regular Light', isDark: false, variant: 'regular',
   ladder: { ground: 0.9, groundDeep: 0.8, content: 0.985, chrome: 0.935, raised: 0.95, widget: 0.97, overlay: 0.985 },
   alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.55, widgetGlass: 0.74, content: 0.92 },
-  labelBoost: 0, wallpaperVividness: 1,
-  effects: { blur: 22, blurWidget: 32, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 12, lensEdge: 34, aberration: 0.7, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
+  labelBoost: 0, wallpaperVividness: 1, window: { content: 0.3, chrome: 0.26, widget: 0.7, dim: 0.04 },
+  effects: { blur: 16, blurWidget: 24, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 18, lensEdge: 50, aberration: 1.2, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
 });
 
 export const clear = build({
   id: 'glass-clear', name: 'Glass Clear', isDark: true, variant: 'clear',
   ladder: { ground: 0.15, groundDeep: 0.1, content: 0.19, chrome: 0.235, raised: 0.275, widget: 0.32, overlay: 0.36 },
   alphas: { chrome: 0.34, raised: 0.42, widget: 0.9, overlay: 0.94, chromeGlass: 0.26, widgetGlass: 0.62, content: 0.86 },
-  labelBoost: 0.1, wallpaperVividness: 1.7,
-  effects: { blur: 8, blurWidget: 24, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 16, lensEdge: 40, aberration: 1.4, exaggeration: 0.5, dim: 0.42, radius, shadowColor: '#02030a', lightAngle: 225, motion },
+  labelBoost: 0.1, wallpaperVividness: 1.7, window: { content: 0.03, chrome: 0.03, widget: 0.5, dim: 0.05 },
+  effects: { blur: 6, blurWidget: 16, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 26, lensEdge: 74, aberration: 1.6, exaggeration: 0.5, dim: 0.42, radius, shadowColor: '#02030a', lightAngle: 225, motion },
 });
 
 export const opaqueTheme = build({
   id: 'glass-opaque', name: 'Glass Opaque', isDark: true, variant: 'opaque',
   ladder: { ground: 0.15, groundDeep: 0.1, content: 0.19, chrome: 0.245, raised: 0.29, widget: 0.335, overlay: 0.38 },
   alphas: { chrome: 1, raised: 1, widget: 1, overlay: 1, chromeGlass: 1, widgetGlass: 1, content: 1 },
-  labelBoost: 0.1, wallpaperVividness: 0,
+  labelBoost: 0.1, wallpaperVividness: 0, window: { content: 1, chrome: 1, widget: 1, dim: 0 },
   effects: { blur: 0, blurWidget: 0, saturate: 1, brightness: 1, contrastBoost: 1, lensScale: 0, lensEdge: 30, aberration: 0, exaggeration: 0, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
 
 export const palettes: Palette[] = [regularDark, regularLight, clear, opaqueTheme];
+
+/**
+ * Optional glass tints (glass/tints/glass-tint-<id>.css). The default material is colourless; a tint is a thin
+ * coloured film laid into every plane (window, cards, widgets, controls) — the way Control Center's glass takes
+ * a wallpaper colour. Colours are Apple's dark-grade system colours; alpha is the film density, kept low (a hint of colour in the glass, not a colour wash).
+ */
+/**
+ * Density presets (glass/density/glass-density-<percent>.css): one multiplier on every plane alpha and the window film.
+ * 0 = absolutely clear (only rims, bevels, lensing and text remain), 100 = the tuned default, 200 = opaque-ish.
+ * Any value works: set `--vsg-density` yourself on .monaco-workbench.
+ */
+export const DENSITY_PRESETS: { percent: number; description: string }[] = [
+  { percent: 0, description: 'absolutely clear: a plane of glass with only its rims, bevels and lensing' },
+  { percent: 25, description: 'a breath of smoke' },
+  { percent: 50, description: 'half the default film' },
+  { percent: 75, description: 'a little thinner than the default' },
+  { percent: 150, description: 'denser, for bright desktops' },
+  { percent: 200, description: 'opaque-ish, the most legible' },
+];
+
+/** Lens presets (glass/lens/*.css): multiply rim displacement AND rim width together (the slope, and so the folding
+ *  limit, is unchanged). Aberration presets (glass/aberration/*.css): multiply the chromatic offset at the rim. */
+export const LENS_PRESETS: { id: string; mul: number; description: string }[] = [
+  { id: 'soft', mul: 0.7, description: 'a gentler bend at every rim' },
+  { id: 'strong', mul: 1.4, description: 'a heavier bend at every rim' },
+];
+export const ABERRATION_PRESETS: { id: string; mul: number; description: string }[] = [
+  { id: 'off', mul: 0, description: 'no colour fringing at the rim' },
+  { id: 'subtle', mul: 0.5, description: 'half the default fringing' },
+  { id: 'strong', mul: 2.5, description: 'heavy red-to-blue fringing, like thick crystal' },
+];
+
+export interface Tint { id: string; name: string; color: Hex; alpha: number; description: string }
+export const TINTS: Tint[] = [
+  { id: 'graphite', name: 'Graphite', color: gray(0.5, 0.0), alpha: 0.14, description: 'neutral grey film — the smokiest glass' },
+  { id: 'blue', name: 'Blue', color: APPLE.dark.blue, alpha: 0.08, description: 'system blue' },
+  { id: 'indigo', name: 'Indigo', color: APPLE.dark.indigo, alpha: 0.09, description: 'system indigo' },
+  { id: 'violet', name: 'Violet', color: APPLE.dark.purple, alpha: 0.07, description: 'system purple' },
+  { id: 'teal', name: 'Teal', color: APPLE.dark.teal, alpha: 0.07, description: 'system teal' },
+  { id: 'mint', name: 'Mint', color: APPLE.dark.mint, alpha: 0.06, description: 'system mint' },
+  { id: 'rose', name: 'Rose', color: APPLE.dark.pink, alpha: 0.06, description: 'system pink' },
+  { id: 'amber', name: 'Amber', color: APPLE.dark.orange, alpha: 0.06, description: 'system orange' },
+];
 
 /** Small report used by `npm run build` to print the ladder. */
 export function describe(p: Palette): string {

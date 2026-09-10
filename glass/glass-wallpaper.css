@@ -1,0 +1,25 @@
+/*! VS Glass — wallpaper-mode addon (generated; load AFTER glass.css). For a window that is not see-through:
+ *  paints a neutral smoke backdrop and thickens the planes. MIT */
+/*
+ * Wallpaper mode (optional addon — load AFTER glass.css).
+ * For a VS Code window that is NOT see-through (no Vibrancy Continued): paints a neutral smoke backdrop into
+ * the window ground and thickens every plane back to its wallpaper-mode density, so the glass has something
+ * in-page to refract and the specular/thickness cues still read. No colour — tint is a separate addon.
+ */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) {
+  background: var(--vsg-wallpaper) !important;
+  background-attachment: fixed !important;
+  border-radius: 0;
+  /* denser base alphas (still × --vsg-density, so the density presets keep working here too) */
+  --vsg-plane-content-a: var(--vsg-plane-content-wall-a);
+  --vsg-plane-chrome-a: var(--vsg-plane-chrome-wall-a);
+  --vsg-plane-widget-a: var(--vsg-plane-widget-wall-a);
+  --vsg-plane-dim-a: var(--vsg-plane-dim-wall-a);
+}
+/* the window is opaque here, so it is not a slab: no window rim, no window smoke */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)::after { display: none; }
+
+@media (prefers-reduced-transparency: reduce) {
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) { background: var(--vsg-ground) !important; }
+}

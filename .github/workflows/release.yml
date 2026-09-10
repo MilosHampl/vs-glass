@@ -95,5 +95,9 @@ jobs:
           files: |
             vs-glass-*.vsix
             glass/glass.css
-            glass/glass-transparent.css
+            glass/glass-wallpaper.css
+            glass/tints/*.css
+            glass/density/*.css
+            glass/lens/*.css
+            glass/aberration/*.css
             glass/glass-filters.svg

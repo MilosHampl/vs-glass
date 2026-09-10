@@ -5,7 +5,7 @@
 #   1. installs the packaged theme (dist/vs-glass-<version>.vsix) into the user's VS Code
 #   2. rewrites ~/Library/Application Support/Code/User/settings.json:
 #        - workbench.colorTheme = "Glass Regular Dark", workbench.experimental.modernUI = true
-#        - vscode_vibrancy.theme = "Custom theme (use imports)", vscode_vibrancy.imports = [glass.css, glass-transparent.css]
+#        - vscode_vibrancy.theme = "Custom theme (use imports)", vscode_vibrancy.imports = [glass.css]  (transparent-window mode is glass.css's default)
 #        - vscode_vibrancy.type = "under-window", vscode_vibrancy.windowMode kept, window.titleBarStyle = "custom"
 #        - removes the old workbench.colorCustomizations block (it would override the theme's own keys)
 #   3. backs up the app files Vibrancy patches (out/main.js, workbench.html, product.json) — the actual re-patch
@@ -50,7 +50,7 @@ s['workbench.experimental.modernUI'] = True
 s['window.titleBarStyle'] = 'custom'
 s['vscode_vibrancy.theme'] = 'Custom theme (use imports)'
 s['vscode_vibrancy.preferredDarkTheme'] = 'Glass Regular Dark'
-s['vscode_vibrancy.imports'] = [f'{repo}/glass/glass.css', f'{repo}/glass/glass-transparent.css']
+s['vscode_vibrancy.imports'] = [f'{repo}/glass/glass.css']
 s['vscode_vibrancy.type'] = 'under-window'
 removed = s.pop('workbench.colorCustomizations', None)
 json.dump(s, open(path, 'w'), indent=2, ensure_ascii=False)

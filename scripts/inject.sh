@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # VS Glass — Layer 2 direct-patch installer ("Route B" in glass/install.md).
 #
-# Appends glass/glass.css (and, with --transparent, glass/glass-transparent.css) directly to
+# Appends glass/glass.css (plus, with --wallpaper, glass/glass-wallpaper.css and, with --tint NAME,
+# glass/tints/glass-tint-NAME.css) directly to
 # VS Code's own workbench.desktop.main.css, and fixes the product.json checksum entry for that
 # file so VS Code does not show its "installation appears to be corrupt" notice. This needs no
 # extension, no CSP/trusted-types workaround (style-src already allows 'self' 'unsafe-inline',
@@ -9,7 +10,7 @@
 # Part A4 for why this is the lowest-blast-radius injection route of the ones evaluated.
 #
 # Usage:
-#   scripts/inject.sh install [--transparent]
+#   scripts/inject.sh install [--wallpaper] [--tint NAME] [--density PERCENT] [--lens soft|strong] [--aberration off|subtle|strong]
 #   scripts/inject.sh uninstall
 #   scripts/inject.sh status
 #   scripts/inject.sh --help
@@ -31,7 +32,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 GLASS_CSS="$REPO_ROOT/glass/glass.css"
-GLASS_TRANSPARENT_CSS="$REPO_ROOT/glass/glass-transparent.css"
+GLASS_WALLPAPER_CSS="$REPO_ROOT/glass/glass-wallpaper.css"
+GLASS_TINT_DIR="$REPO_ROOT/glass/tints"
+GLASS_DENSITY_DIR="$REPO_ROOT/glass/density"
+GLASS_LENS_DIR="$REPO_ROOT/glass/lens"
+GLASS_ABERRATION_DIR="$REPO_ROOT/glass/aberration"
 PACKAGE_JSON="$REPO_ROOT/package.json"
 
 MARKER_START="/* VS-GLASS-START */"
@@ -57,10 +62,22 @@ usage() {
 ${C_BOLD}scripts/inject.sh${C_RESET} — VS Glass Layer 2 direct-patch installer
 
 USAGE
-  scripts/inject.sh install [--transparent]
-      Patch VS Code's workbench.desktop.main.css with glass.css (and, with
-      --transparent, glass-transparent.css too), and fix the product.json
-      checksum so VS Code doesn't flag the install as corrupt.
+  scripts/inject.sh install [--wallpaper] [--tint NAME] [--density PERCENT]
+                            [--lens soft|strong] [--aberration off|subtle|strong]
+      Patch VS Code's workbench.desktop.main.css with glass.css and fix the
+      product.json checksum so VS Code doesn't flag the install as corrupt.
+      glass.css alone assumes a see-through window (Vibrancy Continued).
+        --wallpaper   also append glass-wallpaper.css: a neutral smoke backdrop
+                      for a window that is NOT transparent.
+        --tint NAME   also append glass/tints/glass-tint-NAME.css (graphite,
+                      blue, indigo, violet, teal, mint, rose, amber).
+        --density P   also append glass/density/glass-density-P.css: how much
+                      film the planes carry, 0 (absolutely clear) 25 50 75
+                      150 200 (opaque-ish); 100 is the default and needs no file.
+        --lens L      also append glass/lens/glass-lens-L.css: rim bend strength
+                      (soft, strong; the default needs no file).
+        --aberration A  also append glass/aberration/glass-aberration-A.css:
+                      colour fringing at the rim (off, subtle, strong).
 
   scripts/inject.sh uninstall
       Restore the pristine workbench.desktop.main.css and product.json from
@@ -399,11 +416,15 @@ marker_block_present() {
   grep -qF "$MARKER_START" "$1" 2>/dev/null
 }
 
-# Build the marker block (header + glass.css + optional glass-transparent.css) to stdout.
+# Build the marker block (header + glass.css + optional addons) to stdout.
 build_marker_block() {
-  local transparent="$1" vsg_version="$2" vscode_version="$3"
-  local mode="wallpaper"
-  [ "$transparent" = "1" ] && mode="transparent"
+  local wallpaper="$1" tint="$2" density="$3" lens="$4" aberration="$5" vsg_version="$6" vscode_version="$7"
+  local mode="transparent-window"
+  [ "$wallpaper" = "1" ] && mode="wallpaper"
+  [ -n "$tint" ] && mode="$mode, tint $tint"
+  [ -n "$density" ] && mode="$mode, density $density %"
+  [ -n "$lens" ] && mode="$mode, lens $lens"
+  [ -n "$aberration" ] && mode="$mode, aberration $aberration"
 
   printf '%s\n' "$MARKER_START"
   cat <<HEADER
@@ -416,9 +437,25 @@ build_marker_block() {
  */
 HEADER
   cat "$GLASS_CSS"
-  if [ "$transparent" = "1" ]; then
+  if [ "$wallpaper" = "1" ]; then
     printf '\n'
-    cat "$GLASS_TRANSPARENT_CSS"
+    cat "$GLASS_WALLPAPER_CSS"
+  fi
+  if [ -n "$tint" ]; then
+    printf '\n'
+    cat "$GLASS_TINT_DIR/glass-tint-$tint.css"
+  fi
+  if [ -n "$density" ]; then
+    printf '\n'
+    cat "$GLASS_DENSITY_DIR/glass-density-$density.css"
+  fi
+  if [ -n "$lens" ]; then
+    printf '\n'
+    cat "$GLASS_LENS_DIR/glass-lens-$lens.css"
+  fi
+  if [ -n "$aberration" ]; then
+    printf '\n'
+    cat "$GLASS_ABERRATION_DIR/glass-aberration-$aberration.css"
   fi
   printf '\n%s\n' "$MARKER_END"
 }
@@ -433,18 +470,39 @@ recorded_field() {
 # ---------------------------------------------------------------------------
 
 cmd_install() {
-  local transparent=0
+  local wallpaper=0 tint="" density="" lens="" aberration=""
   while [ $# -gt 0 ]; do
     case "$1" in
-      --transparent) transparent=1 ;;
+      --wallpaper) wallpaper=1 ;;
+      --lens) shift; lens="${1:-}"; [ -n "$lens" ] || { err "--lens needs soft or strong"; usage; exit 1; } ;;
+      --lens=*) lens="${1#--lens=}" ;;
+      --aberration) shift; aberration="${1:-}"; [ -n "$aberration" ] || { err "--aberration needs off, subtle or strong"; usage; exit 1; } ;;
+      --aberration=*) aberration="${1#--aberration=}" ;;
+      --density) shift; density="${1:-}"; [ -n "$density" ] || { err "--density needs a percent (0 25 50 75 150 200)"; usage; exit 1; } ;;
+      --density=*) density="${1#--density=}" ;;
+      --transparent) warn "--transparent is now the default and the flag is ignored (use --wallpaper for an opaque window)" ;;
+      --tint) shift; tint="${1:-}"; [ -n "$tint" ] || { err "--tint needs a name"; usage; exit 1; } ;;
+      --tint=*) tint="${1#--tint=}" ;;
       *) err "Unknown option to install: $1"; usage; exit 1 ;;
     esac
     shift
   done
 
   [ -f "$GLASS_CSS" ] || { err "Missing $GLASS_CSS"; exit 1; }
-  if [ "$transparent" = "1" ]; then
-    [ -f "$GLASS_TRANSPARENT_CSS" ] || { err "Missing $GLASS_TRANSPARENT_CSS"; exit 1; }
+  if [ "$wallpaper" = "1" ]; then
+    [ -f "$GLASS_WALLPAPER_CSS" ] || { err "Missing $GLASS_WALLPAPER_CSS"; exit 1; }
+  fi
+  if [ -n "$tint" ]; then
+    [ -f "$GLASS_TINT_DIR/glass-tint-$tint.css" ] || { err "Unknown tint '$tint' — available: $(ls "$GLASS_TINT_DIR" | sed -E 's/glass-tint-(.*)\.css/\1/' | tr '\n' ' ')"; exit 1; }
+  fi
+  if [ -n "$density" ]; then
+    [ -f "$GLASS_DENSITY_DIR/glass-density-$density.css" ] || { err "Unknown density '$density' — available: $(ls "$GLASS_DENSITY_DIR" | sed -E 's/glass-density-(.*)\.css/\1/' | tr '\n' ' ')(100 is the default, no file needed)"; exit 1; }
+  fi
+  if [ -n "$lens" ]; then
+    [ -f "$GLASS_LENS_DIR/glass-lens-$lens.css" ] || { err "Unknown lens preset '$lens' — available: soft strong"; exit 1; }
+  fi
+  if [ -n "$aberration" ]; then
+    [ -f "$GLASS_ABERRATION_DIR/glass-aberration-$aberration.css" ] || { err "Unknown aberration preset '$aberration' — available: off subtle strong"; exit 1; }
   fi
 
   locate_app
@@ -467,10 +525,10 @@ cmd_install() {
   fi
 
   local block
-  block="$(build_marker_block "$transparent" "$vsg_version" "$vscode_version")"
+  block="$(build_marker_block "$wallpaper" "$tint" "$density" "$lens" "$aberration" "$vsg_version" "$vscode_version")"
   printf '\n%s\n' "$block" >> "$CSS_FILE"
-  if [ "$transparent" = "1" ]; then
-    detail "appended glass.css + glass-transparent.css (transparent-window mode)"
+  if [ "$wallpaper" = "1" ]; then
+    detail "appended glass.css + glass-wallpaper.css (wallpaper mode)${tint:+ + tint $tint}${density:+ + density $density}${lens:+ + lens $lens}${aberration:+ + aberration $aberration}"
   else
     detail "appended glass.css"
   fi
@@ -481,7 +539,7 @@ cmd_install() {
   json_set_checksum "$PRODUCT_JSON" "$new_checksum"
   detail "checksums[\"$CHECKSUM_KEY\"] = $new_checksum"
 
-  success "Installed VS Glass Layer 2 ($( [ "$transparent" = "1" ] && echo "transparent-window mode" || echo "wallpaper mode" ))."
+  success "Installed VS Glass Layer 2 ($( [ "$wallpaper" = "1" ] && echo "wallpaper mode" || echo "transparent-window mode" )${tint:+, tint $tint}${density:+, density $density %}${lens:+, lens $lens}${aberration:+, aberration $aberration})."
   echo
   info "Restart VS Code (Quit fully, ⌘Q — not just \"Reload Window\") to apply."
   detail "VS Code updates overwrite both patched files. Re-run \"scripts/inject.sh install\" after every update."

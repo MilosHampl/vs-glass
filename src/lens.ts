@@ -30,6 +30,10 @@ export interface LensClass {
   rim: number;
   /** convex "ball lens": the whole shape refracts with a gentle profile and no frosted body — icon-only controls */
   convex?: boolean;
+  /** which edges lens (default: all). One-sided classes are for window-edge strips that only bend inward. */
+  sides?: { top?: boolean; bottom?: boolean; left?: boolean; right?: boolean };
+  /** override the frost blur (px) for this class; 0 = clear glass (never blur UI text under a window-edge strip) */
+  blur?: number;
 }
 
 export const LENS_CLASSES: LensClass[] = [
@@ -40,6 +44,10 @@ export const LENS_CLASSES: LensClass[] = [
   { name: 'column', w: 48, h: 820, mw: 12, mh: 128, axes: 'x', rim: 0.5 },     // activity bar
   { name: 'strip', w: 1400, h: 36, mw: 128, mh: 12, axes: 'y', rim: 0.35 },    // title bar, status bar, tab strip, sticky scroll
   { name: 'capsule', w: 32, h: 32, mw: 32, mh: 32, axes: 'xy', rim: 0.6, convex: true }, // icon-only pills (activity/status items) — never under text
+  // window-edge strips: the slab's top/bottom rim bends what sits just inside the window edge (title bar, status bar,
+  // the last code lines). One-sided, clear (no frost), so UI text is bent a little but never blurred.
+  { name: 'edge-top', w: 1400, h: 40, mw: 64, mh: 40, axes: 'y', rim: 0.6, sides: { top: true }, blur: 0 },
+  { name: 'edge-bottom', w: 1400, h: 40, mw: 64, mh: 40, axes: 'y', rim: 0.6, sides: { bottom: true }, blur: 0 },
 ];
 
 /** Displacement profile: 0 in the flat centre, rising to 1 at the edge over `edge` px (eased). */
@@ -59,17 +67,22 @@ export function makeMap(cls: LensClass, edgePx: number, power = 2): { uri: strin
   for (let y = 0; y < mh; y++) {
     for (let x = 0; x < mw; x++) {
       const cx = (x + 0.5) * sx, cy = (y + 0.5) * sy; // CSS-px position in the representative surface
-      const dl = cx, dr = w - cx, dt = cy, db = h - cy;
+      const sd = cls.sides ?? { top: true, bottom: true, left: true, right: true };
+      const far = 1e9; // a disabled side is infinitely far away → no displacement, no rim from it
+      const dl = sd.left ? cx : far, dr = sd.right ? w - cx : far, dt = sd.top ? cy : far, db = sd.bottom ? h - cy : far;
       const px = profile(Math.min(dl, dr), edgePx, power) * (dl < dr ? 1 : -1); // toward centre
       const py = profile(Math.min(dt, db), edgePx, power) * (dt < db ? 1 : -1);
       const i = (y * mw + x) * 4;
-      // rim weight (0 centre → 1 edge) — linear ramp so the clear rim fades softly into the frosted centre
-      const rimX = cls.axes === 'y' ? 0 : Math.max(0, 1 - Math.min(dl, dr) / (edgePx * 1.15));
-      const rimY = cls.axes === 'x' ? 0 : Math.max(0, 1 - Math.min(dt, db) / (edgePx * 1.15));
-      const rim = cls.convex ? 1 : Math.min(1, Math.max(rimX, rimY));
+      // rim weight (0 centre → 1 edge). Steep: the displaced copy fully replaces the frosted body wherever the
+      // displacement is more than a quarter of its maximum, and only fades in the innermost part of the rim, where
+      // the displacement is already tiny. A gentle ramp here shows the undisplaced body under the displaced copy
+      // (a double image) — review round 3, F3/F4.
+      const profX = cls.axes === 'y' ? 0 : profile(Math.min(dl, dr), edgePx, power);
+      const profY = cls.axes === 'x' ? 0 : profile(Math.min(dt, db), edgePx, power);
+      const rim = cls.convex ? 1 : Math.min(1, Math.max(profX, profY) * 4);
       data[i] = Math.round(128 + px * ampX * 127);
       data[i + 1] = Math.round(128 + py * ampY * 127);
-      data[i + 2] = Math.round(Math.pow(rim, 0.8) * 255);
+      data[i + 2] = Math.round(rim * 255);
       data[i + 3] = 255;
     }
   }
@@ -110,7 +123,8 @@ export function filterSvg(id: string, cls: LensClass, mapUri: string, displacePx
       `<feDisplacementMap in='SourceGraphic' in2='map' scale='${scale.toFixed(5)}' xChannelSelector='R' yChannelSelector='G' result='lens'/>`,
     ]),
     `<feGaussianBlur in='lens' stdDeviation='${sx} ${sy}' result='lensSoft'/>`,
-    `<feComponentTransfer in='lensSoft' result='lensLit'><feFuncR type='linear' slope='1.12' intercept='0.015'/><feFuncG type='linear' slope='1.12' intercept='0.015'/><feFuncB type='linear' slope='1.12' intercept='0.02'/></feComponentTransfer>`,
+    // light concentrates at the edge: a small lift only (a strong lift reads as a bright wash on a transparent page)
+    `<feComponentTransfer in='lensSoft' result='lensLit'><feFuncR type='linear' slope='1.05' intercept='0.006'/><feFuncG type='linear' slope='1.05' intercept='0.006'/><feFuncB type='linear' slope='1.05' intercept='0.009'/></feComponentTransfer>`,
     `<feComposite in='lensLit' in2='rimA' operator='in' result='rim'/>`,
     `<feComposite in='rim' in2='frost' operator='over'/>`,
     `</filter>`,

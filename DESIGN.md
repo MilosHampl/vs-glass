@@ -1,8 +1,9 @@
 # VS Glass — Design
 
 VS Glass ships two layers: Layer 1, a color theme (`themes/*.json`, generated from
-`src/palette.ts`), and Layer 2, injected CSS (`glass/glass.css` + `glass/glass-transparent.css`,
-generated from `src/glass/*.css` and `src/lens.ts`). This document explains what Apple's Liquid
+`src/palette.ts`), and Layer 2, injected CSS (`glass/glass.css`, plus the optional
+`glass/glass-wallpaper.css` and `glass/tints/glass-tint-<id>.css` addons, generated from
+`src/glass/*.css` and `src/lens.ts`). This document explains what Apple's Liquid
 Glass documentation says the material actually does, and how each piece is approximated inside a
 Chromium/Electron surface that was never designed to host a Metal-rendered material. Every number
 here was read from generated themes, research files, or a script run in this repo on 2026-09-10.
@@ -21,6 +22,17 @@ possible: `backdrop-filter: url(#svgFilter)` with `feDisplacementMap`, which Chr
 among engines — resolves (`research/css-liquid-glass.md` §a; WebKit tracks this as an explicit
 non-support bug, #245510).
 
+**Goal: colourless material, transparent window first.** Apple's own definition is explicit — "no
+inherent color... takes on colors from the content directly behind it" (HIG Color, §2, §4.7) — so the
+default Layer-2 material carries no hue mesh anywhere. `glass/glass.css` alone assumes the Electron
+window itself is see-through (paired with Vibrancy Continued) and paints only a thin smoky film; the
+window is one rounded glass slab (§4.5). Three optional addons cover the cases that default can't:
+`glass/glass-wallpaper.css` paints a neutral, colourless smoke backdrop for a window that stays opaque,
+eight `glass/tints/glass-tint-<id>.css` films let anyone who wants a deliberate colour cast add one on
+top of either mode, and six `glass/density/glass-density-<percent>.css` presets turn the base window's
+density into a knob, from fully clear to opaque-ish, on top of any mode or tint — floating widgets keep
+their own fixed, readable body regardless (§3). See §5.
+
 **Non-goal, hard rule: never filter editor text.** Apple's Liquid Glass is a functional layer above
 content that must never degrade it (§2). No selector in `glass.css` puts `backdrop-filter`, `filter`,
 or `mix-blend-mode` on `.monaco-editor`'s text nodes — only its *background* gets a slightly
@@ -31,8 +43,9 @@ displaced.
 **Non-goal: Layer 2 is CSS-only, by design.** PROGRESS.md's Phase-1 findings confirm data-URI SVG
 filters work inside `backdrop-filter` (finding 3) — no runtime script, no CSP change, no Trusted
 Types dependency (finding 8). This bounds optic 8 ("liquid response"): real Liquid Glass reshapes
-its map per frame from touch/motion; VS Glass can only transition fixed custom properties
-(`--vsg-hl-x/y/a`) on `:hover`/`:focus-within` — see §4.8, §9.
+its map per frame from touch/motion; VS Glass keeps its specular sheen static and only transitions a
+small, deliberate set of properties on `:active`/pop-in/focus — a press scale, a widget's entrance, a
+focus glow — see §4.8, §9.
 
 **Non-goal: be honest about what CSS cannot do.** Four optics have no faithful CSS equivalent:
 per-pixel Metal-computed refraction (approximated with a static, low-res displacement map, §4.1);
@@ -101,7 +114,7 @@ Sampling is content-relative, never glass-relative:
 > HIG Materials
 
 This is the only concrete numeric optical constant Apple publishes anywhere in this research.
-`effects.dim` encodes it exactly: `0` for Regular Dark/Light/Opaque, `0.35` for Clear
+`effects.dim` encodes it exactly: `0` for Regular Dark/Light/Opaque, `0.42` for Clear in wallpaper mode (a little above Apple's 35 % because the dimmed layer sits over code, not a photo; the transparent-window planes use their own, thinner `window.dim`)
 (`src/palette.ts`), applied as `rgba(0,0,0,var(--vsg-dim))` under every card/widget sheen
 (`src/glass/glass.css` §4/§5).
 
@@ -111,7 +124,7 @@ This is the only concrete numeric optical constant Apple publishes anywhere in t
 |---|---|---|
 | Content plane (never Liquid Glass) | Editor (`.part.editor > .content`, `.monaco-editor`) | "Don't use Liquid Glass in the content layer... keep it in the content layer to ensure clarity" (WWDC25 219) — translucent background only, never filtered. |
 | Functional layer (floats above content) | Title bar, status bar, activity bar, sidebar, aux bar, panel, tab strip | The literal equivalent of "tab bars and sidebars" (HIG Materials). |
-| Floating widgets (highest lensing) | Quick input, hover, suggest, parameter hints, find, menus, notifications, dialogs, debug toolbar | These genuinely overlap code (PROGRESS.md finding 11) — sidebar/panel sit beside the editor as DOM siblings, not on top of it. |
+| Floating widgets (highest lensing) | Quick input, hover, suggest, parameter hints, find, dropdown lists, notifications, dialogs, debug toolbar | These genuinely overlap code (PROGRESS.md finding 11) — sidebar/panel sit beside the editor as DOM siblings, not on top of it. Context menus are the exception: on macOS VS Code shows native menus by default, and with `window.menuStyle: custom` it renders them inside an isolated shadow root, so injected CSS cannot reach them and they take the theme's `menu.*` colours only. |
 
 ---
 
@@ -123,6 +136,37 @@ a 4-level `Elevation` stack) → `label` (vibrancy tiers) → `accent`/`accentTe
 colours, two grades) → `effects` (Layer-2 tokens).
 
 ### Ground, wallpaper, content plane, and the four-level stack
+
+`build()` produces four things above the four-level `glass` stack that Layer 2 draws the window
+itself from: `ground` (the opaque window colour VS Code's grid view actually paints through,
+`titleBar.activeBackground`, §7); `wallpaper` (the `glass-wallpaper.css` addon's neutral smoke source
+— a `base` plus grey plumes/pockets, no hue, `wallpaper.blobs`, §4.7); `planes` (the transparent-window
+mode's own four densities — `content`/`chrome`/`widget`/`dim` — generated per variant from its
+`window: { content, chrome, widget, dim }` knob and written to `--vsg-plane-content/-chrome/-widget/
+-dim`, the CSS that shows through when the OS makes the window transparent); and `glass.tint` (the
+material's own base colour, distinct from the separate `TINTS` table, whose entries drive the optional
+`--vsg-tint-rgb`/`--vsg-tint-a` film laid into every plane as `--vsg-tint-film`, §4.7).
+
+**How planes are generated, and how density fits in:** the **base** planes — `--vsg-plane-content`,
+`--vsg-plane-chrome`, `--vsg-window-film`, `--vsg-plane-dim` — are each built from a fixed colour
+(`--vsg-plane-content-rgb` and so on), a base alpha (`--vsg-plane-content-a`, the per-variant density
+before any preset), and `--vsg-density` (default `1`), multiplied together: `rgba(rgb, base-a ×
+density)` (`--vsg-plane-dim` clamps to `min(1, density)` so it can't invert past fully opaque). The
+tuned default base alpha is now low — "almost clear," a faint smoky film rather than a visible material
+— and `glass/density/glass-density-<percent>.css` presets (§5) do nothing but set `--vsg-density` to a
+new number: `0` is fully clear (only rims, bevels, lensing and text left), `2` is opaque-ish. Because
+the multiplication happens once in `glass.css` itself, that one line changes the window film and every
+base plane together. `glass-wallpaper.css` only re-points the *base-alpha* half of the formula
+(`--vsg-plane-content-a` → `--vsg-plane-content-wall-a`, and so on) to wallpaper mode's denser starting
+point; it never touches `--vsg-density`, so a density preset loaded after it keeps working the same way.
+
+**Floating widgets don't follow `--vsg-density`.** After an adversarial review round, `--vsg-plane-widget`
+was split off onto its own knob, `--vsg-widget-density` (default `1`, independent of the density
+presets above), with a floor under the multiplication (`max(floor, base-a × widget-density)`): a
+bodiless widget over an otherwise-clear base window has nothing to frost against and ghosts instead of
+reading as glass, so widgets keep a fixed, readable body while the base window goes as clear as density
+`0` allows. Command palette, hovers, suggest, notifications, dialogs and dropdown lists all use this
+plane; only their alpha, not their lensing or bevel, is protected this way.
 
 Each `Elevation` carries `solid` (composited look, used for contrast math), `bg` (the `#RRGGBBAA`
 written to theme JSON), `bgGlass` (same tint at Layer 2's alpha), `border`, and a `specular {hi, mid,
@@ -181,8 +225,8 @@ Every gray — ground, content, all four elevations — runs through this one fu
 `0.02` dark, `0.012` light (light grounds need less chroma before reading as simply "blue"). This
 encodes Apple's "no inherent color... takes on colors from the content directly behind it" (HIG
 Color) as a designed floor: a literal implementation needs real-time sampling Chromium cannot do
-without JS, so hue 262 guarantees glass never reads as flat neutral gray; the wallpaper mesh (§4.7)
-supplies the actual adaptive color.
+without JS, so hue 262 guarantees glass never reads as flat neutral gray, even though the default
+material is otherwise colourless; §4.7 covers where the actual adaptive tint comes from in each mode.
 
 ### Label tiers: the macOS ramp, adapted
 
@@ -244,16 +288,19 @@ resolves ANSI contrast against `panel.background` (§7).
 
 | Variant | blur / blurWidget | saturate | lensScale / lensEdge | aberration | exaggeration | dim |
 |---|---|---|---|---|---|---|
-| Regular Dark | 18 / 22 px | 1.55 | 10 / 26 px | 0.7 px | 0.3 | 0 |
-| Regular Light | 22 / 26 px | 1.35 | 9 / 26 px | 0.5 px | 0.3 | 0 |
-| Clear | 8 / 12 px | 1.9 | 13 / 30 px | 2.2 px | 0.5 | 0.35 |
+| Regular Dark | 14 / 22 px | 1.55 | 20 / 56 px | 1.6 px | 0.3 | 0 |
+| Regular Light | 16 / 24 px | 1.35 | 18 / 50 px | 1.2 px | 0.3 | 0 |
+| Clear | 6 / 16 px | 1.9 | 26 / 74 px | 2.2 px | 0.5 | 0.42 |
 | Opaque | 0 / 0 px | 1.0 | 0 / 30 px | 0 px | 0 | 0 |
 
 Clear is the *least* blurred (Apple: "highly translucent... prioritizing visibility of the
 underlying content") but the most saturated/aberrated, and the only variant needing a dimming layer
 — consistent with Apple's three-condition Clear rule (§2). Opaque zeroes every knob; `GUARD` (§4, §6)
 excludes it from Layer 2 entirely, so it is what the other three look like with optics off, not a
-fifth design.
+fifth design. `lensScale`/`lensEdge` roughly doubled and `aberration` strengthened across the board
+(the frost blur dropped in step, so refraction reads clearly rather than getting buried under it) —
+`lensEdge` is kept at roughly 2.8× `lensScale` for every variant, which is what keeps the displacement
+slope under the folding limit (§4.1).
 
 ---
 
@@ -285,8 +332,10 @@ produces equal *pixel* displacement on both axes despite being far from square.
 
 **Folding rule:** PROGRESS.md finding 5 — slope over 1 (`scale ÷ edge-zone width × map derivative`)
 folds the backdrop and doubles text; keep `|d(offset)/dx| < ~0.7`. `profile()`'s power-2 easing
-(`Math.pow(t, 2)`) keeps peak slope well under that threshold as long as `lensScale` stays a modest
-fraction of `lensEdge` — displacement should never exceed roughly 0.4× the rim width.
+(`Math.pow(t, 2)`) keeps peak slope under that threshold by construction as long as the ratio holds:
+`lensEdge` is kept at roughly 2.8× `lensScale` for every variant (e.g. Regular Dark: a 56px rim over a
+20px displacement, §3), which is what lets lensing run roughly twice as strong as earlier tuning
+without folding the backdrop or doubling text.
 
 **Why never `%` in `userSpaceOnUse`:** finding 4 — percentages there resolve against the SVG's
 zero-size viewport and silently produce nothing. `filterSvg()` uses `objectBoundingBox` throughout,
@@ -294,10 +343,19 @@ so no `%` ever appears in generated markup.
 
 **Frosted-centre / clear-rim composite:** the source is blurred wholesale (`feGaussianBlur ...
 result='frost'`); a separate branch displaces the *sharp* source toward the centre
-(`feDisplacementMap`), lifts it slightly (`feComponentTransfer`, `slope='1.07'`), masks to only the
-rim via the map's B channel (`feComposite in='lensLit' in2='rimA' operator='in'`), then composites
-**over** the frosted body (`operator='over'`) — one filter, no JS, producing the flat-interior /
-sharp-lit-rim read Apple's reference imagery shows.
+(`feDisplacementMap`), lifts it slightly (`feComponentTransfer`, `slope='1.05'`, reduced from an
+earlier `1.07`/`1.12` after review found a stronger lift read as a bright wash rather than a highlight),
+masks to only the rim via the map's B channel (`feComposite in='lensLit' in2='rimA' operator='in'`),
+then composites **over** the frosted body (`operator='over'`) — one filter, no JS, producing the
+flat-interior / sharp-lit-rim read Apple's reference imagery shows.
+
+**Steep rim alpha, and why:** the map's B channel (rim weight) is `min(1, max(profX, profY) × 4)`, not
+the raw falloff profile — steep, not gentle: the displaced, refracted copy fully replaces the frosted
+body wherever the displacement is already past a quarter of its maximum, and only fades in the
+innermost sliver of the rim, where the displacement is tiny anyway. A gentler ramp there let the
+*undisplaced* frosted body show faintly through the displaced copy at partial alpha — a double image,
+flagged at widget rims and the editor's bottom edge in an adversarial review round. The steep ramp
+removes it: past that quarter-point there is only ever one copy of the backdrop on screen.
 
 **Chromatic aberration**, credited to ruri.design's Glass tool (studied per PROGRESS.md's mid-build
 directives): the sharp source's R/G/B channels split into single-channel images, each displaced by a
@@ -309,28 +367,45 @@ feComposite(in='dRG', in2='dB', operator='arithmetic', k1=0, k2=1, k3=1, k4=0) /
 ```
 
 `k2=k3=1, k1=k4=0` is a pure additive sum, recombining three independently-displaced channels into
-one RGB image with a colour fringe at the rim. `aberration` is `0`/`0.5`/`0.7`/`2.2px` across
-Opaque/Regular Light/Regular Dark/Clear — Clear gets by far the most, matching its more-visible,
-more-distorted character.
+one RGB image with a colour fringe at the rim. `aberration` is `0`/`1.2`/`1.0`/`1.6px` across
+Opaque/Regular Light/Regular Dark/Clear — pulled back from a more aggressive pass after review found
+the fringe reading as smear rather than dispersion; Clear still gets the most, matching its
+more-visible, more-distorted character.
 
 **Aspect classes** (`LENS_CLASSES`, `src/lens.ts`):
 
 | Class | Size | Axes | Rim × | Used for |
 |---|---|---|---|---|
 | `widget` | 560×360 | xy | 0.8 | quick input, suggest, hovers, notifications |
-| `menu` | 240×320 | xy | 0.6 | context menus, dropdown lists |
+| `menu` | 240×320 | xy | 0.6 | dropdown lists, capsule buttons (context menus are out of reach, see §3) |
 | `sidebar` | 300×820 | xy | 0.9 | side/aux bar cards |
 | `panel` | 1100×320 | xy | 0.9 | bottom panel card |
 | `column` | 48×820 | x | 0.5 | activity bar |
 | `strip` | 1400×36 | y | 0.35 | title/status bar, tab strip, sticky scroll |
+| `capsule` | 32×32 | xy, convex | 0.6 | icon-only pills (activity/status items) — a "ball lens" profile, no frosted body |
+| `edge-top` | 1400×40 | y, top-only | 0.6 | window slab's top rim (title bar) |
+| `edge-bottom` | 1400×40 | y, bottom-only | 0.6 | window slab's bottom rim (status bar); editor card's bottom seam |
 
 `rim` scales `lensEdge`/`lensScale` down for thinner surfaces so the lens zone doesn't consume a
-36px strip.
+36px strip. The two `edge-*` classes set `blur: 0` — clear glass, no frosted body — since a window-edge
+strip is meant to bend the title bar/status bar/code beneath it, never blur it.
+
+**Window-edge lensing:** `.monaco-workbench::before`/`::after` (§4.5) carry the `edge-top`/`edge-bottom`
+filters directly, giving the window slab's own top and bottom rim real, GPU-evaluated refraction — not
+just a static gradient — following the window's 20px corner radius. Both strips are 40px tall, tall
+enough that title-bar and status-bar text visibly compresses toward the frame rather than just tinting
+at the very edge. The editor card gets a matching `edge-bottom` strip (56px tall, its own taller box —
+the filter itself doesn't care how tall the element applying it is) along its own bottom seam, bending
+the last visible code lines the same way. The window's *side* rim has no lens (a straight edge with
+nothing to bend toward its own middle axis doesn't need one) — it's a plain inset ring on
+`.monaco-workbench` itself, painted under the parts in the 4px margins the floating cards leave.
 
 **Refraction needs an opaque in-page backdrop:** PROGRESS.md finding 6 — under a transparent window
 (Vibrancy, 20%-alpha editor) the displaced copy composites over the still-visible original and
 ghosts; on an opaque backdrop displacement is clean. This is why wallpaper mode paints an opaque
-in-page ground (§5).
+in-page ground (§5). The window-edge and editor-edge strips above are the exception worth noting: they
+bend in-page content (the title/status bar, the code itself), which is always opaque already, so they
+carry no such risk regardless of mode.
 
 **Real vs. simulated:** the displacement is real, GPU-evaluated `feDisplacementMap` math — not
 faked. The *map* is a static, low-res, shape-generic profile per class, not Apple's per-frame
@@ -346,6 +421,13 @@ masked to ~1px via `mask-composite: exclude` (`glass.css` §1/§4/§5). Alphas c
 `overlay: [0.72, 0.24, 0.06]`), tracking "thicker glass has more pronounced effects" (§7.3).
 `--vsg-light-angle` is fixed at `225deg` for every variant.
 
+Just inside that hairline sits a separate **bevel band** (`--vsg-bevel`, §4.3), now a lit chamfer rather
+than a groove: a bright hairline, a faint *light* band just inside it, then a soft shade fading into the
+body — no hard dark line. It gives an edge the read of thick material even where there is nothing
+behind it for the lens to bend — wallpaper mode's smoke is a real backdrop to refract, but a transparent
+window's OS-blurred desktop is not (§4.1, §5) — so the bevel is what keeps a rim looking like glass
+rather than a flat line in that case.
+
 **Real vs. simulated:** the shape is a faithful static approximation. **Impossible, not
 unimplemented:** device-motion response — Electron has no accelerometer.
 
@@ -353,16 +435,31 @@ unimplemented:** device-motion response — Electron has no accelerometer.
 
 **Apple:** thickness scales with current size; shadow opacity is content-aware.
 
-**VS Glass:** a fixed layered `box-shadow` per elevation (`--vsg-thickness-chrome`/`-widget`):
+**VS Glass:** a fixed layered `box-shadow` per elevation (`--vsg-thickness-chrome`/`-widget`), built on
+a shared **bevel** (`--vsg-bevel`) every rim carries first:
 
 ```css
+--vsg-bevel:
+  inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.07),
+  inset 0 0 0 2px rgba(var(--vsg-spec-rgb), 0.035),
+  inset 0 0 6px 3px rgba(var(--vsg-shadow-rgb), 0.12);
 --vsg-thickness-widget:
+  var(--vsg-bevel),
   inset 0 1px 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-widget-spec-mid) * 0.9)),
   inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.30),
   inset 0 0 18px rgba(var(--vsg-shadow-rgb), 0.08),
   0 18px 48px rgba(var(--vsg-shadow-rgb), 0.45),
   0 2px 8px rgba(var(--vsg-shadow-rgb), 0.35);
 ```
+
+The bevel is a lit chamfer, all inset: a bright hairline, then a faint light band just inside it, then
+a soft shade fading into the body — no hard dark groove, which an earlier pass had and which read as a
+line rather than bent material. It's the part that reads as "thick glass" independent of anything
+behind the element. `--vsg-bevel` composes into `--vsg-thickness-chrome`/`-widget` (so every chrome
+card and widget carries it) and the window slab's own box-shadow carries an equivalent chamfer directly
+— its bottom edge brightened to about the same order as the top, after review found a dim bottom rim
+let the window's silhouette dissolve into the desktop below it; capsule buttons and pills carry a
+smaller inline version of the same pattern (§4.2).
 
 Widget shadows (`0 18px 48px`) are deeper/wider than chrome's (`0 10px 30px`) — a fixed per-tier
 choice standing in for "thickness scales with size," not a live function of rendered size.
@@ -392,13 +489,31 @@ body text.
 **VS Glass:** VS Code 1.136's `workbench.experimental.modernUI`/`floatingPanels` adds
 `.floating-panels.modern-ui` with real margins and rounded corners (PROGRESS.md finding 10) — the
 substrate `glass.css` §4 applies chrome material, lens filters, thickness shadow, and specular ring
-to; §2 paints the wallpaper mesh into the gaps. Without the class, a fallback rule swaps the
-elevation shadow for a flatter inset-seam treatment (no gap for a floating card's shadow).
+to. The window itself is painted as one slab: `.monaco-workbench::before`/`::after` are one-sided
+`edge-top`/`edge-bottom` lens strips (§4.1) — 40px, clear glass, no frost — that genuinely bend
+whatever sits just inside the top and bottom window edges (title bar, status bar) toward the window
+centre, plus the specular hairline and bevel (§4.2/§4.3), following the `--vsg-radius-window` (20px)
+window corners. The window's *side* rim is a separate plain inset ring painted directly on
+`.monaco-workbench` (a straight edge doesn't need a lens). Together these make every floating card sit
+inside a single glass pane rather than on a flat rectangle. Cards, widgets, and controls nest inside
+that slab on one concentric radius ladder — window 20 > card 16 > widget 14 > control 9 > inner row 7
+(`radius` in `src/palette.ts`) — window is exactly card + VS Code's own 4px floating-card margin, so no
+two nested radii collide (§4.6). In wallpaper mode the gaps between cards show the neutral smoke addon
+(§4.7) instead of window transparency, and the slab itself is switched off (`glass-wallpaper.css` sets
+`border-radius: 0` and hides `::before`/`::after`) since the window is opaque there, not a slab.
+Without the `modernUI` class, a fallback rule swaps the elevation shadow for a flatter inset-seam
+treatment (no gap for a floating card's shadow).
 
 Widgets over chrome still get their own `backdrop-filter`, which reads as glass-on-glass if taken
 literally — but Apple's stated reason for the rule ("glass can not sample other glass... inconsistent
 behavior," WWDC25 323) doesn't map cleanly here: VS Glass filters sample raw rendered pixels, not a
 `GlassEffectContainer`-style shared sampling region, because Chromium has no such primitive (§9).
+
+Not every surface carries the same material, though: after review, small controls (activity-bar and
+status-bar pills, secondary buttons, the active tab, sticky scroll) were moved onto a faint, clear light
+film so they take on the colour of whatever sits behind them rather than reading as a grey body of their
+own; only floating widgets (the ones this section is about) keep a fixed, smoky body, since they need to
+stay legible over arbitrary content regardless of what's behind them.
 
 **Real vs. simulated:** floating-pane geometry and shadows are real, rendered structures. **Gap:** no
 shape-merging/morphing container equivalent (§9).
@@ -410,8 +525,10 @@ shape-merging/morphing container equivalent (§9).
 **VS Glass:** `glass.css` §1 overrides VS Code's radius custom properties (`--vscode-cornerRadius-
 small/medium/large/xLarge` → `--vsg-radius-inner/control/card/card+4px`); §6 hand-sets inner-element
 radii relative to their container (list rows: `--vsg-radius-inner`; widget rows: `widget − 6px`;
-inputs/buttons: `--vsg-radius-control`) — an authored approximation, since CSS has no native
-concentric-radius primitive (no `.rect(corner: .containerConcentric)` equivalent).
+inputs/buttons: `--vsg-radius-control`; notification toast rows: the toast's own `--vsg-radius-widget`
+minus its border width; the Settings editor's search field: `--vsg-radius-control`, matching every
+other input) — an authored approximation, since CSS has no native concentric-radius primitive (no
+`.rect(corner: .containerConcentric)` equivalent).
 
 **Real vs. simulated:** rendered radii are real and correctly nested. **Gap:** the relationship is
 hard-coded per selector, not computed from actual padding.
@@ -420,64 +537,140 @@ hard-coded per selector, not computed from actual padding.
 
 **Apple:** "no inherent color... takes on colors from the content directly behind it."
 
-**VS Glass:** two layers — the hue-262 floor (§3) on every gray, plus a **wallpaper mesh** (six
-radial-gradient blobs in palette hues, `--vsg-wallpaper`, `src/build.ts`/`wallpaper.blobs` in
-`palette.ts`) painted onto the ground, e.g. Regular Dark: indigo top-left, magenta-violet
-bottom-right, teal top-right, blue bottom-left, plus pink/mint cores — giving every pane's
-`saturate()`/`brightness()`/`contrast()` backdrop stack (`--vsg-filter-chrome`) something colourful
-to actually process, rather than gray-on-gray.
+**VS Glass:** the default material is colourless — hue-262 (§3) keeps every gray from reading as flat
+neutral, but no hue or mesh is painted into the ground by default. The actual adaptive tint comes from
+whichever mode is active:
 
-**Real vs. simulated:** the saturate/lens pipeline genuinely processes real wallpaper pixels — not
-faked. The *source* is synthetic: a fixed mesh, not the user's real desktop/content (partially real
-only in transparent-window mode, §5).
+- **Transparent-window mode (default):** Vibrancy's OS-level blur genuinely samples the user's real
+  desktop picture behind the window and blurs it — the real adaptive-tint mechanism Apple describes,
+  just supplied by the OS compositor, not CSS. VS Glass cannot see or process those pixels itself
+  (§9); the base plane variables (`--vsg-plane-content/-chrome/-dim`, §3) are deliberately thin —
+  almost clear at the tuned default — so the OS blur reads through; `--vsg-plane-widget` stays at its
+  own fixed level regardless (§3).
+- **Wallpaper mode (addon):** `glass-wallpaper.css` paints a neutral smoke backdrop — luminance-only
+  grey plumes and darker pockets (`wallpaper.blobs` in `src/palette.ts`, §3), no hue — so every pane's
+  `saturate()`/`brightness()`/`contrast()` backdrop stack has real pixels to process without
+  introducing a colour of its own. Its amplitude was raised substantially after review found the earlier
+  smoke too faint to give the lens real luminance structure to bend.
+- **Tint addons (combinable with either mode):** `glass/tints/glass-tint-<id>.css` sets
+  `--vsg-tint-rgb`/`--vsg-tint-a` from Apple's dark-grade system colours (the `TINTS` table in
+  `src/palette.ts`); `--vsg-tint-film` is laid into every plane — window slab, cards, widgets, capsule
+  buttons — as a fixed coloured film. This is a deliberate, explicit colour choice, not adaptive
+  sampling, and it is opt-in.
+
+**Real vs. simulated:** in transparent-window mode, the "adaptive" half is genuinely real — the OS
+actually samples the desktop — but it happens entirely outside VS Glass's own CSS, which never touches
+those pixels. In wallpaper mode, the saturate/lens pipeline genuinely processes real pixels, just
+synthetic, neutral ones rather than the user's real desktop. Tint addons are a fixed film by design,
+not sampling of anything.
 
 ### 4.8 Liquid response
 
 **Apple:** "instantly flexing and energizing with light... scaling, bouncing, and shimmering,"
 confirmed spring/elastic.
 
-**VS Glass:** `@property`-typed `--vsg-hl-x/-y/-a` (`glass.css` §0), transitioned over 240ms
-(`cubic-bezier(.2,.8,.2,1)`) on `:hover`/`:focus-within` for widgets/cards. Buttons get a restrained
-response after an explicit revert (PROGRESS.md decision 5: an earlier showy sheen-sweep/lift/glow
-treatment was reverted at the user's direction — "make it as true to macOS Liquid Glass as possible
-— the Control Center style buttons") to a capsule toggle: thin top specular ring, tinted frosted
-fill, hover brightens ~7% (`filter: brightness(1.07–1.08)`), `:active { transform: scale(0.96) }`
-with a fast 60ms return, no sweeps or overshoot.
+**VS Glass:** the most restrained of the eight optics, by explicit, twice-repeated owner direction.
+An earlier build drifted the specular sheen's position on hover (`@property`-typed `--vsg-hl-x/-y/-a`,
+transitioned toward a new value under the cursor); the owner rejected it a second time ("buttons shine
+animations look like shit, make them just glass") and it is now gone everywhere, not just on buttons.
+The sheen on cards, widgets and buttons alike is a **static** highlight — `--vsg-hl-x/-y/-a` still
+exist as typed custom properties with a `transition` declared, but nothing ever writes a new value to
+them on `:hover`, so in practice they never move. What *does* still respond:
 
-**Real vs. simulated:** transitions are real, interpolated, GPU-composited. **Gap:** CSS
-`cubic-bezier` is a fixed-duration ease, not Apple's physical spring (`apple-liquid-glass.md` §6
-confirms no spring constants are ever published — this is an interpretation, not a port); no
+- **Buttons** (`.monaco-text-button` pills): a capsule shape, a bright hairline rim, a darker
+  refraction band just inside it, a faint static top light, a soft drop shadow, and the backdrop bent
+  at the rim by the lens filter (§4.1); primary buttons carry a light accent tint, secondary buttons
+  are clear glass. Nothing moves on hover (`:hover { filter: none }`, stated explicitly to keep it that
+  way); the only response is a quick `:active { transform: scale(0.97) }` press. Icon buttons and
+  toolbar actions follow the same press-only rule.
+- **Floating widgets** (quick input, suggest, parameter hints, hover, the action widget, context-view
+  menus) pop in on open: `@keyframes vsg-pop`, a small scale-and-lift-in over `var(--vsg-motion-base)`
+  (240ms) — an entrance, not a hover response.
+- **List rows** get a focus glow on keyboard/selection focus: an accent-tinted inset ring plus a soft
+  outer glow, replacing VS Code's default focus outline. Focus, not hover — moving the mouse over a row
+  that isn't focused does nothing.
+
+Nothing else animates on `:hover` anywhere in Layer 2. `--vsg-motion-fast`/`-base`/`-slow` still exist
+as tokens (§3) and still drive the transitions above; they no longer drive a highlight sweep.
+
+**Real vs. simulated:** the press scale, pop-in and focus glow are real, interpolated,
+GPU-composited transitions. **Gap:** no hover-driven "flexing and energizing" at all — a deliberate,
+owner-directed restraint, not an attempted-and-failed port; CSS `cubic-bezier` is a fixed-duration
+ease regardless (`apple-liquid-glass.md` §6 confirms no spring constants are ever published); no
 cross-element illumination propagation ("glow spreads... onto any Liquid Glass elements nearby").
 
 ---
 
-## 5. Wallpaper mode vs. transparent-window mode
+## 5. Transparent-window mode (default) vs. wallpaper mode (addon)
 
 Two Layer-2 configurations exist because of one directive and one constraint pulling opposite ways.
-Directive (PROGRESS.md, mid-build): *"The entire window should be transparent with the liquid glass
-effect."* Constraint (finding 6, §4.1): refraction ghosts unless the backdrop it displaces is
-opaque. `backdrop-filter` cannot see the desktop — true window transparency can only come from the
-OS (Vibrancy's native blur), which is incompatible with clean in-page refraction on the same surface.
+Directive (PROGRESS.md, restated at the maintainer's later direction): *"no colour, a multilayer plane
+of glass with a limited smoky glass effect, everything liquid glass, the whole window and editor
+visibly transparent, tint as an option."* Constraint (finding 6, §4.1): refraction ghosts unless the
+backdrop it displaces is opaque — `backdrop-filter` cannot see the desktop, so genuine window
+transparency can only come from the OS (Vibrancy's native blur), which is in tension with clean
+in-page refraction on the same surface.
 
-**Wallpaper mode** (`glass/glass.css`, default): `@G { background: var(--vsg-wallpaper) !important;
-}` paints an opaque in-page mesh; every glass surface refracts that — clean, ghost-free lensing
-everywhere, at the cost of the window not actually being transparent.
+**Transparent-window mode** (`glass/glass.css` alone, default): assumes the window itself is
+see-through — Vibrancy Continued, `vscode_vibrancy.type: "under-window"`, theme `"Custom theme (use
+imports)"`. `--vsg-plane-content/-chrome/-dim` (the base planes, §3) are set thin — almost clear —
+generated per variant from each palette's `window: { content, chrome, widget, dim }` knob, so the OS
+blur reads through the glass rather than fighting it; `--vsg-plane-widget` stays at its own fixed,
+readable level regardless (§3), since floating widgets need a legible body over whatever the OS is
+blurring. The window itself is painted as one rounded glass slab
+(`--vsg-radius-window`: 20px; `.monaco-workbench::before`/`::after` draw the window-edge lens strips
+and bevel, §4.1/§4.5). No in-page ground is painted, so refraction reads wherever glass overlaps
+in-page content — widgets over code, sticky scroll, card rims over the editor seam, the window's own
+top/bottom edges — and cannot bend the desktop itself (§4.1, §9).
 
-**Transparent-window mode** (`glass/glass-transparent.css`, addon, loaded after `glass.css`):
-requires Vibrancy Continued (`under-window`/`sidebar`/`hud`, "Custom theme (use imports)"). Removes
-the wallpaper (`background: transparent !important`), keeps every plane translucent
-(`--vsg-content-bg-window`, `--vsg-chrome-window`, `--vsg-widget-window` — e.g. Clear's chrome-window
-alpha `0.26` vs. Regular's `0.42`), and adds a dimming layer (`--vsg-dim-window`: `0.22` dark / `0.1`
-light) since the real desktop behind the window could be anything. Recommended pairing with Vibrancy
-Continued — it's the configuration Vibrancy's OS blur exists to support; running wallpaper mode under
-Vibrancy wastes that blur on a surface painting its own opaque mesh underneath.
+**Why the editor needs its own clearing pass:** the directive above says "the whole window *and
+editor* visibly transparent," and the editor is the one part of the workbench VS Code makes hardest to
+see through. VS Code paints `editorPane.background` inline, directly on `.editor-container`'s own
+`style` attribute, not through a stylesheet rule Layer 2 can simply out-rank with specificity — and
+`.part.editor` itself ships opaque by default. Left alone, the editor would stay a solid slab no matter
+what the rest of Layer 2 did to the chrome around it. `glass.css` clears this in two passes: overriding
+the relevant `--vscode-*` variables to transparent (`editorPane`, `editorGutter`,
+`editorGroup.emptyBackground`, the tab strip and its active/inactive backgrounds, breadcrumb, minimap,
+terminal, panel, sideBar, activityBar, statusBar, titleBar, and the Settings editor's header), and
+additionally forcing `.part.editor`, `.editor-container` and `.editor-instance` transparent directly,
+since the inline style otherwise wins over a variable override. Only then does the editor card's own
+`--vsg-plane-content` background (§3) become the one thing painting that plane — and because code now
+sits on a genuinely see-through surface rather than an opaque one, editor lines, line numbers, terminal
+rows and sticky-scroll lines get a soft legibility text-shadow so they stay readable over whatever
+shows through (§6).
 
-**Trade-off:** wallpaper mode gains guaranteed clean refraction and a designed-legible backdrop, at
-the cost of a synthetic, not-actually-transparent window. Transparent mode gains the literal
-whole-window transparency requested and the real desktop, at the cost of ghosting risk wherever a
-backdrop isn't fully opaque (finding 6 is unconditional) — mitigated, not eliminated, by higher
-per-surface alphas. Refraction stays genuinely clean only where glass overlaps in-page content
-(widgets over code, sticky scroll) — exactly where finding 11 says lensing is most visible anyway.
+**Wallpaper mode** (`glass/glass-wallpaper.css`, addon, loaded after `glass.css`): for a window that
+is NOT transparent. `@G { background: var(--vsg-wallpaper) !important; }` paints the neutral smoke
+backdrop (§4.7, now substantially stronger, see below) into the window ground and re-points the
+*base-alpha* half of the base planes' formula (§3) — `--vsg-plane-content-a`, `--vsg-plane-chrome-a`,
+`--vsg-plane-dim-a`, and `--vsg-plane-widget-a` too (feeding `--vsg-widget-density`'s own multiplication)
+— to wallpaper mode's denser starting point, so every surface has an opaque, ghost-free backdrop to
+refract. Both the smoke and these base alphas lean smoky rather than solid, so the glass above them
+still reads as glass rather than a flat wall — and because only the base alpha moves, `--vsg-density`
+and `--vsg-widget-density` (below) still multiply on top exactly as they do in transparent-window mode.
+It also disables the window rim and sets `border-radius: 0` — the window is opaque here, not a slab.
+
+**Density** (`glass/density/glass-density-<percent>.css`, addon, loaded after `glass.css` and after
+`glass-wallpaper.css` if used, works with either mode): six presets — `0`, `25`, `50`, `75`, `150`,
+`200` — each just set `--vsg-density` to a new number (`100` is the tuned default and needs no file, so
+there is no `glass-density-100.css`). `--vsg-density` scales only the **base** planes: the window film,
+editor content, and chrome cards/strips. `0` is fully clear — a plane of glass with only its rims,
+bevels, lensing and text left, no film at all; the tuned default (`1`) is now itself "almost clear," a
+faint smoky film rather than a visible material; `200` is opaque-ish, the most legible over a bright or
+busy backdrop. **Floating widgets are deliberately exempt** (§3, §9): after review found a bodiless
+widget over a near-clear base window ghosts instead of reading as glass, `--vsg-plane-widget` was split
+onto its own `--vsg-widget-density` knob (default `1`) with a floor, so the command palette, hovers,
+suggest, notifications, dialogs and dropdown lists stay legible no matter how clear the base window
+gets. Any value in between the presets (or beyond) works too for either variable — copy a preset and
+edit the number, or set `--vsg-density`/`--vsg-widget-density` directly on `.monaco-workbench`.
+
+**Trade-off:** wallpaper mode gains guaranteed clean refraction everywhere and a legible, designed
+backdrop, at the cost of the window not actually being transparent. Transparent mode gains a
+genuinely see-through window and whatever adaptive tint the user's real desktop supplies (§4.7), at
+the cost of refraction only showing where glass overlaps in-page content — exactly where finding 11
+says lensing is most visible anyway, but not everywhere. Tint addons (§4.7) layer a fixed coloured
+film on top of either mode, and density presets scale legibility up or down on top of either mode,
+without changing this trade-off.
 
 ---
 
@@ -491,30 +684,44 @@ are sampled with glass **ON**, then again with `.vs-glass-off` added to `.monaco
 
 **Numbers** (120 Hz display, 4 s per run, window visible — Chromium pauses `requestAnimationFrame`
 entirely for occluded windows, which is what produced an earlier "no frames" result; `perf.mjs` now
-refuses to measure a hidden window):
+refuses to measure a hidden window; re-measured after the window-edge lensing, the stronger lens knobs
+(§3), and the legibility text-shadow below all landed):
 
-| scenario | state | p50 | p95 | max | frames > 16.7 ms | frames > 33 ms |
-|---|---|---|---|---|---|---|
-| editor scroll | glass ON | 8.3 ms | 10.2 ms | 36.4 ms | 0.4 % | 0.2 % |
-| editor scroll | glass OFF | 8.3 ms | 9.8 ms | 10.4 ms | 0.0 % | 0.0 % |
-| scroll under open command palette | glass ON | 8.3 ms | 16.7 ms | 58.4 ms | 5.2 % | 0.2 % |
-| scroll under open command palette | glass OFF | 8.3 ms | 10.1 ms | 10.4 ms | 0.0 % | 0.0 % |
+| scenario | state | p50 | p95 |
+|---|---|---|---|
+| editor scroll | glass ON | 8.3 ms | 8.6 ms |
+| editor scroll | glass OFF | 8.3 ms | 8.5 ms |
+| scroll under open command palette | glass ON | 8.3 ms | 9.2 ms |
 
-Editor scrolling is unaffected: the seven persistent glass surfaces sit beside the editor, not over
-it, so nothing re-filters while code moves (two slow frames in 476 is the compositor tail, not a
-trend). The heaviest case is deliberately the pathological one — scrolling code *beneath an open
-command palette* re-runs the palette's displacement + 22 px blur over a 600×420 CSS-px backdrop every
-frame; p95 lands exactly on 16.7 ms (60 fps) with one frame above 33 ms in four seconds. Typing and
-scrolling with hovers, suggest widgets or menus open behaves the same way (smaller backdrops, cheaper).
+Editor scrolling is effectively unaffected: the persistent glass surfaces sit beside the editor, not
+over it, and the window-edge/editor-edge strips (§4.1) are `blur: 0` — clear glass, nothing frosted to
+evaluate — so nothing heavy re-filters while code moves. The previously-heaviest case, scrolling code
+*beneath an open command palette* (re-running the palette's displacement + 22 px blur over a 600×420
+CSS-px backdrop every frame), now lands at p95 9.2 ms — comfortably under the 16.7 ms (60 fps) budget,
+despite the stronger lens knobs, because the frost blur dropped in the same pass (§3) and the text
+legibility shadow (below) costs nothing extra to paint. Typing and scrolling with hovers, suggest
+widgets or menus open behaves the same way (smaller backdrops, cheaper). Max and per-frame-overage
+figures were not part of this re-measurement pass; see `scripts/perf.mjs` for the method to reproduce
+the fuller table.
+
+**Legibility text-shadow:** because clearing the editor's own paints (§5) puts code on a genuinely
+see-through plane instead of an opaque one, `.view-lines`, the line-number gutter, `.xterm-rows`, and
+sticky-scroll lines all get a soft dark `text-shadow` (Apple lifts labels off glass the same way, §4.4)
+so they stay legible over whatever shows through. A `text-shadow` is compositor-cheap — no
+`backdrop-filter`, no extra paint per scroll frame — which is why the numbers above show no measurable
+cost from adding it.
 
 **Backdrop budget:** `css-liquid-glass.md` §g — "budget SVG-displacement `backdrop-filter` for at
 most a handful of chrome surfaces... do NOT apply... per list row... or inside a scrolling list."
 Persistent-filter surfaces: **title bar, status bar, activity bar, sidebar, aux bar, panel, tab
-strip — seven.** Widgets filter only while open (not in the DOM otherwise); nothing inside a
-scrolling list carries its own filter; the editor's text is never filtered. Every filtered rule also
-sets `isolation: isolate` (§g: scopes blend modes, gives the compositor a clean boundary) and none of
-the seven nests inside another's backdrop-affected subtree, avoiding the "exponential degradation"
-nesting risk §g warns about.
+strip — seven** — plus, since the window-edge lensing landed, two more on the window slab itself
+(`edge-top`/`edge-bottom`, §4.1) and one on the editor card's bottom seam. All three of those extra
+strips are clear glass (`blur: 0`), so they add surfaces without adding a blur cost — consistent with
+the Numbers above showing no measurable regression. Widgets filter only while open (not in the DOM
+otherwise); nothing inside a scrolling list carries its own filter; the editor's text is never filtered
+(it gets the text-shadow above instead). Every filtered rule also sets `isolation: isolate` (§g: scopes
+blend modes, gives the compositor a clean boundary) and none of these nests inside another's
+backdrop-affected subtree, avoiding the "exponential degradation" nesting risk §g warns about.
 
 **`prefers-reduced-transparency` kill-switch:** `glass.css` §9 forces every `backdrop-filter` to
 `none` under this media query, swapping to opaque `solid` colours — "strictly cheaper than the
@@ -589,19 +796,37 @@ is what the fallback produces.
 
 | Optic | Real | Simulated / approximated |
 |---|---|---|
-| 1. Lensing | `feDisplacementMap` genuinely bends backdrop pixels | Static, low-res, shape-generic map per class, not per-frame Metal geometry |
+| 1. Lensing | `feDisplacementMap` genuinely bends backdrop pixels | Static, low-res, shape-generic map per class, not per-frame Metal geometry; bends only in-page content — refracting what's actually behind the window (desktop, other windows, video) is impossible from CSS, not a gap to close (§9) |
 | 2. Specular highlight | Rendered conic-gradient ring, per-elevation ramp | Fixed 225° light; no device-motion response (impossible — no accelerometer) |
 | 3. Thickness | Rendered layered `box-shadow` | Fixed per-elevation recipe; no content-aware shadow opacity |
 | 4. Vibrancy | Real alpha compositing of label tiers | No per-instance light/dark flip; one fixed direction per theme |
 | 5. Floating panes | Real floating-card geometry, shadows, gaps | No `GlassEffectContainer`-style shared sampling/merging |
 | 6. Concentric geometry | Real nested rounded corners | Hand-authored per-selector radii, not computed from padding |
-| 7. Adaptive tint | Real saturate/backdrop processing of wallpaper pixels | Wallpaper is a synthetic fixed mesh, not the real desktop (partial exception: transparent-window mode) |
-| 8. Liquid response | Real interpolated CSS transitions | Fixed-duration ease, not a physical spring; no cross-element illumination propagation |
+| 7. Adaptive tint | In transparent-window mode, the OS genuinely blurs the user's real desktop (outside VS Glass's own CSS); in wallpaper mode, real saturate/backdrop processing of the neutral smoke | Wallpaper mode's smoke is synthetic and colourless, not the user's real desktop; tint addons are a fixed film, not adaptive sampling |
+| 8. Liquid response | Real interpolated CSS transitions for press scale, widget pop-in, and list-row focus glow | Deliberately minimal by owner direction: static sheen, no hover motion anywhere; fixed-duration ease, not a physical spring; no cross-element illumination propagation |
 
 ---
 
 ## 9. Open problems / future work
 
+- **Refracting what's actually behind the window is impossible from CSS, not unimplemented, and stated
+  plainly here because it is the single biggest gap between VS Glass and real Liquid Glass.** The
+  renderer never receives those pixels at all — not "can't access them efficiently," literally never
+  receives them. `backdrop-filter` only ever sees what the page itself painted; the desktop, another
+  window, or a video playing underneath VS Code are not in that paint. macOS composites whatever is
+  behind a window only after the page has already been drawn, one layer up from anything a web renderer
+  can hook into, and Vibrancy Continued's behind-window materials (§5) — the mechanism this project's
+  transparent-window mode depends on — only blur and saturate at the OS compositor level; they do not
+  hand those pixels back to the app for the app to filter itself. So in transparent-window mode, the OS
+  blur is the whole story wherever glass doesn't overlap in-page content, and no CSS change closes that
+  gap. The one even-conceivable route is a native macOS 26 `NSGlassEffectView` experiment: it would need
+  its own native module inside Electron's main process (a structurally different component from
+  anything else in this project, well outside Layer 2's CSS-only scope, §1), and even then is unlikely
+  to expose sampling of what's behind the window to that module — Apple's own materials do not document
+  handing raw behind-window pixels to apps either. Out of scope; not attempted. **VS Glass deliberately
+  ships no "desktop mirror" or other fake** — no painted copy of the wallpaper standing in for real
+  refraction — because the owner ruled fakery out explicitly: the honest gap stays visible rather than
+  being papered over.
 - **A JS enhancer for exact per-element maps.** Six fixed aspect classes (§4.1) approximate every
   element of a rough shape; a `ResizeObserver`-driven enhancer could fit a map to each element's
   actual size/radius, and approximate `GlassEffectContainer`-style shared sampling/shape merging
@@ -610,10 +835,11 @@ is what the fallback produces.
   text-density detection; not attempted.
 - **Device-motion highlights are impossible**, not unimplemented — Electron has no accelerometer and
   VS Code's window doesn't tilt. Permanent, structural.
-- **Cheaper widget blur while scrolling** (§6) — the one measurable cost is a 22 px SVG blur over the
-  command palette while code scrolls beneath it (p95 16.7 ms). A smaller blur radius for the widget
-  class, or `feGaussianBlur` at half resolution via `feImage`/`feTile` tricks, would buy headroom on
-  60 Hz machines; not done because 120 Hz never dropped below 60 fps.
+- **Cheaper widget blur while scrolling** (§6) — the one remaining measurable cost is a 22 px SVG blur
+  over the command palette while code scrolls beneath it (p95 9.2 ms after §3's frost thinning, already
+  comfortably under the 16.7 ms budget). A smaller blur radius for the widget class, or `feGaussianBlur`
+  at half resolution via `feImage`/`feTile` tricks, would buy further headroom on 60 Hz machines; not
+  done because 120 Hz never dropped below 60 fps.
 - **Windows/Linux Vibrancy materials** — §5's transparent-window mode was designed and verified only
   against macOS Vibrancy (`mica`/`under-window`/`sidebar`/`hud`). Vibrancy Continued also supports
   Windows 11 Acrylic/Mica and partial Linux (`prior-art.md` §1); the `--vsg-*-window` alphas were
@@ -640,6 +866,22 @@ is what the fallback produces.
 | `research/tooling.md` | CDP/debugging-port findings, corrected by PROGRESS.md's empirical Phase 1. |
 | `research/reference/` | Downloaded Apple HIG screenshots for internal comparison only — copyrighted, gitignored, never committed. |
 | `research/css-tests/` | The runnable proof-of-concept (`lensing-test.html`, `gen_displacement.py`) that validated SDF-based edge-lensing before it was ported into `src/lens.ts`. |
+
+### Screenshot tooling
+
+The evidence in `screenshots/` and `screenshots/transparent/` is produced by three scripts, not hand-captured:
+
+| Script | What it does |
+|---|---|
+| `scripts/screenshots.mjs` | Drives a live VS Code over CDP and captures the wallpaper-mode matrix (`--addons`, `--out`, `--suffix` select variant/addon combinations and output naming); `--alpha` captures with a transparent page background instead, the raw material `composite-transparent.mjs` composites. |
+| `scripts/composite-transparent.mjs` | Composites one `--alpha` capture over the maintainer's desktop picture, blurred the way Vibrancy's under-window material blurs it, producing the `screenshots/transparent/*.png` files (`--crop` trims the capture first). Simulated compositing, not a screen recording — every transparent-mode image and caption says so. |
+| `scripts/transparent-shots.sh` | Orchestrates the two above for the full transparent-mode set: drives the captures, then runs the composite step for each, writing `screenshots/transparent/` and `screenshots/transparent/tints/`. |
+
+**Test-bed note:** on macOS, the Vibrancy Continued test bed used for transparent-mode work does not
+pick up a fresh `glass.css` automatically — its own patch inlines the `imports` files into the Electron
+main process at patch time (§5, `glass/install.md` Route C), not at load time. After every build, the
+maintainer runs **Reload Vibrancy** and restarts that instance before capturing anything; skipping this
+step is a known way to get a screenshot run that silently shows stale CSS on that particular bed.
 
 ### Credits
 

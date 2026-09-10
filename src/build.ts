@@ -5,8 +5,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { palettes, describe, type Palette } from './palette';
-import { css as cssColor, alpha } from './color';
+import { palettes, describe, TINTS, DENSITY_PRESETS, LENS_PRESETS, ABERRATION_PRESETS, type Palette } from './palette';
+import { css as cssColor, alpha, parseHex } from './color';
 import { LENS_CLASSES, makeMap, filterSvg, filterDataUrl } from './lens';
 import chrome from './colors/chrome';
 import editor from './colors/editor';
@@ -59,6 +59,24 @@ function buildTheme(p: Palette) {
 // ---------------------------------------------------------------------------------------------
 // Layer 2: CSS variables + lens filters
 // ---------------------------------------------------------------------------------------------
+const rgbOf = (hex: string) => { const c = parseHex(hex); return `${Math.round(c.r * 255)}, ${Math.round(c.g * 255)}, ${Math.round(c.b * 255)}`; };
+const alphaOf = (hex: string) => parseHex(hex).a;
+/** rgb + base alpha + wallpaper-mode alpha for one plane, and the composed colour that follows --vsg-density */
+function planeVars(name: string, color: string, wallAlpha: number, minAlpha = 0, densityVar = '--vsg-density'): Record<string, string> {
+  // minAlpha: a floor the density knob cannot go below. Widgets over code need one: a backdrop-filtered copy of
+  // text on a transparent page is too thin to hide the sharp original beneath it (PROGRESS.md finding 6), so a
+  // bodiless widget ghosts instead of frosting. The editor and chrome planes have no floor (density 0 = clear glass).
+  const a = `var(--vsg-plane-${name}-a) * var(${densityVar})`;
+  return {
+    [`--vsg-plane-${name}-rgb`]: rgbOf(color),
+    [`--vsg-plane-${name}-a`]: alphaOf(color).toFixed(3),
+    [`--vsg-plane-${name}-wall-a`]: wallAlpha.toFixed(3),
+    [`--vsg-plane-${name}`]: minAlpha > 0
+      ? `rgba(var(--vsg-plane-${name}-rgb), max(${minAlpha}, ${a}))`
+      : `rgba(var(--vsg-plane-${name}-rgb), calc(${a}))`,
+  };
+}
+
 function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
   const e = p.effects, g = p.glass;
   const v: Record<string, string> = {
@@ -82,6 +100,7 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     '--vsg-brightness': String(e.brightness),
     '--vsg-contrast': String(e.contrastBoost),
     '--vsg-dim': String(e.dim),
+    '--vsg-radius-window': `${e.radius.window}px`,
     '--vsg-radius-card': `${e.radius.card}px`,
     '--vsg-radius-widget': `${e.radius.widget}px`,
     '--vsg-radius-control': `${e.radius.control}px`,
@@ -93,12 +112,27 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     '--vsg-ease': e.motion.ease,
     '--vsg-vibrancy-blend': p.isDark ? 'plus-lighter' : 'multiply',
     '--vsg-exaggeration': String(e.exaggeration),
-    // transparent-window mode (Vibrancy Continued): the OS blurs the desktop behind the window, so the
-    // in-page planes must stay translucent instead of painting a wallpaper
-    '--vsg-content-bg-window': cssColor(alpha(p.content.bg, p.opaqueMode ? 1 : (p.variant === 'clear' ? 0.42 : 0.6))),
-    '--vsg-chrome-window': cssColor(alpha(p.glass.chrome.solid, p.opaqueMode ? 1 : (p.variant === 'clear' ? 0.26 : 0.42))),
-    '--vsg-widget-window': cssColor(alpha(p.glass.widget.solid, p.opaqueMode ? 1 : 0.6)),
-    '--vsg-dim-window': String(p.isDark ? 0.22 : 0.1),
+    // planes — default = transparent-window mode (the OS shows the desktop through the window; the in-page planes
+    // stay thin). Every plane alpha is a base value × --vsg-density, one knob from 0 (absolutely clear: only rims,
+    // bevels and lensing remain) to ~2 (opaque-ish); glass/density/*.css presets set it, or set it yourself.
+    // glass-wallpaper.css swaps the base alphas for the denser wallpaper-mode materials (same rgb).
+    '--vsg-density': '1',
+    ...planeVars('content', p.planes.content, p.opaqueMode ? 1 : alphaOf(p.content.bgGlass)),
+    ...planeVars('chrome', p.planes.chrome, p.opaqueMode ? 1 : alphaOf(p.glass.chrome.bgGlass)),
+    // widgets (palette, hovers, menus, notifications, dialogs) do NOT follow --vsg-density: the owner wants the base
+    // window fully clear while modals stay readable, so they keep a fixed frosted body (--vsg-widget-density tunes it)
+    ...planeVars('widget', p.planes.widget, p.opaqueMode ? 1 : alphaOf(p.glass.widget.bgGlass), p.opaqueMode ? 1 : 0.3, '--vsg-widget-density'),
+    '--vsg-widget-density': '1',
+    '--vsg-plane-dim-a': String(p.planes.dim),
+    '--vsg-plane-dim-wall-a': String(p.effects.dim),
+    '--vsg-plane-dim': 'calc(var(--vsg-plane-dim-a) * min(1, var(--vsg-density)))',
+    // the window slab's own smoky film (dark: a little shadow colour; light: a little white), also × density
+    '--vsg-window-film-rgb': p.isDark ? rgbOf(p.groundDeep) : '255, 255, 255',
+    '--vsg-window-film-a': String(p.opaqueMode ? 1 : p.isDark ? (p.variant === 'clear' ? 0.01 : 0.02) : 0.2),
+    '--vsg-window-film': 'rgba(var(--vsg-window-film-rgb), calc(var(--vsg-window-film-a) * var(--vsg-density)))',
+    // tint film: colourless by default; glass/tints/*.css set these
+    '--vsg-tint-rgb': '0, 0, 0',
+    '--vsg-tint-a': '0',
     '--vsg-wallpaper': p.wallpaper.blobs.length === 0 ? cssColor(p.wallpaper.base) :
       p.wallpaper.blobs.map(b => `radial-gradient(ellipse ${b.size} ${b.size} at ${b.x} ${b.y}, ${cssColor(b.color).replace(/^#(..)(..)(..)$/, (_, r, g2, bl) => `rgba(${parseInt(r, 16)}, ${parseInt(g2, 16)}, ${parseInt(bl, 16)}, ${b.alpha.toFixed(3)})`)}, transparent 62%)`).join(', ') + `, ${cssColor(p.wallpaper.base)}`,
   };
@@ -112,20 +146,40 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     v[`--vsg-${level}-spec-mid`] = String(el.specular.mid);
     v[`--vsg-${level}-spec-lo`] = String(el.specular.lo);
   }
-  // lens filters (one per aspect class); opaque variant gets none
+  const lens = lensVars(p);
+  Object.assign(v, lens.vars);
+  const body = Object.entries(v).map(([k, val]) => `  ${k}: ${val};`).join('\n');
+  return { css: body, filtersSvg: lens.filtersSvg };
+}
+
+/** Lens filter variables (one data-URI filter per aspect class). lensMul scales displacement and rim width together
+ *  (same slope), aberrationMul scales the chromatic offset. Presets re-emit only these variables. */
+function lensVars(p: Palette, lensMul = 1, aberrationMul = 1, idSuffix = ''): { vars: Record<string, string>; filtersSvg: string[] } {
+  const e = p.effects;
+  const vars: Record<string, string> = {};
   const filtersSvg: string[] = [];
   for (const cls of LENS_CLASSES) {
-    if (e.lensScale <= 0) { v[`--vsg-lens-${cls.name}`] = 'none'; continue; }
+    if (e.lensScale <= 0) { vars[`--vsg-lens-${cls.name}`] = 'none'; continue; }
     // convex capsules: the rim IS the whole shape (edge = radius), gentler ramp, no frost
-    const { uri } = cls.convex ? makeMap(cls, Math.min(cls.w, cls.h) / 2, 1.3) : makeMap(cls, e.lensEdge * cls.rim);
-    const id = `vsg-lens-${p.id}-${cls.name}`;
-    const blur = cls.convex ? 0 : cls.name === 'widget' || cls.name === 'menu' ? e.blurWidget : cls.name === 'strip' ? Math.min(e.blur, 12) : e.blur;
-    const markup = filterSvg(id, cls, uri, e.lensScale * cls.rim, blur, e.aberration * cls.rim);
+    const { uri } = cls.convex ? makeMap(cls, Math.min(cls.w, cls.h) / 2, 1.3) : makeMap(cls, e.lensEdge * lensMul * cls.rim);
+    const id = `vsg-lens-${p.id}-${cls.name}${idSuffix}`;
+    const blur = cls.blur ?? (cls.convex ? 0 : cls.name === 'widget' || cls.name === 'menu' ? e.blurWidget : cls.name === 'strip' ? Math.min(e.blur, 12) : e.blur);
+    const markup = filterSvg(id, cls, uri, e.lensScale * lensMul * cls.rim, blur, e.aberration * aberrationMul * cls.rim);
     filtersSvg.push(markup);
-    v[`--vsg-lens-${cls.name}`] = filterDataUrl(markup, id);
+    vars[`--vsg-lens-${cls.name}`] = filterDataUrl(markup, id);
   }
-  const body = Object.entries(v).map(([k, val]) => `  ${k}: ${val};`).join('\n');
-  return { css: body, filtersSvg };
+  return { vars, filtersSvg };
+}
+
+/** An addon file that re-emits the lens variables for every palette with a preset multiplier applied. */
+function lensPresetCss(kind: 'lens' | 'aberration', id: string, mul: number, description: string): string {
+  const blocks = palettes.map(p => {
+    const { vars } = lensVars(p, kind === 'lens' ? mul : 1, kind === 'aberration' ? mul : 1, `-${kind}-${id}`);
+    const body = Object.entries(vars).map(([k, val]) => `  ${k}: ${val};`).join('\n');
+    // guard + theme class: beats the palette block in glass.css
+    return `/* ${p.name} */\n${GUARD}.${themeClass(p)} {\n${body}\n}`;
+  });
+  return `/*! VS Glass — ${kind} preset "${id}" (generated; load AFTER glass.css). ${description}. MIT */\n${blocks.join('\n\n')}\n`;
 }
 
 function buildGlassCss(): { css: string; svg: string } {
@@ -162,10 +216,32 @@ function main() {
   const { css, svg } = buildGlassCss();
   fs.writeFileSync(path.join(ROOT, 'glass', 'glass.css'), css);
   fs.writeFileSync(path.join(ROOT, 'glass', 'glass-filters.svg'), svg);
-  const transparent = `/*! VS Glass — transparent-window mode addon (generated; load AFTER glass.css). For use with Vibrancy\n *  Continued or any setup that makes the window itself see-through. MIT */\n` +
-    fs.readFileSync(path.join(ROOT, 'src', 'glass', 'glass-transparent.css'), 'utf8').replaceAll('@G', GUARD);
-  fs.writeFileSync(path.join(ROOT, 'glass', 'glass-transparent.css'), transparent);
-  console.log(`✓ glass/glass.css (${(css.length / 1024).toFixed(0)} KB) · glass/glass-transparent.css (${(transparent.length / 1024).toFixed(0)} KB) · glass/glass-filters.svg (${(svg.length / 1024).toFixed(0)} KB)`);
+  // addons: wallpaper mode (opaque window) and tints (coloured film) — both load after glass.css
+  const wallpaper = `/*! VS Glass — wallpaper-mode addon (generated; load AFTER glass.css). For a window that is not see-through:\n *  paints a neutral smoke backdrop and thickens the planes. MIT */\n` +
+    fs.readFileSync(path.join(ROOT, 'src', 'glass', 'glass-wallpaper.css'), 'utf8').replaceAll('@G', GUARD);
+  fs.writeFileSync(path.join(ROOT, 'glass', 'glass-wallpaper.css'), wallpaper);
+  fs.mkdirSync(path.join(ROOT, 'glass', 'tints'), { recursive: true });
+  const tintTemplate = fs.readFileSync(path.join(ROOT, 'src', 'glass', 'glass-tint.css'), 'utf8');
+  for (const t of TINTS) {
+    const h = t.color.replace('#', '');
+    const rgb = `${parseInt(h.slice(0, 2), 16)}, ${parseInt(h.slice(2, 4), 16)}, ${parseInt(h.slice(4, 6), 16)}`;
+    const out = `/*! VS Glass — tint addon "${t.name}" (generated; load AFTER glass.css). MIT */\n` +
+      tintTemplate.replaceAll('@G', GUARD).replaceAll('@NAME', t.name).replaceAll('@DESC', t.description).replaceAll('@RGB', rgb).replaceAll('@ALPHA', String(t.alpha));
+    fs.writeFileSync(path.join(ROOT, 'glass', 'tints', `glass-tint-${t.id}.css`), out);
+  }
+  fs.mkdirSync(path.join(ROOT, 'glass', 'density'), { recursive: true });
+  const densityTemplate = fs.readFileSync(path.join(ROOT, 'src', 'glass', 'glass-density.css'), 'utf8');
+  for (const d of DENSITY_PRESETS) {
+    const out = `/*! VS Glass — density preset ${d.percent} % (generated; load AFTER glass.css). ${d.description}. MIT */\n` +
+      densityTemplate.replaceAll('@G', GUARD).replaceAll('@PERCENT', String(d.percent)).replaceAll('@VALUE', String(d.percent / 100)).replaceAll('@DESC', d.description);
+    fs.writeFileSync(path.join(ROOT, 'glass', 'density', `glass-density-${d.percent}.css`), out);
+  }
+  // lens strength and chromatic-aberration presets (each re-emits the filters with a multiplier)
+  fs.mkdirSync(path.join(ROOT, 'glass', 'lens'), { recursive: true });
+  fs.mkdirSync(path.join(ROOT, 'glass', 'aberration'), { recursive: true });
+  for (const l of LENS_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'lens', `glass-lens-${l.id}.css`), lensPresetCss('lens', l.id, l.mul, l.description));
+  for (const a of ABERRATION_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'aberration', `glass-aberration-${a.id}.css`), lensPresetCss('aberration', a.id, a.mul, a.description));
+  console.log(`✓ glass/glass.css (${(css.length / 1024).toFixed(0)} KB) · glass/glass-wallpaper.css (${(wallpaper.length / 1024).toFixed(0)} KB) · glass/tints/ (${TINTS.length}) · glass/density/ (${DENSITY_PRESETS.length}) · glass/lens/ (${LENS_PRESETS.length}) · glass/aberration/ (${ABERRATION_PRESETS.length}) · glass/glass-filters.svg (${(svg.length / 1024).toFixed(0)} KB)`);
 }
 
 main();
