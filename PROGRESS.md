@@ -80,6 +80,13 @@ These override anything a research agent claimed to the contrary.
 - *Two evidence files were broken (menu not open; rim zoom crop black)* → menu scene now uses Shift+F10; zoom crops computed from image size.
 - Pens research (`research/reference-pens.md`) adopted in the same round: conic ring on buttons, hover specular nudge on buttons, convex `capsule` lens class for icon-only pills, rings on activity/status pills, Clear aberration 2.2→1.4.
 
+## GitHub (2026-09-10)
+
+- Repo created public: https://github.com/MilosHampl/vs-glass (description, homepage, 10 topics). Pushed with the keyring token (`env -u GITHUB_TOKEN …`) because the env token lacks `workflow` scope.
+- First CI run failed at `vsce package --out dist/` (directory did not exist on the runner) → `mkdir -p dist &&` added; second run green in 18 s with the `.vsix` artifact uploaded. All gate steps (build, generated-files diff, schema, coverage, contrast) passed on the runner.
+- GitHub Pages enabled via API (`docs/` on `main`): https://miloshampl.github.io/vs-glass/ returns 200 with assets.
+- Social preview image (`assets/social-preview.png`) cannot be set through the API — the owner can upload it in Settings → Social preview.
+
 ## CI gating — proven locally (2026-09-10)
 
 Ran the exact CI steps, then broke things on purpose: deleting `sideBar.background` from a generated theme → `audit-coverage` exit 1 ("1 unintentional gap"); setting `sideBar.foreground` to #2a2f3a → `audit-contrast` exit 1 (1.17:1); any hand edit of `themes/` or `glass/` → `git diff --exit-code -- themes glass` exit 1. `npm run build` restores everything and all gates pass (exit 0). `vsce package` produces 15 files / 90 KB with zero warnings.

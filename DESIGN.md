@@ -655,3 +655,7 @@ is what the fallback produces.
 - **Custom CSS and JS Loader** (`be5invis.vscode-custom-css`) — the most widely-installed CSS
   injection route, documented as Route A alongside its CSP trade-off.
 - **Contributor Covenant** — this repo's `CODE_OF_CONDUCT.md` is adopted from it.
+
+## Review history
+
+Two adversarial review rounds (an independent reviewer judging screenshots against Apple's references, without access to the source or these docs) are archived in `research/review-round-1.md` and `research/review-round-2.md`; `PROGRESS.md` lists what changed after each. Round 1 scored the flagship ≈2/10 ("a competent translucent theme") and drove the second pass: the specular ring re-lit from the top-left, the activity-bar/sidebar seam removed, deeper thickness shadows, a more vivid and structured wallpaper so cards have something to refract, larger rim displacement, light-mode separation, balanced diff fills, and a denser Clear widget material.
