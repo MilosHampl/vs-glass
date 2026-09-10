@@ -1,0 +1,81 @@
+{
+  "name": "vs-glass",
+  "displayName": "VS Glass",
+  "description": "Apple Liquid Glass for VS Code — refractive edges, specular highlights, and layered glass materials.",
+  "version": "1.0.0",
+  "publisher": "MilosHampl",
+  "author": {
+    "name": "Milos Hampl"
+  },
+  "license": "MIT",
+  "icon": "icon.png",
+  "homepage": "https://miloshampl.github.io/vs-glass/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MilosHampl/vs-glass.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MilosHampl/vs-glass/issues"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "keywords": [
+    "liquid glass",
+    "glassmorphism",
+    "refraction",
+    "apple",
+    "macos",
+    "tahoe",
+    "translucent",
+    "frosted",
+    "dark",
+    "light"
+  ],
+  "galleryBanner": {
+    "color": "#0b0d16",
+    "theme": "dark"
+  },
+  "contributes": {
+    "themes": [
+      {
+        "label": "Glass Regular Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/glass-regular-dark-color-theme.json"
+      },
+      {
+        "label": "Glass Regular Light",
+        "uiTheme": "vs",
+        "path": "./themes/glass-regular-light-color-theme.json"
+      },
+      {
+        "label": "Glass Clear",
+        "uiTheme": "vs-dark",
+        "path": "./themes/glass-clear-color-theme.json"
+      },
+      {
+        "label": "Glass Opaque",
+        "uiTheme": "vs-dark",
+        "path": "./themes/glass-opaque-color-theme.json"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsx src/build.ts",
+    "audit": "npm run audit:coverage && npm run audit:contrast",
+    "audit:coverage": "node scripts/audit-coverage.mjs",
+    "audit:contrast": "node scripts/audit-contrast.mjs",
+    "validate": "node scripts/validate-schema.mjs",
+    "package": "vsce package --no-dependencies",
+    "check": "npm run build && npm run validate && npm run audit && npm run package"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "@vscode/vsce": "^3.9.2",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  }
+}
