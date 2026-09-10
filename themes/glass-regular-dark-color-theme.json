@@ -1,0 +1,20 @@
+{
+  "$schema": "vscode://schemas/color-theme",
+  "name": "Glass Regular Dark",
+  "type": "dark",
+  "semanticHighlighting": true,
+  "colors": {},
+  "tokenColors": [
+    {
+      "name": "Default",
+      "scope": [
+        "source",
+        "text"
+      ],
+      "settings": {
+        "foreground": "#d8dadf"
+      }
+    }
+  ],
+  "semanticTokenColors": {}
+}

@@ -1,0 +1,3185 @@
+{
+ "owner": "panels",
+ "count": 289,
+ "keys": [
+  {
+   "id": "activeSessionView.background",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of an active session view in the agent sessions window.",
+   "defaults": {
+    "dark": "@agentsPanel.background",
+    "light": "@agentsPanel.background",
+    "hcDark": "@agentsPanel.background",
+    "hcLight": "@agentsPanel.background"
+   }
+  },
+  {
+   "id": "activeSessionView.foreground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Foreground color of an active session view in the agent sessions window.",
+   "defaults": {
+    "dark": "@agentsPanel.foreground",
+    "light": "@agentsPanel.foreground",
+    "hcDark": "@agentsPanel.foreground",
+    "hcLight": "@agentsPanel.foreground"
+   }
+  },
+  {
+   "id": "agentFeedbackEditorWidget.background",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of the agent feedback widget shown in the editor.",
+   "defaults": {
+    "dark": "expr:Pf(@editorWidget.background,.08)",
+    "light": "expr:Mu(@editorWidget.background,.04)",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "agentFeedbackEditorWidget.border",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Border color of the agent feedback widget shown in the editor.",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.35)",
+    "light": "expr:pi(@foreground,.35)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "agentFeedbackInputWidget.border",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Border color of the agent feedback input widget shown in the editor.",
+   "defaults": {
+    "dark": "@editorWidget.border",
+    "light": "@editorWidget.border",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "agentSessionReadIndicator.foreground",
+   "group": "Agent Session colors",
+   "description": "Foreground color for the read indicator in an agent session.",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.2)",
+    "light": "expr:pi(@foreground,.2)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "agentSessionSelectedBadge.border",
+   "group": "Agent Session colors",
+   "description": "Border color for the badges in selected agent session items.",
+   "defaults": {
+    "dark": "expr:pi(@list.activeSelectionForeground,.3)",
+    "light": "expr:pi(@list.activeSelectionForeground,.3)",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "agentSessionSelectedUnfocusedBadge.border",
+   "group": "Agent Session colors",
+   "description": "Border color for the badges in selected agent session items when the view is unfocused.",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.3)",
+    "light": "expr:pi(@foreground,.3)",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "agentStatusIndicator.background",
+   "group": "Agent Session colors",
+   "description": "Background color of the agent status indicator in the titlebar.",
+   "defaults": {
+    "dark": "@commandCenter.background",
+    "light": "@commandCenter.background",
+    "hcDark": "@commandCenter.background",
+    "hcLight": "@commandCenter.background"
+   }
+  },
+  {
+   "id": "agents.background",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of the agent sessions window shell and gradient base.",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@sideBar.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "agentsBadge.background",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of badges in the agent sessions window.",
+   "defaults": {
+    "dark": "@activityBarBadge.background",
+    "light": "@activityBarBadge.background",
+    "hcDark": "@activityBarBadge.background",
+    "hcLight": "@activityBarBadge.background"
+   }
+  },
+  {
+   "id": "agentsBadge.foreground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Foreground color of badges in the agent sessions window.",
+   "defaults": {
+    "dark": "@activityBarBadge.foreground",
+    "light": "@activityBarBadge.foreground",
+    "hcDark": "@activityBarBadge.foreground",
+    "hcLight": "@activityBarBadge.foreground"
+   }
+  },
+  {
+   "id": "agentsBottomPanel.border",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Border color of the bottom panel in the agent sessions window.",
+   "defaults": {
+    "dark": "@agentsPanel.border",
+    "light": "@agentsPanel.border",
+    "hcDark": "@agentsPanel.border",
+    "hcLight": "@agentsPanel.border"
+   }
+  },
+  {
+   "id": "agentsCard.border",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Border color of the floating content card (sessions grid and custom view grid) in the agent sessions window.",
+   "defaults": {
+    "dark": "@agentsPanel.border",
+    "light": "@agentsPanel.border",
+    "hcDark": "@agentsPanel.border",
+    "hcLight": "@agentsPanel.border"
+   }
+  },
+  {
+   "id": "agentsChatInput.background",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of the chat input field in the agent sessions window.",
+   "defaults": {
+    "dark": "@input.background",
+    "light": "@input.background",
+    "hcDark": "@input.background",
+    "hcLight": "@input.background"
+   }
+  },
+  {
+   "id": "agentsChatInput.border",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Border color of the chat input field in the agent sessions window.",
+   "defaults": {
+    "dark": "@input.border",
+    "light": "@input.border",
+    "hcDark": "@input.border",
+    "hcLight": "@input.border"
+   }
+  },
+  {
+   "id": "agentsChatInput.focusBorder",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Border color of the chat input field when focused in the agent sessions window.",
+   "defaults": {
+    "dark": "@focusBorder",
+    "light": "@focusBorder",
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "agentsChatInput.foreground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Foreground color of the chat input field in the agent sessions window.",
+   "defaults": {
+    "dark": "@input.foreground",
+    "light": "@input.foreground",
+    "hcDark": "@input.foreground",
+    "hcLight": "@input.foreground"
+   }
+  },
+  {
+   "id": "agentsChatInput.placeholderForeground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Placeholder text color in the chat input field in the agent sessions window.",
+   "defaults": {
+    "dark": "@input.placeholderForeground",
+    "light": "@input.placeholderForeground",
+    "hcDark": "@input.placeholderForeground",
+    "hcLight": "@input.placeholderForeground"
+   }
+  },
+  {
+   "id": "agentsGradient.tintColor",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Tint color used in the background gradient of the agent sessions window shell.",
+   "defaults": {
+    "dark": "@button.background",
+    "light": "@button.background",
+    "hcDark": "@button.background",
+    "hcLight": "@button.background"
+   }
+  },
+  {
+   "id": "agentsNewSessionButton.background",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of the New Session button in the agent sessions sidebar.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "agentsNewSessionButton.border",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Border color of the New Session button in the agent sessions sidebar.",
+   "defaults": {
+    "dark": "@button.secondaryBorder",
+    "light": "@button.secondaryBorder",
+    "hcDark": "@button.secondaryBorder",
+    "hcLight": "@button.secondaryBorder"
+   }
+  },
+  {
+   "id": "agentsNewSessionButton.foreground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Foreground color of the New Session button in the agent sessions sidebar.",
+   "defaults": {
+    "dark": "@sideBar.foreground",
+    "light": "@sideBar.foreground",
+    "hcDark": "@sideBar.foreground",
+    "hcLight": "@sideBar.foreground"
+   }
+  },
+  {
+   "id": "agentsNewSessionButton.hoverBackground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of the New Session button when hovered in the agent sessions sidebar.",
+   "defaults": {
+    "dark": "@toolbar.hoverBackground",
+    "light": "@toolbar.hoverBackground",
+    "hcDark": "@toolbar.hoverBackground",
+    "hcLight": "@toolbar.hoverBackground"
+   }
+  },
+  {
+   "id": "agentsPanel.background",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of the card panels (chat, files, terminal) in the agent sessions window.",
+   "defaults": {
+    "dark": "@sideBar.background",
+    "light": "@editor.background",
+    "hcDark": "@sideBar.background",
+    "hcLight": "@sideBar.background"
+   }
+  },
+  {
+   "id": "agentsPanel.border",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Border color of the card panels (chat, files, terminal) in the agent sessions window.",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.15)",
+    "light": "expr:pi(@foreground,.15)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "agentsPanel.foreground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Foreground color of the card panels (chat, files, terminal) in the agent sessions window.",
+   "defaults": {
+    "dark": "@sideBar.foreground",
+    "light": "@sideBar.foreground",
+    "hcDark": "@sideBar.foreground",
+    "hcLight": "@sideBar.foreground"
+   }
+  },
+  {
+   "id": "agentsUnreadBadge.background",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of the unread sessions count badge on the sidebar toggle.",
+   "defaults": {
+    "dark": "@activityBarBadge.background",
+    "light": "@activityBarBadge.background",
+    "hcDark": "@activityBarBadge.background",
+    "hcLight": "@activityBarBadge.background"
+   }
+  },
+  {
+   "id": "agentsUnreadBadge.foreground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Foreground color of the unread sessions count badge on the sidebar toggle.",
+   "defaults": {
+    "dark": "@activityBarBadge.foreground",
+    "light": "@activityBarBadge.foreground",
+    "hcDark": "@activityBarBadge.foreground",
+    "hcLight": "@activityBarBadge.foreground"
+   }
+  },
+  {
+   "id": "agentsUpdateButton.downloadedBackground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of the update button when download is complete in the agent sessions window.",
+   "defaults": {
+    "dark": "expr:pi(@button.background,.7)",
+    "light": "expr:pi(@button.background,.7)",
+    "hcDark": "expr:pi(@button.background,.7)",
+    "hcLight": "expr:pi(@button.background,.7)"
+   }
+  },
+  {
+   "id": "agentsUpdateButton.downloadingBackground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of the update button to show download progress in the agent sessions window.",
+   "defaults": {
+    "dark": "expr:pi(@button.background,.4)",
+    "light": "expr:pi(@button.background,.4)",
+    "hcDark": "expr:pi(@button.background,.4)",
+    "hcLight": "expr:pi(@button.background,.4)"
+   }
+  },
+  {
+   "id": "agentsVoice.speakingBackground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color for the speaking voice state row highlight",
+   "defaults": {
+    "dark": "#a371f714",
+    "light": "#8250df14",
+    "hcDark": "#d2a8ff14",
+    "hcLight": "#6639ba14"
+   }
+  },
+  {
+   "id": "agentsVoice.speakingForeground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Color for the speaking/active voice state indicator",
+   "defaults": {
+    "dark": "#a371f7",
+    "light": "#8250df",
+    "hcDark": "#d2a8ff",
+    "hcLight": "#6639ba"
+   }
+  },
+  {
+   "id": "aiCustomizationManagement.sashBorder",
+   "group": "Agent Session colors",
+   "description": "The color of the Chat Customization Management editor splitview sash border.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "chart.axis",
+   "group": "Chart colors",
+   "description": "Axis color for the chart.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#BFBFBF\").transparent(.4)",
+    "light": "expr:qe.fromHex(\"#000000\").transparent(.6)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "chart.guide",
+   "group": "Chart colors",
+   "description": "Guide line for the chart.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#BFBFBF\").transparent(.2)",
+    "light": "expr:qe.fromHex(\"#000000\").transparent(.2)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "chart.line",
+   "group": "Chart colors",
+   "description": "Line color for the chart.",
+   "defaults": {
+    "dark": "#236B8E",
+    "light": "#236B8E",
+    "hcDark": "#236B8E",
+    "hcLight": "#236B8E"
+   }
+  },
+  {
+   "id": "charts.blue",
+   "group": "Chart colors",
+   "description": "Color for blue elements in charts.",
+   "defaults": {
+    "dark": "@editorInfo.foreground",
+    "light": "@editorInfo.foreground",
+    "hcDark": "@editorInfo.foreground",
+    "hcLight": "@editorInfo.foreground"
+   }
+  },
+  {
+   "id": "charts.foreground",
+   "group": "Chart colors",
+   "description": "Contrast color for text in charts.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "charts.green",
+   "group": "Chart colors",
+   "description": "Color for green elements in charts.",
+   "defaults": {
+    "dark": "#89D185",
+    "light": "#388A34",
+    "hcDark": "#89D185",
+    "hcLight": "#374e06"
+   }
+  },
+  {
+   "id": "charts.lines",
+   "group": "Chart colors",
+   "description": "Color for lines in charts.",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.5)",
+    "light": "expr:pi(@foreground,.5)",
+    "hcDark": "expr:pi(@foreground,.5)",
+    "hcLight": "expr:pi(@foreground,.5)"
+   }
+  },
+  {
+   "id": "charts.orange",
+   "group": "Chart colors",
+   "description": "Color for orange elements in charts.",
+   "defaults": {
+    "dark": "@minimap.findMatchHighlight",
+    "light": "@minimap.findMatchHighlight",
+    "hcDark": "@minimap.findMatchHighlight",
+    "hcLight": "@minimap.findMatchHighlight"
+   }
+  },
+  {
+   "id": "charts.purple",
+   "group": "Chart colors",
+   "description": "Color for purple elements in charts.",
+   "defaults": {
+    "dark": "#B180D7",
+    "light": "#652D90",
+    "hcDark": "#B180D7",
+    "hcLight": "#652D90"
+   }
+  },
+  {
+   "id": "charts.red",
+   "group": "Chart colors",
+   "description": "Color for red elements in charts.",
+   "defaults": {
+    "dark": "@editorError.foreground",
+    "light": "@editorError.foreground",
+    "hcDark": "@editorError.foreground",
+    "hcLight": "@editorError.foreground"
+   }
+  },
+  {
+   "id": "charts.yellow",
+   "group": "Chart colors",
+   "description": "Color for yellow elements in charts.",
+   "defaults": {
+    "dark": "@editorWarning.foreground",
+    "light": "@editorWarning.foreground",
+    "hcDark": "@editorWarning.foreground",
+    "hcLight": "@editorWarning.foreground"
+   }
+  },
+  {
+   "id": "chat.avatarBackground",
+   "group": "Chat colors",
+   "description": "The background color of a chat avatar.",
+   "defaults": {
+    "dark": "#1f1f1f",
+    "light": "#f2f2f2",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "chat.avatarForeground",
+   "group": "Chat colors",
+   "description": "The foreground color of a chat avatar.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "chat.checkpointSeparator",
+   "group": "Chat colors",
+   "description": "Chat checkpoint separator color.",
+   "defaults": {
+    "dark": "#585858",
+    "light": "#a9a9a9",
+    "hcDark": "#a9a9a9",
+    "hcLight": "#a5a5a5"
+   }
+  },
+  {
+   "id": "chat.dictationActiveMicGlow",
+   "group": "Chat colors (undocumented)",
+   "description": "Accent color of the glow shown on the microphone while dictation is listening.",
+   "defaults": {
+    "dark": "@chat.voiceGlowBaseColor",
+    "light": "@chat.voiceGlowBaseColor",
+    "hcDark": "@chat.voiceGlowBaseColor",
+    "hcLight": "@chat.voiceGlowBaseColor"
+   }
+  },
+  {
+   "id": "chat.editedFileForeground",
+   "group": "Chat colors",
+   "description": "The foreground color of a chat edited file in the edited file list.",
+   "defaults": {
+    "dark": "#E2C08D",
+    "light": "#895503",
+    "hcDark": "#E2C08D",
+    "hcLight": "#895503"
+   }
+  },
+  {
+   "id": "chat.findMatchBackground",
+   "group": "Chat colors (undocumented)",
+   "description": "Background color of the current search match in a chat transcript.",
+   "defaults": {
+    "dark": "expr:pi(@chat.findMatchHighlightBackground,2)",
+    "light": "expr:pi(@chat.findMatchHighlightBackground,2)",
+    "hcDark": "#EA5C00AA",
+    "hcLight": "#EA5C00AA"
+   }
+  },
+  {
+   "id": "chat.findMatchHighlightBackground",
+   "group": "Chat colors (undocumented)",
+   "description": "Background color of the other search matches in a chat transcript. The color must not be opaque so as not to hide underlying content.",
+   "defaults": {
+    "dark": "@editor.findMatchHighlightBackground",
+    "light": "@editor.findMatchHighlightBackground",
+    "hcDark": "#EA5C0055",
+    "hcLight": "#EA5C0055"
+   }
+  },
+  {
+   "id": "chat.inputWorkingBorderColor1",
+   "group": "Chat colors (undocumented)",
+   "description": "First color stop of the animated chat input border shown while a request is in flight.",
+   "defaults": {
+    "dark": "@button.background",
+    "light": "@button.background",
+    "hcDark": "#FFFFFF",
+    "hcLight": "#000000"
+   }
+  },
+  {
+   "id": "chat.inputWorkingBorderColor2",
+   "group": "Chat colors (undocumented)",
+   "description": "Secondary accent color used by other animated chat input affordances. Not used by the in-flight chat input border.",
+   "defaults": {
+    "dark": "expr:Mu(@button.background,.5)",
+    "light": "expr:Mu(@button.background,.3)",
+    "hcDark": "#A0A0A0",
+    "hcLight": "#555555"
+   }
+  },
+  {
+   "id": "chat.inputWorkingBorderColor3",
+   "group": "Chat colors (undocumented)",
+   "description": "Tertiary accent color used by other animated chat input affordances. Not used by the in-flight chat input border.",
+   "defaults": {
+    "dark": "expr:Pf(@button.background,.5)",
+    "light": "expr:Pf(@button.background,.3)",
+    "hcDark": "#000000",
+    "hcLight": "#000000"
+   }
+  },
+  {
+   "id": "chat.linesAddedForeground",
+   "group": "Chat colors",
+   "description": "Foreground color of lines added in chat code block pill.",
+   "defaults": {
+    "dark": "#54B054",
+    "light": "#107C10",
+    "hcDark": "#54B054",
+    "hcLight": "#107C10"
+   }
+  },
+  {
+   "id": "chat.linesRemovedForeground",
+   "group": "Chat colors",
+   "description": "Foreground color of lines removed in chat code block pill.",
+   "defaults": {
+    "dark": "#FC6A6A",
+    "light": "#BC2F32",
+    "hcDark": "#F48771",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "chat.requestBackground",
+   "group": "Chat colors",
+   "description": "The background color of a chat request.",
+   "defaults": {
+    "dark": "expr:pi(@editor.background,.62)",
+    "light": "expr:pi(@editor.background,.62)",
+    "hcDark": "@editorWidget.background",
+    "hcLight": null
+   }
+  },
+  {
+   "id": "chat.requestBorder",
+   "group": "Chat colors",
+   "description": "The border color of a chat request.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(255,255,255,.1))",
+    "light": "expr:new qe(new ri(0,0,0,.1))",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "chat.requestBubbleBackground",
+   "group": "Chat colors",
+   "description": "Background color of the chat request bubble.",
+   "defaults": {
+    "dark": "expr:pi(@editor.selectionBackground,.3)",
+    "light": "expr:pi(@editor.selectionBackground,.3)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "chat.requestBubbleHoverBackground",
+   "group": "Chat colors",
+   "description": "Background color of the chat request bubble on hover.",
+   "defaults": {
+    "dark": "expr:pi(@editor.selectionBackground,.6)",
+    "light": "expr:pi(@editor.selectionBackground,.6)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "chat.requestCodeBorder",
+   "group": "Chat colors",
+   "description": "Border color of code blocks within the chat request bubble.",
+   "defaults": {
+    "dark": "#004972B8",
+    "light": "#0e639c40",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "chat.slashCommandBackground",
+   "group": "Chat colors",
+   "description": "The background color of a chat slash command.",
+   "defaults": {
+    "dark": "#26477866",
+    "light": "#adceff7a",
+    "hcDark": "#ffffff",
+    "hcLight": "@badge.background"
+   }
+  },
+  {
+   "id": "chat.slashCommandForeground",
+   "group": "Chat colors",
+   "description": "The foreground color of a chat slash command.",
+   "defaults": {
+    "dark": "#85b6ff",
+    "light": "#26569e",
+    "hcDark": "#000000",
+    "hcLight": "@badge.foreground"
+   }
+  },
+  {
+   "id": "chat.thinkingShimmer",
+   "group": "Chat colors",
+   "description": "Shimmer highlight for thinking/working labels.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#000000",
+    "hcDark": "#ffffff",
+    "hcLight": "#000000"
+   }
+  },
+  {
+   "id": "chat.voiceGlowBaseColor",
+   "group": "Chat colors (undocumented)",
+   "description": "Base accent the Voice Mode ambient glow is derived from. The listening and speaking glows are hue-shifted from this color.",
+   "defaults": {
+    "dark": "@focusBorder",
+    "light": "@focusBorder",
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "chat.voiceListeningGlow",
+   "group": "Chat colors (undocumented)",
+   "description": "Accent color of the Voice Mode glow while listening. Derived from {0} when unset.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "chat.voiceSpeakingGlow",
+   "group": "Chat colors (undocumented)",
+   "description": "Accent color of the Voice Mode glow while the agent is speaking. Derived from {0} when unset.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "chatManagement.sashBorder",
+   "group": "Chat colors",
+   "description": "The color of the Chat Management editor splitview sash border.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "debugConsole.errorForeground",
+   "group": "Debug Icons colors",
+   "description": "Foreground color for error messages in debug REPL console.",
+   "defaults": {
+    "dark": "@errorForeground",
+    "light": "@errorForeground",
+    "hcDark": "@errorForeground",
+    "hcLight": "@errorForeground"
+   }
+  },
+  {
+   "id": "debugConsole.infoForeground",
+   "group": "Debug Icons colors",
+   "description": "Foreground color for info messages in debug REPL console.",
+   "defaults": {
+    "dark": "@editorInfo.foreground",
+    "light": "@editorInfo.foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "debugConsole.sourceForeground",
+   "group": "Debug Icons colors",
+   "description": "Foreground color for source filenames in debug REPL console.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "debugConsole.warningForeground",
+   "group": "Debug Icons colors",
+   "description": "Foreground color for warning messages in debug REPL console.",
+   "defaults": {
+    "dark": "@editorWarning.foreground",
+    "light": "@editorWarning.foreground",
+    "hcDark": "#008000",
+    "hcLight": "@editorWarning.foreground"
+   }
+  },
+  {
+   "id": "debugConsoleInputIcon.foreground",
+   "group": "Debug Icons colors",
+   "description": "Foreground color for debug console input marker icon.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "debugIcon.breakpointCurrentStackframeForeground",
+   "group": "Debug Icons colors",
+   "description": "Icon color for the current breakpoint stack frame.",
+   "defaults": {
+    "dark": "#FFCC00",
+    "light": "#BE8700",
+    "hcDark": "#FFCC00",
+    "hcLight": "#BE8700"
+   }
+  },
+  {
+   "id": "debugIcon.breakpointDisabledForeground",
+   "group": "Debug Icons colors",
+   "description": "Icon color for disabled breakpoints.",
+   "defaults": {
+    "dark": "#848484",
+    "light": "#848484",
+    "hcDark": "#848484",
+    "hcLight": "#848484"
+   }
+  },
+  {
+   "id": "debugIcon.breakpointForeground",
+   "group": "Debug Icons colors",
+   "description": "Icon color for breakpoints.",
+   "defaults": {
+    "dark": "#E51400",
+    "light": "#E51400",
+    "hcDark": "#E51400",
+    "hcLight": "#E51400"
+   }
+  },
+  {
+   "id": "debugIcon.breakpointStackframeForeground",
+   "group": "Debug Icons colors",
+   "description": "Icon color for all breakpoint stack frames.",
+   "defaults": {
+    "dark": "#89D185",
+    "light": "#89D185",
+    "hcDark": "#89D185",
+    "hcLight": "#89D185"
+   }
+  },
+  {
+   "id": "debugIcon.breakpointUnverifiedForeground",
+   "group": "Debug Icons colors",
+   "description": "Icon color for unverified breakpoints.",
+   "defaults": {
+    "dark": "#848484",
+    "light": "#848484",
+    "hcDark": "#848484",
+    "hcLight": "#848484"
+   }
+  },
+  {
+   "id": "debugIcon.continueForeground",
+   "group": "Debug Icons colors",
+   "description": "Debug toolbar icon for continue.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "debugIcon.disconnectForeground",
+   "group": "Debug Icons colors",
+   "description": "Debug toolbar icon for disconnect.",
+   "defaults": {
+    "dark": "#F48771",
+    "light": "#A1260D",
+    "hcDark": "#F48771",
+    "hcLight": "#A1260D"
+   }
+  },
+  {
+   "id": "debugIcon.pauseForeground",
+   "group": "Debug Icons colors",
+   "description": "Debug toolbar icon for pause.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "debugIcon.restartForeground",
+   "group": "Debug Icons colors",
+   "description": "Debug toolbar icon for restart.",
+   "defaults": {
+    "dark": "#89D185",
+    "light": "#388A34",
+    "hcDark": "#89D185",
+    "hcLight": "#388A34"
+   }
+  },
+  {
+   "id": "debugIcon.startForeground",
+   "group": "Debug Icons colors",
+   "description": "Debug toolbar icon for start debugging.",
+   "defaults": {
+    "dark": "#89D185",
+    "light": "#388A34",
+    "hcDark": "#89D185",
+    "hcLight": "#388A34"
+   }
+  },
+  {
+   "id": "debugIcon.stepBackForeground",
+   "group": "Debug Icons colors",
+   "description": "Debug toolbar icon for step back.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "debugIcon.stepIntoForeground",
+   "group": "Debug Icons colors",
+   "description": "Debug toolbar icon for step into.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "debugIcon.stepOutForeground",
+   "group": "Debug Icons colors",
+   "description": "Debug toolbar icon for step over.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "debugIcon.stepOverForeground",
+   "group": "Debug Icons colors",
+   "description": "Debug toolbar icon for step over.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "debugIcon.stopForeground",
+   "group": "Debug Icons colors",
+   "description": "Debug toolbar icon for stop.",
+   "defaults": {
+    "dark": "#F48771",
+    "light": "#A1260D",
+    "hcDark": "#F48771",
+    "hcLight": "#A1260D"
+   }
+  },
+  {
+   "id": "debugTokenExpression.boolean",
+   "group": "Debug colors",
+   "description": "Foreground color for booleans in debug views.",
+   "defaults": {
+    "dark": "#4e94ce",
+    "light": "#0000ff",
+    "hcDark": "#75bdfe",
+    "hcLight": "#0000ff"
+   }
+  },
+  {
+   "id": "debugTokenExpression.error",
+   "group": "Debug colors",
+   "description": "Foreground color for expression errors in debug views.",
+   "defaults": {
+    "dark": "#f48771",
+    "light": "#e51400",
+    "hcDark": "#f48771",
+    "hcLight": "#e51400"
+   }
+  },
+  {
+   "id": "debugTokenExpression.name",
+   "group": "Debug colors",
+   "description": "Foreground color for the token names shown in debug views (such as in the Variables or Watch view).",
+   "defaults": {
+    "dark": "#c586c0",
+    "light": "#9b46b0",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "debugTokenExpression.number",
+   "group": "Debug colors",
+   "description": "Foreground color for numbers in debug views.",
+   "defaults": {
+    "dark": "#b5cea8",
+    "light": "#098658",
+    "hcDark": "#89d185",
+    "hcLight": "#098658"
+   }
+  },
+  {
+   "id": "debugTokenExpression.string",
+   "group": "Debug colors",
+   "description": "Foreground color for strings in debug views.",
+   "defaults": {
+    "dark": "#ce9178",
+    "light": "#a31515",
+    "hcDark": "#f48771",
+    "hcLight": "#a31515"
+   }
+  },
+  {
+   "id": "debugTokenExpression.type",
+   "group": "Debug colors",
+   "description": "Foreground color for the token types shown in the debug views (ie. the Variables or Watch view).",
+   "defaults": {
+    "dark": "#4A90E2",
+    "light": "#4A90E2",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "debugTokenExpression.value",
+   "group": "Debug colors",
+   "description": "Foreground color for the token values shown in debug views.",
+   "defaults": {
+    "dark": "#cccccc99",
+    "light": "#6c6c6ccc",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "debugToolBar.background",
+   "group": "Debug colors",
+   "description": "Debug toolbar background color.",
+   "defaults": {
+    "dark": "#333333",
+    "light": "#F3F3F3",
+    "hcDark": "#000000",
+    "hcLight": "#FFFFFF"
+   }
+  },
+  {
+   "id": "debugToolBar.border",
+   "group": "Debug colors",
+   "description": "Debug toolbar border color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "debugView.exceptionLabelBackground",
+   "group": "Debug colors",
+   "description": "Background color for a label shown in the CALL STACK view when the debugger breaks on an exception.",
+   "defaults": {
+    "dark": "#6C2022",
+    "light": "#A31515",
+    "hcDark": "#6C2022",
+    "hcLight": "#A31515"
+   }
+  },
+  {
+   "id": "debugView.exceptionLabelForeground",
+   "group": "Debug colors",
+   "description": "Foreground color for a label shown in the CALL STACK view when the debugger breaks on an exception.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "#FFF",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "debugView.stateLabelBackground",
+   "group": "Debug colors",
+   "description": "Background color for a label in the CALL STACK view showing the current session's or thread's state.",
+   "defaults": {
+    "dark": "#88888844",
+    "light": "#88888844",
+    "hcDark": "#88888844",
+    "hcLight": "#88888844"
+   }
+  },
+  {
+   "id": "debugView.stateLabelForeground",
+   "group": "Debug colors",
+   "description": "Foreground color for a label in the CALL STACK view showing the current session's or thread's state.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "debugView.valueChangedHighlight",
+   "group": "Debug colors",
+   "description": "Color used to highlight value changes in the debug views (such as in the Variables view).",
+   "defaults": {
+    "dark": "#569CD6",
+    "light": "#569CD6",
+    "hcDark": "#569CD6",
+    "hcLight": "#569CD6"
+   }
+  },
+  {
+   "id": "editor.focusedStackFrameHighlightBackground",
+   "group": "Debug colors",
+   "description": "Background color of the focused stack frame highlight in the editor.",
+   "defaults": {
+    "dark": "#7abd7a4d",
+    "light": "#cee7ce73",
+    "hcDark": "#7abd7a4d",
+    "hcLight": "#cee7ce73"
+   }
+  },
+  {
+   "id": "editor.inlineValuesBackground",
+   "group": "Debug colors",
+   "description": "Color for the debug inline value background.",
+   "defaults": {
+    "dark": "#ffc80033",
+    "light": "#ffc80033",
+    "hcDark": "#ffc80033",
+    "hcLight": "#ffc80033"
+   }
+  },
+  {
+   "id": "editor.inlineValuesForeground",
+   "group": "Debug colors",
+   "description": "Color for the debug inline value text.",
+   "defaults": {
+    "dark": "#ffffff80",
+    "light": "#00000080",
+    "hcDark": "#ffffff80",
+    "hcLight": "#00000080"
+   }
+  },
+  {
+   "id": "editor.stackFrameHighlightBackground",
+   "group": "Debug colors",
+   "description": "Background color of the top stack frame highlight in the editor.",
+   "defaults": {
+    "dark": "#ffff0033",
+    "light": "#ffff6673",
+    "hcDark": "#ffff0033",
+    "hcLight": "#ffff6673"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.commentForeground",
+   "group": "Merge conflicts colors",
+   "description": "Editor overview ruler decoration color for resolved comments. This color should be opaque.",
+   "defaults": {
+    "dark": "@editorGutter.commentRangeForeground",
+    "light": "@editorGutter.commentRangeForeground",
+    "hcDark": "@editorGutter.commentRangeForeground",
+    "hcLight": "@editorGutter.commentRangeForeground"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.commentUnresolvedForeground",
+   "group": "Merge conflicts colors",
+   "description": "Editor overview ruler decoration color for unresolved comments. This color should be opaque.",
+   "defaults": {
+    "dark": "@editorOverviewRuler.commentForeground",
+    "light": "@editorOverviewRuler.commentForeground",
+    "hcDark": "@editorOverviewRuler.commentForeground",
+    "hcLight": "@editorOverviewRuler.commentForeground"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.commonContentForeground",
+   "group": "Merge conflicts colors",
+   "description": "Common ancestor overview ruler foreground for inline merge conflicts.",
+   "defaults": {
+    "dark": "expr:pi(@merge.commonHeaderBackground,GLe)",
+    "light": "expr:pi(@merge.commonHeaderBackground,GLe)",
+    "hcDark": "@merge.border",
+    "hcLight": "@merge.border"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.currentContentForeground",
+   "group": "Merge conflicts colors",
+   "description": "Current overview ruler foreground for inline merge conflicts.",
+   "defaults": {
+    "dark": "expr:pi(@merge.currentHeaderBackground,GLe)",
+    "light": "expr:pi(@merge.currentHeaderBackground,GLe)",
+    "hcDark": "@merge.border",
+    "hcLight": "@merge.border"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.incomingContentForeground",
+   "group": "Merge conflicts colors",
+   "description": "Incoming overview ruler foreground for inline merge conflicts.",
+   "defaults": {
+    "dark": "expr:pi(@merge.incomingHeaderBackground,GLe)",
+    "light": "expr:pi(@merge.incomingHeaderBackground,GLe)",
+    "hcDark": "@merge.border",
+    "hcLight": "@merge.border"
+   }
+  },
+  {
+   "id": "git.blame.editorDecorationForeground",
+   "group": "Git colors",
+   "description": "Color for the blame editor decoration.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gitDecoration.addedResourceForeground",
+   "group": "Git colors",
+   "description": "Color for added Git resources. Used for file labels and the SCM viewlet.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gitDecoration.conflictingResourceForeground",
+   "group": "Git colors",
+   "description": "Color for conflicting Git resources. Used for file labels and the SCM viewlet.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gitDecoration.deletedResourceForeground",
+   "group": "Git colors",
+   "description": "Color for deleted Git resources. Used for file labels and the SCM viewlet.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gitDecoration.ignoredResourceForeground",
+   "group": "Git colors",
+   "description": "Color for ignored Git resources. Used for file labels and the SCM viewlet.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gitDecoration.modifiedResourceForeground",
+   "group": "Git colors",
+   "description": "Color for modified Git resources. Used for file labels and the SCM viewlet.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gitDecoration.renamedResourceForeground",
+   "group": "Git colors",
+   "description": "Color for renamed or copied Git resources. Used for file labels and the SCM viewlet.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gitDecoration.stageDeletedResourceForeground",
+   "group": "Git colors",
+   "description": "Color for staged deletions git decorations.  Used for file labels and the SCM viewlet.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gitDecoration.stageModifiedResourceForeground",
+   "group": "Git colors",
+   "description": "Color for staged modifications git decorations.  Used for file labels and the SCM viewlet.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gitDecoration.submoduleResourceForeground",
+   "group": "Git colors",
+   "description": "Color for submodule resources.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gitDecoration.untrackedResourceForeground",
+   "group": "Git colors",
+   "description": "Color for untracked Git resources. Used for file labels and the SCM viewlet.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "inactiveSessionView.background",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Background color of an inactive session view in the agent sessions window.",
+   "defaults": {
+    "dark": "@agents.background",
+    "light": "@agents.background",
+    "hcDark": "@agents.background",
+    "hcLight": "@agents.background"
+   }
+  },
+  {
+   "id": "inactiveSessionView.foreground",
+   "group": "Agent Session colors (undocumented)",
+   "description": "Foreground color of an inactive session view in the agent sessions window.",
+   "defaults": {
+    "dark": "@agentsPanel.foreground",
+    "light": "@agentsPanel.foreground",
+    "hcDark": "@agentsPanel.foreground",
+    "hcLight": "@agentsPanel.foreground"
+   }
+  },
+  {
+   "id": "inlineChat.background",
+   "group": "Inline Chat colors",
+   "description": "Background color of the interactive editor widget.",
+   "defaults": {
+    "dark": "@editorWidget.background",
+    "light": "@editorWidget.background",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "inlineChat.border",
+   "group": "Inline Chat colors",
+   "description": "Border color of the interactive editor widget.",
+   "defaults": {
+    "dark": "@editorWidget.border",
+    "light": "@editorWidget.border",
+    "hcDark": "@editorWidget.border",
+    "hcLight": "@editorWidget.border"
+   }
+  },
+  {
+   "id": "inlineChat.foreground",
+   "group": "Inline Chat colors",
+   "description": "Foreground color of the interactive editor widget",
+   "defaults": {
+    "dark": "@editorWidget.foreground",
+    "light": "@editorWidget.foreground",
+    "hcDark": "@editorWidget.foreground",
+    "hcLight": "@editorWidget.foreground"
+   }
+  },
+  {
+   "id": "inlineChat.shadow",
+   "group": "Inline Chat colors",
+   "description": "Shadow color of the interactive editor widget.",
+   "defaults": {
+    "dark": "@widget.shadow",
+    "light": "@widget.shadow",
+    "hcDark": "@widget.shadow",
+    "hcLight": "@widget.shadow"
+   }
+  },
+  {
+   "id": "inlineChatDiff.inserted",
+   "group": "Inline Chat colors",
+   "description": "Background color of inserted text in the interactive editor input.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.insertedTextBackground,.5)",
+    "light": "expr:pi(@diffEditor.insertedTextBackground,.5)",
+    "hcDark": "expr:pi(@diffEditor.insertedTextBackground,.5)",
+    "hcLight": "expr:pi(@diffEditor.insertedTextBackground,.5)"
+   }
+  },
+  {
+   "id": "inlineChatDiff.removed",
+   "group": "Inline Chat colors",
+   "description": "Background color of removed text in the interactive editor input.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.removedTextBackground,.5)",
+    "light": "expr:pi(@diffEditor.removedTextBackground,.5)",
+    "hcDark": "expr:pi(@diffEditor.removedTextBackground,.5)",
+    "hcLight": "expr:pi(@diffEditor.removedTextBackground,.5)"
+   }
+  },
+  {
+   "id": "inlineChatInput.background",
+   "group": "Inline Chat colors",
+   "description": "Background color of the interactive editor input.",
+   "defaults": {
+    "dark": "@input.background",
+    "light": "@input.background",
+    "hcDark": "@input.background",
+    "hcLight": "@input.background"
+   }
+  },
+  {
+   "id": "inlineChatInput.border",
+   "group": "Inline Chat colors",
+   "description": "Border color of the interactive editor input.",
+   "defaults": {
+    "dark": "@editorWidget.border",
+    "light": "@editorWidget.border",
+    "hcDark": "@editorWidget.border",
+    "hcLight": "@editorWidget.border"
+   }
+  },
+  {
+   "id": "inlineChatInput.focusBorder",
+   "group": "Inline Chat colors",
+   "description": "Border color of the interactive editor input when focused.",
+   "defaults": {
+    "dark": "@focusBorder",
+    "light": "@focusBorder",
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "inlineChatInput.placeholderForeground",
+   "group": "Inline Chat colors",
+   "description": "Foreground color of the interactive editor input placeholder.",
+   "defaults": {
+    "dark": "@input.placeholderForeground",
+    "light": "@input.placeholderForeground",
+    "hcDark": "@input.placeholderForeground",
+    "hcLight": "@input.placeholderForeground"
+   }
+  },
+  {
+   "id": "interactive.activeCodeBorder",
+   "group": "Panel Chat colors",
+   "description": "The border color for the current interactive code cell when the editor has focus.",
+   "defaults": {
+    "dark": "expr:ofe(@peekView.border,@peekView.border,\"#007acc\")",
+    "light": "expr:ofe(@peekView.border,@peekView.border,\"#007acc\")",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "interactive.inactiveCodeBorder",
+   "group": "Panel Chat colors",
+   "description": "The border color for the current interactive code cell when the editor does not have focus.",
+   "defaults": {
+    "dark": "expr:ofe(@list.inactiveSelectionBackground,@list.inactiveSelectionBackground,\"#37373D\")",
+    "light": "expr:ofe(@list.inactiveSelectionBackground,@list.inactiveSelectionBackground,\"#E4E6F1\")",
+    "hcDark": "@panel.border",
+    "hcLight": "@panel.border"
+   }
+  },
+  {
+   "id": "merge.border",
+   "group": "Merge conflicts colors",
+   "description": "Border color on headers and the splitter in inline merge conflicts.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "#C3DF6F",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "merge.commonContentBackground",
+   "group": "Merge conflicts colors",
+   "description": "Common ancestor content background in inline merge-conflicts. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "expr:pi(@merge.commonHeaderBackground,kTi)",
+    "light": "expr:pi(@merge.commonHeaderBackground,kTi)",
+    "hcDark": "expr:pi(@merge.commonHeaderBackground,kTi)",
+    "hcLight": "expr:pi(@merge.commonHeaderBackground,kTi)"
+   }
+  },
+  {
+   "id": "merge.commonHeaderBackground",
+   "group": "Merge conflicts colors",
+   "description": "Common ancestor header background in inline merge-conflicts. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "$qxo",
+    "light": "$qxo",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "merge.currentContentBackground",
+   "group": "Merge conflicts colors",
+   "description": "Current content background in inline merge conflicts. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "expr:pi(@merge.currentHeaderBackground,kTi)",
+    "light": "expr:pi(@merge.currentHeaderBackground,kTi)",
+    "hcDark": "expr:pi(@merge.currentHeaderBackground,kTi)",
+    "hcLight": "expr:pi(@merge.currentHeaderBackground,kTi)"
+   }
+  },
+  {
+   "id": "merge.currentHeaderBackground",
+   "group": "Merge conflicts colors",
+   "description": "Current header background in inline merge conflicts. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "$Kxo",
+    "light": "$Kxo",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "merge.incomingContentBackground",
+   "group": "Merge conflicts colors",
+   "description": "Incoming content background in inline merge conflicts. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "expr:pi(@merge.incomingHeaderBackground,kTi)",
+    "light": "expr:pi(@merge.incomingHeaderBackground,kTi)",
+    "hcDark": "expr:pi(@merge.incomingHeaderBackground,kTi)",
+    "hcLight": "expr:pi(@merge.incomingHeaderBackground,kTi)"
+   }
+  },
+  {
+   "id": "merge.incomingHeaderBackground",
+   "group": "Merge conflicts colors",
+   "description": "Incoming header background in inline merge conflicts. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "$Gxo",
+    "light": "$Gxo",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "mergeEditor.change.background",
+   "group": "Merge conflicts colors",
+   "description": "The background color for changes.",
+   "defaults": {
+    "dark": "#9bb95533",
+    "light": "#9bb95533",
+    "hcDark": "#9bb95533",
+    "hcLight": "#9bb95533"
+   }
+  },
+  {
+   "id": "mergeEditor.change.word.background",
+   "group": "Merge conflicts colors",
+   "description": "The background color for word changes.",
+   "defaults": {
+    "dark": "#9ccc2c33",
+    "light": "#9ccc2c66",
+    "hcDark": "#9ccc2c33",
+    "hcLight": "#9ccc2c66"
+   }
+  },
+  {
+   "id": "mergeEditor.changeBase.background",
+   "group": "Merge conflicts colors",
+   "description": "The background color for changes in base.",
+   "defaults": {
+    "dark": "#4B1818FF",
+    "light": "#FFCCCCFF",
+    "hcDark": "#4B1818FF",
+    "hcLight": "#FFCCCCFF"
+   }
+  },
+  {
+   "id": "mergeEditor.changeBase.word.background",
+   "group": "Merge conflicts colors",
+   "description": "The background color for word changes in base.",
+   "defaults": {
+    "dark": "#6F1313FF",
+    "light": "#FFA3A3FF",
+    "hcDark": "#6F1313FF",
+    "hcLight": "#FFA3A3FF"
+   }
+  },
+  {
+   "id": "mergeEditor.conflict.handled.minimapOverViewRuler",
+   "group": "Merge conflicts colors",
+   "description": "The foreground color for changes in input 1.",
+   "defaults": {
+    "dark": "#adaca8ee",
+    "light": "#adaca8ee",
+    "hcDark": "#adaca8ee",
+    "hcLight": "#adaca8ee"
+   }
+  },
+  {
+   "id": "mergeEditor.conflict.handledFocused.border",
+   "group": "Merge conflicts colors",
+   "description": "The border color of handled focused conflicts.",
+   "defaults": {
+    "dark": "#c1c1c1cc",
+    "light": "#c1c1c1cc",
+    "hcDark": "#c1c1c1cc",
+    "hcLight": "#c1c1c1cc"
+   }
+  },
+  {
+   "id": "mergeEditor.conflict.handledUnfocused.border",
+   "group": "Merge conflicts colors",
+   "description": "The border color of handled unfocused conflicts.",
+   "defaults": {
+    "dark": "#86868649",
+    "light": "#86868649",
+    "hcDark": "#86868649",
+    "hcLight": "#86868649"
+   }
+  },
+  {
+   "id": "mergeEditor.conflict.input1.background",
+   "group": "Merge conflicts colors",
+   "description": "The background color of decorations in input 1.",
+   "defaults": {
+    "dark": "expr:pi(@merge.currentHeaderBackground,Pvn)",
+    "light": "expr:pi(@merge.currentHeaderBackground,Pvn)",
+    "hcDark": "expr:pi(@merge.currentHeaderBackground,Pvn)",
+    "hcLight": "expr:pi(@merge.currentHeaderBackground,Pvn)"
+   }
+  },
+  {
+   "id": "mergeEditor.conflict.input2.background",
+   "group": "Merge conflicts colors",
+   "description": "The background color of decorations in input 2.",
+   "defaults": {
+    "dark": "expr:pi(@merge.incomingHeaderBackground,Pvn)",
+    "light": "expr:pi(@merge.incomingHeaderBackground,Pvn)",
+    "hcDark": "expr:pi(@merge.incomingHeaderBackground,Pvn)",
+    "hcLight": "expr:pi(@merge.incomingHeaderBackground,Pvn)"
+   }
+  },
+  {
+   "id": "mergeEditor.conflict.unhandled.minimapOverViewRuler",
+   "group": "Merge conflicts colors",
+   "description": "The foreground color for changes in input 1.",
+   "defaults": {
+    "dark": "#fcba03FF",
+    "light": "#fcba03FF",
+    "hcDark": "#fcba03FF",
+    "hcLight": "#fcba03FF"
+   }
+  },
+  {
+   "id": "mergeEditor.conflict.unhandledFocused.border",
+   "group": "Merge conflicts colors",
+   "description": "The border color of unhandled focused conflicts.",
+   "defaults": {
+    "dark": "#ffa600",
+    "light": "#ffa600",
+    "hcDark": "#ffa600",
+    "hcLight": "#ffa600"
+   }
+  },
+  {
+   "id": "mergeEditor.conflict.unhandledUnfocused.border",
+   "group": "Merge conflicts colors",
+   "description": "The border color of unhandled unfocused conflicts.",
+   "defaults": {
+    "dark": "#ffa6007a",
+    "light": "#ffa600FF",
+    "hcDark": "#ffa6007a",
+    "hcLight": "#ffa6007a"
+   }
+  },
+  {
+   "id": "mergeEditor.conflictingLines.background",
+   "group": "Merge conflicts colors",
+   "description": "The background of the \"Conflicting Lines\" text.",
+   "defaults": {
+    "dark": "#ffea0047",
+    "light": "#ffea0047",
+    "hcDark": "#ffea0047",
+    "hcLight": "#ffea0047"
+   }
+  },
+  {
+   "id": "notebook.cellBorderColor",
+   "group": "Notebook colors",
+   "description": "The border color for notebook cells.",
+   "defaults": {
+    "dark": "expr:pi(@list.inactiveSelectionBackground,1)",
+    "light": "expr:pi(@list.inactiveSelectionBackground,1)",
+    "hcDark": "@panel.border",
+    "hcLight": "@panel.border"
+   }
+  },
+  {
+   "id": "notebook.cellEditorBackground",
+   "group": "Notebook colors",
+   "description": "The color of the notebook cell editor background",
+   "defaults": {
+    "dark": "@sideBar.background",
+    "light": "@sideBar.background",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "notebook.cellHoverBackground",
+   "group": "Notebook colors",
+   "description": "The background color of a cell when the cell is hovered.",
+   "defaults": {
+    "dark": "expr:pi(@notebook.focusedCellBackground,.5)",
+    "light": "expr:pi(@notebook.focusedCellBackground,.7)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "notebook.cellInsertionIndicator",
+   "group": "Notebook colors",
+   "description": "The color of the notebook cell insertion indicator.",
+   "defaults": {
+    "dark": "@focusBorder",
+    "light": "@focusBorder",
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "notebook.cellStatusBarItemHoverBackground",
+   "group": "Notebook colors",
+   "description": "The background color of notebook cell status bar items.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(255,255,255,.15))",
+    "light": "expr:new qe(new ri(0,0,0,.08))",
+    "hcDark": "expr:new qe(new ri(255,255,255,.15))",
+    "hcLight": "expr:new qe(new ri(0,0,0,.08))"
+   }
+  },
+  {
+   "id": "notebook.cellToolbarSeparator",
+   "group": "Notebook colors",
+   "description": "The color of the separator in the cell bottom toolbar",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#808080\").transparent(.35)",
+    "light": "expr:qe.fromHex(\"#808080\").transparent(.35)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "notebook.editorBackground",
+   "group": "Notebook colors",
+   "description": "Notebook background color.",
+   "defaults": {
+    "dark": "@editorPane.background",
+    "light": "@editorPane.background",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "notebook.focusedCellBackground",
+   "group": "Notebook colors",
+   "description": "The background color of a cell when the cell is focused.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "notebook.focusedCellBorder",
+   "group": "Notebook colors",
+   "description": "The color of the cell's focus indicator borders when the cell is focused.",
+   "defaults": {
+    "dark": "@focusBorder",
+    "light": "@focusBorder",
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "notebook.focusedEditorBorder",
+   "group": "Notebook colors",
+   "description": "The color of the notebook cell editor border.",
+   "defaults": {
+    "dark": "@focusBorder",
+    "light": "@focusBorder",
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "notebook.inactiveFocusedCellBorder",
+   "group": "Notebook colors",
+   "description": "The color of the cell's top and bottom border when a cell is focused while the primary focus is outside of the editor.",
+   "defaults": {
+    "dark": "@notebook.cellBorderColor",
+    "light": "@notebook.cellBorderColor",
+    "hcDark": "@notebook.cellBorderColor",
+    "hcLight": "@notebook.cellBorderColor"
+   }
+  },
+  {
+   "id": "notebook.inactiveSelectedCellBorder",
+   "group": "Notebook colors",
+   "description": "The color of the cell's borders when multiple cells are selected.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "notebook.outputContainerBackgroundColor",
+   "group": "Notebook colors",
+   "description": "The Color of the notebook output container background.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "notebook.outputContainerBorderColor",
+   "group": "Notebook colors",
+   "description": "The border color of the notebook output container.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "notebook.selectedCellBackground",
+   "group": "Notebook colors",
+   "description": "The background color of a cell when the cell is selected.",
+   "defaults": {
+    "dark": "@list.inactiveSelectionBackground",
+    "light": "@list.inactiveSelectionBackground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "notebook.selectedCellBorder",
+   "group": "Notebook colors",
+   "description": "The color of the cell's top and bottom border when the cell is selected but not focused.",
+   "defaults": {
+    "dark": "@notebook.cellBorderColor",
+    "light": "@notebook.cellBorderColor",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "notebook.symbolHighlightBackground",
+   "group": "Notebook colors",
+   "description": "Background color of highlighted cell",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#ffffff0b\")",
+    "light": "expr:qe.fromHex(\"#fdff0033\")",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "notebookEditorOverviewRuler.runningCellForeground",
+   "group": "Notebook colors",
+   "description": "The color of the running cell decoration in the notebook editor overview ruler.",
+   "defaults": {
+    "dark": "@debugIcon.startForeground",
+    "light": "@debugIcon.startForeground",
+    "hcDark": "@debugIcon.startForeground",
+    "hcLight": "@debugIcon.startForeground"
+   }
+  },
+  {
+   "id": "notebookScrollbarSlider.activeBackground",
+   "group": "Notebook colors",
+   "description": "Notebook scrollbar slider background color when clicked on.",
+   "defaults": {
+    "dark": "@scrollbarSlider.activeBackground",
+    "light": "@scrollbarSlider.activeBackground",
+    "hcDark": "@scrollbarSlider.activeBackground",
+    "hcLight": "@scrollbarSlider.activeBackground"
+   }
+  },
+  {
+   "id": "notebookScrollbarSlider.background",
+   "group": "Notebook colors",
+   "description": "Notebook scrollbar slider background color.",
+   "defaults": {
+    "dark": "@scrollbarSlider.background",
+    "light": "@scrollbarSlider.background",
+    "hcDark": "@scrollbarSlider.background",
+    "hcLight": "@scrollbarSlider.background"
+   }
+  },
+  {
+   "id": "notebookScrollbarSlider.hoverBackground",
+   "group": "Notebook colors",
+   "description": "Notebook scrollbar slider background color when hovering.",
+   "defaults": {
+    "dark": "@scrollbarSlider.hoverBackground",
+    "light": "@scrollbarSlider.hoverBackground",
+    "hcDark": "@scrollbarSlider.hoverBackground",
+    "hcLight": "@scrollbarSlider.hoverBackground"
+   }
+  },
+  {
+   "id": "notebookStatusErrorIcon.foreground",
+   "group": "Notebook colors",
+   "description": "The error icon color of notebook cells in the cell status bar.",
+   "defaults": {
+    "dark": "@errorForeground",
+    "light": "@errorForeground",
+    "hcDark": "@errorForeground",
+    "hcLight": "@errorForeground"
+   }
+  },
+  {
+   "id": "notebookStatusRunningIcon.foreground",
+   "group": "Notebook colors",
+   "description": "The running icon color of notebook cells in the cell status bar.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "notebookStatusSuccessIcon.foreground",
+   "group": "Notebook colors",
+   "description": "The success icon color of notebook cells in the cell status bar.",
+   "defaults": {
+    "dark": "@debugIcon.startForeground",
+    "light": "@debugIcon.startForeground",
+    "hcDark": "@debugIcon.startForeground",
+    "hcLight": "@debugIcon.startForeground"
+   }
+  },
+  {
+   "id": "scmGraph.foreground1",
+   "group": "Source Control Graph colors",
+   "description": "Source control graph foreground color (1).",
+   "defaults": {
+    "dark": "#FFB000",
+    "light": "#FFB000",
+    "hcDark": "#FFB000",
+    "hcLight": "#FFB000"
+   }
+  },
+  {
+   "id": "scmGraph.foreground2",
+   "group": "Source Control Graph colors",
+   "description": "Source control graph foreground color (2).",
+   "defaults": {
+    "dark": "#DC267F",
+    "light": "#DC267F",
+    "hcDark": "#DC267F",
+    "hcLight": "#DC267F"
+   }
+  },
+  {
+   "id": "scmGraph.foreground3",
+   "group": "Source Control Graph colors",
+   "description": "Source control graph foreground color (3).",
+   "defaults": {
+    "dark": "#994F00",
+    "light": "#994F00",
+    "hcDark": "#994F00",
+    "hcLight": "#994F00"
+   }
+  },
+  {
+   "id": "scmGraph.foreground4",
+   "group": "Source Control Graph colors",
+   "description": "Source control graph foreground color (4).",
+   "defaults": {
+    "dark": "#40B0A6",
+    "light": "#40B0A6",
+    "hcDark": "#40B0A6",
+    "hcLight": "#40B0A6"
+   }
+  },
+  {
+   "id": "scmGraph.foreground5",
+   "group": "Source Control Graph colors",
+   "description": "Source control graph foreground color (5).",
+   "defaults": {
+    "dark": "#B66DFF",
+    "light": "#B66DFF",
+    "hcDark": "#B66DFF",
+    "hcLight": "#B66DFF"
+   }
+  },
+  {
+   "id": "scmGraph.historyItemBaseRefColor",
+   "group": "Source Control Graph colors",
+   "description": "History item base reference color.",
+   "defaults": {
+    "dark": "#EA5C00",
+    "light": "#EA5C00",
+    "hcDark": "#EA5C00",
+    "hcLight": "#EA5C00"
+   }
+  },
+  {
+   "id": "scmGraph.historyItemHoverAdditionsForeground",
+   "group": "Source Control Graph colors",
+   "description": "History item hover additions foreground color.",
+   "defaults": {
+    "dark": "#81B88B",
+    "light": "#587C0C",
+    "hcDark": "#A1E3AD",
+    "hcLight": "#374E06"
+   }
+  },
+  {
+   "id": "scmGraph.historyItemHoverDefaultLabelBackground",
+   "group": "Source Control Graph colors",
+   "description": "History item hover default label background color.",
+   "defaults": {
+    "dark": "@badge.background",
+    "light": "@badge.background",
+    "hcDark": "@badge.background",
+    "hcLight": "@badge.background"
+   }
+  },
+  {
+   "id": "scmGraph.historyItemHoverDefaultLabelForeground",
+   "group": "Source Control Graph colors",
+   "description": "History item hover default label foreground color.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "scmGraph.historyItemHoverDeletionsForeground",
+   "group": "Source Control Graph colors",
+   "description": "History item hover deletions foreground color.",
+   "defaults": {
+    "dark": "#C74E39",
+    "light": "#AD0707",
+    "hcDark": "#C74E39",
+    "hcLight": "#AD0707"
+   }
+  },
+  {
+   "id": "scmGraph.historyItemHoverLabelForeground",
+   "group": "Source Control Graph colors",
+   "description": "History item hover label foreground color.",
+   "defaults": {
+    "dark": "@panel.background",
+    "light": "@panel.background",
+    "hcDark": "@panel.background",
+    "hcLight": "@panel.background"
+   }
+  },
+  {
+   "id": "scmGraph.historyItemRefColor",
+   "group": "Source Control Graph colors",
+   "description": "History item reference color.",
+   "defaults": {
+    "dark": "@charts.blue",
+    "light": "@charts.blue",
+    "hcDark": "@charts.blue",
+    "hcLight": "@charts.blue"
+   }
+  },
+  {
+   "id": "scmGraph.historyItemRemoteRefColor",
+   "group": "Source Control Graph colors",
+   "description": "History item remote reference color.",
+   "defaults": {
+    "dark": "@charts.purple",
+    "light": "@charts.purple",
+    "hcDark": "@charts.purple",
+    "hcLight": "@charts.purple"
+   }
+  },
+  {
+   "id": "terminal.ansiBlack",
+   "group": "Integrated Terminal colors",
+   "description": "'Black' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#000000",
+    "light": "#000000",
+    "hcDark": "#000000",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "terminal.ansiBlue",
+   "group": "Integrated Terminal colors",
+   "description": "'Blue' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#2472c8",
+    "light": "#0451a5",
+    "hcDark": "#0000ee",
+    "hcLight": "#0451a5"
+   }
+  },
+  {
+   "id": "terminal.ansiBrightBlack",
+   "group": "Integrated Terminal colors",
+   "description": "'BrightBlack' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#666666",
+    "light": "#666666",
+    "hcDark": "#7f7f7f",
+    "hcLight": "#666666"
+   }
+  },
+  {
+   "id": "terminal.ansiBrightBlue",
+   "group": "Integrated Terminal colors",
+   "description": "'BrightBlue' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#3b8eea",
+    "light": "#0451a5",
+    "hcDark": "#5c5cff",
+    "hcLight": "#0451a5"
+   }
+  },
+  {
+   "id": "terminal.ansiBrightCyan",
+   "group": "Integrated Terminal colors",
+   "description": "'BrightCyan' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#29b8db",
+    "light": "#0598bc",
+    "hcDark": "#00ffff",
+    "hcLight": "#0598bc"
+   }
+  },
+  {
+   "id": "terminal.ansiBrightGreen",
+   "group": "Integrated Terminal colors",
+   "description": "'BrightGreen' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#23d18b",
+    "light": "#14CE14",
+    "hcDark": "#00ff00",
+    "hcLight": "#00bc00"
+   }
+  },
+  {
+   "id": "terminal.ansiBrightMagenta",
+   "group": "Integrated Terminal colors",
+   "description": "'BrightMagenta' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#d670d6",
+    "light": "#bc05bc",
+    "hcDark": "#ff00ff",
+    "hcLight": "#bc05bc"
+   }
+  },
+  {
+   "id": "terminal.ansiBrightRed",
+   "group": "Integrated Terminal colors",
+   "description": "'BrightRed' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#f14c4c",
+    "light": "#cd3131",
+    "hcDark": "#ff0000",
+    "hcLight": "#cd3131"
+   }
+  },
+  {
+   "id": "terminal.ansiBrightWhite",
+   "group": "Integrated Terminal colors",
+   "description": "'BrightWhite' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#e5e5e5",
+    "light": "#a5a5a5",
+    "hcDark": "#ffffff",
+    "hcLight": "#a5a5a5"
+   }
+  },
+  {
+   "id": "terminal.ansiBrightYellow",
+   "group": "Integrated Terminal colors",
+   "description": "'BrightYellow' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#f5f543",
+    "light": "#b5ba00",
+    "hcDark": "#ffff00",
+    "hcLight": "#b5ba00"
+   }
+  },
+  {
+   "id": "terminal.ansiCyan",
+   "group": "Integrated Terminal colors",
+   "description": "'Cyan' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#11a8cd",
+    "light": "#0598bc",
+    "hcDark": "#00cdcd",
+    "hcLight": "#0598bc"
+   }
+  },
+  {
+   "id": "terminal.ansiGreen",
+   "group": "Integrated Terminal colors",
+   "description": "'Green' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#0DBC79",
+    "light": "#107C10",
+    "hcDark": "#00cd00",
+    "hcLight": "#136C13"
+   }
+  },
+  {
+   "id": "terminal.ansiMagenta",
+   "group": "Integrated Terminal colors",
+   "description": "'Magenta' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#bc3fbc",
+    "light": "#bc05bc",
+    "hcDark": "#cd00cd",
+    "hcLight": "#bc05bc"
+   }
+  },
+  {
+   "id": "terminal.ansiRed",
+   "group": "Integrated Terminal colors",
+   "description": "'Red' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#cd3131",
+    "light": "#cd3131",
+    "hcDark": "#cd0000",
+    "hcLight": "#cd3131"
+   }
+  },
+  {
+   "id": "terminal.ansiWhite",
+   "group": "Integrated Terminal colors",
+   "description": "'White' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#e5e5e5",
+    "light": "#555555",
+    "hcDark": "#e5e5e5",
+    "hcLight": "#555555"
+   }
+  },
+  {
+   "id": "terminal.ansiYellow",
+   "group": "Integrated Terminal colors",
+   "description": "'Yellow' ANSI color in the terminal.",
+   "defaults": {
+    "dark": "#e5e510",
+    "light": "#949800",
+    "hcDark": "#cdcd00",
+    "hcLight": "#949800"
+   }
+  },
+  {
+   "id": "terminal.background",
+   "group": "Integrated Terminal colors",
+   "description": "The background of the Integrated Terminal's viewport.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "terminal.border",
+   "group": "Integrated Terminal colors",
+   "description": "The color of the border that separates split panes within the terminal. This defaults to panel.border.",
+   "defaults": {
+    "dark": "@panel.border",
+    "light": "@panel.border",
+    "hcDark": "@panel.border",
+    "hcLight": "@panel.border"
+   }
+  },
+  {
+   "id": "terminal.dropBackground",
+   "group": "Integrated Terminal colors",
+   "description": "The background color when dragging on top of terminals. The color should have transparency so that the terminal contents can still shine through.",
+   "defaults": {
+    "dark": "@editorGroup.dropBackground",
+    "light": "@editorGroup.dropBackground",
+    "hcDark": "@editorGroup.dropBackground",
+    "hcLight": "@editorGroup.dropBackground"
+   }
+  },
+  {
+   "id": "terminal.findMatchBackground",
+   "group": "Integrated Terminal colors",
+   "description": "Color of the current search match in the terminal. The color must not be opaque so as not to hide underlying terminal content.",
+   "defaults": {
+    "dark": "@editor.findMatchBackground",
+    "light": "@editor.findMatchBackground",
+    "hcDark": null,
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "terminal.findMatchBorder",
+   "group": "Integrated Terminal colors",
+   "description": "Border color of the current search match in the terminal.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "#f38518",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "terminal.findMatchHighlightBackground",
+   "group": "Integrated Terminal colors",
+   "description": "Color of the other search matches in the terminal. The color must not be opaque so as not to hide underlying terminal content.",
+   "defaults": {
+    "dark": "@editor.findMatchHighlightBackground",
+    "light": "@editor.findMatchHighlightBackground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "terminal.findMatchHighlightBorder",
+   "group": "Integrated Terminal colors",
+   "description": "Border color of the other search matches in the terminal.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "#f38518",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "terminal.foreground",
+   "group": "Integrated Terminal colors",
+   "description": "The default foreground color of the Integrated Terminal.",
+   "defaults": {
+    "dark": "#CCCCCC",
+    "light": "#333333",
+    "hcDark": "#FFFFFF",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "terminal.hoverHighlightBackground",
+   "group": "Integrated Terminal colors",
+   "description": "Color of the highlight when hovering a link in the terminal.",
+   "defaults": {
+    "dark": "expr:pi(@editor.hoverHighlightBackground,.5)",
+    "light": "expr:pi(@editor.hoverHighlightBackground,.5)",
+    "hcDark": "expr:pi(@editor.hoverHighlightBackground,.5)",
+    "hcLight": "expr:pi(@editor.hoverHighlightBackground,.5)"
+   }
+  },
+  {
+   "id": "terminal.inactiveSelectionBackground",
+   "group": "Integrated Terminal colors",
+   "description": "The selection background color of the terminal when it does not have focus.",
+   "defaults": {
+    "dark": "expr:pi(@terminal.selectionBackground,.5)",
+    "light": "expr:pi(@terminal.selectionBackground,.5)",
+    "hcDark": "expr:pi(@terminal.selectionBackground,.7)",
+    "hcLight": "expr:pi(@terminal.selectionBackground,.5)"
+   }
+  },
+  {
+   "id": "terminal.initialHintForeground",
+   "group": "Integrated Terminal colors",
+   "description": "Foreground color of the terminal initial hint.",
+   "defaults": {
+    "dark": "#ffffff56",
+    "light": "#0007",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "terminal.selectionBackground",
+   "group": "Integrated Terminal colors",
+   "description": "The selection background color of the terminal.",
+   "defaults": {
+    "dark": "@editor.selectionBackground",
+    "light": "@editor.selectionBackground",
+    "hcDark": "@editor.selectionBackground",
+    "hcLight": "@editor.selectionBackground"
+   }
+  },
+  {
+   "id": "terminal.selectionForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The selection foreground color of the terminal. When this is null the selection foreground will be retained and have the minimum contrast ratio feature applied.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "terminal.tab.activeBorder",
+   "group": "Integrated Terminal colors",
+   "description": "Border on the side of the terminal tab in the panel. This defaults to tab.activeBorder .",
+   "defaults": {
+    "dark": "@tab.activeBorder",
+    "light": "@tab.activeBorder",
+    "hcDark": "@tab.activeBorder",
+    "hcLight": "@tab.activeBorder"
+   }
+  },
+  {
+   "id": "terminalCommandDecoration.defaultBackground",
+   "group": "Integrated Terminal colors",
+   "description": "The default terminal command decoration background color.",
+   "defaults": {
+    "dark": "#ffffff40",
+    "light": "#00000040",
+    "hcDark": "#ffffff80",
+    "hcLight": "#00000040"
+   }
+  },
+  {
+   "id": "terminalCommandDecoration.errorBackground",
+   "group": "Integrated Terminal colors",
+   "description": "The terminal command decoration background color for error commands.",
+   "defaults": {
+    "dark": "#F14C4C",
+    "light": "#E51400",
+    "hcDark": "#F14C4C",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "terminalCommandDecoration.successBackground",
+   "group": "Integrated Terminal colors",
+   "description": "The terminal command decoration background color for successful commands.",
+   "defaults": {
+    "dark": "#1B81A8",
+    "light": "#2090D3",
+    "hcDark": "#1B81A8",
+    "hcLight": "#007100"
+   }
+  },
+  {
+   "id": "terminalCommandGuide.foreground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color of the terminal command guide that appears to the left of a command and its output on hover.",
+   "defaults": {
+    "dark": "expr:pi(@list.inactiveSelectionBackground,1)",
+    "light": "expr:pi(@list.inactiveSelectionBackground,1)",
+    "hcDark": "@panel.border",
+    "hcLight": "@panel.border"
+   }
+  },
+  {
+   "id": "terminalCursor.background",
+   "group": "Integrated Terminal colors",
+   "description": "The background color of the terminal cursor. Allows customizing the color of a character overlapped by a block cursor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "terminalCursor.foreground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color of the terminal cursor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "terminalOverviewRuler.border",
+   "group": "Integrated Terminal colors",
+   "description": "The overview ruler left-side border color.",
+   "defaults": {
+    "dark": "@editorOverviewRuler.border",
+    "light": "@editorOverviewRuler.border",
+    "hcDark": "@editorOverviewRuler.border",
+    "hcLight": "@editorOverviewRuler.border"
+   }
+  },
+  {
+   "id": "terminalOverviewRuler.cursorForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The overview ruler cursor color.",
+   "defaults": {
+    "dark": "#A0A0A0CC",
+    "light": "#A0A0A0CC",
+    "hcDark": "#A0A0A0CC",
+    "hcLight": "#A0A0A0CC"
+   }
+  },
+  {
+   "id": "terminalOverviewRuler.findMatchForeground",
+   "group": "Integrated Terminal colors",
+   "description": "Overview ruler marker color for find matches in the terminal.",
+   "defaults": {
+    "dark": "@editorOverviewRuler.findMatchForeground",
+    "light": "@editorOverviewRuler.findMatchForeground",
+    "hcDark": "#f38518",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "terminalStickyScroll.background",
+   "group": "Integrated Terminal colors",
+   "description": "The background color of the sticky scroll overlay in the terminal.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "terminalStickyScroll.border",
+   "group": "Integrated Terminal colors",
+   "description": "The border of the sticky scroll overlay in the terminal.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "#6fc3df",
+    "hcLight": "#0f4a85"
+   }
+  },
+  {
+   "id": "terminalStickyScrollHover.background",
+   "group": "Integrated Terminal colors",
+   "description": "The background color of the sticky scroll overlay in the terminal when hovered.",
+   "defaults": {
+    "dark": "#2A2D2E",
+    "light": "#F0F0F0",
+    "hcDark": "#E48B39",
+    "hcLight": "#0f4a85"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.aliasForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for an alias icon. These icons will appear in the terminal suggest widget",
+   "defaults": {
+    "dark": "@symbolIcon.methodForeground",
+    "light": "@symbolIcon.methodForeground",
+    "hcDark": "@symbolIcon.methodForeground",
+    "hcLight": "@symbolIcon.methodForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.argumentForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for an argument icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.variableForeground",
+    "light": "@symbolIcon.variableForeground",
+    "hcDark": "@symbolIcon.variableForeground",
+    "hcLight": "@symbolIcon.variableForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.branchForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a branch icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.fileForeground",
+    "light": "@symbolIcon.fileForeground",
+    "hcDark": "@symbolIcon.fileForeground",
+    "hcLight": "@symbolIcon.fileForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.commitForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a commit icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.fileForeground",
+    "light": "@symbolIcon.fileForeground",
+    "hcDark": "@symbolIcon.fileForeground",
+    "hcLight": "@symbolIcon.fileForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.fileForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a file icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.fileForeground",
+    "light": "@symbolIcon.fileForeground",
+    "hcDark": "@symbolIcon.fileForeground",
+    "hcLight": "@symbolIcon.fileForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.flagForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for an flag icon. These icons will appear in the terminal suggest widget",
+   "defaults": {
+    "dark": "@symbolIcon.enumeratorForeground",
+    "light": "@symbolIcon.enumeratorForeground",
+    "hcDark": "@symbolIcon.enumeratorForeground",
+    "hcLight": "@symbolIcon.enumeratorForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.folderForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a folder icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.folderForeground",
+    "light": "@symbolIcon.folderForeground",
+    "hcDark": "@symbolIcon.folderForeground",
+    "hcLight": "@symbolIcon.folderForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.inlineSuggestionForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for an inline suggestion icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.methodForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a method icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.methodForeground",
+    "light": "@symbolIcon.methodForeground",
+    "hcDark": "@symbolIcon.methodForeground",
+    "hcLight": "@symbolIcon.methodForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.optionForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for an option icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.enumeratorForeground",
+    "light": "@symbolIcon.enumeratorForeground",
+    "hcDark": "@symbolIcon.enumeratorForeground",
+    "hcLight": "@symbolIcon.enumeratorForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.optionValueForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for an enum member icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.enumeratorMemberForeground",
+    "light": "@symbolIcon.enumeratorMemberForeground",
+    "hcDark": "@symbolIcon.enumeratorMemberForeground",
+    "hcLight": "@symbolIcon.enumeratorMemberForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.pullRequestDoneForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a completed pull request icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.fileForeground",
+    "light": "@symbolIcon.fileForeground",
+    "hcDark": "@symbolIcon.fileForeground",
+    "hcLight": "@symbolIcon.fileForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.pullRequestForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a pull request icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.fileForeground",
+    "light": "@symbolIcon.fileForeground",
+    "hcDark": "@symbolIcon.fileForeground",
+    "hcLight": "@symbolIcon.fileForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.remoteForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a remote icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.fileForeground",
+    "light": "@symbolIcon.fileForeground",
+    "hcDark": "@symbolIcon.fileForeground",
+    "hcLight": "@symbolIcon.fileForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.stashForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a stash icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.fileForeground",
+    "light": "@symbolIcon.fileForeground",
+    "hcDark": "@symbolIcon.fileForeground",
+    "hcLight": "@symbolIcon.fileForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.symbolText",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a plaintext suggestion. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.fileForeground",
+    "light": "@symbolIcon.fileForeground",
+    "hcDark": "@symbolIcon.fileForeground",
+    "hcLight": "@symbolIcon.fileForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.symbolicLinkFileForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a symbolic link file icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.fileForeground",
+    "light": "@symbolIcon.fileForeground",
+    "hcDark": "@symbolIcon.fileForeground",
+    "hcLight": "@symbolIcon.fileForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.symbolicLinkFolderForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a symbolic link folder icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.folderForeground",
+    "light": "@symbolIcon.folderForeground",
+    "hcDark": "@symbolIcon.folderForeground",
+    "hcLight": "@symbolIcon.folderForeground"
+   }
+  },
+  {
+   "id": "terminalSymbolIcon.tagForeground",
+   "group": "Integrated Terminal colors",
+   "description": "The foreground color for a tag icon. These icons will appear in the terminal suggest widget.",
+   "defaults": {
+    "dark": "@symbolIcon.fileForeground",
+    "light": "@symbolIcon.fileForeground",
+    "hcDark": "@symbolIcon.fileForeground",
+    "hcLight": "@symbolIcon.fileForeground"
+   }
+  },
+  {
+   "id": "testing.coverCountBadgeBackground",
+   "group": "Testing colors",
+   "description": "Background for the badge indicating execution count",
+   "defaults": {
+    "dark": "@badge.background",
+    "light": "@badge.background",
+    "hcDark": "@badge.background",
+    "hcLight": "@badge.background"
+   }
+  },
+  {
+   "id": "testing.coverCountBadgeForeground",
+   "group": "Testing colors",
+   "description": "Foreground for the badge indicating execution count",
+   "defaults": {
+    "dark": "@badge.foreground",
+    "light": "@badge.foreground",
+    "hcDark": "@badge.foreground",
+    "hcLight": "@badge.foreground"
+   }
+  },
+  {
+   "id": "testing.coveredBackground",
+   "group": "Testing colors",
+   "description": "Background color of text that was covered.",
+   "defaults": {
+    "dark": "@diffEditor.insertedTextBackground",
+    "light": "@diffEditor.insertedTextBackground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "testing.coveredBorder",
+   "group": "Testing colors",
+   "description": "Border color of text that was covered.",
+   "defaults": {
+    "dark": "expr:pi(@testing.coveredBackground,.75)",
+    "light": "expr:pi(@testing.coveredBackground,.75)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "testing.coveredGutterBackground",
+   "group": "Testing colors",
+   "description": "Gutter color of regions where code was covered.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.insertedTextBackground,.6)",
+    "light": "expr:pi(@diffEditor.insertedTextBackground,.6)",
+    "hcDark": "@charts.green",
+    "hcLight": "@charts.green"
+   }
+  },
+  {
+   "id": "testing.coveredMinimapBackground",
+   "group": "Testing colors (undocumented)",
+   "description": "Minimap color of regions where code was covered.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.insertedTextBackground,.6)",
+    "light": "expr:pi(@diffEditor.insertedTextBackground,.6)",
+    "hcDark": "@charts.green",
+    "hcLight": "@charts.green"
+   }
+  },
+  {
+   "id": "testing.iconErrored",
+   "group": "Testing colors",
+   "description": "Color for the 'Errored' icon in the test explorer.",
+   "defaults": {
+    "dark": "@list.errorForeground",
+    "light": "@list.errorForeground",
+    "hcDark": "@list.errorForeground",
+    "hcLight": "@list.errorForeground"
+   }
+  },
+  {
+   "id": "testing.iconErrored.retired",
+   "group": "Testing colors",
+   "description": "Retired color for the 'Errored' icon in the test explorer.",
+   "defaults": {
+    "dark": "expr:pi(@testing.iconErrored,.7)",
+    "light": "expr:pi(@testing.iconErrored,.7)",
+    "hcDark": "expr:pi(@testing.iconErrored,.7)",
+    "hcLight": "expr:pi(@testing.iconErrored,.7)"
+   }
+  },
+  {
+   "id": "testing.iconFailed",
+   "group": "Testing colors",
+   "description": "Color for the 'failed' icon in the test explorer.",
+   "defaults": {
+    "dark": "@list.errorForeground",
+    "light": "@list.errorForeground",
+    "hcDark": "@list.errorForeground",
+    "hcLight": "@list.errorForeground"
+   }
+  },
+  {
+   "id": "testing.iconFailed.retired",
+   "group": "Testing colors",
+   "description": "Retired color for the 'failed' icon in the test explorer.",
+   "defaults": {
+    "dark": "expr:pi(@testing.iconFailed,.7)",
+    "light": "expr:pi(@testing.iconFailed,.7)",
+    "hcDark": "expr:pi(@testing.iconFailed,.7)",
+    "hcLight": "expr:pi(@testing.iconFailed,.7)"
+   }
+  },
+  {
+   "id": "testing.iconPassed",
+   "group": "Testing colors",
+   "description": "Color for the 'passed' icon in the test explorer.",
+   "defaults": {
+    "dark": "#73c991",
+    "light": "#73c991",
+    "hcDark": "#73c991",
+    "hcLight": "#007100"
+   }
+  },
+  {
+   "id": "testing.iconPassed.retired",
+   "group": "Testing colors",
+   "description": "Retired color for the 'passed' icon in the test explorer.",
+   "defaults": {
+    "dark": "expr:pi(@testing.iconPassed,.7)",
+    "light": "expr:pi(@testing.iconPassed,.7)",
+    "hcDark": "expr:pi(@testing.iconPassed,.7)",
+    "hcLight": "expr:pi(@testing.iconPassed,.7)"
+   }
+  },
+  {
+   "id": "testing.iconQueued",
+   "group": "Testing colors",
+   "description": "Color for the 'Queued' icon in the test explorer.",
+   "defaults": {
+    "dark": "@list.warningForeground",
+    "light": "@list.warningForeground",
+    "hcDark": "@list.warningForeground",
+    "hcLight": "@list.warningForeground"
+   }
+  },
+  {
+   "id": "testing.iconQueued.retired",
+   "group": "Testing colors",
+   "description": "Retired color for the 'Queued' icon in the test explorer.",
+   "defaults": {
+    "dark": "expr:pi(@testing.iconQueued,.7)",
+    "light": "expr:pi(@testing.iconQueued,.7)",
+    "hcDark": "expr:pi(@testing.iconQueued,.7)",
+    "hcLight": "expr:pi(@testing.iconQueued,.7)"
+   }
+  },
+  {
+   "id": "testing.iconSkipped",
+   "group": "Testing colors",
+   "description": "Color for the 'Skipped' icon in the test explorer.",
+   "defaults": {
+    "dark": "#848484",
+    "light": "#848484",
+    "hcDark": "#848484",
+    "hcLight": "#848484"
+   }
+  },
+  {
+   "id": "testing.iconSkipped.retired",
+   "group": "Testing colors",
+   "description": "Retired color for the 'Skipped' icon in the test explorer.",
+   "defaults": {
+    "dark": "expr:pi(@testing.iconSkipped,.7)",
+    "light": "expr:pi(@testing.iconSkipped,.7)",
+    "hcDark": "expr:pi(@testing.iconSkipped,.7)",
+    "hcLight": "expr:pi(@testing.iconSkipped,.7)"
+   }
+  },
+  {
+   "id": "testing.iconUnset",
+   "group": "Testing colors",
+   "description": "Color for the 'Unset' icon in the test explorer.",
+   "defaults": {
+    "dark": "#848484",
+    "light": "#848484",
+    "hcDark": "#848484",
+    "hcLight": "#848484"
+   }
+  },
+  {
+   "id": "testing.iconUnset.retired",
+   "group": "Testing colors",
+   "description": "Retired color for the 'Unset' icon in the test explorer.",
+   "defaults": {
+    "dark": "expr:pi(@testing.iconUnset,.7)",
+    "light": "expr:pi(@testing.iconUnset,.7)",
+    "hcDark": "expr:pi(@testing.iconUnset,.7)",
+    "hcLight": "expr:pi(@testing.iconUnset,.7)"
+   }
+  },
+  {
+   "id": "testing.message.error.badgeBackground",
+   "group": "Testing colors",
+   "description": "Background color of test error messages shown inline in the editor.",
+   "defaults": {
+    "dark": "@activityErrorBadge.background",
+    "light": "@activityErrorBadge.background",
+    "hcDark": "@activityErrorBadge.background",
+    "hcLight": "@activityErrorBadge.background"
+   }
+  },
+  {
+   "id": "testing.message.error.badgeBorder",
+   "group": "Testing colors",
+   "description": "Border color of test error messages shown inline in the editor.",
+   "defaults": {
+    "dark": "@testing.message.error.badgeBackground",
+    "light": "@testing.message.error.badgeBackground",
+    "hcDark": "@testing.message.error.badgeBackground",
+    "hcLight": "@testing.message.error.badgeBackground"
+   }
+  },
+  {
+   "id": "testing.message.error.badgeForeground",
+   "group": "Testing colors",
+   "description": "Text color of test error messages shown inline in the editor.",
+   "defaults": {
+    "dark": "@activityErrorBadge.foreground",
+    "light": "@activityErrorBadge.foreground",
+    "hcDark": "@activityErrorBadge.foreground",
+    "hcLight": "@activityErrorBadge.foreground"
+   }
+  },
+  {
+   "id": "testing.message.error.lineBackground",
+   "group": "Testing colors",
+   "description": "Margin color beside error messages shown inline in the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "testing.message.info.decorationForeground",
+   "group": "Testing colors",
+   "description": "Text color of test info messages shown inline in the editor.",
+   "defaults": {
+    "dark": "expr:pi(@editor.foreground,.5)",
+    "light": "expr:pi(@editor.foreground,.5)",
+    "hcDark": "expr:pi(@editor.foreground,.5)",
+    "hcLight": "expr:pi(@editor.foreground,.5)"
+   }
+  },
+  {
+   "id": "testing.message.info.lineBackground",
+   "group": "Testing colors",
+   "description": "Margin color beside info messages shown inline in the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "testing.messagePeekBorder",
+   "group": "Testing colors",
+   "description": "Color of the peek view borders and arrow when peeking a logged message.",
+   "defaults": {
+    "dark": "@editorInfo.foreground",
+    "light": "@editorInfo.foreground",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "testing.messagePeekHeaderBackground",
+   "group": "Testing colors",
+   "description": "Color of the peek view borders and arrow when peeking a logged message.",
+   "defaults": {
+    "dark": "expr:pi(@editorInfo.foreground,.1)",
+    "light": "expr:pi(@editorInfo.foreground,.1)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "testing.peekBorder",
+   "group": "Testing colors",
+   "description": "Color of the peek view borders and arrow.",
+   "defaults": {
+    "dark": "@editorError.foreground",
+    "light": "@editorError.foreground",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "testing.peekHeaderBackground",
+   "group": "Testing colors",
+   "description": "Color of the peek view borders and arrow.",
+   "defaults": {
+    "dark": "expr:pi(@editorError.foreground,.1)",
+    "light": "expr:pi(@editorError.foreground,.1)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "testing.runAction",
+   "group": "Testing colors",
+   "description": "Color for 'run' icons in the editor.",
+   "defaults": {
+    "dark": "@testing.iconPassed",
+    "light": "@testing.iconPassed",
+    "hcDark": "@testing.iconPassed",
+    "hcLight": "@testing.iconPassed"
+   }
+  },
+  {
+   "id": "testing.uncoveredBackground",
+   "group": "Testing colors",
+   "description": "Background color of text that was not covered.",
+   "defaults": {
+    "dark": "@diffEditor.removedTextBackground",
+    "light": "@diffEditor.removedTextBackground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "testing.uncoveredBorder",
+   "group": "Testing colors",
+   "description": "Border color of text that was not covered.",
+   "defaults": {
+    "dark": "expr:pi(@testing.uncoveredBackground,.75)",
+    "light": "expr:pi(@testing.uncoveredBackground,.75)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "testing.uncoveredBranchBackground",
+   "group": "Testing colors",
+   "description": "Background of the widget shown for an uncovered branch.",
+   "defaults": {
+    "dark": "expr:bD(pi(@diffEditor.removedTextBackground,2),@editor.background)",
+    "light": "expr:bD(pi(@diffEditor.removedTextBackground,2),@editor.background)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "testing.uncoveredGutterBackground",
+   "group": "Testing colors",
+   "description": "Gutter color of regions where code not covered.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.removedTextBackground,1.5)",
+    "light": "expr:pi(@diffEditor.removedTextBackground,1.5)",
+    "hcDark": "@charts.red",
+    "hcLight": "@charts.red"
+   }
+  },
+  {
+   "id": "testing.uncoveredMinimapBackground",
+   "group": "Testing colors (undocumented)",
+   "description": "Minimap color of regions where code was not covered.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.removedTextBackground,1.5)",
+    "light": "expr:pi(@diffEditor.removedTextBackground,1.5)",
+    "hcDark": "@charts.red",
+    "hcLight": "@charts.red"
+   }
+  }
+ ]
+}

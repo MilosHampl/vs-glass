@@ -1,0 +1,2206 @@
+{
+ "owner": "chrome",
+ "count": 200,
+ "keys": [
+  {
+   "id": "activityBar.activeBackground",
+   "group": "Activity Bar",
+   "description": "Activity Bar optional background color for the active element.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "activityBar.activeBorder",
+   "group": "Activity Bar",
+   "description": "Activity Bar active indicator border color.",
+   "defaults": {
+    "dark": "@activityBar.foreground",
+    "light": "@activityBar.foreground",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "activityBar.activeFocusBorder",
+   "group": "Activity Bar",
+   "description": "Activity bar focus border color for the active item.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "activityBar.background",
+   "group": "Activity Bar",
+   "description": "Activity Bar background color.",
+   "defaults": {
+    "dark": "#333333",
+    "light": "#2C2C2C",
+    "hcDark": "#000000",
+    "hcLight": "#FFFFFF"
+   }
+  },
+  {
+   "id": "activityBar.border",
+   "group": "Activity Bar",
+   "description": "Activity Bar border color with the Side Bar.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "activityBar.dropBorder",
+   "group": "Activity Bar",
+   "description": "Drag and drop feedback color for the activity bar items. The activity bar is showing on the far left or right and allows to switch between views of the side bar",
+   "defaults": {
+    "dark": "@activityBar.foreground",
+    "light": "@activityBar.foreground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "activityBar.foreground",
+   "group": "Activity Bar",
+   "description": "Activity Bar foreground color (for example used for the icons).",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#ffffff",
+    "hcDark": "#ffffff",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "activityBar.inactiveForeground",
+   "group": "Activity Bar",
+   "description": "Activity Bar item foreground color when it is inactive.",
+   "defaults": {
+    "dark": "expr:pi(@activityBar.foreground,.4)",
+    "light": "expr:pi(@activityBar.foreground,.4)",
+    "hcDark": "#ffffff",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "activityBarBadge.background",
+   "group": "Activity Bar",
+   "description": "Activity notification badge background color.",
+   "defaults": {
+    "dark": "#007ACC",
+    "light": "#007ACC",
+    "hcDark": "#000000",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "activityBarBadge.foreground",
+   "group": "Activity Bar",
+   "description": "Activity notification badge foreground color.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#ffffff",
+    "hcDark": "#ffffff",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "activityBarTop.activeBackground",
+   "group": "Activity Bar",
+   "description": "Background color for the active item in the Activity bar when it is on top / bottom. The activity allows to switch between views of the side bar.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "activityBarTop.activeBorder",
+   "group": "Activity Bar",
+   "description": "Focus border color for the active item in the Activity bar when it is on top. The activity allows to switch between views of the side bar.",
+   "defaults": {
+    "dark": "@activityBarTop.foreground",
+    "light": "@activityBarTop.foreground",
+    "hcDark": "@contrastBorder",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "activityBarTop.background",
+   "group": "Activity Bar",
+   "description": "Background color of the activity bar when set to top / bottom.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "activityBarTop.dropBorder",
+   "group": "Activity Bar",
+   "description": "Drag and drop feedback color for the items in the Activity bar when it is on top. The activity allows to switch between views of the side bar.",
+   "defaults": {
+    "dark": "@activityBarTop.foreground",
+    "light": "@activityBarTop.foreground",
+    "hcDark": "@activityBarTop.foreground",
+    "hcLight": "@activityBarTop.foreground"
+   }
+  },
+  {
+   "id": "activityBarTop.foreground",
+   "group": "Activity Bar",
+   "description": "Active foreground color of the item in the Activity bar when it is on top. The activity allows to switch between views of the side bar.",
+   "defaults": {
+    "dark": "#E7E7E7",
+    "light": "#424242",
+    "hcDark": "#ffffff",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "activityBarTop.inactiveForeground",
+   "group": "Activity Bar",
+   "description": "Inactive foreground color of the item in the Activity bar when it is on top. The activity allows to switch between views of the side bar.",
+   "defaults": {
+    "dark": "expr:pi(@activityBarTop.foreground,.6)",
+    "light": "expr:pi(@activityBarTop.foreground,.75)",
+    "hcDark": "#ffffff",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "activityErrorBadge.background",
+   "group": "Activity Bar",
+   "description": "Background color of the error activity badge",
+   "defaults": {
+    "dark": "#F14C4C",
+    "light": "#E51400",
+    "hcDark": null,
+    "hcLight": "#F14C4C"
+   }
+  },
+  {
+   "id": "activityErrorBadge.foreground",
+   "group": "Activity Bar",
+   "description": "Foreground color of the error activity badge",
+   "defaults": {
+    "dark": "expr:#000000.lighten(.2)",
+    "light": "#ffffff",
+    "hcDark": null,
+    "hcLight": "expr:#000000.lighten(.2)"
+   }
+  },
+  {
+   "id": "activityWarningBadge.background",
+   "group": "Activity Bar",
+   "description": "Background color of the warning activity badge",
+   "defaults": {
+    "dark": "#B27C00",
+    "light": "#B27C00",
+    "hcDark": null,
+    "hcLight": "#B27C00"
+   }
+  },
+  {
+   "id": "activityWarningBadge.foreground",
+   "group": "Activity Bar",
+   "description": "Foreground color of the warning activity badge",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#ffffff",
+    "hcDark": "#ffffff",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "arm32ServerDeprecation.banner",
+   "group": "Banner colors (undocumented)",
+   "description": "Support for 32-bit ARM remote servers is deprecated and will be removed in a future release of {0}.",
+   "defaults": {
+    "dark": "$ZHr",
+    "light": "$ZHr",
+    "hcDark": "$ZHr",
+    "hcLight": "$ZHr"
+   }
+  },
+  {
+   "id": "banner.background",
+   "group": "Banner colors",
+   "description": "Banner background color.",
+   "defaults": {
+    "dark": "@list.activeSelectionBackground",
+    "light": "expr:Mu(@list.activeSelectionBackground,.3)",
+    "hcDark": "@list.activeSelectionBackground",
+    "hcLight": "@list.activeSelectionBackground"
+   }
+  },
+  {
+   "id": "banner.foreground",
+   "group": "Banner colors",
+   "description": "Banner foreground color.",
+   "defaults": {
+    "dark": "@list.activeSelectionForeground",
+    "light": "@list.activeSelectionForeground",
+    "hcDark": "@list.activeSelectionForeground",
+    "hcLight": "@list.activeSelectionForeground"
+   }
+  },
+  {
+   "id": "banner.iconForeground",
+   "group": "Banner colors",
+   "description": "Color for the icon in front of the banner text.",
+   "defaults": {
+    "dark": "@editorInfo.foreground",
+    "light": "@editorInfo.foreground",
+    "hcDark": "@editorInfo.foreground",
+    "hcLight": "@editorInfo.foreground"
+   }
+  },
+  {
+   "id": "breadcrumb.activeSelectionForeground",
+   "group": "Breadcrumbs colors",
+   "description": "Color of selected breadcrumb items.",
+   "defaults": {
+    "dark": "expr:Pf(@foreground,.1)",
+    "light": "expr:Mu(@foreground,.2)",
+    "hcDark": "expr:Pf(@foreground,.1)",
+    "hcLight": "expr:Pf(@foreground,.1)"
+   }
+  },
+  {
+   "id": "breadcrumb.background",
+   "group": "Breadcrumbs colors",
+   "description": "Background color of breadcrumb items.",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@editor.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "breadcrumb.focusForeground",
+   "group": "Breadcrumbs colors",
+   "description": "Color of focused breadcrumb items.",
+   "defaults": {
+    "dark": "expr:Pf(@foreground,.1)",
+    "light": "expr:Mu(@foreground,.2)",
+    "hcDark": "expr:Pf(@foreground,.1)",
+    "hcLight": "expr:Pf(@foreground,.1)"
+   }
+  },
+  {
+   "id": "breadcrumb.foreground",
+   "group": "Breadcrumbs colors",
+   "description": "Color of breadcrumb items.",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.8)",
+    "light": "expr:pi(@foreground,.8)",
+    "hcDark": "expr:pi(@foreground,.8)",
+    "hcLight": "expr:pi(@foreground,.8)"
+   }
+  },
+  {
+   "id": "breadcrumbPicker.background",
+   "group": "Breadcrumbs colors",
+   "description": "Background color of breadcrumb item picker.",
+   "defaults": {
+    "dark": "@editorWidget.background",
+    "light": "@editorWidget.background",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "commandCenter.activeBackground",
+   "group": "Command Center colors",
+   "description": "Active background color of the Command Center.",
+   "defaults": {
+    "dark": "expr:#ffffff.transparent(.08)",
+    "light": "expr:#000000.transparent(.08)",
+    "hcDark": "@menubar.selectionBackground",
+    "hcLight": "@menubar.selectionBackground"
+   }
+  },
+  {
+   "id": "commandCenter.activeBorder",
+   "group": "Command Center colors",
+   "description": "Active border color of the Command Center.",
+   "defaults": {
+    "dark": "expr:pi(@titleBar.activeForeground,.3)",
+    "light": "expr:pi(@titleBar.activeForeground,.3)",
+    "hcDark": "@titleBar.activeForeground",
+    "hcLight": "@titleBar.activeForeground"
+   }
+  },
+  {
+   "id": "commandCenter.activeForeground",
+   "group": "Command Center colors",
+   "description": "Active foreground color of the Command Center.",
+   "defaults": {
+    "dark": "@menubar.selectionForeground",
+    "light": "@menubar.selectionForeground",
+    "hcDark": "@menubar.selectionForeground",
+    "hcLight": "@menubar.selectionForeground"
+   }
+  },
+  {
+   "id": "commandCenter.background",
+   "group": "Command Center colors",
+   "description": "Background color of the Command Center.",
+   "defaults": {
+    "dark": "expr:#ffffff.transparent(.05)",
+    "light": "expr:#000000.transparent(.05)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "commandCenter.border",
+   "group": "Command Center colors",
+   "description": "Border color of the Command Center.",
+   "defaults": {
+    "dark": "expr:pi(@titleBar.activeForeground,.2)",
+    "light": "expr:pi(@titleBar.activeForeground,.2)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "commandCenter.debuggingBackground",
+   "group": "Command Center colors",
+   "description": "Command Center background color when a program is being debugged.",
+   "defaults": {
+    "dark": "expr:pi(@statusBar.debuggingBackground,.258)",
+    "light": "expr:pi(@statusBar.debuggingBackground,.258)",
+    "hcDark": "expr:pi(@statusBar.debuggingBackground,.258)",
+    "hcLight": "expr:pi(@statusBar.debuggingBackground,.258)"
+   }
+  },
+  {
+   "id": "commandCenter.foreground",
+   "group": "Command Center colors",
+   "description": "Foreground color of the Command Center.",
+   "defaults": {
+    "dark": "@titleBar.activeForeground",
+    "light": "@titleBar.activeForeground",
+    "hcDark": "@titleBar.activeForeground",
+    "hcLight": "@titleBar.activeForeground"
+   }
+  },
+  {
+   "id": "commandCenter.inactiveBorder",
+   "group": "Command Center colors",
+   "description": "Border color of the Command Center when the window is inactive.",
+   "defaults": {
+    "dark": "expr:pi(@titleBar.inactiveForeground,.25)",
+    "light": "expr:pi(@titleBar.inactiveForeground,.25)",
+    "hcDark": "expr:pi(@titleBar.inactiveForeground,.25)",
+    "hcLight": "expr:pi(@titleBar.inactiveForeground,.25)"
+   }
+  },
+  {
+   "id": "commandCenter.inactiveForeground",
+   "group": "Command Center colors",
+   "description": "Foreground color of the Command Center when the window is inactive.",
+   "defaults": {
+    "dark": "@titleBar.inactiveForeground",
+    "light": "@titleBar.inactiveForeground",
+    "hcDark": "@titleBar.inactiveForeground",
+    "hcLight": "@titleBar.inactiveForeground"
+   }
+  },
+  {
+   "id": "contrastActiveBorder",
+   "group": "Contrast colors",
+   "description": "An extra border around active elements to separate them from others for greater contrast.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "__ref:focusBorder",
+    "hcLight": "__ref:focusBorder"
+   }
+  },
+  {
+   "id": "contrastBorder",
+   "group": "Contrast colors",
+   "description": "An extra border around elements to separate them from others for greater contrast.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "#6FC3DF",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "descriptionForeground",
+   "group": "Base colors",
+   "description": "Foreground color for description text providing additional information, for example for a label.",
+   "defaults": {
+    "dark": "__ref:pi(foreground,.7)",
+    "light": "#717171",
+    "hcDark": "__ref:pi(foreground,.7)",
+    "hcLight": "__ref:pi(foreground,.7)"
+   }
+  },
+  {
+   "id": "disabledForeground",
+   "group": "Base colors",
+   "description": "Overall foreground for disabled elements. This color is only used if not overridden by a component.",
+   "defaults": {
+    "dark": "#CCCCCC80",
+    "light": "#61616180",
+    "hcDark": "#A5A5A5",
+    "hcLight": "#7F7F7F"
+   }
+  },
+  {
+   "id": "editorGroup.border",
+   "group": "Editor Groups & Tabs",
+   "description": "Color to separate multiple editor groups from each other.",
+   "defaults": {
+    "dark": "#444444",
+    "light": "#E7E7E7",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorGroup.dropBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Background color when dragging editors around.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#53595D\").transparent(.5)",
+    "light": "expr:qe.fromHex(\"#2677CB\").transparent(.18)",
+    "hcDark": null,
+    "hcLight": "expr:qe.fromHex(\"#0F4A85\").transparent(.5)"
+   }
+  },
+  {
+   "id": "editorGroup.dropIntoPromptBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Background color of text shown over editors when dragging files. This text informs the user that they can hold shift to drop into the editor.",
+   "defaults": {
+    "dark": "@editorWidget.background",
+    "light": "@editorWidget.background",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "editorGroup.dropIntoPromptBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border color of text shown over editors when dragging files. This text informs the user that they can hold shift to drop into the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorGroup.dropIntoPromptForeground",
+   "group": "Editor Groups & Tabs",
+   "description": "Foreground color of text shown over editors when dragging files. This text informs the user that they can hold shift to drop into the editor.",
+   "defaults": {
+    "dark": "@editorWidget.foreground",
+    "light": "@editorWidget.foreground",
+    "hcDark": "@editorWidget.foreground",
+    "hcLight": "@editorWidget.foreground"
+   }
+  },
+  {
+   "id": "editorGroup.emptyBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Background color of an empty editor group.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorGroup.focusedEmptyBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border color of an empty editor group that is focused.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "editorGroupHeader.border",
+   "group": "Editor Groups & Tabs",
+   "description": "Border color between editor group header and editor (below breadcrumbs if enabled).",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorGroupHeader.noTabsBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Background color of the editor group title header when using single Tab (set \"workbench.editor.showTabs\": \"single\" ).",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@editor.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "editorGroupHeader.tabsBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Background color of the Tabs container.",
+   "defaults": {
+    "dark": "#252526",
+    "light": "#F3F3F3",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorGroupHeader.tabsBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border color below the editor tabs control when tabs are enabled.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorPane.background",
+   "group": "Editor Groups & Tabs",
+   "description": "Background color of the editor pane visible on the left and right side of the centered editor layout.",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@editor.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "errorForeground",
+   "group": "Base colors",
+   "description": "Overall foreground color for error messages (this color is only used if not overridden by a component).",
+   "defaults": {
+    "dark": "#F48771",
+    "light": "#A1260D",
+    "hcDark": "#F48771",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "focusBorder",
+   "group": "Base colors",
+   "description": "Overall border color for focused elements. This color is only used if not overridden by a component.",
+   "defaults": {
+    "dark": "#007FD4",
+    "light": "#0090F1",
+    "hcDark": "#F38518",
+    "hcLight": "#006BBD"
+   }
+  },
+  {
+   "id": "foreground",
+   "group": "Base colors",
+   "description": "Overall foreground color. This color is only used if not overridden by a component.",
+   "defaults": {
+    "dark": "#CCCCCC",
+    "light": "#616161",
+    "hcDark": "#FFFFFF",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "icon.foreground",
+   "group": "Base colors",
+   "description": "The default color for icons in the workbench.",
+   "defaults": {
+    "dark": "#C5C5C5",
+    "light": "#424242",
+    "hcDark": "#FFFFFF",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "modernActivityBar.activeBackground",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Background color of active Activity bar items in the default side position when the modern UI is enabled.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "modernActivityBar.activeForeground",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Foreground color of active Activity bar items in the default side position when the modern UI is enabled.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "modernActivityBar.background",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Background color of the Activity bar in the default side position when the modern UI is enabled.",
+   "defaults": {
+    "dark": "@activityBar.background",
+    "light": "@activityBar.background",
+    "hcDark": "@activityBar.background",
+    "hcLight": "@activityBar.background"
+   }
+  },
+  {
+   "id": "modernActivityBar.border",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Border color of the Activity bar in the default side position when the modern UI is enabled.",
+   "defaults": {
+    "dark": "@surface.border",
+    "light": "@surface.border",
+    "hcDark": "@surface.border",
+    "hcLight": "@surface.border"
+   }
+  },
+  {
+   "id": "modernActivityBar.hoverBackground",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Background color of Activity bar items in the default side position when hovering and the modern UI is enabled.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "modernActivityBar.hoverForeground",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Foreground color of Activity bar items in the default side position when hovering and the modern UI is enabled.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "modernActivityBar.inactiveBackground",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Background color of the Activity bar in an inactive window when it is in the default side position and the modern UI is enabled.",
+   "defaults": {
+    "dark": "@modernActivityBar.background",
+    "light": "@modernActivityBar.background",
+    "hcDark": "@modernActivityBar.background",
+    "hcLight": "@modernActivityBar.background"
+   }
+  },
+  {
+   "id": "modernActivityBarItem.activeBackground",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Background color of active Activity bar items in the default side position when the modern UI is enabled.",
+   "defaults": {
+    "dark": "expr:hA(@modernActivityBar.activeBackground,@modernTab.activeBackground)",
+    "light": "expr:hA(@modernActivityBar.activeBackground,@modernTab.activeBackground)",
+    "hcDark": "expr:hA(@modernActivityBar.activeBackground,@modernTab.activeBackground)",
+    "hcLight": "expr:hA(@modernActivityBar.activeBackground,@modernTab.activeBackground)"
+   }
+  },
+  {
+   "id": "modernActivityBarItem.activeForeground",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Foreground color of active Activity bar items in the default side position when the modern UI is enabled.",
+   "defaults": {
+    "dark": "expr:hA(@modernActivityBar.activeForeground,@modernTab.activeForeground)",
+    "light": "expr:hA(@modernActivityBar.activeForeground,@modernTab.activeForeground)",
+    "hcDark": "expr:hA(@modernActivityBar.activeForeground,@modernTab.activeForeground)",
+    "hcLight": "expr:hA(@modernActivityBar.activeForeground,@modernTab.activeForeground)"
+   }
+  },
+  {
+   "id": "modernActivityBarItem.hoverBackground",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Background color of Activity bar items in the default side position when hovering and the modern UI is enabled.",
+   "defaults": {
+    "dark": "expr:hA(@modernActivityBar.hoverBackground,@modernTab.hoverBackground)",
+    "light": "expr:hA(@modernActivityBar.hoverBackground,@modernTab.hoverBackground)",
+    "hcDark": "expr:hA(@modernActivityBar.hoverBackground,@modernTab.hoverBackground)",
+    "hcLight": "expr:hA(@modernActivityBar.hoverBackground,@modernTab.hoverBackground)"
+   }
+  },
+  {
+   "id": "modernActivityBarItem.hoverForeground",
+   "group": "Activity Bar colors (modern redesign, undocumented)",
+   "description": "Foreground color of Activity bar items in the default side position when hovering and the modern UI is enabled.",
+   "defaults": {
+    "dark": "expr:hA(@modernActivityBar.hoverForeground,@modernTab.hoverForeground)",
+    "light": "expr:hA(@modernActivityBar.hoverForeground,@modernTab.hoverForeground)",
+    "hcDark": "expr:hA(@modernActivityBar.hoverForeground,@modernTab.hoverForeground)",
+    "hcLight": "expr:hA(@modernActivityBar.hoverForeground,@modernTab.hoverForeground)"
+   }
+  },
+  {
+   "id": "modernEditorTab.activeActionBackground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Opaque background color of tab actions on active editor tabs when the modern tab style is enabled.",
+   "defaults": {
+    "dark": "expr:bD(@modernEditorTab.activeBackground,@editor.background)",
+    "light": "expr:bD(@modernEditorTab.activeBackground,@editor.background)",
+    "hcDark": "expr:bD(@modernEditorTab.activeBackground,@editor.background)",
+    "hcLight": "expr:bD(@modernEditorTab.activeBackground,@editor.background)"
+   }
+  },
+  {
+   "id": "modernEditorTab.activeBackground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Background color of active editor tabs when the modern tab style is enabled.",
+   "defaults": {
+    "dark": "@modernTab.activeBackground",
+    "light": "@modernTab.activeBackground",
+    "hcDark": "@modernTab.activeBackground",
+    "hcLight": "@modernTab.activeBackground"
+   }
+  },
+  {
+   "id": "modernEditorTab.activeForeground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Foreground color of active editor tabs when the modern tab style is enabled.",
+   "defaults": {
+    "dark": "@modernTab.activeForeground",
+    "light": "@modernTab.activeForeground",
+    "hcDark": "@modernTab.activeForeground",
+    "hcLight": "@modernTab.activeForeground"
+   }
+  },
+  {
+   "id": "modernEditorTab.activeHoverActionBackground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Opaque background color of tab actions on active editor tabs when hovering and the modern tab style is enabled.",
+   "defaults": {
+    "dark": "expr:bD(@modernEditorTab.activeHoverBackground,@editor.background)",
+    "light": "expr:bD(@modernEditorTab.activeHoverBackground,@editor.background)",
+    "hcDark": "expr:bD(@modernEditorTab.activeHoverBackground,@editor.background)",
+    "hcLight": "expr:bD(@modernEditorTab.activeHoverBackground,@editor.background)"
+   }
+  },
+  {
+   "id": "modernEditorTab.activeHoverBackground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Background color of active editor tabs when hovering and the modern tab style is enabled.",
+   "defaults": {
+    "dark": "@modernEditorTab.hoverBackground",
+    "light": "@modernEditorTab.hoverBackground",
+    "hcDark": "@modernEditorTab.hoverBackground",
+    "hcLight": "@modernEditorTab.hoverBackground"
+   }
+  },
+  {
+   "id": "modernEditorTab.hoverActionBackground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Opaque background color of tab actions on editor tabs when hovering and the modern tab style is enabled.",
+   "defaults": {
+    "dark": "expr:bD(@modernEditorTab.hoverBackground,@editor.background)",
+    "light": "expr:bD(@modernEditorTab.hoverBackground,@editor.background)",
+    "hcDark": "expr:bD(@modernEditorTab.hoverBackground,@editor.background)",
+    "hcLight": "expr:bD(@modernEditorTab.hoverBackground,@editor.background)"
+   }
+  },
+  {
+   "id": "modernEditorTab.hoverBackground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Background color of editor tabs when hovering and the modern tab style is enabled.",
+   "defaults": {
+    "dark": "@modernTab.hoverBackground",
+    "light": "@modernTab.hoverBackground",
+    "hcDark": "@modernTab.hoverBackground",
+    "hcLight": "@modernTab.hoverBackground"
+   }
+  },
+  {
+   "id": "modernEditorTab.hoverForeground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Foreground color of editor tabs when hovering and the modern tab style is enabled.",
+   "defaults": {
+    "dark": "@modernTab.hoverForeground",
+    "light": "@modernTab.hoverForeground",
+    "hcDark": "@modernTab.hoverForeground",
+    "hcLight": "@modernTab.hoverForeground"
+   }
+  },
+  {
+   "id": "modernEditorTab.inactiveBackground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Background color of inactive editor tabs when the modern tab style is enabled.",
+   "defaults": {
+    "dark": "transparent",
+    "light": "transparent",
+    "hcDark": "transparent",
+    "hcLight": "transparent"
+   }
+  },
+  {
+   "id": "modernEditorTab.selectedActionBackground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Opaque background color of tab actions on selected editor tabs when the modern tab style is enabled.",
+   "defaults": {
+    "dark": "expr:bD(@tab.selectedBackground,@editor.background)",
+    "light": "expr:bD(@tab.selectedBackground,@editor.background)",
+    "hcDark": "expr:bD(@tab.selectedBackground,@editor.background)",
+    "hcLight": "expr:bD(@tab.selectedBackground,@editor.background)"
+   }
+  },
+  {
+   "id": "modernTab.activeBackground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Background color of active tabs when the modern tab style is enabled.",
+   "defaults": {
+    "dark": "@list.inactiveSelectionBackground",
+    "light": "@list.inactiveSelectionBackground",
+    "hcDark": "@list.inactiveSelectionBackground",
+    "hcLight": "@list.inactiveSelectionBackground"
+   }
+  },
+  {
+   "id": "modernTab.activeForeground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Foreground color of active tabs when the modern tab style is enabled.",
+   "defaults": {
+    "dark": "expr:hA(@list.inactiveSelectionForeground,@foreground)",
+    "light": "expr:hA(@list.inactiveSelectionForeground,@foreground)",
+    "hcDark": "expr:hA(@list.inactiveSelectionForeground,@foreground)",
+    "hcLight": "expr:hA(@list.inactiveSelectionForeground,@foreground)"
+   }
+  },
+  {
+   "id": "modernTab.hoverBackground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Background color of tabs when hovering and the modern tab style is enabled.",
+   "defaults": {
+    "dark": "@list.hoverBackground",
+    "light": "@list.hoverBackground",
+    "hcDark": "@list.hoverBackground",
+    "hcLight": "@list.hoverBackground"
+   }
+  },
+  {
+   "id": "modernTab.hoverForeground",
+   "group": "Editor Groups & Tabs colors (modern redesign, undocumented)",
+   "description": "Foreground color of tabs when hovering and the modern tab style is enabled.",
+   "defaults": {
+    "dark": "expr:hA(@list.hoverForeground,@foreground)",
+    "light": "expr:hA(@list.hoverForeground,@foreground)",
+    "hcDark": "expr:hA(@list.hoverForeground,@foreground)",
+    "hcLight": "expr:hA(@list.hoverForeground,@foreground)"
+   }
+  },
+  {
+   "id": "outputView.background",
+   "group": "Panel colors",
+   "description": "Output view background color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "outputViewStickyScroll.background",
+   "group": "Panel colors",
+   "description": "Output view sticky scroll background color.",
+   "defaults": {
+    "dark": "@outputView.background",
+    "light": "@outputView.background",
+    "hcDark": "@outputView.background",
+    "hcLight": "@outputView.background"
+   }
+  },
+  {
+   "id": "panel.background",
+   "group": "Panel colors",
+   "description": "Panel background color.",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@editor.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "panel.border",
+   "group": "Panel colors",
+   "description": "Panel border color to separate the panel from the editor.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#808080\").transparent(.35)",
+    "light": "expr:qe.fromHex(\"#808080\").transparent(.35)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "panel.dropBorder",
+   "group": "Panel colors",
+   "description": "Drag and drop feedback color for the panel titles. Panels are shown below the editor area and contain views like output and integrated terminal.",
+   "defaults": {
+    "dark": "@panelTitle.activeForeground",
+    "light": "@panelTitle.activeForeground",
+    "hcDark": "@panelTitle.activeForeground",
+    "hcLight": "@panelTitle.activeForeground"
+   }
+  },
+  {
+   "id": "panelInput.border",
+   "group": "Panel colors",
+   "description": "Input box border for inputs in the panel.",
+   "defaults": {
+    "dark": "@input.border",
+    "light": "expr:qe.fromHex(\"#ddd\")",
+    "hcDark": "@input.border",
+    "hcLight": "@input.border"
+   }
+  },
+  {
+   "id": "panelSection.border",
+   "group": "Panel colors",
+   "description": "Panel section border color used when multiple views are stacked horizontally in the panel. Panels are shown below the editor area and contain views like output ",
+   "defaults": {
+    "dark": "@panel.border",
+    "light": "@panel.border",
+    "hcDark": "@panel.border",
+    "hcLight": "@panel.border"
+   }
+  },
+  {
+   "id": "panelSection.dropBackground",
+   "group": "Panel colors",
+   "description": "Drag and drop feedback color for the panel sections. The color should have transparency so that the panel sections can still shine through. Panels are shown bel",
+   "defaults": {
+    "dark": "@editorGroup.dropBackground",
+    "light": "@editorGroup.dropBackground",
+    "hcDark": "@editorGroup.dropBackground",
+    "hcLight": "@editorGroup.dropBackground"
+   }
+  },
+  {
+   "id": "panelSectionHeader.background",
+   "group": "Panel colors",
+   "description": "Panel section header background color. Panels are shown below the editor area and contain views like output and integrated terminal.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#808080\").transparent(.2)",
+    "light": "expr:qe.fromHex(\"#808080\").transparent(.2)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "panelSectionHeader.border",
+   "group": "Panel colors",
+   "description": "Panel section header border color used when multiple views are stacked vertically in the panel. Panels are shown below the editor area and contain views like ou",
+   "defaults": {
+    "dark": "@contrastBorder",
+    "light": "@contrastBorder",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "panelSectionHeader.foreground",
+   "group": "Panel colors",
+   "description": "Panel section header foreground color. Panels are shown below the editor area and contain views like output and integrated terminal.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "panelStickyScroll.background",
+   "group": "Panel colors",
+   "description": "Background color of sticky scroll in the panel.",
+   "defaults": {
+    "dark": "@panel.background",
+    "light": "@panel.background",
+    "hcDark": "@panel.background",
+    "hcLight": "@panel.background"
+   }
+  },
+  {
+   "id": "panelStickyScroll.border",
+   "group": "Panel colors",
+   "description": "Border color of sticky scroll in the panel.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "panelStickyScroll.shadow",
+   "group": "Panel colors",
+   "description": "Shadow color of sticky scroll in the panel.",
+   "defaults": {
+    "dark": "@scrollbar.shadow",
+    "light": "@scrollbar.shadow",
+    "hcDark": "@scrollbar.shadow",
+    "hcLight": "@scrollbar.shadow"
+   }
+  },
+  {
+   "id": "panelTitle.activeBorder",
+   "group": "Panel colors",
+   "description": "Border color for the active panel title.",
+   "defaults": {
+    "dark": "@panelTitle.activeForeground",
+    "light": "@panelTitle.activeForeground",
+    "hcDark": "@contrastBorder",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "panelTitle.activeForeground",
+   "group": "Panel colors",
+   "description": "Title color for the active panel.",
+   "defaults": {
+    "dark": "#E7E7E7",
+    "light": "#424242",
+    "hcDark": "#ffffff",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "panelTitle.border",
+   "group": "Panel colors",
+   "description": "Panel title border color on the bottom, separating the title from the views. Panels are shown below the editor area and contain views like output and integrated",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@panel.border",
+    "hcLight": "@panel.border"
+   }
+  },
+  {
+   "id": "panelTitle.inactiveForeground",
+   "group": "Panel colors",
+   "description": "Title color for the inactive panel.",
+   "defaults": {
+    "dark": "expr:pi(@panelTitle.activeForeground,.6)",
+    "light": "expr:pi(@panelTitle.activeForeground,.75)",
+    "hcDark": "#ffffff",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "panelTitleBadge.background",
+   "group": "Panel colors",
+   "description": "Panel title badge background color. Panels are shown below the editor area and contain views like output and integrated terminal.",
+   "defaults": {
+    "dark": "@activityBarBadge.background",
+    "light": "@activityBarBadge.background",
+    "hcDark": "@activityBarBadge.background",
+    "hcLight": "@activityBarBadge.background"
+   }
+  },
+  {
+   "id": "panelTitleBadge.foreground",
+   "group": "Panel colors",
+   "description": "Panel title badge foreground color. Panels are shown below the editor area and contain views like output and integrated terminal.",
+   "defaults": {
+    "dark": "@activityBarBadge.foreground",
+    "light": "@activityBarBadge.foreground",
+    "hcDark": "@activityBarBadge.foreground",
+    "hcLight": "@activityBarBadge.foreground"
+   }
+  },
+  {
+   "id": "profileBadge.background",
+   "group": "Profiles",
+   "description": "Profile badge background color. The profile badge shows on top of the settings gear icon in the activity bar.",
+   "defaults": {
+    "dark": "#4D4D4D",
+    "light": "#C4C4C4",
+    "hcDark": "#ffffff",
+    "hcLight": "#000000"
+   }
+  },
+  {
+   "id": "profileBadge.foreground",
+   "group": "Profiles",
+   "description": "Profile badge foreground color. The profile badge shows on top of the settings gear icon in the activity bar.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#333333",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "profiles.sashBorder",
+   "group": "Profiles",
+   "description": "The color of the Profiles editor splitview sash border.",
+   "defaults": {
+    "dark": "@panel.border",
+    "light": "@panel.border",
+    "hcDark": "@panel.border",
+    "hcLight": "@panel.border"
+   }
+  },
+  {
+   "id": "sash.hoverBorder",
+   "group": "Base colors",
+   "description": "The hover border color for draggable sashes.",
+   "defaults": {
+    "dark": "@focusBorder",
+    "light": "@focusBorder",
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "selection.background",
+   "group": "Base colors",
+   "description": "Background color of text selections in the workbench (for input fields or text areas, does not apply to selections within the editor and the terminal).",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "sideBar.background",
+   "group": "Side Bar",
+   "description": "Side Bar background color.",
+   "defaults": {
+    "dark": "#252526",
+    "light": "#F3F3F3",
+    "hcDark": "#000000",
+    "hcLight": "#FFFFFF"
+   }
+  },
+  {
+   "id": "sideBar.border",
+   "group": "Side Bar",
+   "description": "Side Bar border color on the side separating the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "sideBar.dropBackground",
+   "group": "Side Bar",
+   "description": "Drag and drop feedback color for the side bar sections. The color should have transparency so that the side bar sections can still shine through.",
+   "defaults": {
+    "dark": "@editorGroup.dropBackground",
+    "light": "@editorGroup.dropBackground",
+    "hcDark": "@editorGroup.dropBackground",
+    "hcLight": "@editorGroup.dropBackground"
+   }
+  },
+  {
+   "id": "sideBar.foreground",
+   "group": "Side Bar",
+   "description": "Side Bar foreground color. The Side Bar is the container for views like Explorer and Search.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "sideBarActivityBarTop.border",
+   "group": "Side Bar",
+   "description": "Border color between the activity bar at the top/bottom and the views.",
+   "defaults": {
+    "dark": "@sideBarSectionHeader.border",
+    "light": "@sideBarSectionHeader.border",
+    "hcDark": "@sideBarSectionHeader.border",
+    "hcLight": "@sideBarSectionHeader.border"
+   }
+  },
+  {
+   "id": "sideBarSectionHeader.background",
+   "group": "Side Bar",
+   "description": "Side Bar section header background color.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#808080\").transparent(.2)",
+    "light": "expr:qe.fromHex(\"#808080\").transparent(.2)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "sideBarSectionHeader.border",
+   "group": "Side Bar",
+   "description": "Side bar section header border color.",
+   "defaults": {
+    "dark": "@contrastBorder",
+    "light": "@contrastBorder",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "sideBarSectionHeader.foreground",
+   "group": "Side Bar",
+   "description": "Side Bar section header foreground color.",
+   "defaults": {
+    "dark": "@sideBar.foreground",
+    "light": "@sideBar.foreground",
+    "hcDark": "@sideBar.foreground",
+    "hcLight": "@sideBar.foreground"
+   }
+  },
+  {
+   "id": "sideBarStickyScroll.background",
+   "group": "Side Bar",
+   "description": "Background color of sticky scroll in the side bar.",
+   "defaults": {
+    "dark": "@sideBar.background",
+    "light": "@sideBar.background",
+    "hcDark": "@sideBar.background",
+    "hcLight": "@sideBar.background"
+   }
+  },
+  {
+   "id": "sideBarStickyScroll.border",
+   "group": "Side Bar",
+   "description": "Border color of sticky scroll in the side bar.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "sideBarStickyScroll.shadow",
+   "group": "Side Bar",
+   "description": "Shadow color of sticky scroll in the side bar.",
+   "defaults": {
+    "dark": "@scrollbar.shadow",
+    "light": "@scrollbar.shadow",
+    "hcDark": "@scrollbar.shadow",
+    "hcLight": "@scrollbar.shadow"
+   }
+  },
+  {
+   "id": "sideBarTitle.background",
+   "group": "Side Bar",
+   "description": "Side bar title background color. The side bar is the container for views like explorer and search.",
+   "defaults": {
+    "dark": "@sideBar.background",
+    "light": "@sideBar.background",
+    "hcDark": "@sideBar.background",
+    "hcLight": "@sideBar.background"
+   }
+  },
+  {
+   "id": "sideBarTitle.border",
+   "group": "Side Bar",
+   "description": "Side bar title border color on the bottom, separating the title from the views. The side bar is the container for views like explorer and search.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@sideBar.border",
+    "hcLight": "@sideBar.border"
+   }
+  },
+  {
+   "id": "sideBarTitle.foreground",
+   "group": "Side Bar",
+   "description": "Side Bar title foreground color.",
+   "defaults": {
+    "dark": "@sideBar.foreground",
+    "light": "@sideBar.foreground",
+    "hcDark": "@sideBar.foreground",
+    "hcLight": "@sideBar.foreground"
+   }
+  },
+  {
+   "id": "sideBySideEditor.horizontalBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Color to separate two editors from each other when shown side by side in an editor group from top to bottom.",
+   "defaults": {
+    "dark": "@editorGroup.border",
+    "light": "@editorGroup.border",
+    "hcDark": "@editorGroup.border",
+    "hcLight": "@editorGroup.border"
+   }
+  },
+  {
+   "id": "sideBySideEditor.verticalBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Color to separate two editors from each other when shown side by side in an editor group from left to right.",
+   "defaults": {
+    "dark": "@editorGroup.border",
+    "light": "@editorGroup.border",
+    "hcDark": "@editorGroup.border",
+    "hcLight": "@editorGroup.border"
+   }
+  },
+  {
+   "id": "statusBar.background",
+   "group": "Status Bar colors",
+   "description": "Standard Status Bar background color.",
+   "defaults": {
+    "dark": "#007ACC",
+    "light": "#007ACC",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "statusBar.border",
+   "group": "Status Bar colors",
+   "description": "Status Bar border color separating the Status Bar and editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "statusBar.debuggingBackground",
+   "group": "Status Bar colors",
+   "description": "Status Bar background color when a program is being debugged.",
+   "defaults": {
+    "dark": "#CC6633",
+    "light": "#CC6633",
+    "hcDark": "#BA592C",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "statusBar.debuggingBorder",
+   "group": "Status Bar colors",
+   "description": "Status Bar border color separating the Status Bar and editor when a program is being debugged.",
+   "defaults": {
+    "dark": "@statusBar.border",
+    "light": "@statusBar.border",
+    "hcDark": "@statusBar.border",
+    "hcLight": "@statusBar.border"
+   }
+  },
+  {
+   "id": "statusBar.debuggingForeground",
+   "group": "Status Bar colors",
+   "description": "Status Bar foreground color when a program is being debugged.",
+   "defaults": {
+    "dark": "@statusBar.foreground",
+    "light": "@statusBar.foreground",
+    "hcDark": "@statusBar.foreground",
+    "hcLight": "#FFFFFF"
+   }
+  },
+  {
+   "id": "statusBar.focusBorder",
+   "group": "Status Bar colors",
+   "description": "Status bar border color when focused on keyboard navigation. The status bar is shown in the bottom of the window.",
+   "defaults": {
+    "dark": "@statusBar.foreground",
+    "light": "@statusBar.foreground",
+    "hcDark": null,
+    "hcLight": "@statusBar.foreground"
+   }
+  },
+  {
+   "id": "statusBar.foreground",
+   "group": "Status Bar colors",
+   "description": "Status Bar foreground color.",
+   "defaults": {
+    "dark": "#FFFFFF",
+    "light": "#FFFFFF",
+    "hcDark": "#FFFFFF",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "statusBar.noFolderBackground",
+   "group": "Status Bar colors",
+   "description": "Status Bar background color when no folder is opened.",
+   "defaults": {
+    "dark": "#68217A",
+    "light": "#68217A",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "statusBar.noFolderBorder",
+   "group": "Status Bar colors",
+   "description": "Status Bar border color separating the Status Bar and editor when no folder is opened.",
+   "defaults": {
+    "dark": "@statusBar.border",
+    "light": "@statusBar.border",
+    "hcDark": "@statusBar.border",
+    "hcLight": "@statusBar.border"
+   }
+  },
+  {
+   "id": "statusBar.noFolderForeground",
+   "group": "Status Bar colors",
+   "description": "Status Bar foreground color when no folder is opened.",
+   "defaults": {
+    "dark": "@statusBar.foreground",
+    "light": "@statusBar.foreground",
+    "hcDark": "@statusBar.foreground",
+    "hcLight": "@statusBar.foreground"
+   }
+  },
+  {
+   "id": "statusBarItem.activeBackground",
+   "group": "Status Bar colors",
+   "description": "Status Bar item background color when clicking.",
+   "defaults": {
+    "dark": "expr:#ffffff.transparent(.18)",
+    "light": "expr:#ffffff.transparent(.18)",
+    "hcDark": "expr:#ffffff.transparent(.18)",
+    "hcLight": "expr:#000000.transparent(.18)"
+   }
+  },
+  {
+   "id": "statusBarItem.compactHoverBackground",
+   "group": "Status Bar colors",
+   "description": "Status bar item background color when hovering an item that contains two hovers. The status bar is shown in the bottom of the window.",
+   "defaults": {
+    "dark": "expr:#ffffff.transparent(.12)",
+    "light": "expr:#000000.transparent(.12)",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "statusBarItem.errorBackground",
+   "group": "Status Bar colors",
+   "description": "Status bar error items background color. Error items stand out from other status bar entries to indicate error conditions.",
+   "defaults": {
+    "dark": "expr:Mu(@errorForeground,.4)",
+    "light": "expr:Mu(@errorForeground,.4)",
+    "hcDark": null,
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "statusBarItem.errorForeground",
+   "group": "Status Bar colors",
+   "description": "Status bar error items foreground color. Error items stand out from other status bar entries to indicate error conditions.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#ffffff",
+    "hcDark": "#ffffff",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "statusBarItem.errorHoverBackground",
+   "group": "Status Bar colors",
+   "description": "Status bar error items background color when hovering. Error items stand out from other status bar entries to indicate error conditions. The status bar is shown",
+   "defaults": {
+    "dark": "@statusBarItem.hoverBackground",
+    "light": "@statusBarItem.hoverBackground",
+    "hcDark": "@statusBarItem.hoverBackground",
+    "hcLight": "@statusBarItem.hoverBackground"
+   }
+  },
+  {
+   "id": "statusBarItem.errorHoverForeground",
+   "group": "Status Bar colors",
+   "description": "Status bar error items foreground color when hovering. Error items stand out from other status bar entries to indicate error conditions. The status bar is shown",
+   "defaults": {
+    "dark": "@statusBarItem.hoverForeground",
+    "light": "@statusBarItem.hoverForeground",
+    "hcDark": "@statusBarItem.hoverForeground",
+    "hcLight": "@statusBarItem.hoverForeground"
+   }
+  },
+  {
+   "id": "statusBarItem.focusBorder",
+   "group": "Status Bar colors",
+   "description": "Status bar item border color when focused on keyboard navigation. The status bar is shown in the bottom of the window.",
+   "defaults": {
+    "dark": "@statusBar.foreground",
+    "light": "@statusBar.foreground",
+    "hcDark": null,
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "statusBarItem.hoverBackground",
+   "group": "Status Bar colors",
+   "description": "Status Bar item background color when hovering.",
+   "defaults": {
+    "dark": "expr:#ffffff.transparent(.12)",
+    "light": "expr:#000000.transparent(.12)",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "statusBarItem.hoverForeground",
+   "group": "Status Bar colors",
+   "description": "Status bar item foreground color when hovering. The status bar is shown in the bottom of the window.",
+   "defaults": {
+    "dark": "@statusBar.foreground",
+    "light": "@statusBar.foreground",
+    "hcDark": "@statusBar.foreground",
+    "hcLight": "@statusBar.foreground"
+   }
+  },
+  {
+   "id": "statusBarItem.offlineBackground",
+   "group": "Status Bar colors",
+   "description": "Status bar item background color when the workbench is offline.",
+   "defaults": {
+    "dark": "#6c1717",
+    "light": "#6c1717",
+    "hcDark": "#6c1717",
+    "hcLight": "#6c1717"
+   }
+  },
+  {
+   "id": "statusBarItem.offlineForeground",
+   "group": "Status Bar colors",
+   "description": "Status bar item foreground color when the workbench is offline.",
+   "defaults": {
+    "dark": "@statusBarItem.remoteForeground",
+    "light": "@statusBarItem.remoteForeground",
+    "hcDark": "@statusBarItem.remoteForeground",
+    "hcLight": "@statusBarItem.remoteForeground"
+   }
+  },
+  {
+   "id": "statusBarItem.offlineHoverBackground",
+   "group": "Status Bar colors",
+   "description": "Status bar item background hover color when the workbench is offline.",
+   "defaults": {
+    "dark": "@statusBarItem.hoverBackground",
+    "light": "@statusBarItem.hoverBackground",
+    "hcDark": "@statusBarItem.hoverBackground",
+    "hcLight": null
+   }
+  },
+  {
+   "id": "statusBarItem.offlineHoverForeground",
+   "group": "Status Bar colors",
+   "description": "Status bar item foreground hover color when the workbench is offline.",
+   "defaults": {
+    "dark": "@statusBarItem.hoverForeground",
+    "light": "@statusBarItem.hoverForeground",
+    "hcDark": "@statusBarItem.hoverForeground",
+    "hcLight": "@statusBarItem.hoverForeground"
+   }
+  },
+  {
+   "id": "statusBarItem.prominentBackground",
+   "group": "Status Bar colors",
+   "description": "Status Bar prominent items background color.",
+   "defaults": {
+    "dark": "expr:#000000.transparent(.5)",
+    "light": "expr:#000000.transparent(.5)",
+    "hcDark": "expr:#000000.transparent(.5)",
+    "hcLight": "expr:#000000.transparent(.5)"
+   }
+  },
+  {
+   "id": "statusBarItem.prominentForeground",
+   "group": "Status Bar colors",
+   "description": "Status Bar prominent items foreground color.",
+   "defaults": {
+    "dark": "@statusBar.foreground",
+    "light": "@statusBar.foreground",
+    "hcDark": "@statusBar.foreground",
+    "hcLight": "@statusBar.foreground"
+   }
+  },
+  {
+   "id": "statusBarItem.prominentHoverBackground",
+   "group": "Status Bar colors",
+   "description": "Status Bar prominent items background color when hovering.",
+   "defaults": {
+    "dark": "@statusBarItem.hoverBackground",
+    "light": "@statusBarItem.hoverBackground",
+    "hcDark": "@statusBarItem.hoverBackground",
+    "hcLight": "@statusBarItem.hoverBackground"
+   }
+  },
+  {
+   "id": "statusBarItem.prominentHoverForeground",
+   "group": "Status Bar colors",
+   "description": "Status bar prominent items foreground color when hovering. Prominent items stand out from other status bar entries to indicate importance. The status bar is sho",
+   "defaults": {
+    "dark": "@statusBarItem.hoverForeground",
+    "light": "@statusBarItem.hoverForeground",
+    "hcDark": "@statusBarItem.hoverForeground",
+    "hcLight": "@statusBarItem.hoverForeground"
+   }
+  },
+  {
+   "id": "statusBarItem.remoteBackground",
+   "group": "Status Bar colors",
+   "description": "Background color for the remote indicator on the status bar.",
+   "defaults": {
+    "dark": "@activityBarBadge.background",
+    "light": "@activityBarBadge.background",
+    "hcDark": "@activityBarBadge.background",
+    "hcLight": "@activityBarBadge.background"
+   }
+  },
+  {
+   "id": "statusBarItem.remoteForeground",
+   "group": "Status Bar colors",
+   "description": "Foreground color for the remote indicator on the status bar.",
+   "defaults": {
+    "dark": "@activityBarBadge.foreground",
+    "light": "@activityBarBadge.foreground",
+    "hcDark": "@activityBarBadge.foreground",
+    "hcLight": "@activityBarBadge.foreground"
+   }
+  },
+  {
+   "id": "statusBarItem.remoteHoverBackground",
+   "group": "Status Bar colors",
+   "description": "Background color for the remote indicator on the status bar when hovering.",
+   "defaults": {
+    "dark": "@statusBarItem.hoverBackground",
+    "light": "@statusBarItem.hoverBackground",
+    "hcDark": "@statusBarItem.hoverBackground",
+    "hcLight": null
+   }
+  },
+  {
+   "id": "statusBarItem.remoteHoverForeground",
+   "group": "Status Bar colors",
+   "description": "Foreground color for the remote indicator on the status bar when hovering.",
+   "defaults": {
+    "dark": "@statusBarItem.hoverForeground",
+    "light": "@statusBarItem.hoverForeground",
+    "hcDark": "@statusBarItem.hoverForeground",
+    "hcLight": "@statusBarItem.hoverForeground"
+   }
+  },
+  {
+   "id": "statusBarItem.warningBackground",
+   "group": "Status Bar colors",
+   "description": "Status bar warning items background color. Warning items stand out from other status bar entries to indicate warning conditions. The status bar is shown in the ",
+   "defaults": {
+    "dark": "expr:Mu(@editorWarning.foreground,.4)",
+    "light": "expr:Mu(@editorWarning.foreground,.4)",
+    "hcDark": null,
+    "hcLight": "#895503"
+   }
+  },
+  {
+   "id": "statusBarItem.warningForeground",
+   "group": "Status Bar colors",
+   "description": "Status bar warning items foreground color. Warning items stand out from other status bar entries to indicate warning conditions. The status bar is shown in the ",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#ffffff",
+    "hcDark": "#ffffff",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "statusBarItem.warningHoverBackground",
+   "group": "Status Bar colors",
+   "description": "Status bar warning items background color when hovering. Warning items stand out from other status bar entries to indicate warning conditions. The status bar is",
+   "defaults": {
+    "dark": "@statusBarItem.hoverBackground",
+    "light": "@statusBarItem.hoverBackground",
+    "hcDark": "@statusBarItem.hoverBackground",
+    "hcLight": "@statusBarItem.hoverBackground"
+   }
+  },
+  {
+   "id": "statusBarItem.warningHoverForeground",
+   "group": "Status Bar colors",
+   "description": "Status bar warning items foreground color when hovering. Warning items stand out from other status bar entries to indicate warning conditions. The status bar is",
+   "defaults": {
+    "dark": "@statusBarItem.hoverForeground",
+    "light": "@statusBarItem.hoverForeground",
+    "hcDark": "@statusBarItem.hoverForeground",
+    "hcLight": "@statusBarItem.hoverForeground"
+   }
+  },
+  {
+   "id": "surface.background",
+   "group": "Design tokens - surface colors (undocumented)",
+   "description": "Background color of framed container surfaces (\"cards\"), such as the floating workbench panels in the modern layout.",
+   "defaults": {
+    "dark": "@sideBar.background",
+    "light": "@editor.background",
+    "hcDark": "@sideBar.background",
+    "hcLight": "@sideBar.background"
+   }
+  },
+  {
+   "id": "surface.border",
+   "group": "Design tokens - surface colors (undocumented)",
+   "description": "Border color of framed container surfaces (\"cards\"), such as the floating workbench panels in the modern layout.",
+   "defaults": {
+    "dark": "expr:bD(pi(@foreground,.1),@surface.background)",
+    "light": "expr:bD(pi(@foreground,.1),@surface.background)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "surface.foreground",
+   "group": "Design tokens - surface colors (undocumented)",
+   "description": "Foreground color of framed container surfaces (\"cards\"), such as the floating workbench panels in the modern layout.",
+   "defaults": {
+    "dark": "@sideBar.foreground",
+    "light": "@sideBar.foreground",
+    "hcDark": "@sideBar.foreground",
+    "hcLight": "@sideBar.foreground"
+   }
+  },
+  {
+   "id": "tab.activeBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Active Tab background color in an active group.",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@editor.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "tab.activeBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Bottom border for the active tab.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "tab.activeBorderTop",
+   "group": "Editor Groups & Tabs",
+   "description": "Top border for the active tab.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "tab.activeForeground",
+   "group": "Editor Groups & Tabs",
+   "description": "Active Tab foreground color in an active group.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#333333",
+    "hcDark": "#ffffff",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "tab.activeModifiedBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border on the top of modified (dirty) active tabs in an active group.",
+   "defaults": {
+    "dark": "#3399CC",
+    "light": "#33AAEE",
+    "hcDark": null,
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "tab.border",
+   "group": "Editor Groups & Tabs",
+   "description": "Border to separate Tabs from each other.",
+   "defaults": {
+    "dark": "#252526",
+    "light": "#F3F3F3",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "tab.dragAndDropBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border between tabs to indicate that a tab can be inserted between two tabs. Tabs are the containers for editors in the editor area. Multiple tabs can be opened",
+   "defaults": {
+    "dark": "@tab.activeForeground",
+    "light": "@tab.activeForeground",
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "tab.hoverBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Tab background color when hovering",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "tab.hoverBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border to highlight tabs when hovering",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "tab.hoverForeground",
+   "group": "Editor Groups & Tabs",
+   "description": "Tab foreground color when hovering",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "tab.inactiveBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Inactive Tab background color.",
+   "defaults": {
+    "dark": "#2D2D2D",
+    "light": "#ECECEC",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "tab.inactiveForeground",
+   "group": "Editor Groups & Tabs",
+   "description": "Inactive Tab foreground color in an active group.",
+   "defaults": {
+    "dark": "expr:pi(@tab.activeForeground,.5)",
+    "light": "expr:pi(@tab.activeForeground,.7)",
+    "hcDark": "#ffffff",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "tab.inactiveModifiedBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border on the top of modified (dirty) inactive tabs in an active group.",
+   "defaults": {
+    "dark": "expr:pi(@tab.activeModifiedBorder,.5)",
+    "light": "expr:pi(@tab.activeModifiedBorder,.5)",
+    "hcDark": "#ffffff",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "tab.lastPinnedBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border on the right of the last pinned editor to separate from unpinned editors.",
+   "defaults": {
+    "dark": "@tree.indentGuidesStroke",
+    "light": "@tree.indentGuidesStroke",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "tab.selectedBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Background of a selected tab. Tabs are the containers for editors in the editor area. Multiple tabs can be opened in one editor group. There can be multiple edi",
+   "defaults": {
+    "dark": "@list.inactiveSelectionBackground",
+    "light": "@list.inactiveSelectionBackground",
+    "hcDark": "@list.inactiveSelectionBackground",
+    "hcLight": "@list.inactiveSelectionBackground"
+   }
+  },
+  {
+   "id": "tab.selectedBorderTop",
+   "group": "Editor Groups & Tabs",
+   "description": "Border to the top of a selected tab. Tabs are the containers for editors in the editor area. Multiple tabs can be opened in one editor group. There can be multi",
+   "defaults": {
+    "dark": "@focusBorder",
+    "light": "@focusBorder",
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "tab.selectedForeground",
+   "group": "Editor Groups & Tabs",
+   "description": "Foreground of a selected tab. Tabs are the containers for editors in the editor area. Multiple tabs can be opened in one editor group. There can be multiple edi",
+   "defaults": {
+    "dark": "@tab.activeForeground",
+    "light": "@tab.activeForeground",
+    "hcDark": "@tab.activeForeground",
+    "hcLight": "@tab.activeForeground"
+   }
+  },
+  {
+   "id": "tab.unfocusedActiveBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Active Tab background color in an inactive editor group.",
+   "defaults": {
+    "dark": "@tab.activeBackground",
+    "light": "@tab.activeBackground",
+    "hcDark": "@tab.activeBackground",
+    "hcLight": "@tab.activeBackground"
+   }
+  },
+  {
+   "id": "tab.unfocusedActiveBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Bottom border for the active tab in an inactive editor group.",
+   "defaults": {
+    "dark": "expr:pi(@tab.activeBorder,.5)",
+    "light": "expr:pi(@tab.activeBorder,.7)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "tab.unfocusedActiveBorderTop",
+   "group": "Editor Groups & Tabs",
+   "description": "Top border for the active tab in an inactive editor group",
+   "defaults": {
+    "dark": "expr:pi(@tab.activeBorderTop,.5)",
+    "light": "expr:pi(@tab.activeBorderTop,.7)",
+    "hcDark": null,
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "tab.unfocusedActiveForeground",
+   "group": "Editor Groups & Tabs",
+   "description": "Active tab foreground color in an inactive editor group.",
+   "defaults": {
+    "dark": "expr:pi(@tab.activeForeground,.5)",
+    "light": "expr:pi(@tab.activeForeground,.7)",
+    "hcDark": "#ffffff",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "tab.unfocusedActiveModifiedBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border on the top of modified (dirty) active tabs in an unfocused group.",
+   "defaults": {
+    "dark": "expr:pi(@tab.activeModifiedBorder,.5)",
+    "light": "expr:pi(@tab.activeModifiedBorder,.7)",
+    "hcDark": "#ffffff",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "tab.unfocusedHoverBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Tab background color in an unfocused group when hovering",
+   "defaults": {
+    "dark": "expr:pi(@tab.hoverBackground,.5)",
+    "light": "expr:pi(@tab.hoverBackground,.7)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "tab.unfocusedHoverBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border to highlight tabs in an unfocused group when hovering",
+   "defaults": {
+    "dark": "expr:pi(@tab.hoverBorder,.5)",
+    "light": "expr:pi(@tab.hoverBorder,.7)",
+    "hcDark": null,
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "tab.unfocusedHoverForeground",
+   "group": "Editor Groups & Tabs",
+   "description": "Tab foreground color in an unfocused group when hovering",
+   "defaults": {
+    "dark": "expr:pi(@tab.hoverForeground,.5)",
+    "light": "expr:pi(@tab.hoverForeground,.5)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "tab.unfocusedInactiveBackground",
+   "group": "Editor Groups & Tabs",
+   "description": "Inactive Tab background color in an unfocused group",
+   "defaults": {
+    "dark": "@tab.inactiveBackground",
+    "light": "@tab.inactiveBackground",
+    "hcDark": "@tab.inactiveBackground",
+    "hcLight": "@tab.inactiveBackground"
+   }
+  },
+  {
+   "id": "tab.unfocusedInactiveForeground",
+   "group": "Editor Groups & Tabs",
+   "description": "Inactive tab foreground color in an inactive editor group.",
+   "defaults": {
+    "dark": "expr:pi(@tab.inactiveForeground,.5)",
+    "light": "expr:pi(@tab.inactiveForeground,.5)",
+    "hcDark": "#ffffff",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "tab.unfocusedInactiveModifiedBorder",
+   "group": "Editor Groups & Tabs",
+   "description": "Border on the top of modified (dirty) inactive tabs in an unfocused group.",
+   "defaults": {
+    "dark": "expr:pi(@tab.inactiveModifiedBorder,.5)",
+    "light": "expr:pi(@tab.inactiveModifiedBorder,.5)",
+    "hcDark": "#ffffff",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "titleBar.activeBackground",
+   "group": "Title Bar colors",
+   "description": "Title Bar background when the window is active.",
+   "defaults": {
+    "dark": "#3C3C3C",
+    "light": "#DDDDDD",
+    "hcDark": "#000000",
+    "hcLight": "#FFFFFF"
+   }
+  },
+  {
+   "id": "titleBar.activeForeground",
+   "group": "Title Bar colors",
+   "description": "Title Bar foreground when the window is active.",
+   "defaults": {
+    "dark": "#CCCCCC",
+    "light": "#333333",
+    "hcDark": "#FFFFFF",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "titleBar.border",
+   "group": "Title Bar colors",
+   "description": "Title bar border color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "titleBar.inactiveBackground",
+   "group": "Title Bar colors",
+   "description": "Title Bar background when the window is inactive.",
+   "defaults": {
+    "dark": "expr:pi(@titleBar.activeBackground,.6)",
+    "light": "expr:pi(@titleBar.activeBackground,.6)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "titleBar.inactiveForeground",
+   "group": "Title Bar colors",
+   "description": "Title Bar foreground when the window is inactive.",
+   "defaults": {
+    "dark": "expr:pi(@titleBar.activeForeground,.6)",
+    "light": "expr:pi(@titleBar.activeForeground,.6)",
+    "hcDark": null,
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "unsupportedGlibcWarning.banner",
+   "group": "Banner colors (undocumented)",
+   "description": "You are connected to an OS version that is unsupported by {0}.",
+   "defaults": {
+    "dark": "$JHr",
+    "light": "$JHr",
+    "hcDark": "$JHr",
+    "hcLight": "$JHr"
+   }
+  },
+  {
+   "id": "widget.border",
+   "group": "Base colors",
+   "description": "Border color of widgets such as Find/Replace inside the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "widget.shadow",
+   "group": "Base colors",
+   "description": "Shadow color of widgets such as Find/Replace inside the editor.",
+   "defaults": {
+    "dark": "expr:pi(#000000,.36)",
+    "light": "expr:pi(#000000,.16)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "window.activeBorder",
+   "group": "Window border",
+   "description": "Border color for the active (focused) window.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "window.inactiveBorder",
+   "group": "Window border",
+   "description": "Border color for the inactive (unfocused) windows.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  }
+ ]
+}

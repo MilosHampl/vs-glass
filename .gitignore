@@ -6,3 +6,9 @@ dist/
 *.log
 .vscode-test/
 scratch/
+
+# Apple reference imagery is copyrighted: kept locally for design comparison only
+research/reference/*.png
+research/reference/*.jpg
+research/reference/*.jpeg
+research/reference/*.webp

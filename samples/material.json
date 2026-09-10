@@ -1,0 +1,129 @@
+{
+  "$schema": "https://schema.example.com/glass-material-v1.0.json",
+  "version": "1.0.0",
+  "materials": [
+    {
+      "id": "mat_001",
+      "name": "Soda-Lime Glass",
+      "type": "standard",
+      "properties": {
+        "refractiveIndex": 1.52,
+        "density": 2.5,
+        "thermalExpansion": 8.5e-6,
+        "transmittance": 0.95,
+        "isIsotropic": true,
+        "hasDispersion": false,
+        "minWavelength": 350.0,
+        "maxWavelength": 2500.0
+      },
+      "composition": {
+        "SiO2": 70.5,
+        "Na2O": 15.2,
+        "CaO": 8.3,
+        "other": 6.0
+      },
+      "optical_properties": [
+        {
+          "wavelength": 400,
+          "refractionIndex": 1.536,
+          "absorption": 0.001
+        },
+        {
+          "wavelength": 589,
+          "refractionIndex": 1.520,
+          "absorption": 0.0
+        },
+        {
+          "wavelength": 1000,
+          "refractionIndex": 1.508,
+          "absorption": 0.002
+        }
+      ],
+      "color": {
+        "hex": "#F0F8FF",
+        "rgb": [240, 248, 255],
+        "hsl": [208, 100, 97],
+        "transparency": 98.5
+      }
+    },
+    {
+      "id": "mat_002",
+      "name": "Diamond",
+      "type": "precious",
+      "properties": {
+        "refractiveIndex": 2.417,
+        "density": 3.52,
+        "thermalExpansion": 0.8e-6,
+        "transmittance": 0.99,
+        "isIsotropic": true,
+        "hasDispersion": true,
+        "minWavelength": 225.0,
+        "maxWavelength": 200000.0
+      },
+      "composition": {
+        "C": 99.95,
+        "N": 0.03,
+        "O": 0.02
+      },
+      "optical_properties": [
+        {
+          "wavelength": 400,
+          "refractionIndex": 2.456,
+          "absorption": 0.0
+        },
+        {
+          "wavelength": 589,
+          "refractionIndex": 2.417,
+          "absorption": 0.0
+        },
+        {
+          "wavelength": 1000,
+          "refractionIndex": 2.407,
+          "absorption": 0.0
+        }
+      ],
+      "color": {
+        "hex": "#FFFACD",
+        "rgb": [255, 250, 205],
+        "hsl": [60, 100, 90],
+        "transparency": 99.9
+      }
+    }
+  ],
+  "coatings": {
+    "anti_reflective": {
+      "layers": 4,
+      "materials": ["MgF2", "Al2O3", "SiO2"],
+      "thickness": [97, 45, 87],
+      "efficiency": 0.985
+    },
+    "uv_protective": {
+      "absorption_range": [290, 400],
+      "transmittance_range": [420, 780],
+      "effectiveness": 98.5
+    }
+  },
+  "processing": {
+    "temperature_range": [500, 2000],
+    "methods": [
+      "annealing",
+      "tempering",
+      "lamination"
+    ],
+    "quality_control": true,
+    "certifications": [
+      "ISO 12126",
+      "ASTM D1003",
+      "EN 12150"
+    ]
+  },
+  "metadata": {
+    "created": "2024-01-15T09:30:00Z",
+    "updated": "2026-09-10T14:25:30Z",
+    "author": "Glass Research Lab",
+    "deprecated": false,
+    "tags": ["optical", "material-science", "refraction", "caustics"],
+    "relatedMaterials": null,
+    "notes": "Standard reference data for glass material rendering engine"
+  }
+}

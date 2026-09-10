@@ -1,0 +1,10 @@
+{
+  "editor.fontSize": 13,
+  "editor.lineHeight": 20,
+  "editor.minimap.enabled": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.renderWhitespace": "none",
+  "editor.stickyScroll.enabled": true,
+  "workbench.startupEditor": "none"
+}

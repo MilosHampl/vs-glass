@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VS Glass — Liquid Glass CSS lensing test</title>
+<style>
+  :root {
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 1400px;
+    height: 900px;
+    overflow: hidden;
+    font-family: -apple-system, "SF Pro Text", "Segoe UI", sans-serif;
+    background: #0b0d12;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * BUSY BACKGROUND — stripes + gradients + repeated text, so that
+   * any lensing/refraction on the panes above is visible as bent
+   * lines / warped letters near the pane edges.
+   * ---------------------------------------------------------------- */
+  .backdrop {
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(90deg,
+        rgba(255,255,255,0.12) 0 2px,
+        transparent 2px 26px),
+      repeating-linear-gradient(0deg,
+        rgba(255,255,255,0.08) 0 2px,
+        transparent 2px 26px),
+      radial-gradient(circle at 15% 20%, #ff5f6d 0%, transparent 40%),
+      radial-gradient(circle at 85% 15%, #36d1dc 0%, transparent 38%),
+      radial-gradient(circle at 30% 85%, #ffd452 0%, transparent 42%),
+      radial-gradient(circle at 80% 80%, #7b2ff7 0%, transparent 45%),
+      linear-gradient(135deg, #12151c 0%, #1c2130 50%, #10131a 100%);
+  }
+  .backdrop .stripes {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg,
+      rgba(0,0,0,0) 0 18px,
+      rgba(255,255,255,0.10) 18px 36px);
+    mix-blend-mode: overlay;
+  }
+  .backdrop .text-wall {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 0;
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 2px;
+    overflow: hidden;
+    padding: 10px;
+    user-select: none;
+    mix-blend-mode: overlay;
+  }
+  .backdrop .text-wall span { margin: 6px 14px; white-space: nowrap; }
+
+  h1 {
+    position: relative;
+    z-index: 5;
+    color: #fff;
+    font-size: 20px;
+    margin: 18px 24px 4px;
+  }
+  p.note {
+    position: relative;
+    z-index: 5;
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+    margin: 0 24px 14px;
+    max-width: 900px;
+  }
+
+  .row {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 0 24px;
+  }
+
+  .cell { display: flex; flex-direction: column; gap: 8px; }
+  .cell .label {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(0,0,0,0.55);
+    padding: 3px 8px;
+    border-radius: 4px;
+    width: fit-content;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * BASE PANE — shared by all six demos
+   * ---------------------------------------------------------------- */
+  .pane {
+    position: relative;
+    width: 280px;
+    height: 160px;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+    isolation: isolate;
+    contain: paint;
+  }
+  .pane .content {
+    position: relative;
+    z-index: 2;
+    padding: 14px 16px;
+    color: #fff;
+    font-size: 13px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .pane .content b { display: block; font-size: 15px; margin-bottom: 4px; }
+
+  /* 1. Blur-only control (no SVG filter at all) */
+  .pane-blur {
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+  }
+
+  /* 2. feDisplacementMap edge lensing, INLINE svg filter (same document) */
+  .pane-lens-inline {
+    backdrop-filter: url(#edgeLens) blur(1.5px) saturate(160%) brightness(1.05);
+    -webkit-backdrop-filter: url(#edgeLens) blur(1.5px) saturate(160%) brightness(1.05);
+  }
+
+  /* 3. feDisplacementMap edge lensing, EXTERNAL .svg file reference */
+  .pane-lens-external {
+    backdrop-filter: url('external.svg#edgeLensExt') blur(1.5px) saturate(160%) brightness(1.05);
+    -webkit-backdrop-filter: url('external.svg#edgeLensExt') blur(1.5px) saturate(160%) brightness(1.05);
+  }
+
+  /* 4. Specular highlight pseudo-element: conic-gradient ring via
+   *    mask-composite, brightest near top-left, falling off around
+   *    the border radius. */
+  .pane-specular {
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+  }
+  .pane-specular::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(from 220deg at 28% 22%,
+      rgba(255,255,255,0.95) 0deg,
+      rgba(255,255,255,0.55) 55deg,
+      rgba(255,255,255,0.05) 130deg,
+      rgba(255,255,255,0)    190deg,
+      rgba(255,255,255,0.12) 300deg,
+      rgba(255,255,255,0.95) 360deg);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .pane-specular::after {
+    /* soft top-left sheen glow on top of the glass, additive */
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: inherit;
+    background: radial-gradient(circle at 20% 18%,
+      rgba(255,255,255,0.35), transparent 55%);
+    mix-blend-mode: plus-lighter;
+    pointer-events: none;
+  }
+
+  /* 5. Material thickness: layered inset + outer box-shadow */
+  .pane-thickness {
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,0.65),
+      inset 0 -1px 1px rgba(0,0,0,0.40),
+      inset 1px 0 1px rgba(255,255,255,0.15),
+      inset -1px 0 1px rgba(0,0,0,0.20),
+      inset 0 0 22px rgba(0,0,0,0.12),
+      0 10px 26px rgba(0,0,0,0.45),
+      0 2px 6px rgba(0,0,0,0.30);
+  }
+
+  /* 6. Liquid response on hover: @property-typed custom props driving
+   *    a moving sheen, plus native backdrop-filter/transform transitions
+   *    (filter function lists interpolate natively in Chromium — no
+   *    @property needed for those two). */
+  @property --hl-x {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 25%;
+  }
+  @property --hl-y {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 20%;
+  }
+  @property --hl-alpha {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0.25;
+  }
+  .pane-hover {
+    --hl-x: 25%;
+    --hl-y: 20%;
+    --hl-alpha: 0.25;
+    backdrop-filter: url(#edgeLens) blur(2px) saturate(140%) brightness(1);
+    -webkit-backdrop-filter: url(#edgeLens) blur(2px) saturate(140%) brightness(1);
+    transition:
+      backdrop-filter 320ms cubic-bezier(.2,.8,.2,1),
+      -webkit-backdrop-filter 320ms cubic-bezier(.2,.8,.2,1),
+      transform 320ms cubic-bezier(.2,.8,.2,1),
+      --hl-x 320ms cubic-bezier(.2,.8,.2,1),
+      --hl-y 320ms cubic-bezier(.2,.8,.2,1),
+      --hl-alpha 320ms cubic-bezier(.2,.8,.2,1),
+      box-shadow 320ms cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  }
+  .pane-hover:hover {
+    --hl-x: 70%;
+    --hl-y: 65%;
+    --hl-alpha: 0.5;
+    backdrop-filter: url(#edgeLens) blur(1px) saturate(190%) brightness(1.1);
+    -webkit-backdrop-filter: url(#edgeLens) blur(1px) saturate(190%) brightness(1.1);
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 0 16px 34px rgba(0,0,0,0.5);
+  }
+  .pane-hover::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--hl-x) var(--hl-y),
+      rgba(255,255,255, var(--hl-alpha)), transparent 55%);
+    mix-blend-mode: plus-lighter;
+    pointer-events: none;
+  }
+  .pane-hover .content { position: relative; z-index: 4; }
+
+  footer {
+    position: relative;
+    z-index: 5;
+    color: rgba(255,255,255,0.45);
+    font-size: 11px;
+    margin: 18px 24px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="backdrop">
+    <div class="stripes"></div>
+    <div class="text-wall" aria-hidden="true">
+      <span>REFRACTION</span><span>GLASS</span><span>0123456789</span>
+      <span>LENSING</span><span>VS CODE</span><span>ABCDEFG</span>
+      <span>SIDEBAR</span><span>QUICK INPUT</span><span>SPECULAR</span>
+      <span>EDGE</span><span>DISPLACEMENT</span><span>MATERIAL</span>
+      <span>THICKNESS</span><span>TINT</span><span>VIBRANCY</span>
+      <span>ABCDEFG</span><span>0123456789</span><span>GLASS</span>
+    </div>
+  </div>
+
+  <!-- ------------------------------------------------------------ -->
+  <!-- Inline SVG filter, defined in THIS document (panels 2 and 6) -->
+  <!-- ------------------------------------------------------------ -->
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <filter id="edgeLens"
+            filterUnits="userSpaceOnUse"
+            primitiveUnits="userSpaceOnUse"
+            x="0" y="0" width="560" height="320"
+            color-interpolation-filters="sRGB">
+      <feImage href="data:image/png;base64,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JEmSAWPASJIkA8aAkSTJgDFgJEmSAWPASJIkA8aAkSTJgDFgJEmSAWPASJIkA8aAkSTJgDFgJEmSAWPASJIkA8aAkSTJgDFg/I9BkiQDxoCRJEkGjAEjSZIMGANGkiQDxoCRJEkGjAEjSZIMGANGkiQDxoCRJEkGjAEjSZIMGANGkiQDxoCRJEkGjAEjSZIMGANGkiQDxoCRJEkGjAEjSZIMGANGkiQDxoCRJEkGjAEjSZIMGANGkiQZMAaMJEkGjAEjSZIMGANGkiQZMAaMJEkGjAEjSZIMGANGkiQZMAaMJEkGjAEjSZIMGANGkiQZMAaMJEkGjAEjSZIMGANGkiQZMAaMJEkGjAEjSZIMGANGkiQZMAaMJEkGjAFjwEiSZMAYMJIkyYAxYCRJkgFjwEiSZMAYMJIkyYAxYCRJkgFjwEiSZMAYMJIkyYAxYCRJkgFjwEiSZMAYMJIkyYAxYCRJkgFjwEiSZMAYMJIkyYAxYCRJkgFjwEiSZMAYMJIkyYAxYCRJkgFjwEiSJAPGgJEkyYAxYCRJkgFjwEiSJAPGgJEkyYAxYCRJkgFjwEiSJAPGgJEkyYAxYCRJkgFjwEiSJAPGgJEkyYAxYCRJkgFjwEiSJAPGgJEkyYAxYCRJkgFjwEiSJAPGgJEkSQaMASNJkgFjwEiSJAPGgJEkSQaMASNJkgFjwEiSJAPGgJEkSQaMASNJkgFjwEiSJAPGgJEkSQaMASNJkgFjwEiSJAPGgJEkSQaMASNJkgFjwEiSJAPGgJEkSQaMASNJkgFjwPgfgyRJBowBI0mSDBgDRpIkGTAGjCRJBowBI0mSDBgDRpIkGTAGjCRJBowBI0mSDBgDRpIkGTAGjCRJBowBI0mSDBgDRpIkGTAGjCRJBowBI0mSDBgDRpIkGTAGjCRJBowBI0mSDBgDRpIkGTAGjCRJMmAMGEmSDBgDRpIkGTAGjCRJMmAMGEmSDBgDRpIkGTAGjCRJMmAMGEmSDBgDRpIkGTAGjCRJMmAMGEmSDBgDRpIkGTAGjCRJMmAMGEmSDBgDRpIkGTAGjCRJMmAMGEmSDBgDxoCRJMmAMWAkSZIBY8BIkiQDxoCRJMmAMWAkSZIBY8BIkiQDxoCRJMmAMWAkSZIBY8BIkiQDxoCRJMmAMWAkSZIBY8BIkiQDxoCRJMmAMWAkSZIBY8BIkiQDxoCRJMmA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"
+               x="0" y="0" width="560" height="320"
+               result="dispMap" preserveAspectRatio="none"/>
+      <feDisplacementMap in="SourceGraphic" in2="dispMap"
+                          scale="70"
+                          xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+
+  <h1>VS Glass — CSS liquid-glass lensing test (2026-09-10)</h1>
+  <p class="note">
+    Six panes over a busy background (grid stripes + colour blobs + a text wall).
+    Panes 2/3/6 use an SVG <code>feDisplacementMap</code> filter (edge-only
+    signed-distance displacement map, generated by
+    <code>research/css-tests/gen_displacement.py</code>, neutral 128/128/128 in
+    the centre, pushed outward only within a ~34px rim). Compare pane 1
+    (plain blur) against 2/3 to see whether the grid lines and text visibly
+    bend near the pane edge but stay straight in the centre.
+  </p>
+
+  <div class="row">
+    <div class="cell">
+      <div class="label">1. blur-only control</div>
+      <div class="pane pane-blur">
+        <div class="content"><b>Blur control</b>backdrop-filter: blur(16px) saturate(150%). No displacement — grid lines behind should stay straight, only softened.</div>
+      </div>
+    </div>
+
+    <div class="cell">
+      <div class="label">2. feDisplacementMap — inline SVG</div>
+      <div class="pane pane-lens-inline">
+        <div class="content"><b>Edge lensing (inline)</b>backdrop-filter: url(#edgeLens) blur(1.5px) saturate(160%). Filter defined in this HTML document.</div>
+      </div>
+    </div>
+
+    <div class="cell">
+      <div class="label">3. feDisplacementMap — external .svg</div>
+      <div class="pane pane-lens-external">
+        <div class="content"><b>Edge lensing (external file)</b>backdrop-filter: url('external.svg#edgeLensExt') ... Filter defined in a separate .svg file.</div>
+      </div>
+    </div>
+
+    <div class="cell">
+      <div class="label">4. specular highlight</div>
+      <div class="pane pane-specular">
+        <div class="content"><b>Specular rim</b>conic-gradient border via mask-composite: exclude, brightest top-left, plus a plus-lighter sheen glow.</div>
+      </div>
+    </div>
+
+    <div class="cell">
+      <div class="label">5. thickness shadows</div>
+      <div class="pane pane-thickness">
+        <div class="content"><b>Material thickness</b>Layered inset box-shadows (top-light / bottom-dark / side) plus an outer contact shadow read as a solid slab.</div>
+      </div>
+    </div>
+
+    <div class="cell">
+      <div class="label">6. hover flex (animated)</div>
+      <div class="pane pane-hover">
+        <div class="content"><b>Liquid response</b>Hover me — @property-typed --hl-x/--hl-y/--hl-alpha animate a sheen; backdrop-filter and transform transition natively.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    VS Glass research — Chromium/Electron only. Displacement map: 560×320 px, corner radius 28px, rim 34px, generated by gen_displacement.py.
+  </footer>
+
+</body>
+</html>

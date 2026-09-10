@@ -1,0 +1,2822 @@
+{
+ "owner": "editor",
+ "count": 256,
+ "keys": [
+  {
+   "id": "diffEditor.border",
+   "group": "Diff editor colors",
+   "description": "Border color between the two text editors.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "diffEditor.diagonalFill",
+   "group": "Diff editor colors",
+   "description": "Color of the diff editor's diagonal fill. The diagonal fill is used in side-by-side diff views.",
+   "defaults": {
+    "dark": "#cccccc33",
+    "light": "#22222233",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "diffEditor.insertedLineBackground",
+   "group": "Diff editor colors",
+   "description": "Background color for lines that got inserted. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "$zLe",
+    "light": "$zLe",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "diffEditor.insertedTextBackground",
+   "group": "Diff editor colors",
+   "description": "Background color for text that got inserted. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#9ccc2c33",
+    "light": "#9ccc2c40",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "diffEditor.insertedTextBorder",
+   "group": "Diff editor colors",
+   "description": "Outline color for the text that got inserted.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "#33ff2eff",
+    "hcLight": "#374E06"
+   }
+  },
+  {
+   "id": "diffEditor.move.border",
+   "group": "Diff editor colors",
+   "description": "The border color for text that got moved in the diff editor.",
+   "defaults": {
+    "dark": "#8b8b8b9c",
+    "light": "#8b8b8b9c",
+    "hcDark": "#8b8b8b9c",
+    "hcLight": "#8b8b8b9c"
+   }
+  },
+  {
+   "id": "diffEditor.moveActive.border",
+   "group": "Diff editor colors",
+   "description": "The active border color for text that got moved in the diff editor.",
+   "defaults": {
+    "dark": "#FFA500",
+    "light": "#FFA500",
+    "hcDark": "#FFA500",
+    "hcLight": "#FFA500"
+   }
+  },
+  {
+   "id": "diffEditor.removedLineBackground",
+   "group": "Diff editor colors",
+   "description": "Background color for lines that got removed. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "$KLe",
+    "light": "$KLe",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "diffEditor.removedTextBackground",
+   "group": "Diff editor colors",
+   "description": "Background color for text that got removed. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#ff000033",
+    "light": "#ff000033",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "diffEditor.removedTextBorder",
+   "group": "Diff editor colors",
+   "description": "Outline color for text that got removed.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "#FF008F",
+    "hcLight": "#AD0707"
+   }
+  },
+  {
+   "id": "diffEditor.unchangedCodeBackground",
+   "group": "Diff editor colors",
+   "description": "The background color of unchanged code in the diff editor.",
+   "defaults": {
+    "dark": "#74747429",
+    "light": "#b8b8b829",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "diffEditor.unchangedRegionBackground",
+   "group": "Diff editor colors",
+   "description": "The color of unchanged blocks in diff editor.",
+   "defaults": {
+    "dark": "sideBar.background",
+    "light": "sideBar.background",
+    "hcDark": "sideBar.background",
+    "hcLight": "sideBar.background"
+   }
+  },
+  {
+   "id": "diffEditor.unchangedRegionForeground",
+   "group": "Diff editor colors",
+   "description": "The foreground color of unchanged blocks in the diff editor.",
+   "defaults": {
+    "dark": "foreground",
+    "light": "foreground",
+    "hcDark": "foreground",
+    "hcLight": "foreground"
+   }
+  },
+  {
+   "id": "diffEditor.unchangedRegionShadow",
+   "group": "Diff editor colors",
+   "description": "The color of the shadow around unchanged region widgets.",
+   "defaults": {
+    "dark": "#000000",
+    "light": "#737373BF",
+    "hcDark": "#000000",
+    "hcLight": "#737373BF"
+   }
+  },
+  {
+   "id": "diffEditorGutter.insertedLineBackground",
+   "group": "Diff editor colors",
+   "description": "Background color for the margin where lines got inserted.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "diffEditorGutter.removedLineBackground",
+   "group": "Diff editor colors",
+   "description": "Background color for the margin where lines got removed.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "diffEditorOverview.insertedForeground",
+   "group": "Diff editor colors",
+   "description": "Diff overview ruler foreground for inserted content.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "diffEditorOverview.removedForeground",
+   "group": "Diff editor colors",
+   "description": "Diff overview ruler foreground for removed content.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.background",
+   "group": "Editor colors",
+   "description": "Editor background color.",
+   "defaults": {
+    "dark": "#1E1E1E",
+    "light": "#ffffff",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "editor.border",
+   "group": "Editor colors (undocumented)",
+   "description": "Border color of the editor surface in the modern layout.",
+   "defaults": {
+    "dark": "@surface.border",
+    "light": "@surface.border",
+    "hcDark": "@surface.border",
+    "hcLight": "@surface.border"
+   }
+  },
+  {
+   "id": "editor.compositionBorder",
+   "group": "Editor colors",
+   "description": "The border color for an IME composition.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#000000",
+    "hcDark": "#ffffff",
+    "hcLight": "#000000"
+   }
+  },
+  {
+   "id": "editor.findMatchBackground",
+   "group": "Editor colors",
+   "description": "Color of the current search match.",
+   "defaults": {
+    "dark": "#515C6A",
+    "light": "#A8AC94",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.findMatchBorder",
+   "group": "Editor colors",
+   "description": "Border color of the current search match.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "editor.findMatchForeground",
+   "group": "Editor colors",
+   "description": "Text color of the current search match.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.findMatchHighlightBackground",
+   "group": "Editor colors",
+   "description": "Color of the other search matches. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#EA5C0055",
+    "light": "#EA5C0055",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.findMatchHighlightBorder",
+   "group": "Editor colors",
+   "description": "Border color of the other search matches.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "editor.findMatchHighlightForeground",
+   "group": "Editor colors",
+   "description": "Foreground color of the other search matches.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.findRangeHighlightBackground",
+   "group": "Editor colors",
+   "description": "Color the range limiting the search (Enable 'Find in Selection' in the find widget). The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#3a3d4166",
+    "light": "#b4b4b44d",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.findRangeHighlightBorder",
+   "group": "Editor colors",
+   "description": "Border color the range limiting the search (Enable 'Find in Selection' in the find widget).",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "expr:pi(@contrastActiveBorder,.4)",
+    "hcLight": "expr:pi(@contrastActiveBorder,.4)"
+   }
+  },
+  {
+   "id": "editor.foldBackground",
+   "group": "Editor colors",
+   "description": "Background color for folded ranges. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "expr:pi(@editor.selectionBackground,.3)",
+    "light": "expr:pi(@editor.selectionBackground,.3)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.foldPlaceholderForeground",
+   "group": "Editor colors",
+   "description": "Color of the collapsed text after the first line of a folded range.",
+   "defaults": {
+    "dark": "#808080",
+    "light": "#808080",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.foreground",
+   "group": "Editor colors",
+   "description": "Editor default foreground color.",
+   "defaults": {
+    "dark": "#BBBBBB",
+    "light": "#333333",
+    "hcDark": "#ffffff",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "editor.hoverHighlightBackground",
+   "group": "Editor colors",
+   "description": "Highlight below the word for which a hover is shown. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#264f7840",
+    "light": "#ADD6FF26",
+    "hcDark": "#ADD6FF26",
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.inactiveLineHighlightBackground",
+   "group": "Editor colors",
+   "description": "Background color for the highlight of line at the cursor position when the editor is not focused.",
+   "defaults": {
+    "dark": "@editor.lineHighlightBackground",
+    "light": "@editor.lineHighlightBackground",
+    "hcDark": "@editor.lineHighlightBackground",
+    "hcLight": "@editor.lineHighlightBackground"
+   }
+  },
+  {
+   "id": "editor.inactiveSelectionBackground",
+   "group": "Editor colors",
+   "description": "Color of the selection in an inactive editor. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "expr:pi(@editor.selectionBackground,.5)",
+    "light": "expr:pi(@editor.selectionBackground,.5)",
+    "hcDark": "expr:pi(@editor.selectionBackground,.7)",
+    "hcLight": "expr:pi(@editor.selectionBackground,.5)"
+   }
+  },
+  {
+   "id": "editor.lineHighlightBackground",
+   "group": "Editor colors",
+   "description": "Background color for the highlight of line at the cursor position.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.lineHighlightBorder",
+   "group": "Editor colors",
+   "description": "Background color for the border around the line at the cursor position.",
+   "defaults": {
+    "dark": "#282828",
+    "light": "#eeeeee",
+    "hcDark": "#f38518",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editor.linkedEditingBackground",
+   "group": "Editor colors",
+   "description": "Background color when the editor is in linked editing mode.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#f00\").transparent(.3)",
+    "light": "expr:qe.fromHex(\"#f00\").transparent(.3)",
+    "hcDark": "expr:qe.fromHex(\"#f00\").transparent(.3)",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "editor.placeholder.foreground",
+   "group": "Editor colors",
+   "description": "Foreground color of the placeholder text in the editor.",
+   "defaults": {
+    "dark": "@editorGhostText.foreground",
+    "light": "@editorGhostText.foreground",
+    "hcDark": "@editorGhostText.foreground",
+    "hcLight": "@editorGhostText.foreground"
+   }
+  },
+  {
+   "id": "editor.rangeHighlightBackground",
+   "group": "Editor colors",
+   "description": "Background color of highlighted ranges, used by Quick Open, Symbol in File and Find features. The color must not be opaque so as not to hide underlying decorati",
+   "defaults": {
+    "dark": "#ffffff0b",
+    "light": "#fdff0033",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.rangeHighlightBorder",
+   "group": "Editor colors",
+   "description": "Background color of the border around highlighted ranges.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "editor.selectionBackground",
+   "group": "Editor colors",
+   "description": "Color of the editor selection.",
+   "defaults": {
+    "dark": "#264F78",
+    "light": "#ADD6FF",
+    "hcDark": "#f3f518",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "editor.selectionForeground",
+   "group": "Editor colors",
+   "description": "Color of the selected text for high contrast.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "editor.selectionHighlightBackground",
+   "group": "Editor colors",
+   "description": "Color for regions with the same content as the selection. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "expr:fTi(@editor.selectionBackground,@editor.background,.3,.6)",
+    "light": "expr:fTi(@editor.selectionBackground,@editor.background,.3,.6)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.selectionHighlightBorder",
+   "group": "Editor colors",
+   "description": "Border color for regions with the same content as the selection.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "editor.snippetFinalTabstopHighlightBackground",
+   "group": "Snippets colors",
+   "description": "Highlight background color of the final tabstop of a snippet.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.snippetFinalTabstopHighlightBorder",
+   "group": "Snippets colors",
+   "description": "Highlight border color of the final tabstop of a snippet.",
+   "defaults": {
+    "dark": "#525252",
+    "light": "expr:new qe(new ri(10,50,100,.5))",
+    "hcDark": "#525252",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "editor.snippetTabstopHighlightBackground",
+   "group": "Snippets colors",
+   "description": "Highlight background color of a snippet tabstop.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(124,124,124,.3))",
+    "light": "expr:new qe(new ri(10,50,100,.2))",
+    "hcDark": "expr:new qe(new ri(124,124,124,.3))",
+    "hcLight": "expr:new qe(new ri(10,50,100,.2))"
+   }
+  },
+  {
+   "id": "editor.snippetTabstopHighlightBorder",
+   "group": "Snippets colors",
+   "description": "Highlight border color of a snippet tabstop.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.symbolHighlightBackground",
+   "group": "Editor colors",
+   "description": "Background color of highlighted symbol. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "@editor.findMatchHighlightBackground",
+    "light": "@editor.findMatchHighlightBackground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.symbolHighlightBorder",
+   "group": "Editor colors",
+   "description": "Background color of the border around highlighted symbols.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "editor.wordHighlightBackground",
+   "group": "Editor colors",
+   "description": "Background color of a symbol during read-access, for example when reading a variable. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#575757B8",
+    "light": "#57575740",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.wordHighlightBorder",
+   "group": "Editor colors",
+   "description": "Border color of a symbol during read-access, for example when reading a variable.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "editor.wordHighlightStrongBackground",
+   "group": "Editor colors",
+   "description": "Background color of a symbol during write-access, for example when writing to a variable. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#004972B8",
+    "light": "#0e639c40",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editor.wordHighlightStrongBorder",
+   "group": "Editor colors",
+   "description": "Border color of a symbol during write-access, for example when writing to a variable.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "editor.wordHighlightTextBackground",
+   "group": "Editor colors",
+   "description": "Background color of a textual occurrence for a symbol. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "@editor.wordHighlightBackground",
+    "light": "@editor.wordHighlightBackground",
+    "hcDark": "@editor.wordHighlightBackground",
+    "hcLight": "@editor.wordHighlightBackground"
+   }
+  },
+  {
+   "id": "editor.wordHighlightTextBorder",
+   "group": "Editor colors",
+   "description": "Border color of a textual occurrence for a symbol.",
+   "defaults": {
+    "dark": "@editor.wordHighlightBorder",
+    "light": "@editor.wordHighlightBorder",
+    "hcDark": "@editor.wordHighlightBorder",
+    "hcLight": "@editor.wordHighlightBorder"
+   }
+  },
+  {
+   "id": "editorBracketHighlight.foreground1",
+   "group": "Editor colors",
+   "description": "Foreground color of brackets (1). Requires enabling bracket pair colorization.",
+   "defaults": {
+    "dark": "#FFD700",
+    "light": "#0431FAFF",
+    "hcDark": "#FFD700",
+    "hcLight": "#0431FAFF"
+   }
+  },
+  {
+   "id": "editorBracketHighlight.foreground2",
+   "group": "Editor colors",
+   "description": "Foreground color of brackets (2). Requires enabling bracket pair colorization.",
+   "defaults": {
+    "dark": "#DA70D6",
+    "light": "#319331FF",
+    "hcDark": "#DA70D6",
+    "hcLight": "#319331FF"
+   }
+  },
+  {
+   "id": "editorBracketHighlight.foreground3",
+   "group": "Editor colors",
+   "description": "Foreground color of brackets (3). Requires enabling bracket pair colorization.",
+   "defaults": {
+    "dark": "#179FFF",
+    "light": "#7B3814FF",
+    "hcDark": "#87CEFA",
+    "hcLight": "#7B3814FF"
+   }
+  },
+  {
+   "id": "editorBracketHighlight.foreground4",
+   "group": "Editor colors",
+   "description": "Foreground color of brackets (4). Requires enabling bracket pair colorization.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketHighlight.foreground5",
+   "group": "Editor colors",
+   "description": "Foreground color of brackets (5). Requires enabling bracket pair colorization.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketHighlight.foreground6",
+   "group": "Editor colors",
+   "description": "Foreground color of brackets (6). Requires enabling bracket pair colorization.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketHighlight.unexpectedBracket.foreground",
+   "group": "Editor colors",
+   "description": "Foreground color of unexpected brackets.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(255,18,18,.8))",
+    "light": "expr:new qe(new ri(255,18,18,.8))",
+    "hcDark": "expr:new qe(new ri(255,50,50,1))",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "editorBracketMatch.background",
+   "group": "Editor colors",
+   "description": "Background color behind matching brackets.",
+   "defaults": {
+    "dark": "#0064001a",
+    "light": "#0064001a",
+    "hcDark": "#0064001a",
+    "hcLight": "#0000"
+   }
+  },
+  {
+   "id": "editorBracketMatch.border",
+   "group": "Editor colors",
+   "description": "Color for matching brackets boxes.",
+   "defaults": {
+    "dark": "#888",
+    "light": "#B9B9B9",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorBracketMatch.foreground",
+   "group": "Editor colors",
+   "description": "Foreground color for matching brackets.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.activeBackground1",
+   "group": "Editor colors",
+   "description": "Background color of active bracket pair guides (1). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.activeBackground2",
+   "group": "Editor colors",
+   "description": "Background color of active bracket pair guides (2). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.activeBackground3",
+   "group": "Editor colors",
+   "description": "Background color of active bracket pair guides (3). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.activeBackground4",
+   "group": "Editor colors",
+   "description": "Background color of active bracket pair guides (4). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.activeBackground5",
+   "group": "Editor colors",
+   "description": "Background color of active bracket pair guides (5). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.activeBackground6",
+   "group": "Editor colors",
+   "description": "Background color of active bracket pair guides (6). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.background1",
+   "group": "Editor colors",
+   "description": "Background color of inactive bracket pair guides (1). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.background2",
+   "group": "Editor colors",
+   "description": "Background color of inactive bracket pair guides (2). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.background3",
+   "group": "Editor colors",
+   "description": "Background color of inactive bracket pair guides (3). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.background4",
+   "group": "Editor colors",
+   "description": "Background color of inactive bracket pair guides (4). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.background5",
+   "group": "Editor colors",
+   "description": "Background color of inactive bracket pair guides (5). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorBracketPairGuide.background6",
+   "group": "Editor colors",
+   "description": "Background color of inactive bracket pair guides (6). Requires enabling bracket pair guides.",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorCodeLens.foreground",
+   "group": "Editor colors",
+   "description": "Foreground color of an editor CodeLens.",
+   "defaults": {
+    "dark": "#999999",
+    "light": "#919191",
+    "hcDark": "#999999",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "editorCommentsWidget.rangeActiveBackground",
+   "group": "Editor colors",
+   "description": "Color of background for currently selected or hovered comment range.",
+   "defaults": {
+    "dark": "expr:pi(@editorCommentsWidget.unresolvedBorder,.1)",
+    "light": "expr:pi(@editorCommentsWidget.unresolvedBorder,.1)",
+    "hcDark": "expr:pi(@editorCommentsWidget.unresolvedBorder,.1)",
+    "hcLight": "expr:pi(@editorCommentsWidget.unresolvedBorder,.1)"
+   }
+  },
+  {
+   "id": "editorCommentsWidget.rangeBackground",
+   "group": "Editor colors",
+   "description": "Color of background for comment ranges.",
+   "defaults": {
+    "dark": "expr:pi(@editorCommentsWidget.unresolvedBorder,.1)",
+    "light": "expr:pi(@editorCommentsWidget.unresolvedBorder,.1)",
+    "hcDark": "expr:pi(@editorCommentsWidget.unresolvedBorder,.1)",
+    "hcLight": "expr:pi(@editorCommentsWidget.unresolvedBorder,.1)"
+   }
+  },
+  {
+   "id": "editorCommentsWidget.replyInputBackground",
+   "group": "Editor colors",
+   "description": "Background color for comment reply input box.",
+   "defaults": {
+    "dark": "@peekViewTitle.background",
+    "light": "@peekViewTitle.background",
+    "hcDark": "@peekViewTitle.background",
+    "hcLight": "@peekViewTitle.background"
+   }
+  },
+  {
+   "id": "editorCommentsWidget.resolvedBorder",
+   "group": "Editor colors",
+   "description": "Color of borders and arrow for resolved comments.",
+   "defaults": {
+    "dark": "@commentsView.resolvedIcon",
+    "light": "@commentsView.resolvedIcon",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorCommentsWidget.unresolvedBorder",
+   "group": "Editor colors",
+   "description": "Color of borders and arrow for unresolved comments.",
+   "defaults": {
+    "dark": "@commentsView.unresolvedIcon",
+    "light": "@commentsView.unresolvedIcon",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorCursor.background",
+   "group": "Editor colors",
+   "description": "The background color of the editor cursor. Allows customizing the color of a character overlapped by a block cursor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorCursor.foreground",
+   "group": "Editor colors",
+   "description": "Color of the editor cursor.",
+   "defaults": {
+    "dark": "#AEAFAD",
+    "light": "#000000",
+    "hcDark": "#ffffff",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "editorError.background",
+   "group": "Editor colors",
+   "description": "Background color of error text in the editor. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorError.border",
+   "group": "Editor colors",
+   "description": "Border color of error boxes in the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "expr:qe.fromHex(\"#E47777\").transparent(.8)",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "editorError.foreground",
+   "group": "Editor colors",
+   "description": "Foreground color of error squiggles in the editor.",
+   "defaults": {
+    "dark": "#F14C4C",
+    "light": "#E51400",
+    "hcDark": "#F48771",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "editorGutter.addedBackground",
+   "group": "Editor colors",
+   "description": "Editor gutter background color for lines that are added.",
+   "defaults": {
+    "dark": "#487E02",
+    "light": "#48985D",
+    "hcDark": "#487E02",
+    "hcLight": "#48985D"
+   }
+  },
+  {
+   "id": "editorGutter.addedSecondaryBackground",
+   "group": "Editor colors",
+   "description": "Editor gutter secondary background color for lines that are added.",
+   "defaults": {
+    "dark": "expr:Mu(@editorGutter.addedBackground,.5)",
+    "light": "expr:Pf(@editorGutter.addedBackground,.7)",
+    "hcDark": "#487E02",
+    "hcLight": "#48985D"
+   }
+  },
+  {
+   "id": "editorGutter.background",
+   "group": "Editor colors",
+   "description": "Background color of the editor gutter. The gutter contains the glyph margins and the line numbers.",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@editor.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "editorGutter.commentDraftGlyphForeground",
+   "group": "Editor colors",
+   "description": "Editor gutter decoration color for commenting glyphs for comment threads with draft comments.",
+   "defaults": {
+    "dark": "@editorGutter.commentGlyphForeground",
+    "light": "@editorGutter.commentGlyphForeground",
+    "hcDark": "@editorGutter.commentGlyphForeground",
+    "hcLight": "@editorGutter.commentGlyphForeground"
+   }
+  },
+  {
+   "id": "editorGutter.commentGlyphForeground",
+   "group": "Editor colors",
+   "description": "Editor gutter decoration color for commenting glyphs.",
+   "defaults": {
+    "dark": "@editor.foreground",
+    "light": "@editor.foreground",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "editorGutter.commentRangeForeground",
+   "group": "Editor colors",
+   "description": "Editor gutter decoration color for commenting ranges.",
+   "defaults": {
+    "dark": "expr:bD(@list.inactiveSelectionBackground,@editor.background)",
+    "light": "expr:Mu(bD(@list.inactiveSelectionBackground,@editor.background),.05)",
+    "hcDark": "#ffffff",
+    "hcLight": "#000000"
+   }
+  },
+  {
+   "id": "editorGutter.commentUnresolvedGlyphForeground",
+   "group": "Editor colors",
+   "description": "Editor gutter decoration color for commenting glyphs for unresolved comment threads.",
+   "defaults": {
+    "dark": "@editorGutter.commentGlyphForeground",
+    "light": "@editorGutter.commentGlyphForeground",
+    "hcDark": "@editorGutter.commentGlyphForeground",
+    "hcLight": "@editorGutter.commentGlyphForeground"
+   }
+  },
+  {
+   "id": "editorGutter.deletedBackground",
+   "group": "Editor colors",
+   "description": "Editor gutter background color for lines that are deleted.",
+   "defaults": {
+    "dark": "@editorError.foreground",
+    "light": "@editorError.foreground",
+    "hcDark": "@editorError.foreground",
+    "hcLight": "@editorError.foreground"
+   }
+  },
+  {
+   "id": "editorGutter.deletedSecondaryBackground",
+   "group": "Editor colors",
+   "description": "Editor gutter secondary background color for lines that are deleted.",
+   "defaults": {
+    "dark": "expr:Mu(@editorGutter.deletedBackground,.4)",
+    "light": "expr:Pf(@editorGutter.deletedBackground,.3)",
+    "hcDark": "#F48771",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "editorGutter.foldingControlForeground",
+   "group": "Editor colors",
+   "description": "Color of the folding control in the editor gutter.",
+   "defaults": {
+    "dark": "@icon.foreground",
+    "light": "@icon.foreground",
+    "hcDark": "@icon.foreground",
+    "hcLight": "@icon.foreground"
+   }
+  },
+  {
+   "id": "editorGutter.itemBackground",
+   "group": "Editor colors",
+   "description": "Editor gutter decoration color for gutter item background. This color should be opaque.",
+   "defaults": {
+    "dark": "expr:bD(@list.inactiveSelectionBackground,@editor.background)",
+    "light": "expr:Mu(bD(@list.inactiveSelectionBackground,@editor.background),.05)",
+    "hcDark": "#ffffff",
+    "hcLight": "#000000"
+   }
+  },
+  {
+   "id": "editorGutter.itemGlyphForeground",
+   "group": "Editor colors",
+   "description": "Editor gutter decoration color for gutter item glyphs.",
+   "defaults": {
+    "dark": "@editor.foreground",
+    "light": "@editor.foreground",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "editorGutter.modifiedBackground",
+   "group": "Editor colors",
+   "description": "Editor gutter background color for lines that are modified.",
+   "defaults": {
+    "dark": "#1B81A8",
+    "light": "#2090D3",
+    "hcDark": "#1B81A8",
+    "hcLight": "#2090D3"
+   }
+  },
+  {
+   "id": "editorGutter.modifiedSecondaryBackground",
+   "group": "Editor colors",
+   "description": "Editor gutter secondary background color for lines that are modified.",
+   "defaults": {
+    "dark": "expr:Mu(@editorGutter.modifiedBackground,.5)",
+    "light": "expr:Pf(@editorGutter.modifiedBackground,.7)",
+    "hcDark": "#1B81A8",
+    "hcLight": "#2090D3"
+   }
+  },
+  {
+   "id": "editorHint.border",
+   "group": "Editor colors",
+   "description": "Border color of hint boxes in the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "expr:qe.fromHex(\"#eeeeee\").transparent(.8)",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "editorHint.foreground",
+   "group": "Editor colors",
+   "description": "Foreground color of hints in the editor.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#eeeeee\").transparent(.7)",
+    "light": "#6c6c6c",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorIndentGuide.activeBackground",
+   "group": "Editor colors",
+   "description": "Color of the active editor indentation guide.",
+   "defaults": {
+    "dark": "@editorWhitespace.foreground",
+    "light": "@editorWhitespace.foreground",
+    "hcDark": "@editorWhitespace.foreground",
+    "hcLight": "@editorWhitespace.foreground"
+   }
+  },
+  {
+   "id": "editorIndentGuide.activeBackground1",
+   "group": "Editor colors",
+   "description": "Color of the active editor indentation guides (1).",
+   "defaults": {
+    "dark": "@editorIndentGuide.activeBackground",
+    "light": "@editorIndentGuide.activeBackground",
+    "hcDark": "@editorIndentGuide.activeBackground",
+    "hcLight": "@editorIndentGuide.activeBackground"
+   }
+  },
+  {
+   "id": "editorIndentGuide.activeBackground2",
+   "group": "Editor colors",
+   "description": "Color of the active editor indentation guides (2).",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorIndentGuide.activeBackground3",
+   "group": "Editor colors",
+   "description": "Color of the active editor indentation guides (3).",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorIndentGuide.activeBackground4",
+   "group": "Editor colors",
+   "description": "Color of the active editor indentation guides (4).",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorIndentGuide.activeBackground5",
+   "group": "Editor colors",
+   "description": "Color of the active editor indentation guides (5).",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorIndentGuide.activeBackground6",
+   "group": "Editor colors",
+   "description": "Color of the active editor indentation guides (6).",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorIndentGuide.background",
+   "group": "Editor colors",
+   "description": "Color of the editor indentation guides.",
+   "defaults": {
+    "dark": "@editorWhitespace.foreground",
+    "light": "@editorWhitespace.foreground",
+    "hcDark": "@editorWhitespace.foreground",
+    "hcLight": "@editorWhitespace.foreground"
+   }
+  },
+  {
+   "id": "editorIndentGuide.background1",
+   "group": "Editor colors",
+   "description": "Color of the editor indentation guides (1).",
+   "defaults": {
+    "dark": "@editorIndentGuide.background",
+    "light": "@editorIndentGuide.background",
+    "hcDark": "@editorIndentGuide.background",
+    "hcLight": "@editorIndentGuide.background"
+   }
+  },
+  {
+   "id": "editorIndentGuide.background2",
+   "group": "Editor colors",
+   "description": "Color of the editor indentation guides (2).",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorIndentGuide.background3",
+   "group": "Editor colors",
+   "description": "Color of the editor indentation guides (3).",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorIndentGuide.background4",
+   "group": "Editor colors",
+   "description": "Color of the editor indentation guides (4).",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorIndentGuide.background5",
+   "group": "Editor colors",
+   "description": "Color of the editor indentation guides (5).",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorIndentGuide.background6",
+   "group": "Editor colors",
+   "description": "Color of the editor indentation guides (6).",
+   "defaults": {
+    "dark": "#00000000",
+    "light": "#00000000",
+    "hcDark": "#00000000",
+    "hcLight": "#00000000"
+   }
+  },
+  {
+   "id": "editorInfo.background",
+   "group": "Editor colors",
+   "description": "Background color of info text in the editor. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorInfo.border",
+   "group": "Editor colors",
+   "description": "Border color of info boxes in the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "expr:qe.fromHex(\"#59a4f9\").transparent(.8)",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "editorInfo.foreground",
+   "group": "Editor colors",
+   "description": "Foreground color of info squiggles in the editor.",
+   "defaults": {
+    "dark": "#59a4f9",
+    "light": "#0063d3",
+    "hcDark": "#59a4f9",
+    "hcLight": "#0063d3"
+   }
+  },
+  {
+   "id": "editorInlayHint.background",
+   "group": "Editor colors",
+   "description": "Background color of inline hints.",
+   "defaults": {
+    "dark": "expr:pi(@badge.background,.1)",
+    "light": "expr:pi(@badge.background,.1)",
+    "hcDark": "expr:pi(#ffffff,.1)",
+    "hcLight": "expr:pi(@badge.background,.1)"
+   }
+  },
+  {
+   "id": "editorInlayHint.foreground",
+   "group": "Editor colors",
+   "description": "Foreground color of inline hints.",
+   "defaults": {
+    "dark": "#969696",
+    "light": "#969696",
+    "hcDark": "#ffffff",
+    "hcLight": "#000000"
+   }
+  },
+  {
+   "id": "editorInlayHint.parameterBackground",
+   "group": "Editor colors",
+   "description": "Background color of inline hints for parameters",
+   "defaults": {
+    "dark": "@editorInlayHint.background",
+    "light": "@editorInlayHint.background",
+    "hcDark": "@editorInlayHint.background",
+    "hcLight": "@editorInlayHint.background"
+   }
+  },
+  {
+   "id": "editorInlayHint.parameterForeground",
+   "group": "Editor colors",
+   "description": "Foreground color of inline hints for parameters",
+   "defaults": {
+    "dark": "@editorInlayHint.foreground",
+    "light": "@editorInlayHint.foreground",
+    "hcDark": "@editorInlayHint.foreground",
+    "hcLight": "@editorInlayHint.foreground"
+   }
+  },
+  {
+   "id": "editorInlayHint.typeBackground",
+   "group": "Editor colors",
+   "description": "Background color of inline hints for types",
+   "defaults": {
+    "dark": "@editorInlayHint.background",
+    "light": "@editorInlayHint.background",
+    "hcDark": "@editorInlayHint.background",
+    "hcLight": "@editorInlayHint.background"
+   }
+  },
+  {
+   "id": "editorInlayHint.typeForeground",
+   "group": "Editor colors",
+   "description": "Foreground color of inline hints for types",
+   "defaults": {
+    "dark": "@editorInlayHint.foreground",
+    "light": "@editorInlayHint.foreground",
+    "hcDark": "@editorInlayHint.foreground",
+    "hcLight": "@editorInlayHint.foreground"
+   }
+  },
+  {
+   "id": "editorLightBulb.foreground",
+   "group": "Editor colors",
+   "description": "The color used for the lightbulb actions icon.",
+   "defaults": {
+    "dark": "#FFCC00",
+    "light": "#DDB100",
+    "hcDark": "#FFCC00",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "editorLightBulbAi.foreground",
+   "group": "Editor colors",
+   "description": "The color used for the lightbulb AI icon.",
+   "defaults": {
+    "dark": "@editorLightBulb.foreground",
+    "light": "@editorLightBulb.foreground",
+    "hcDark": "@editorLightBulb.foreground",
+    "hcLight": "@editorLightBulb.foreground"
+   }
+  },
+  {
+   "id": "editorLightBulbAutoFix.foreground",
+   "group": "Editor colors",
+   "description": "The color used for the lightbulb auto fix actions icon.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "editorLineNumber.activeForeground",
+   "group": "Editor colors",
+   "description": "Color of the active editor line number.",
+   "defaults": {
+    "dark": "@editorActiveLineNumber.foreground",
+    "light": "@editorActiveLineNumber.foreground",
+    "hcDark": "@editorActiveLineNumber.foreground",
+    "hcLight": "@editorActiveLineNumber.foreground"
+   }
+  },
+  {
+   "id": "editorLineNumber.dimmedForeground",
+   "group": "Editor colors",
+   "description": "Color of the final editor line when editor.renderFinalNewline is set to dimmed.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorLineNumber.foreground",
+   "group": "Editor colors",
+   "description": "Color of editor line numbers.",
+   "defaults": {
+    "dark": "#858585",
+    "light": "#237893",
+    "hcDark": "#ffffff",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "editorLink.activeForeground",
+   "group": "Editor colors",
+   "description": "Color of active links.",
+   "defaults": {
+    "dark": "#4E94CE",
+    "light": "#0000ff",
+    "hcDark": "expr:qe.cyan",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "editorMinimap.inlineChatInserted",
+   "group": "Minimap",
+   "description": "Minimap marker color for inline chat inserted content.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.insertedTextBackground,.6)",
+    "light": "expr:pi(@diffEditor.insertedTextBackground,.8)",
+    "hcDark": "expr:pi(@diffEditor.insertedTextBackground,.6)",
+    "hcLight": "expr:pi(@diffEditor.insertedTextBackground,.8)"
+   }
+  },
+  {
+   "id": "editorMultiCursor.primary.background",
+   "group": "Editor colors",
+   "description": "The background color of the primary editor cursor when multiple cursors are present. Allows customizing the color of a character overlapped by a block cursor.",
+   "defaults": {
+    "dark": "@editorCursor.background",
+    "light": "@editorCursor.background",
+    "hcDark": "@editorCursor.background",
+    "hcLight": "@editorCursor.background"
+   }
+  },
+  {
+   "id": "editorMultiCursor.primary.foreground",
+   "group": "Editor colors",
+   "description": "Color of the primary editor cursor when multiple cursors are present.",
+   "defaults": {
+    "dark": "@editorCursor.foreground",
+    "light": "@editorCursor.foreground",
+    "hcDark": "@editorCursor.foreground",
+    "hcLight": "@editorCursor.foreground"
+   }
+  },
+  {
+   "id": "editorMultiCursor.secondary.background",
+   "group": "Editor colors",
+   "description": "The background color of secondary editor cursors when multiple cursors are present. Allows customizing the color of a character overlapped by a block cursor.",
+   "defaults": {
+    "dark": "@editorCursor.background",
+    "light": "@editorCursor.background",
+    "hcDark": "@editorCursor.background",
+    "hcLight": "@editorCursor.background"
+   }
+  },
+  {
+   "id": "editorMultiCursor.secondary.foreground",
+   "group": "Editor colors",
+   "description": "Color of secondary editor cursors when multiple cursors are present.",
+   "defaults": {
+    "dark": "@editorCursor.foreground",
+    "light": "@editorCursor.foreground",
+    "hcDark": "@editorCursor.foreground",
+    "hcLight": "@editorCursor.foreground"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.addedForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for added content.",
+   "defaults": {
+    "dark": "expr:pi(@editorGutter.addedBackground,.6)",
+    "light": "expr:pi(@editorGutter.addedBackground,.6)",
+    "hcDark": "expr:pi(@editorGutter.addedBackground,.6)",
+    "hcLight": "expr:pi(@editorGutter.addedBackground,.6)"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.background",
+   "group": "Editor colors",
+   "description": "Background color of the editor overview ruler. Only used when the minimap is enabled and placed on the right side of the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorOverviewRuler.border",
+   "group": "Editor colors",
+   "description": "Color of the overview ruler border.",
+   "defaults": {
+    "dark": "#7f7f7f4d",
+    "light": "#7f7f7f4d",
+    "hcDark": "#7f7f7f4d",
+    "hcLight": "#666666"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.bracketMatchForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for matching brackets.",
+   "defaults": {
+    "dark": "#A0A0A0",
+    "light": "#A0A0A0",
+    "hcDark": "#A0A0A0",
+    "hcLight": "#A0A0A0"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.commentDraftForeground",
+   "group": "Editor colors",
+   "description": "Editor overview ruler decoration color for comment threads with draft comments. This color should be opaque.",
+   "defaults": {
+    "dark": "@editorOverviewRuler.commentUnresolvedForeground",
+    "light": "@editorOverviewRuler.commentUnresolvedForeground",
+    "hcDark": "@editorOverviewRuler.commentUnresolvedForeground",
+    "hcLight": "@editorOverviewRuler.commentUnresolvedForeground"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.deletedForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for deleted content.",
+   "defaults": {
+    "dark": "expr:pi(@editorGutter.deletedBackground,.6)",
+    "light": "expr:pi(@editorGutter.deletedBackground,.6)",
+    "hcDark": "expr:pi(@editorGutter.deletedBackground,.6)",
+    "hcLight": "expr:pi(@editorGutter.deletedBackground,.6)"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.errorForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for errors.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(255,18,18,.7))",
+    "light": "expr:new qe(new ri(255,18,18,.7))",
+    "hcDark": "expr:new qe(new ri(255,50,50,1))",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.findMatchForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for find matches. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#d186167e",
+    "light": "#d186167e",
+    "hcDark": "#AB5A00",
+    "hcLight": "#AB5A00"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.infoForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for infos.",
+   "defaults": {
+    "dark": "@editorInfo.foreground",
+    "light": "@editorInfo.foreground",
+    "hcDark": "@editorInfo.border",
+    "hcLight": "@editorInfo.border"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.inlineChatInserted",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for inline chat inserted content.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.insertedTextBackground,.6)",
+    "light": "expr:pi(@diffEditor.insertedTextBackground,.8)",
+    "hcDark": "expr:pi(@diffEditor.insertedTextBackground,.6)",
+    "hcLight": "expr:pi(@diffEditor.insertedTextBackground,.8)"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.inlineChatRemoved",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for inline chat removed content.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.removedTextBackground,.6)",
+    "light": "expr:pi(@diffEditor.removedTextBackground,.8)",
+    "hcDark": "expr:pi(@diffEditor.removedTextBackground,.6)",
+    "hcLight": "expr:pi(@diffEditor.removedTextBackground,.8)"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.modifiedForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for modified content.",
+   "defaults": {
+    "dark": "expr:pi(@editorGutter.modifiedBackground,.6)",
+    "light": "expr:pi(@editorGutter.modifiedBackground,.6)",
+    "hcDark": "expr:pi(@editorGutter.modifiedBackground,.6)",
+    "hcLight": "expr:pi(@editorGutter.modifiedBackground,.6)"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.rangeHighlightForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for highlighted ranges, like by the Quick Open, Symbol in File and Find features. The color must not be opaque so as not to hide und",
+   "defaults": {
+    "dark": "$pPn",
+    "light": "$pPn",
+    "hcDark": "$pPn",
+    "hcLight": "$pPn"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.selectionHighlightForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for selection highlights. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#A0A0A0CC",
+    "light": "#A0A0A0CC",
+    "hcDark": "#A0A0A0CC",
+    "hcLight": "#A0A0A0CC"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.warningForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for warnings.",
+   "defaults": {
+    "dark": "@editorWarning.foreground",
+    "light": "@editorWarning.foreground",
+    "hcDark": "@editorWarning.border",
+    "hcLight": "@editorWarning.border"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.wordHighlightForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for symbol highlights. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#A0A0A0CC",
+    "light": "#A0A0A0CC",
+    "hcDark": "#A0A0A0CC",
+    "hcLight": "#A0A0A0CC"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.wordHighlightStrongForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color for write-access symbol highlights. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "#C0A0C0CC",
+    "light": "#C0A0C0CC",
+    "hcDark": "#C0A0C0CC",
+    "hcLight": "#C0A0C0CC"
+   }
+  },
+  {
+   "id": "editorOverviewRuler.wordHighlightTextForeground",
+   "group": "Editor colors",
+   "description": "Overview ruler marker color of a textual occurrence for a symbol. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": "@editorOverviewRuler.selectionHighlightForeground",
+    "light": "@editorOverviewRuler.selectionHighlightForeground",
+    "hcDark": "@editorOverviewRuler.selectionHighlightForeground",
+    "hcLight": "@editorOverviewRuler.selectionHighlightForeground"
+   }
+  },
+  {
+   "id": "editorRuler.foreground",
+   "group": "Editor colors",
+   "description": "Color of the editor rulers.",
+   "defaults": {
+    "dark": "#5A5A5A",
+    "light": "expr:qe.lightgrey",
+    "hcDark": "#ffffff",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "editorUnicodeHighlight.background",
+   "group": "Editor colors",
+   "description": "Background color used to highlight unicode characters.",
+   "defaults": {
+    "dark": "@editorWarning.background",
+    "light": "@editorWarning.background",
+    "hcDark": "@editorWarning.background",
+    "hcLight": "@editorWarning.background"
+   }
+  },
+  {
+   "id": "editorUnicodeHighlight.border",
+   "group": "Editor colors",
+   "description": "Border color used to highlight unicode characters.",
+   "defaults": {
+    "dark": "@editorWarning.foreground",
+    "light": "@editorWarning.foreground",
+    "hcDark": "@editorWarning.foreground",
+    "hcLight": "@editorWarning.foreground"
+   }
+  },
+  {
+   "id": "editorUnnecessaryCode.border",
+   "group": "Editor colors",
+   "description": "Border color of unnecessary (unused) source code in the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "expr:qe.fromHex(\"#fff\").transparent(.8)",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorUnnecessaryCode.opacity",
+   "group": "Editor colors",
+   "description": "Opacity of unnecessary (unused) source code in the editor. For example, \"#000000c0\" will render the code with 75% opacity. For high contrast themes, use the \"ed",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#000a\")",
+    "light": "expr:qe.fromHex(\"#0007\")",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorWarning.background",
+   "group": "Editor colors",
+   "description": "Background color of warning text in the editor. The color must not be opaque so as not to hide underlying decorations.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorWarning.border",
+   "group": "Editor colors",
+   "description": "Border color of warning boxes in the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "expr:qe.fromHex(\"#FFCC00\").transparent(.8)",
+    "hcLight": "expr:qe.fromHex(\"#FFCC00\").transparent(.8)"
+   }
+  },
+  {
+   "id": "editorWarning.foreground",
+   "group": "Editor colors",
+   "description": "Foreground color of warning squiggles in the editor.",
+   "defaults": {
+    "dark": "#CCA700",
+    "light": "#BF8803",
+    "hcDark": "#FFD370",
+    "hcLight": "#895503"
+   }
+  },
+  {
+   "id": "editorWhitespace.foreground",
+   "group": "Editor colors",
+   "description": "Color of whitespace characters in the editor.",
+   "defaults": {
+    "dark": "#e3e4e229",
+    "light": "#33333333",
+    "hcDark": "#e3e4e229",
+    "hcLight": "#CCCCCC"
+   }
+  },
+  {
+   "id": "inlineEdit.gutterIndicator.background",
+   "group": "Editor colors",
+   "description": "Background color for the inline edit gutter indicator.",
+   "defaults": {
+    "dark": "expr:pi(\"tab.inactiveBackground\",.5)",
+    "light": "#5f5f5f18",
+    "hcDark": "expr:pi(\"tab.inactiveBackground\",.5)",
+    "hcLight": "expr:pi(\"tab.inactiveBackground\",.5)"
+   }
+  },
+  {
+   "id": "inlineEdit.gutterIndicator.primaryBackground",
+   "group": "Editor colors",
+   "description": "Background color for the primary inline edit gutter indicator.",
+   "defaults": {
+    "dark": "expr:pi(@inlineEdit.gutterIndicator.primaryBorder,.4)",
+    "light": "expr:pi(@inlineEdit.gutterIndicator.primaryBorder,.5)",
+    "hcDark": "expr:pi(@inlineEdit.gutterIndicator.primaryBorder,.4)",
+    "hcLight": "expr:pi(@inlineEdit.gutterIndicator.primaryBorder,.5)"
+   }
+  },
+  {
+   "id": "inlineEdit.gutterIndicator.primaryBorder",
+   "group": "Editor colors",
+   "description": "Border color for the primary inline edit gutter indicator.",
+   "defaults": {
+    "dark": "@button.background",
+    "light": "@button.background",
+    "hcDark": "@button.background",
+    "hcLight": "@button.background"
+   }
+  },
+  {
+   "id": "inlineEdit.gutterIndicator.primaryForeground",
+   "group": "Editor colors",
+   "description": "Foreground color for the primary inline edit gutter indicator.",
+   "defaults": {
+    "dark": "@button.foreground",
+    "light": "@button.foreground",
+    "hcDark": "@button.foreground",
+    "hcLight": "@button.foreground"
+   }
+  },
+  {
+   "id": "inlineEdit.gutterIndicator.secondaryBackground",
+   "group": "Editor colors",
+   "description": "Background color for the secondary inline edit gutter indicator.",
+   "defaults": {
+    "dark": "@editorHoverWidget.background",
+    "light": "@editorHoverWidget.background",
+    "hcDark": "@editorHoverWidget.background",
+    "hcLight": "@editorHoverWidget.background"
+   }
+  },
+  {
+   "id": "inlineEdit.gutterIndicator.secondaryBorder",
+   "group": "Editor colors",
+   "description": "Border color for the secondary inline edit gutter indicator.",
+   "defaults": {
+    "dark": "@editorHoverWidget.border",
+    "light": "@editorHoverWidget.border",
+    "hcDark": "@editorHoverWidget.border",
+    "hcLight": "@editorHoverWidget.border"
+   }
+  },
+  {
+   "id": "inlineEdit.gutterIndicator.secondaryForeground",
+   "group": "Editor colors",
+   "description": "Foreground color for the secondary inline edit gutter indicator.",
+   "defaults": {
+    "dark": "@editorHoverWidget.foreground",
+    "light": "@editorHoverWidget.foreground",
+    "hcDark": "@editorHoverWidget.foreground",
+    "hcLight": "@editorHoverWidget.foreground"
+   }
+  },
+  {
+   "id": "inlineEdit.gutterIndicator.successfulBackground",
+   "group": "Editor colors",
+   "description": "Background color for the successful inline edit gutter indicator.",
+   "defaults": {
+    "dark": "@inlineEdit.gutterIndicator.successfulBorder",
+    "light": "@inlineEdit.gutterIndicator.successfulBorder",
+    "hcDark": "@inlineEdit.gutterIndicator.successfulBorder",
+    "hcLight": "@inlineEdit.gutterIndicator.successfulBorder"
+   }
+  },
+  {
+   "id": "inlineEdit.gutterIndicator.successfulBorder",
+   "group": "Editor colors",
+   "description": "Border color for the successful inline edit gutter indicator.",
+   "defaults": {
+    "dark": "@button.background",
+    "light": "@button.background",
+    "hcDark": "@button.background",
+    "hcLight": "@button.background"
+   }
+  },
+  {
+   "id": "inlineEdit.gutterIndicator.successfulForeground",
+   "group": "Editor colors",
+   "description": "Foreground color for the successful inline edit gutter indicator.",
+   "defaults": {
+    "dark": "@button.foreground",
+    "light": "@button.foreground",
+    "hcDark": "@button.foreground",
+    "hcLight": "@button.foreground"
+   }
+  },
+  {
+   "id": "inlineEdit.modifiedBackground",
+   "group": "Editor colors",
+   "description": "Background color for the modified text in inline edits.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.insertedTextBackground,.3)",
+    "light": "expr:pi(@diffEditor.insertedTextBackground,.3)",
+    "hcDark": "expr:pi(@diffEditor.insertedTextBackground,.3)",
+    "hcLight": "expr:pi(@diffEditor.insertedTextBackground,.3)"
+   }
+  },
+  {
+   "id": "inlineEdit.modifiedBorder",
+   "group": "Editor colors",
+   "description": "Border color for the modified text in inline edits.",
+   "defaults": {
+    "dark": "@diffEditor.insertedTextBackground",
+    "light": "expr:Mu(@diffEditor.insertedTextBackground,.6)",
+    "hcDark": "@diffEditor.insertedTextBackground",
+    "hcLight": "@diffEditor.insertedTextBackground"
+   }
+  },
+  {
+   "id": "inlineEdit.modifiedChangedLineBackground",
+   "group": "Editor colors",
+   "description": "Background color for the changed lines in the modified text of inline edits.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.insertedLineBackground,.7)",
+    "light": "expr:pi(@diffEditor.insertedLineBackground,.7)",
+    "hcDark": "@diffEditor.insertedLineBackground",
+    "hcLight": "@diffEditor.insertedLineBackground"
+   }
+  },
+  {
+   "id": "inlineEdit.modifiedChangedTextBackground",
+   "group": "Editor colors",
+   "description": "Overlay color for the changed text in the modified text of inline edits.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.insertedTextBackground,.7)",
+    "light": "expr:pi(@diffEditor.insertedTextBackground,.7)",
+    "hcDark": "expr:pi(@diffEditor.insertedTextBackground,.7)",
+    "hcLight": "expr:pi(@diffEditor.insertedTextBackground,.7)"
+   }
+  },
+  {
+   "id": "inlineEdit.originalBackground",
+   "group": "Editor colors",
+   "description": "Background color for the original text in inline edits.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.removedTextBackground,.2)",
+    "light": "expr:pi(@diffEditor.removedTextBackground,.2)",
+    "hcDark": "expr:pi(@diffEditor.removedTextBackground,.2)",
+    "hcLight": "expr:pi(@diffEditor.removedTextBackground,.2)"
+   }
+  },
+  {
+   "id": "inlineEdit.originalBorder",
+   "group": "Editor colors",
+   "description": "Border color for the original text in inline edits.",
+   "defaults": {
+    "dark": "@diffEditor.removedTextBackground",
+    "light": "@diffEditor.removedTextBackground",
+    "hcDark": "@diffEditor.removedTextBackground",
+    "hcLight": "@diffEditor.removedTextBackground"
+   }
+  },
+  {
+   "id": "inlineEdit.originalChangedLineBackground",
+   "group": "Editor colors",
+   "description": "Background color for the changed lines in the original text of inline edits.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.removedTextBackground,.8)",
+    "light": "expr:pi(@diffEditor.removedTextBackground,.8)",
+    "hcDark": "expr:pi(@diffEditor.removedTextBackground,.8)",
+    "hcLight": "expr:pi(@diffEditor.removedTextBackground,.8)"
+   }
+  },
+  {
+   "id": "inlineEdit.originalChangedTextBackground",
+   "group": "Editor colors",
+   "description": "Overlay color for the changed text in the original text of inline edits.",
+   "defaults": {
+    "dark": "expr:pi(@diffEditor.removedTextBackground,.8)",
+    "light": "expr:pi(@diffEditor.removedTextBackground,.8)",
+    "hcDark": "expr:pi(@diffEditor.removedTextBackground,.8)",
+    "hcLight": "expr:pi(@diffEditor.removedTextBackground,.8)"
+   }
+  },
+  {
+   "id": "inlineEdit.tabWillAcceptModifiedBorder",
+   "group": "Editor colors",
+   "description": "Modified border color for the inline edits widget when tab will accept it.",
+   "defaults": {
+    "dark": "expr:Mu(@inlineEdit.modifiedBorder,0)",
+    "light": "expr:Mu(@inlineEdit.modifiedBorder,0)",
+    "hcDark": "expr:Mu(@inlineEdit.modifiedBorder,0)",
+    "hcLight": "expr:Mu(@inlineEdit.modifiedBorder,0)"
+   }
+  },
+  {
+   "id": "inlineEdit.tabWillAcceptOriginalBorder",
+   "group": "Editor colors",
+   "description": "Original border color for the inline edits widget over the original text when tab will accept it.",
+   "defaults": {
+    "dark": "expr:Mu(@inlineEdit.originalBorder,0)",
+    "light": "expr:Mu(@inlineEdit.originalBorder,0)",
+    "hcDark": "expr:Mu(@inlineEdit.originalBorder,0)",
+    "hcLight": "expr:Mu(@inlineEdit.originalBorder,0)"
+   }
+  },
+  {
+   "id": "markdownAlert.caution.foreground",
+   "group": "Markdown",
+   "description": "Foreground color for caution alerts in markdown.",
+   "defaults": {
+    "dark": "@editorError.foreground",
+    "light": "@editorError.foreground",
+    "hcDark": "@editorError.foreground",
+    "hcLight": "@editorError.foreground"
+   }
+  },
+  {
+   "id": "markdownAlert.important.foreground",
+   "group": "Markdown",
+   "description": "Foreground color for important alerts in markdown.",
+   "defaults": {
+    "dark": "@charts.purple",
+    "light": "@charts.purple",
+    "hcDark": "@charts.purple",
+    "hcLight": "@charts.purple"
+   }
+  },
+  {
+   "id": "markdownAlert.note.foreground",
+   "group": "Markdown",
+   "description": "Foreground color for note alerts in markdown.",
+   "defaults": {
+    "dark": "@editorInfo.foreground",
+    "light": "@editorInfo.foreground",
+    "hcDark": "@editorInfo.foreground",
+    "hcLight": "@editorInfo.foreground"
+   }
+  },
+  {
+   "id": "markdownAlert.tip.foreground",
+   "group": "Markdown",
+   "description": "Foreground color for tip alerts in markdown.",
+   "defaults": {
+    "dark": "@charts.green",
+    "light": "@charts.green",
+    "hcDark": "@charts.green",
+    "hcLight": "@charts.green"
+   }
+  },
+  {
+   "id": "markdownAlert.warning.foreground",
+   "group": "Markdown",
+   "description": "Foreground color for warning alerts in markdown.",
+   "defaults": {
+    "dark": "@editorWarning.foreground",
+    "light": "@editorWarning.foreground",
+    "hcDark": "@editorWarning.foreground",
+    "hcLight": "@editorWarning.foreground"
+   }
+  },
+  {
+   "id": "minimap.background",
+   "group": "Minimap",
+   "description": "Minimap background color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "minimap.chatEditHighlight",
+   "group": "Minimap",
+   "description": "Color of pending edit regions in the minimap.",
+   "defaults": {
+    "dark": "expr:pi(@editor.background,.6)",
+    "light": "expr:pi(@editor.background,.6)",
+    "hcDark": "expr:pi(@editor.background,.6)",
+    "hcLight": "expr:pi(@editor.background,.6)"
+   }
+  },
+  {
+   "id": "minimap.errorHighlight",
+   "group": "Minimap",
+   "description": "Highlight color for errors within the editor.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(255,18,18,.7))",
+    "light": "expr:new qe(new ri(255,18,18,.7))",
+    "hcDark": "expr:new qe(new ri(255,50,50,1))",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "minimap.findMatchHighlight",
+   "group": "Minimap",
+   "description": "Highlight color for matches from search within files.",
+   "defaults": {
+    "dark": "@editor.findMatchHighlightBackground",
+    "light": "@editor.findMatchHighlightBackground",
+    "hcDark": "@editor.findMatchHighlightBackground",
+    "hcLight": "@editor.findMatchHighlightBackground"
+   }
+  },
+  {
+   "id": "minimap.foregroundOpacity",
+   "group": "Minimap",
+   "description": "Opacity of foreground elements rendered in the minimap. For example, \"#000000c0\" will render the elements with 75% opacity.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#000f\")",
+    "light": "expr:qe.fromHex(\"#000f\")",
+    "hcDark": "expr:qe.fromHex(\"#000f\")",
+    "hcLight": "expr:qe.fromHex(\"#000f\")"
+   }
+  },
+  {
+   "id": "minimap.infoHighlight",
+   "group": "Minimap",
+   "description": "Minimap marker color for infos.",
+   "defaults": {
+    "dark": "@editorInfo.foreground",
+    "light": "@editorInfo.foreground",
+    "hcDark": "@editorInfo.border",
+    "hcLight": "@editorInfo.border"
+   }
+  },
+  {
+   "id": "minimap.selectionHighlight",
+   "group": "Minimap",
+   "description": "Highlight color for the editor selection.",
+   "defaults": {
+    "dark": "@editor.selectionBackground",
+    "light": "@editor.selectionBackground",
+    "hcDark": "@editor.selectionBackground",
+    "hcLight": "@editor.selectionBackground"
+   }
+  },
+  {
+   "id": "minimap.selectionOccurrenceHighlight",
+   "group": "Minimap",
+   "description": "Minimap marker color for repeating editor selections.",
+   "defaults": {
+    "dark": "@editor.selectionHighlightBackground",
+    "light": "@editor.selectionHighlightBackground",
+    "hcDark": "@editor.selectionHighlightBackground",
+    "hcLight": "@editor.selectionHighlightBackground"
+   }
+  },
+  {
+   "id": "minimap.warningHighlight",
+   "group": "Minimap",
+   "description": "Highlight color for warnings within the editor.",
+   "defaults": {
+    "dark": "@editorWarning.foreground",
+    "light": "@editorWarning.foreground",
+    "hcDark": "@editorWarning.border",
+    "hcLight": "@editorWarning.border"
+   }
+  },
+  {
+   "id": "minimapGutter.addedBackground",
+   "group": "Minimap",
+   "description": "Minimap gutter color for added content.",
+   "defaults": {
+    "dark": "@editorGutter.addedBackground",
+    "light": "@editorGutter.addedBackground",
+    "hcDark": "@editorGutter.addedBackground",
+    "hcLight": "@editorGutter.addedBackground"
+   }
+  },
+  {
+   "id": "minimapGutter.deletedBackground",
+   "group": "Minimap",
+   "description": "Minimap gutter color for deleted content.",
+   "defaults": {
+    "dark": "@editorGutter.deletedBackground",
+    "light": "@editorGutter.deletedBackground",
+    "hcDark": "@editorGutter.deletedBackground",
+    "hcLight": "@editorGutter.deletedBackground"
+   }
+  },
+  {
+   "id": "minimapGutter.modifiedBackground",
+   "group": "Minimap",
+   "description": "Minimap gutter color for modified content.",
+   "defaults": {
+    "dark": "@editorGutter.modifiedBackground",
+    "light": "@editorGutter.modifiedBackground",
+    "hcDark": "@editorGutter.modifiedBackground",
+    "hcLight": "@editorGutter.modifiedBackground"
+   }
+  },
+  {
+   "id": "minimapSlider.activeBackground",
+   "group": "Minimap",
+   "description": "Minimap slider background color when clicked on.",
+   "defaults": {
+    "dark": "expr:pi(@debugTokenExpression.boolean$,.5)",
+    "light": "expr:pi(@debugTokenExpression.boolean$,.5)",
+    "hcDark": "expr:pi(@debugTokenExpression.boolean$,.5)",
+    "hcLight": "expr:pi(@debugTokenExpression.boolean$,.5)"
+   }
+  },
+  {
+   "id": "minimapSlider.background",
+   "group": "Minimap",
+   "description": "Minimap slider background color.",
+   "defaults": {
+    "dark": "expr:pi(@scrollbarSlider.background,.5)",
+    "light": "expr:pi(@scrollbarSlider.background,.5)",
+    "hcDark": "expr:pi(@scrollbarSlider.background,.5)",
+    "hcLight": "expr:pi(@scrollbarSlider.background,.5)"
+   }
+  },
+  {
+   "id": "minimapSlider.hoverBackground",
+   "group": "Minimap",
+   "description": "Minimap slider background color when hovering.",
+   "defaults": {
+    "dark": "expr:pi(@debugTokenExpression.string$,.5)",
+    "light": "expr:pi(@debugTokenExpression.string$,.5)",
+    "hcDark": "expr:pi(@debugTokenExpression.string$,.5)",
+    "hcLight": "expr:pi(@debugTokenExpression.string$,.5)"
+   }
+  },
+  {
+   "id": "multiDiffEditor.background",
+   "group": "Diff editor colors",
+   "description": "The background color of the multi file diff editor",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@editor.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "multiDiffEditor.border",
+   "group": "Diff editor colors",
+   "description": "The border color of the multi file diff editor",
+   "defaults": {
+    "dark": "sideBarSectionHeader.border",
+    "light": "#cccccc",
+    "hcDark": "sideBarSectionHeader.border",
+    "hcLight": "#cccccc"
+   }
+  },
+  {
+   "id": "multiDiffEditor.headerBackground",
+   "group": "Diff editor colors",
+   "description": "The background color of the diff editor's header",
+   "defaults": {
+    "dark": "#262626",
+    "light": "tab.inactiveBackground",
+    "hcDark": "tab.inactiveBackground",
+    "hcLight": "tab.inactiveBackground"
+   }
+  },
+  {
+   "id": "problemsErrorIcon.foreground",
+   "group": "Editor colors",
+   "description": "The color used for the problems error icon.",
+   "defaults": {
+    "dark": "@editorError.foreground",
+    "light": "@editorError.foreground",
+    "hcDark": "@editorError.foreground",
+    "hcLight": "@editorError.foreground"
+   }
+  },
+  {
+   "id": "problemsInfoIcon.foreground",
+   "group": "Editor colors",
+   "description": "The color used for the problems info icon.",
+   "defaults": {
+    "dark": "@editorInfo.foreground",
+    "light": "@editorInfo.foreground",
+    "hcDark": "@editorInfo.foreground",
+    "hcLight": "@editorInfo.foreground"
+   }
+  },
+  {
+   "id": "problemsWarningIcon.foreground",
+   "group": "Editor colors",
+   "description": "The color used for the problems warning icon.",
+   "defaults": {
+    "dark": "@editorWarning.foreground",
+    "light": "@editorWarning.foreground",
+    "hcDark": "@editorWarning.foreground",
+    "hcLight": "@editorWarning.foreground"
+   }
+  },
+  {
+   "id": "scrollbar.background",
+   "group": "Scrollbar control",
+   "description": "Scrollbar track background color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "scrollbar.shadow",
+   "group": "Scrollbar control",
+   "description": "Scrollbar slider shadow to indicate that the view is scrolled.",
+   "defaults": {
+    "dark": "#000000",
+    "light": "#DDDDDD",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "scrollbarSlider.activeBackground",
+   "group": "Scrollbar control",
+   "description": "Scrollbar slider background color when clicked on.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#BFBFBF\").transparent(.4)",
+    "light": "expr:qe.fromHex(\"#000000\").transparent(.6)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "scrollbarSlider.background",
+   "group": "Scrollbar control",
+   "description": "Scrollbar slider background color.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#797979\").transparent(.4)",
+    "light": "expr:qe.fromHex(\"#646464\").transparent(.4)",
+    "hcDark": "expr:pi(@contrastBorder,.6)",
+    "hcLight": "expr:pi(@contrastBorder,.4)"
+   }
+  },
+  {
+   "id": "scrollbarSlider.hoverBackground",
+   "group": "Scrollbar control",
+   "description": "Scrollbar slider background color when hovering.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#646464\").transparent(.7)",
+    "light": "expr:qe.fromHex(\"#646464\").transparent(.7)",
+    "hcDark": "expr:pi(@contrastBorder,.8)",
+    "hcLight": "expr:pi(@contrastBorder,.8)"
+   }
+  },
+  {
+   "id": "search.resultsInfoForeground",
+   "group": "Editor colors",
+   "description": "Color of the text in the search viewlet's completion message. For example, this color is used in the text that says \" {x} results in {y} files \".",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.65)",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "searchEditor.findMatchBackground",
+   "group": "Editor colors",
+   "description": "Color of the editor's results.",
+   "defaults": {
+    "dark": "expr:pi(@editor.findMatchHighlightBackground,.66)",
+    "light": "expr:pi(@editor.findMatchHighlightBackground,.66)",
+    "hcDark": "@editor.findMatchHighlightBackground",
+    "hcLight": "@editor.findMatchHighlightBackground"
+   }
+  },
+  {
+   "id": "searchEditor.findMatchBorder",
+   "group": "Editor colors",
+   "description": "Border color of the editor's results.",
+   "defaults": {
+    "dark": "expr:pi(@editor.findMatchHighlightBorder,.66)",
+    "light": "expr:pi(@editor.findMatchHighlightBorder,.66)",
+    "hcDark": "@editor.findMatchHighlightBorder",
+    "hcLight": "@editor.findMatchHighlightBorder"
+   }
+  },
+  {
+   "id": "searchEditor.textInputBorder",
+   "group": "Editor colors",
+   "description": "Search editor text input box border.",
+   "defaults": {
+    "dark": "@input.border",
+    "light": "@input.border",
+    "hcDark": "@input.border",
+    "hcLight": "@input.border"
+   }
+  },
+  {
+   "id": "symbolIcon.arrayForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for array symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.booleanForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for boolean symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.classForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for class symbols.",
+   "defaults": {
+    "dark": "#EE9D28",
+    "light": "#D67E00",
+    "hcDark": "#EE9D28",
+    "hcLight": "#D67E00"
+   }
+  },
+  {
+   "id": "symbolIcon.colorForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for color symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.constantForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for constant symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.constructorForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for constructor symbols.",
+   "defaults": {
+    "dark": "#B180D7",
+    "light": "#652D90",
+    "hcDark": "#B180D7",
+    "hcLight": "#652D90"
+   }
+  },
+  {
+   "id": "symbolIcon.enumeratorForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for enumerator symbols.",
+   "defaults": {
+    "dark": "#EE9D28",
+    "light": "#D67E00",
+    "hcDark": "#EE9D28",
+    "hcLight": "#D67E00"
+   }
+  },
+  {
+   "id": "symbolIcon.enumeratorMemberForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for enumerator member symbols.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "symbolIcon.eventForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for event symbols.",
+   "defaults": {
+    "dark": "#EE9D28",
+    "light": "#D67E00",
+    "hcDark": "#EE9D28",
+    "hcLight": "#D67E00"
+   }
+  },
+  {
+   "id": "symbolIcon.fieldForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for field symbols.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "symbolIcon.fileForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for file symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.folderForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for folder symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.functionForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for function symbols.",
+   "defaults": {
+    "dark": "#B180D7",
+    "light": "#652D90",
+    "hcDark": "#B180D7",
+    "hcLight": "#652D90"
+   }
+  },
+  {
+   "id": "symbolIcon.interfaceForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for interface symbols.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "symbolIcon.keyForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for key symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.keywordForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for keyword symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.methodForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for method symbols.",
+   "defaults": {
+    "dark": "#B180D7",
+    "light": "#652D90",
+    "hcDark": "#B180D7",
+    "hcLight": "#652D90"
+   }
+  },
+  {
+   "id": "symbolIcon.moduleForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for module symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.namespaceForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for namespace symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.nullForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for null symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.numberForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for number symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.objectForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for object symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.operatorForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for operator symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.packageForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for package symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.propertyForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for property symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.referenceForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for reference symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.snippetForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for snippet symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.stringForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for string symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.structForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for struct symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.textForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for text symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.typeParameterForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for type parameter symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.unitForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for unit symbols.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "symbolIcon.variableForeground",
+   "group": "Symbol Icons colors",
+   "description": "The foreground color for variable symbols.",
+   "defaults": {
+    "dark": "#75BEFF",
+    "light": "#007ACC",
+    "hcDark": "#75BEFF",
+    "hcLight": "#007ACC"
+   }
+  }
+ ]
+}

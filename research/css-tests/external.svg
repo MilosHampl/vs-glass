@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="0" height="0" style="position:absolute;overflow:hidden">
+  <!--
+    External SVG filter file, referenced from lensing-test.html via:
+      backdrop-filter: url('external.svg#edgeLensExt') ...;
+
+    This is the "does Chromium honour an SVG filter that lives in an
+    external .svg file (not inlined in the HTML document) when used as a
+    backdrop-filter reference" test (research question 'a').
+
+    filterUnits/primitiveUnits are pinned to userSpaceOnUse with explicit
+    pixel dimensions matching the .pane element's CSS box (560x320) rather
+    than left at the objectBoundingBox default, per repeated warnings in
+    prior-art writeups that percentage/objectBoundingBox filter regions on
+    backdrop-filter SVG filters clip or mis-scale in Chromium.
+  -->
+  <filter id="edgeLensExt"
+          filterUnits="userSpaceOnUse"
+          primitiveUnits="userSpaceOnUse"
+          x="0" y="0" width="560" height="320"
+          color-interpolation-filters="sRGB">
+    <feImage href="displacement-edge-ext.png"
+             x="0" y="0" width="560" height="320"
+             result="dispMap" preserveAspectRatio="none"/>
+    <feDisplacementMap in="SourceGraphic" in2="dispMap"
+                        scale="70"
+                        xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>

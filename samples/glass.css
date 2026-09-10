@@ -1,0 +1,422 @@
+/**
+ * Glass Material Renderer - Stylesheet
+ * Modern CSS with custom properties, advanced selectors, and animations
+ */
+
+/* Define custom CSS properties */
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #1f2937;
+  --accent-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+  --border-radius: 12px;
+  --transition-speed: 0.3s;
+  --animation-duration: 0.6s;
+
+  --typography-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --typography-mono: "Monaco", "Menlo", "Courier New", monospace;
+
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+}
+
+/* Register custom property for animations */
+@property --glass-opacity {
+  syntax: '<number>';
+  initial-value: 0.1;
+  inherits: false;
+}
+
+@property --refract-index {
+  syntax: '<number>';
+  initial-value: 1.5;
+  inherits: false;
+}
+
+/* Global reset and typography */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  font-family: var(--typography-sans);
+  color-scheme: light dark;
+}
+
+body {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: var(--secondary-color);
+  line-height: 1.6;
+  letter-spacing: 0.3px;
+}
+
+/* Glass morphism effect */
+.glass-pane {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius);
+  box-shadow: var(--glass-shadow);
+  padding: var(--spacing-lg);
+  transition: all var(--transition-speed) ease;
+}
+
+.glass-pane:hover {
+  --glass-opacity: 0.15;
+  background: rgba(255, 255, 255, var(--glass-opacity));
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Advanced selectors */
+.glass-pane > :first-child {
+  margin-top: 0;
+}
+
+.glass-pane > :last-child {
+  margin-bottom: 0;
+}
+
+.glass-pane > * + * {
+  margin-top: var(--spacing-md);
+}
+
+/* Attribute selectors */
+[data-quality="high"] {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+[data-quality="medium"] {
+  color: var(--warning-color);
+  font-weight: 500;
+}
+
+[data-quality="low"] {
+  color: var(--danger-color);
+  font-weight: 400;
+}
+
+/* Pseudo-classes */
+button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: calc(var(--border-radius) / 2);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+}
+
+button:hover {
+  background: color-mix(in srgb, var(--primary-color) 85%, black);
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pseudo-elements */
+.glass-pane::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  border-radius: var(--border-radius);
+  pointer-events: none;
+}
+
+.glass-pane::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: -24px;
+  left: 0;
+  font-size: 0.75rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Keyframe animations */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    --glass-opacity: 0.1;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    --glass-opacity: 0.2;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+  }
+}
+
+@keyframes refract-wave {
+  0% {
+    --refract-index: 1.0;
+    filter: blur(0px);
+  }
+  50% {
+    --refract-index: 1.8;
+    filter: blur(2px);
+  }
+  100% {
+    --refract-index: 1.5;
+    filter: blur(0px);
+  }
+}
+
+/* Animation usage */
+.loading {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+.active-renderer {
+  animation: pulse-glow var(--animation-duration) ease-in-out infinite;
+}
+
+.refracting {
+  animation: refract-wave calc(var(--animation-duration) * 2) ease-in-out infinite;
+}
+
+/* Media queries for responsive design */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --secondary-color: #f3f4f6;
+    --glass-bg: rgba(0, 0, 0, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+
+  body {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  }
+
+  .glass-pane {
+    color: #e5e7eb;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --spacing-lg: 1rem;
+    --spacing-xl: 1.5rem;
+  }
+
+  .glass-pane {
+    padding: var(--spacing-md);
+  }
+
+  button {
+    width: 100%;
+    padding: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    font-size: 14px;
+  }
+
+  .glass-pane {
+    padding: var(--spacing-sm);
+    border-radius: calc(var(--border-radius) * 0.75);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+  .glass-pane {
+    border-width: 2px;
+    border-color: var(--secondary-color);
+  }
+
+  button {
+    box-shadow: 0 0 0 2px var(--secondary-color);
+  }
+}
+
+/* Feature queries with @supports */
+@supports (backdrop-filter: blur(10px)) {
+  .glass-pane {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+  }
+}
+
+@supports (color-mix(in srgb, red, blue)) {
+  .gradient-text {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--primary-color), white 40%),
+      color-mix(in srgb, var(--accent-color), white 30%)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@supports (mask-image: linear-gradient(to right, black, transparent)) {
+  .fade-edge {
+    mask-image: linear-gradient(to right, black 0%, transparent 100%);
+  }
+}
+
+/* Color functions and gradients */
+.primary {
+  color: var(--primary-color);
+}
+
+.accent {
+  color: var(--accent-color);
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+}
+
+.gradient-radial {
+  background: radial-gradient(circle at 50% 50%, var(--primary-color), var(--secondary-color));
+}
+
+/* HSL and RGB color usage */
+.light-mode {
+  background-color: rgb(243, 244, 246);
+  color: rgb(31, 41, 55);
+}
+
+.dark-mode {
+  background-color: rgb(17, 24, 39);
+  color: rgb(243, 244, 246);
+}
+
+.hsl-color {
+  color: hsl(208, 100%, 50%);
+  background: hsl(0, 0%, 95%);
+}
+
+/* Hex color literals */
+.hex-primary {
+  color: #3b82f6;
+  border-color: #1f2937;
+}
+
+/* calc() expressions */
+.container {
+  width: calc(100% - 2 * var(--spacing-lg));
+  max-width: calc(1200px - var(--spacing-xl));
+  margin: calc(var(--spacing-lg) * 2) auto;
+}
+
+.grid-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(200px + 1vw), 1fr));
+  gap: calc(var(--spacing-md) + 0.5vw);
+}
+
+/* Font sizing with calc */
+h1 {
+  font-size: calc(2rem + 1vw);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: calc(1.5rem + 0.75vw);
+  font-weight: 600;
+}
+
+/* Vendor prefixes for compatibility */
+.glass-pane {
+  -webkit-backdrop-filter: blur(10px);
+  -moz-backdrop-filter: blur(10px);
+  -webkit-box-shadow: var(--glass-shadow);
+  -moz-box-shadow: var(--glass-shadow);
+}
+
+/* Important declarations */
+.force-visibility {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Transform and transitions */
+.transform-example {
+  transform: translateY(0) rotateX(0deg) scale(1);
+  transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transform-example:hover {
+  transform: translateY(-4px) rotateX(10deg) scale(1.02);
+}
+
+/* Position and sizing */
+.positioned {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: auto;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .glass-pane {
+    border: 1px solid #ccc;
+    break-inside: avoid;
+  }
+}

@@ -1,0 +1,368 @@
+{
+  "vscodeVersion": "1.136.1",
+  "date": "2026-09-10",
+  "source": {
+    "workbenchHtml": "/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html",
+    "workbenchJs": "/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.js",
+    "workbenchCss": "/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/workbench/workbench.desktop.main.css",
+    "workbenchMainJs": "/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/workbench/workbench.desktop.main.js",
+    "nlsMessages": "/Applications/Visual Studio Code.app/Contents/Resources/app/out/nls.messages.json",
+    "productJson": "/Applications/Visual Studio Code.app/Contents/Resources/app/product.json",
+    "method": "Extracted CSS rules by scanning the 1-line-minified workbench.desktop.main.css (1,568,985 bytes) for selector substrings and walking to the enclosing `{...}` rule. All selectors/notes below are copy-pasted (not memory) from that scan; line numbers aren't meaningful because the file is minified to ~37 physical lines, so citations give byte-offset-free literal rule text instead."
+  },
+  "importantContext2026": {
+    "modernUIRedesign": "VS Code 1.136.1 ships an experimental full workbench re-skin behind `workbench.experimental.modernUI` (boolean, default false, schema flag `experiment:{mode:\"auto\"}` meaning Microsoft can A/B-enable it via their experimentation service without the user opting in). Official description (nls.messages.json #7076, verified by grep): \"Controls whether the Modern UI Update is enabled. When on, the side bars and bottom panel are shown as floating cards with rounded corners and gaps, and a set of refreshed workbench styles is applied, matching the Agents window design.\" When enabled, `.monaco-workbench` gains `.modern-ui` and (if `workbench.experimental.floatingPanels`-derived) `.floating-panels` / `.modern-ui-compact` classes, which change margins, add `border-radius`, and switch several parts to `background-color: var(--vscode-surface-background)` with real gaps between parts (see `stackingContext.floatingPanelsCaveat`). glass.css MUST be written to work under BOTH the classic layout and the modern-ui/floating-panels layout, or explicitly branch on `.monaco-workbench.floating-panels`.",
+    "deprecatedStyleOverridesSetting": "A configuration-migration entry for `workbench.experimental.styleOverrides` (an array-typed setting) still exists in workbench.desktop.main.js, but the setting itself has NO live schema entry in 1.136.1 — grepping for `\"workbench.experimental.styleOverrides\":{` returns nothing. The migration code only forwards any old array value into enabling `workbench.experimental.modernUI` and then discards it. Conclusion: VS Code briefly had (or was building toward) a granular official style-override hook and removed/collapsed it into the coarse modernUI on/off boolean. There is no supported per-selector CSS override API in 1.136.1. See vscode-injection.md Part A5 for the full discussion."
+  },
+  "cssVariableSystem": {
+    "namingFunction": "function CH(s){return `--vscode-${s.replace(/\\./g,\"-\")}`} (workbench.desktop.main.js, verified by grep). Confirms every registered theme color id (dots) becomes `--vscode-<id-with-dashes>`.",
+    "generator": "ThemeService.updateDynamicCSSRules(theme) calls X4o(theme, \".monaco-workbench\", themingParticipants, environmentService) which iterates ALL registered colors via ULe().getColors() and pushes `${CH(colorId)}: ${value};` for every color that has a value in the active theme, plus per-size custom properties from mmt().getSizes(). It wraps the whole list as ONE rule: `.monaco-workbench { --vscode-editor-background: #1e1e1e; --vscode-sideBar-background: #252526; ...hundreds more...; }`.",
+    "injectionSink": "P5i(cssText, \"contributedColorTheme\") finds-or-creates `<style class=\"contributedColorTheme\">` inside `document.head` and sets `.textContent = cssText` (NOT innerHTML). This is regenerated on every theme change / color customization change.",
+    "selectorTarget": ".monaco-workbench (not :root, not body). All `--vscode-*` variables are therefore only guaranteed to resolve inside `.monaco-workbench` or its descendants — a glass.css rule outside that subtree (e.g. targeting `html` or `body`) will NOT see them.",
+    "additionalBaseRule": "A separate ThemingParticipant contributes `.monaco-workbench { background-color: ${editorBackgroundDerived}; }` (and one more color-dependent rule) into the SAME generated stylesheet — this is the root's own flat fallback background, independent of the per-part background-color rules below.",
+    "staticShadowTokens": "workbench.desktop.main.css ALSO sets a handful of non-theme custom properties directly on `.monaco-workbench{...}` as static (not theme-generated) values, e.g. `--vscode-shadow-sm: 0 0 4px rgba(0,0,0,.08)`, `--vscode-shadow-md`, `--vscode-shadow-lg`, `--vscode-shadow-xl`, `--vscode-shadow-active-tab`, `--vscode-shadow-depth-x/y` — these look like theme-color variables but are actually hardcoded in the static bundle, overridden again per-theme by modern-ui (`.modern-ui.monaco-workbench{--vscode-shadow-active-tab: 0 0 0 0 transparent; ...}` zeroes them out).",
+    "confirmedByGrep": true
+  },
+  "stackingContext": {
+    "rootOverflow": ".monaco-workbench{position:relative;inset:0;z-index:1;overflow:hidden;color:var(--vscode-foreground); ...shadow tokens...}. The workbench root fills the whole window (inset:0) and CLIPS (overflow:hidden) anything that visually extends past its own box. Since it fills the window, this in practice only matters for elements that try to escape past the window edge, not for internal part boundaries.",
+    "nonOverlappingSiblings": "Sidebar / editor / panel / auxiliarybar are rendered as `.split-view-view` children of the SAME `.split-view-container` (`.monaco-split-view2>.monaco-scrollable-element>.split-view-container>.split-view-view{white-space:initial;position:absolute}`), each given an explicit inline `left/top/width/height` by the JS Grid/SplitView layout engine. They are position:absolute SIBLINGS placed side-by-side, not stacked — there is no z-order overlap between sidebar and editor in the normal (non-overlay) layout. Confirmed: no `z-index` is set on `.split-view-view` itself; ordering is purely geometric.",
+    "backdropFilterImplication": "Because sidebar/editor/panel do not overlap in paint order, `backdrop-filter: blur()` applied directly to `.part.sidebar` has nothing colorful painted behind it in the SAME document layer other than `.monaco-workbench`'s own flat `background-color` (or a background-image if glass.css sets one) — it can NEVER blur the editor's text/content, because the editor's pixels are never composited underneath the sidebar's box. This is the single most important fact for the lensing strategy.",
+    "recommendedStrategyA_sharedBackdropImage": "Set a background (image, gradient, or a blurred wallpaper screenshot) on `.monaco-workbench` itself (or on a fixed, full-viewport `::before`/div inserted as the first child, z-index below everything else). Then give each 'glass' surface (`.part.sidebar`, `.part.auxiliarybar`, `.part.panel`, `.part.titlebar`, `.part.statusbar`) `background: rgba(...)` (NOT opaque) + `backdrop-filter: blur()`. All parts now visually frost the SAME shared backdrop image, producing a consistent 'glass' look — but it is not truly showing the editor content through the sidebar, it's showing the shared wallpaper layer through both. Caveat: `.monaco-editor-background` elements typically paint an OPAQUE `var(--vscode-editor-background)` across the whole editor viewport, so the wallpaper will only be visible through the editor in truly empty areas unless glass.css also makes `.monaco-editor-background`/`.monaco-editor .margin` semi-transparent.",
+    "recommendedStrategyB_nativeVibrancy": "Rely on Vibrancy Continued's native Electron vibrancy (transparent window + macOS NSVisualEffectView material) for the REAL 'blur what's behind the OS window' effect — this happens at the compositor/window level, entirely outside CSS. Once the window is natively vibrant, CSS `backdrop-filter` is not even required for the base parts: `background-color: rgba(30,30,30,0.55)` on each part is enough, because the OS has already blurred what's behind the whole window. CSS backdrop-filter then only adds value on top of that for genuinely overlapping in-page widgets (below).",
+    "recommendedStrategyC_trueOverlapWidgets": "Floating/overlay widgets — `.suggest-widget`, `.parameter-hints-widget`, `.monaco-hover`, `.rename-box`, `.peekview-widget`, `.find-widget`, `.sticky-widget`, `.quick-input-widget`, `.context-view` (menus/dropdowns), `.notifications-toasts`/`.notifications-center`, `.debug-toolbar` — ARE genuinely stacked on top of editor text or other parts (position:absolute/fixed with z-index in the 4–2575 range, see domOverlayLayers). `backdrop-filter` on THESE elements is the one place in the whole workbench where it produces a real, non-fake blur of whatever is actually behind them. This is the highest-value target for glass.css's backdrop-filter budget.",
+    "overflowHiddenContainers": [
+      ".monaco-workbench (root, overflow:hidden, inset:0 — clips only at the window edge)",
+      ".part.statusbar (overflow:hidden)",
+      ".monaco-list (overflow:hidden)",
+      ".part.activitybar (overflow:hidden, floating-panels mode only)",
+      ".extensions-viewlet>.overlay (position:absolute;inset:0, not overflow but a full-cover layer)"
+    ],
+    "overflowVisibleException": ".monaco-editor{overflow:visible} — the editor root itself does NOT clip, which is why suggest/hover/peek widgets can render outside the nominal editor box.",
+    "containUsage": "grep for `contain:` across the whole 1.5MB bundle returns only 3 unrelated hits (a notebook toolbar `contain:style`, a small icon grid `contain:layout style size paint`, and the chat 'thinking box' `contain:layout style`). NONE of `.part.*`, `.split-view-*`, `.editor-group-container`, or `.monaco-editor` use CSS containment. Not a blocker for backdrop-filter anywhere in the structural layout.",
+    "transformUsage": "`transform:translateZ(0)` appears 4x (a progress-bar animation, a notebook output renderer, a small pixel-spinner icon, and a modal-editor block) and `transform:translate(...)` once on `.floating-panels .part.activitybar>.content` (a cosmetic nudge). None of these sit between a `.part.*` glass surface and the region you'd want backdrop-filter to sample, so they don't create unwanted containing blocks for our purposes — but note ANY element you add `transform` to yourself becomes a new containing block for descendant `position:fixed` children, so glass.css should avoid putting `transform` on `.monaco-workbench` or `.part.*` if it also wants child `position:fixed` overlays (quick-input, notifications) to keep positioning against the real viewport.",
+    "confirmedByGrep": true
+  },
+  "domOverlayLayers": {
+    "note": "z-index table extracted by regex over the whole CSS bundle for rules containing `z-index` with value >= 30, deduped by selector, sorted descending. Confirms the floating/overlay layer is a distinct 'layer 2' on top of the structural parts (which mostly have no explicit z-index — ordering there is DOM order inside z-index:1 root).",
+    "table": [
+      {"selector": ".monaco-workbench .screencast-mouse / .screencast-keyboard", "zIndex": 100000},
+      {"selector": ".monaco-editor .monaco-editor-overlaymessage, #monaco-workbench-editor-drop-overlay, #monaco-pane-drop-overlay, .onboarding-a-overlay", "zIndex": 10000},
+      {"selector": ".keybindings-overflow-widgets-container, .scm-overflow-widgets-container", "zIndex": 5000},
+      {"selector": ".monaco-workbench .part.titlebar .window-controls-container", "zIndex": 3000},
+      {"selector": ".spotlight-overlay", "zIndex": 2600},
+      {"selector": ".monaco-dialog-modal-block", "zIndex": 2575},
+      {"selector": ".quick-input-widget", "zIndex": 2550},
+      {"selector": ".accessible-view", "zIndex": 2550},
+      {"selector": ".monaco-workbench>.notifications-center", "zIndex": 2545},
+      {"selector": ".monaco-workbench>.notifications-toasts", "zIndex": 2545},
+      {"selector": ".monaco-workbench .debug-toolbar", "zIndex": 2520},
+      {"selector": ".monaco-workbench .part.titlebar ... .command-center / .menubar / .window-appicon / toolbar containers", "zIndex": 2500},
+      {"selector": ".menubar .menubar-menu-items-holder", "zIndex": 2000},
+      {"selector": ".monaco-drag-image, .monaco-editor .editor-dictation-widget", "zIndex": 1000},
+      {"selector": ".monaco-editor .rename-box", "zIndex": 100},
+      {"selector": ".monaco-editor .debug-hover-widget, .action-list-submenu-panel, .token-inspect-widget", "zIndex": 50},
+      {"selector": ".monaco-editor .suggest-widget, .monaco-hover.workbench-hover, .workbench-suggest-widget, .action-widget", "zIndex": 40},
+      {"selector": ".monaco-editor .parameter-hints-widget, .monaco-editor .inlineSuggestionsHints.withBorder", "zIndex": 39},
+      {"selector": ".monaco-sash, .monaco-editor .find-widget", "zIndex": 35},
+      {"selector": ".monaco-editor .sticky-widget", "zIndex": 4},
+      {"selector": ".monaco-workbench .part>.content>.monaco-progress-container / editor-group-container>.monaco-progress-container", "zIndex": 5}
+    ],
+    "mountPoints": {
+      ".quick-input-widget": "position:absolute; width:600px; left:50%; z-index:2550. Selector is used bare (not prefixed `.monaco-workbench .quick-input-widget` in most rules, only in modern-ui variants like `.modern-ui.monaco-enable-motion .quick-input-widget`), consistent with it being mounted high in the tree (as a descendant of `.monaco-workbench`, sized relative to the window via `left:50%` needing a positioned ancestor — `.monaco-workbench` itself, which is `position:relative`, supplies that).",
+      ".context-view": "Two variants: `.context-view{position:absolute}` (anchored dropdowns/menus, e.g. `.monaco-menu`) and `.context-view.fixed{all:initial;position:fixed;...}` (full viewport-anchored, e.g. command palette overflow, some quick-pick menus). `.monaco-workbench .context-view{-webkit-app-region:no-drag}` confirms it's a descendant of `.monaco-workbench`, appended once and repositioned/reused for every menu/dropdown/hover popup requested by the ContextViewService.",
+      ".notifications-toasts / .notifications-center": "Both are DIRECT children of `.monaco-workbench` (`>` combinator confirmed: `.monaco-workbench>.notifications-toasts{position:absolute;z-index:2545;...}`).",
+      ".monaco-hover / .monaco-hover.workbench-hover": ".monaco-hover{position:absolute;overflow:hidden;...}. No z-index on the base class; `.workbench-hover` variant gets z-index:40, same layer as suggest-widget.",
+      ".debug-toolbar": ".monaco-workbench .debug-toolbar{position:absolute;z-index:2520;...-webkit-app-region:no-drag}."
+    },
+    "confirmedByGrep": true
+  },
+  "cspAndTrustedTypes": {
+    "liveCspMetaTag": "workbench.html lines 6-59 (verified by Read, 2026-09-10, on the user's own already-Vibrancy-patched install): default-src 'none'; img-src 'self' data: blob: vscode-remote-resource: vscode-managed-remote-resource: https:; media-src 'self'; frame-src 'self' vscode-webview:; script-src 'self' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; connect-src 'self' https: ws:; font-src 'self' vscode-remote-resource: vscode-managed-remote-resource: https://*.vscode-unpkg.net; require-trusted-types-for 'script'; trusted-types VscodeVibrancyContinued amdLoader cellRendererEditorText ...(19 built-in policy names)...",
+    "styleSrcImplication": "style-src has 'unsafe-inline' AND 'self'. Inline `<style>` tags and `style.textContent=` / `style.setProperty()` are ALWAYS allowed, with or without any CSP patch. This is why every custom-CSS extension (Custom CSS Loader, Vibrancy, Custom UI Style) can inject CSS with zero CSP workaround — only JS injection needs special handling.",
+    "scriptSrcImplication": "script-src is 'self' 'unsafe-eval' blob: — NOTABLY NO 'unsafe-inline'. A literal `<script>...</script>` tag with inline code should be blocked by script-src alone, independent of trusted-types, UNLESS the CSP itself has been removed or the script is loaded from a same-origin file (script-src 'self').",
+    "howVibrancyInjectsJs": "Vibrancy Continued does NOT rely on an inline <script> tag surviving CSP. Its runtime bootstrap runs via `BrowserWindow.webContents.executeJavaScript(...)` from the (privileged) Electron main process — this API evaluates code directly in the page's V8 context and is understood to bypass the page's own CSP/trusted-types enforcement (Electron's executeJavaScript is a well-known CSP bypass vector, widely documented in Electron security writeups). Inside that executed code it creates `window.trustedTypes.createPolicy(\"VscodeVibrancyContinued\", {createHTML: v=>v})` (matching the exact policy name it earlier patched into the CSP's trusted-types allowlist) and uses `div.innerHTML = policy.createHTML(htmlString)` to insert `<style>`/`<script>` wrapper elements into `document.body`. NOTE: per the HTML parsing spec, a `<script>` element inserted via `.innerHTML` assignment does NOT execute — so Vibrancy's `imports.js` (user JS files) may not reliably run through this path; its OWN theme CSS and the `imports.css` half of this mechanism is what's load-bearing and verified working.",
+    "howCustomCssLoaderInjectsJs": "be5invis/vscode-custom-css takes a different, more aggressive approach: it deletes the ENTIRE CSP meta tag from workbench.html (`html.replace(/<meta\\s+http-equiv=\"Content-Security-Policy\"[\\s\\S]*?\\/>/, \"\")`, verified via GitHub source fetch). With no CSP left at all, its plain inline `<script>`/`<style>` tags (inserted as literal HTML text before `</body>`/`</head>`, parser-inserted, so they DO execute normally) work with no further trickery — but the whole renderer runs with zero CSP protection from that point forward, a materially larger security-risk than Vibrancy's surgical trusted-types-allowlist patch.",
+    "howDirectFileEditAvoidsCspEntirely": "A third option — used conceptually by subframe7536/vscode-custom-ui-style and recommended in vscode-injection.md as our own inject.sh route — is to append CSS/JS directly into the STATIC bundle files that are already loaded from 'self' (`workbench.desktop.main.css` via its existing `<link rel=stylesheet>`, and `workbench.js` or `workbench.desktop.main.js` via their existing `<script type=module src=...>` tags). Trusted-types only guards RUNTIME sinks (innerHTML, script.src=, eval(string-from-untrusted-source), etc.) — it does not govern the browser's normal parsing/execution of a same-origin `<link>`/`<script src>` resource, and CSP script-src 'self' already permits it. This means editing the bundle files directly needs ZERO CSP/trusted-types workaround, at the cost of touching a checksummed file (see productJsonChecksums below) — which every route (including Vibrancy's HTML edit) triggers anyway.",
+    "confirmedByGrep": true,
+    "confirmedByWebFetch": true
+  },
+  "productJsonChecksums": {
+    "mechanism": "product.json has a top-level `checksums` object: relative-path -> unpadded standard-base64 SHA-256 digest of the pristine file's bytes. Verified by computing sha256(workbench.html) locally and confirming it does NOT match the stored value (because Vibrancy Continued has already modified this exact file on this machine) — this IS the live 'corrupt installation' condition on this machine right now.",
+    "checksummedFiles": [
+      "vs/base/parts/sandbox/electron-browser/preload.js",
+      "vs/workbench/workbench.desktop.main.js",
+      "vs/workbench/workbench.desktop.main.css",
+      "vs/workbench/api/node/extensionHostProcess.js",
+      "vs/code/electron-browser/workbench/workbench.html",
+      "vs/code/electron-browser/workbench/workbench.js",
+      "vs/sessions/sessions.desktop.main.js",
+      "vs/sessions/sessions.desktop.main.css",
+      "vs/sessions/electron-browser/sessions.html",
+      "vs/sessions/electron-browser/sessions.js"
+    ],
+    "notChecksummed": "out/main.js (the Electron MAIN process entry point that Vibrancy Continued patches for its runtime bootstrap) is NOT in this list — confirmed by grep (`VSCODE-VIBRANCY-START` markers found at out/main.js lines 599-604 on this machine, and product.json's checksums object has no `main.js` key at all, only the two workbench.desktop.main.js/.css and workbench.html/.js entries above).",
+    "unavoidability": "Every practical injection route needs to touch AT LEAST ONE of workbench.html / workbench.desktop.main.css / workbench.desktop.main.js / workbench.js to make glass.css/JS actually load — all four are checksummed. There is no way to ship a persistent CSS/JS injection without triggering SOME checksum mismatch; the only variable across routes is (a) how many of the 4 files you touch, and (b) whether you ALSO need a CSP/trusted-types workaround (only relevant if you inject via workbench.html and want inline `<script>` to run).",
+    "confirmedByGrep": true
+  },
+  "regions": {
+    "root": {
+      "selector": ".monaco-workbench",
+      "parentChain": ["html", "body", ".monaco-workbench"],
+      "ownBackground": "background-color set dynamically by a ThemingParticipant rule appended to the same runtime <style class=\"contributedColorTheme\"> block (not the static CSS); approximates editor.background.",
+      "cssVars": ["--vscode-foreground", "--vscode-shadow-sm", "--vscode-shadow-md", "--vscode-shadow-lg", "--vscode-shadow-xl", "--vscode-shadow-active-tab", "--vscode-shadow-depth-x", "--vscode-shadow-depth-y", "(...every other --vscode-* theme color, generated at runtime, see cssVariableSystem)"],
+      "notes": "position:relative;inset:0;z-index:1;overflow:hidden;font-size:13px;line-height:1.4em. This is THE element that receives every platform/theme/feature-flag class VS Code itself toggles: .mac/.windows/.linux, .vs/.vs-dark/.hc-black/.hc-light, .modern-ui, .floating-panels, .modern-ui-compact, .nosidebar, .nopanel, .noactivitybar, .noauxiliarybar, .nostatusbar, .monaco-enable-motion / .monaco-reduce-motion. A `.monaco-workbench.vs-glass` toggle class added by injected JS is the idiomatic, precedented place to hang a glass.css on/off switch — see vscode-injection.md Part C."
+    },
+    "titlebar": {
+      "selector": ".monaco-workbench .part.titlebar",
+      "parentChain": [".monaco-workbench", ".part.titlebar", ".titlebar-container", ".titlebar-left / .titlebar-center / .titlebar-right"],
+      "ownBackground": "No explicit background-color rule was found on `.part.titlebar` itself in the static bundle for the classic layout (relies on `--vscode-titleBar-activeBackground`/`-inactiveBackground` set elsewhere, typically inline via the theming participant chain, not grepped here); `box-shadow: var(--vscode-shadow-md)` is set directly.",
+      "cssVars": ["--vscode-titleBar-activeForeground", "--vscode-commandCenter-foreground", "--vscode-shadow-md"],
+      "notes": "display:flex;flex-direction:row (row-reverse on .mac). `.titlebar-container` is box-sizing:border-box;overflow:hidden;height:100%;width:100%. Contains `.command-center` (z-index:2500, -webkit-app-region:no-drag — draggable window region surrounds it, important: backdrop-filter/blur on titlebar must not visually fight the native -webkit-app-region drag handle)."
+    },
+    "activitybar": {
+      "selector": ".monaco-workbench .part.activitybar",
+      "parentChain": [".monaco-workbench", ".part.activitybar", ".content", ".composite-bar"],
+      "ownBackground": "Not set directly on `.part.activitybar` in classic layout (falls through to root). In floating-panels/modern-ui mode gets `border:1px solid var(--modern-ui-floating-card-border-color, var(--vscode-modernActivityBar-border, var(--vscode-surface-border, var(--vscode-widget-border, transparent))))` and its own card margin/radius, but STILL no explicit background-color in the rules grepped (content area uses --activity-bar-width sizing).",
+      "cssVars": ["--activity-bar-width", "--activity-bar-action-height", "--activity-bar-icon-size", "--vscode-activityBar-foreground", "--vscode-modernActivityBar-border", "--vscode-surface-border", "--vscode-widget-border"],
+      "notes": "width:var(--activity-bar-width,48px);height:100%. floating-panels mode: overflow:hidden, margin/border-radius as a 'card'."
+    },
+    "sidebar": {
+      "selector": ".monaco-workbench .part.sidebar",
+      "parentChain": [".monaco-workbench", ".split-view-container", ".split-view-view", ".part.sidebar", ".title / .content"],
+      "ownBackground": "`.part.sidebar>.title{background-color: var(--vscode-sideBarTitle-background)}`. The sidebar BODY's own background is NOT set by a direct `.part.sidebar{background-color:...}` rule in classic layout in the greps taken (theme applies it via the sideBar.background color elsewhere in the theming-participant chain / per-view backgrounds); in floating-panels mode the analogous auxiliarybar rule explicitly sets `background-color: var(--vscode-sideBar-background) !important`, and sidebar shares the same `--modern-ui-floating-card-*` treatment (border/radius/margin) as auxiliarybar.",
+      "cssVars": ["--vscode-sideBarTitle-background", "--vscode-sideBar-background", "--vscode-sideBarSectionHeader-border", "--vscode-outputView-background", "--vscode-terminal-background"],
+      "notes": "Is a `.split-view-view` sibling of `.part.editor` — see stackingContext.nonOverlappingSiblings. `.monaco-workbench.nosidebar>.part.sidebar{display:none!important}`."
+    },
+    "auxiliarybar": {
+      "selector": ".monaco-workbench .part.auxiliarybar",
+      "parentChain": [".monaco-workbench", ".split-view-container", ".split-view-view", ".part.auxiliarybar", ".content"],
+      "ownBackground": "`.monaco-workbench .part.auxiliarybar>.content .monaco-editor, ...monaco-editor-background{background-color: var(--vscode-sideBar-background)}`. In floating-panels mode: `background-color: var(--vscode-sideBar-background) !important`.",
+      "cssVars": ["--vscode-sideBar-background"],
+      "notes": "Secondary sidebar (right side, e.g. Chat/Copilot panel). `.monaco-workbench.noauxiliarybar .part.auxiliarybar{display:none!important}`."
+    },
+    "panel": {
+      "selector": ".monaco-workbench .part.panel",
+      "parentChain": [".monaco-workbench", ".monaco-grid-view or .split-view-container", ".part.panel", ".title", ".content"],
+      "ownBackground": "In floating-panels mode: `background-color: var(--vscode-panel-background) !important`. Classic layout: `.part.panel>.content .monaco-editor, ...{background-color: var(--vscode-panel-background)}` (applies to the editor-like surfaces embedded in panel, e.g. Output view).",
+      "cssVars": ["--vscode-panel-background", "--vscode-panelTitle-activeBorder", "--vscode-panelTitle-activeForeground", "--vscode-outputViewStickyScroll-background"],
+      "notes": "Bottom/left/right panel (Terminal, Problems, Output, Debug Console). Border-side depends on position: `.part.panel.bottom{border-top}`, `.part.panel.top{border-bottom}`, `.part.panel.right{border-left}`, `.part.panel.left{border-right}`. `.monaco-workbench.nopanel .part.panel{display:none!important}`."
+    },
+    "editorPart": {
+      "selector": ".monaco-workbench .part.editor",
+      "parentChain": [".monaco-workbench", ".monaco-grid-view", ".split-view-container", ".split-view-view", ".part.editor", ".content", ".editor-group-container"],
+      "ownBackground": "No direct `background-color` rule found on `.part.editor` or `.part.editor>.content` themselves (searched `editorGroup-background` — no match). The editor area's visible color comes entirely from per-instance `.monaco-editor-background{background-color:var(--vscode-editor-background)}` painted by each open editor, plus `.monaco-workbench`'s own root background showing through any gap/empty-group area.",
+      "cssVars": ["--vscode-editor-background", "--vscode-editor-border", "--vscode-surface-border", "--vscode-cornerRadius-large"],
+      "notes": "THIS IS THE KEY GAP for the wallpaper/backdrop-image glass strategy: because there's no single 'editor part background' variable to make translucent, achieving a truly see-through editor requires touching `.monaco-editor-background`/`.monaco-editor .margin` (opaque per-instance fills) rather than `.part.editor` itself. `.editor-group-container.empty{opacity:.5}` for an empty group."
+    },
+    "editorGroupContainer": {
+      "selector": ".monaco-workbench .part.editor>.content .editor-group-container",
+      "parentChain": [".part.editor", ".content", ".editor-group-container", ".title (tabs) / .monaco-editor"],
+      "ownBackground": "height:100% only; no explicit background — transparent, shows editor instance(s) or watermark beneath.",
+      "cssVars": [],
+      "notes": "Holds `.title>.tabs-and-actions-container>.tabs-container` and the actual `.monaco-editor` instance(s). `>.monaco-progress-container{position:absolute;z-index:5}` for the loading bar."
+    },
+    "tabsContainer": {
+      "selector": ".monaco-workbench .part.editor>.content .editor-group-container>.title .tabs-container",
+      "parentChain": [".editor-group-container", ".title", ".tabs-and-actions-container", ".tabs-container", ".tab"],
+      "ownBackground": "Not set directly here; each `.tab` gets background via `--modern-ui-editor-tab-*-background` custom properties in modern-ui mode, or theme colors (`tab.activeBackground` etc.) in classic mode.",
+      "cssVars": ["--editor-group-tab-height", "--modern-ui-editor-tab-active-background", "--modern-ui-editor-tab-inactive-background", "--modern-ui-editor-tab-hover-background"],
+      "notes": "display:flex;height:var(--editor-group-tab-height);scrollbar-width:none. `.wrapping` variant allows wrap to multiple rows."
+    },
+    "statusbar": {
+      "selector": ".monaco-workbench .part.statusbar",
+      "parentChain": [".monaco-workbench", ".part.statusbar", ".items-container", ".statusbar-item"],
+      "ownBackground": "Not set directly in the grepped rules (comes from `--vscode-statusBar-background`/`-noFolderBackground` via the theming chain, not a static bundle rule); `transition:background-color .15s ease-out` when motion enabled.",
+      "cssVars": ["--vscode-statusBar-background", "--vscode-statusBar-foreground"],
+      "notes": "box-sizing:border-box;width:100%;height:22px;overflow:hidden. `.monaco-workbench.nostatusbar` hides it and shifts notifications-toasts bottom offset from 25px to 3px."
+    },
+    "banner": {
+      "selector": ".monaco-workbench .part.banner",
+      "parentChain": [".monaco-workbench", ".part.banner", ".icon-container / .message-container / .message-actions-container"],
+      "ownBackground": "`background-color: var(--vscode-banner-background)`.",
+      "cssVars": ["--vscode-banner-background", "--vscode-banner-foreground", "--vscode-banner-iconForeground"],
+      "notes": "width:100%;height:100%;overflow:visible. Thin strip above the editor for e.g. trust/telemetry banners."
+    },
+    "quickInputWidget": {
+      "selector": ".quick-input-widget",
+      "parentChain": [".monaco-workbench", ".quick-input-widget", ".quick-input-titlebar / .quick-input-header / .quick-input-filter / .monaco-list"],
+      "ownBackground": "Not set at this base rule (comes from `--vscode-quickInput-background` via theme, applied elsewhere); base rule only sets geometry: `position:absolute;width:600px;z-index:2550;left:50%;border-radius:var(--vscode-cornerRadius-xLarge);box-shadow:var(--vscode-shadow-xl)`.",
+      "cssVars": ["--vscode-quickInput-background", "--vscode-cornerRadius-xLarge", "--vscode-shadow-xl"],
+      "notes": "Command palette / quick-open / quick-pick container. Genuinely OVERLAPS the editor and every part beneath it — prime backdrop-filter target (see stackingContext.recommendedStrategyC). Motion: `.modern-ui.monaco-enable-motion .quick-input-widget{animation:quick-input-widget-open .25s ...}`."
+    },
+    "hoverWidget": {
+      "selector": ".monaco-hover",
+      "parentChain": [".monaco-workbench or .monaco-editor", ".monaco-hover", ".hover-contents"],
+      "ownBackground": "Not set at base rule (comes from `--vscode-editorHoverWidget-background` via theme). Base rule: `cursor:default;position:absolute;overflow:hidden;line-height:1.5em`.",
+      "cssVars": ["--vscode-editorHoverWidget-background", "--vscode-editorHoverWidget-foreground", "--vscode-editorHoverWidget-border", "--vscode-hover-maxWidth", "--vscode-hover-whiteSpace"],
+      "notes": "`.workbench-hover` variant is z-index:40 (workbench-level hovers, e.g. status bar tooltips); editor-internal hovers nest inside `.monaco-editor`. Genuinely overlaps content — good backdrop-filter target."
+    },
+    "notificationsToasts": {
+      "selector": ".monaco-workbench>.notifications-toasts",
+      "parentChain": [".monaco-workbench", ".notifications-toasts", ".notifications-list-container", ".notification-toast-container", ".notification-toast"],
+      "ownBackground": "Not set at base; the toast itself uses `--vscode-notifications-background` via theme. Base: `position:absolute;z-index:2545;right:3px;bottom:25px;display:none;border-radius:var(--vscode-cornerRadius-small)`.",
+      "cssVars": ["--vscode-notifications-background", "--vscode-notifications-foreground", "--vscode-cornerRadius-small", "--vscode-cornerRadius-large"],
+      "notes": "Direct child of `.monaco-workbench` (`>` combinator confirmed). modern-ui variant repositions using `--modern-ui-notifications-inline-inset`/`-block-end-inset` custom properties."
+    },
+    "notificationsCenter": {
+      "selector": ".monaco-workbench>.notifications-center",
+      "parentChain": [".monaco-workbench", ".notifications-center", ".notifications-center-header", ".notifications-list-container"],
+      "ownBackground": "Not set at base rule in classic layout (grepped only geometry: modern-ui variant sets position via inset custom properties + `border-radius: var(--vscode-cornerRadius-large)`).",
+      "cssVars": ["--vscode-notificationCenter-border", "--vscode-cornerRadius-large"],
+      "notes": "Direct child of `.monaco-workbench`, z-index:2545, same layer as toasts. Opened via the bell icon in the status bar."
+    },
+    "contextView": {
+      "selector": ".context-view",
+      "parentChain": [".monaco-workbench", ".context-view", ".monaco-menu / .action-widget / dropdown content"],
+      "ownBackground": "Not set at base rule (children like `.monaco-menu` set their own `--vscode-menu-background`-derived background).",
+      "cssVars": ["--vscode-menu-background", "--vscode-menu-foreground", "--vscode-menu-border", "--vscode-context-view-close-animation-duration", "--vscode-context-view-menu-motion-shadow"],
+      "notes": "Two positioning modes: `.context-view{position:absolute}` for anchored popups (dropdowns, context menus) and `.context-view.fixed{all:initial;position:fixed;...}` for viewport-anchored ones. `.monaco-workbench .context-view{-webkit-app-region:no-drag}` confirms it's a workbench descendant. Hosts `.monaco-menu` (right-click menus, dropdown menus) — this is the '.context-view .monaco-menu' the task asked about."
+    },
+    "commandCenter": {
+      "selector": ".monaco-workbench .part.titlebar>.titlebar-container>.titlebar-center>.window-title>.command-center",
+      "parentChain": [".part.titlebar", ".titlebar-container", ".titlebar-center", ".window-title", ".command-center", ".monaco-toolbar", ".monaco-action-bar"],
+      "ownBackground": "Not set directly (uses `--vscode-commandCenter-background`/`-foreground` via theme, not grepped as a static rule here).",
+      "cssVars": ["--vscode-commandCenter-foreground", "--vscode-titleBar-activeForeground"],
+      "notes": "z-index:2500; -webkit-app-region:no-drag (carved out of the draggable titlebar region). The breadcrumb/path picker in the titlebar."
+    },
+    "suggestWidget": {
+      "selector": ".monaco-editor .suggest-widget",
+      "parentChain": [".monaco-editor", ".suggest-widget", ".suggest-status-bar"],
+      "ownBackground": "`background-color: var(--vscode-editorSuggestWidget-background)`, `border-color: var(--vscode-editorSuggestWidget-border)`.",
+      "cssVars": ["--vscode-editorSuggestWidget-background", "--vscode-editorSuggestWidget-border", "--vscode-cornerRadius-large"],
+      "notes": "width:430px;z-index:40;border-radius:var(--vscode-cornerRadius-large);box-shadow:0 2px 8px var(--vscode-widget-shadow). Genuinely overlaps editor text — good backdrop-filter target. hc-black/hc-light get border-width:2px, box-shadow:none."
+    },
+    "parameterHintsWidget": {
+      "selector": ".monaco-editor .parameter-hints-widget",
+      "parentChain": [".monaco-editor", ".parameter-hints-widget", ".phwrapper", ".signature"],
+      "ownBackground": "`background-color: var(--vscode-editorHoverWidget-background)`, `border: 1px solid var(--vscode-editorHoverWidget-border)`.",
+      "cssVars": ["--vscode-editorHoverWidget-background", "--vscode-editorHoverWidget-border", "--vscode-editorHoverWidget-foreground", "--vscode-shadow-lg"],
+      "notes": "z-index:39;border-radius:var(--vscode-cornerRadius-large);box-shadow:var(--vscode-shadow-lg). max-width:440px."
+    },
+    "renameBox": {
+      "selector": ".monaco-editor .rename-box",
+      "parentChain": [".monaco-editor", ".rename-box", ".rename-input-with-button", ".rename-candidate-list-container"],
+      "ownBackground": "Not set directly (inherits `color:inherit`; background comes from the containing zone-widget/theme).",
+      "cssVars": ["--vscode-shadow-lg"],
+      "notes": "z-index:100;border-radius:4px;box-shadow:var(--vscode-shadow-lg). Inline rename input overlaid directly on top of the code line being renamed."
+    },
+    "peekviewWidget": {
+      "selector": ".monaco-editor .peekview-widget",
+      "parentChain": [".monaco-editor", ".peekview-widget", ".head", ".peekview-title", ".body"],
+      "ownBackground": "Not set on the widget root directly in the grepped rule (`box-shadow: var(--vscode-shadow-lg)` only); inner regions use `--vscode-peekView*` theme colors (peekViewTitle.background, peekViewResult.background, etc.).",
+      "cssVars": ["--vscode-shadow-lg", "--vscode-peekViewTitle-background", "--vscode-peekViewResult-background", "--vscode-peekViewEditor-background"],
+      "notes": "'Peek definition/references' — a large inline overlay that pushes editor lines apart and covers several lines of code both above and below; visually one of the biggest overlap regions in the editor."
+    },
+    "findWidget": {
+      "selector": ".monaco-editor .find-widget",
+      "parentChain": [".monaco-editor", ".find-widget", ".replace-part"],
+      "ownBackground": "`background-color: var(--vscode-editorWidget-background)`, `border: 1px solid var(--vscode-widget-border)`, `color: var(--vscode-editorWidget-foreground)`.",
+      "cssVars": ["--vscode-editorWidget-background", "--vscode-editorWidget-foreground", "--vscode-widget-border", "--vscode-shadow-lg", "--vscode-cornerRadius-large"],
+      "notes": "position:absolute;z-index:35;transform:translateY(...) slide animation;border-radius:var(--vscode-cornerRadius-large). Sits in the top-right corner of the editor, overlapping code."
+    },
+    "breadcrumbsControl": {
+      "selector": ".monaco-workbench .part.editor>.content .editor-group-container>.title .breadcrumbs-below-tabs .breadcrumbs-control",
+      "parentChain": [".editor-group-container", ".title", ".breadcrumbs-below-tabs", ".breadcrumbs-control", ".monaco-breadcrumb-item"],
+      "ownBackground": "Not set directly (inherits editor-group-container title-bar background).",
+      "cssVars": ["--vscode-breadcrumb-foreground", "--vscode-breadcrumb-background"],
+      "notes": "flex:1 100%;height:22px. Sits between the tabs row and the editor content, NOT overlapping — a structural strip, not a floating widget."
+    },
+    "stickyWidget": {
+      "selector": ".monaco-editor .sticky-widget",
+      "parentChain": [".monaco-editor", ".sticky-widget", ".sticky-widget-lines", ".sticky-line-content"],
+      "ownBackground": "`.sticky-widget-lines-scrollable{background-color: var(--vscode-editorStickyScroll-background)}`.",
+      "cssVars": ["--vscode-editorStickyScroll-background", "--vscode-editorStickyScrollGutter-background", "--vscode-editorStickyScroll-border", "--vscode-editorStickyScroll-shadow"],
+      "notes": "z-index:4;overflow:hidden;box-shadow:var(--vscode-editorStickyScroll-shadow) 0 4px 2px -2px. 'Sticky scroll' — pinned function/class header lines at the top of the editor viewport, DOES overlap the lines scrolling beneath it."
+    },
+    "minimap": {
+      "selector": ".monaco-editor .minimap",
+      "parentChain": [".monaco-editor", ".minimap", ".minimap-slider"],
+      "ownBackground": "Not set on `.minimap` itself here (the minimap canvas is drawn via Canvas2D, not styled via CSS background); slider handle uses `background: var(--vscode-minimapSlider-background)`.",
+      "cssVars": ["--vscode-minimapSlider-background", "--vscode-minimapSlider-hoverBackground", "--vscode-minimapSlider-activeBackground"],
+      "notes": "Right-edge code overview. NOT a good backdrop-filter target — it's a canvas-rendered raster, not text; blurring it would just blur its own bitmap."
+    },
+    "monacoScrollableElement": {
+      "selector": ".monaco-scrollable-element",
+      "parentChain": ["(wraps almost every scrollable region)", ".monaco-scrollable-element", ".scrollbar", ".shadow"],
+      "ownBackground": "Not set (transparent pass-through wrapper); `.shadow.top/.left{box-shadow: var(--vscode-scrollbar-shadow) ... inset}` for the scroll-shadow effect.",
+      "cssVars": ["--vscode-scrollbar-shadow", "--vscode-scrollbarSlider-background", "--vscode-scrollbarSlider-hoverBackground"],
+      "notes": "Generic scroll-viewport wrapper used everywhere (lists, editor, panels, quick-input). No overflow:hidden was explicitly found on the base rule in this grep pass, but functionally clips via its scrollbar/shadow children."
+    },
+    "splitViewStructure": {
+      "selector": ".monaco-split-view2 > .monaco-scrollable-element > .split-view-container > .split-view-view",
+      "parentChain": [".monaco-grid-view", ".monaco-split-view2", ".sash-container", ".split-view-container", ".split-view-view"],
+      "ownBackground": "None — pure layout primitive.",
+      "cssVars": ["--separator-border"],
+      "notes": "THE structural fact for Part B: `.split-view-view{position:absolute}` with NO z-index, geometry set entirely by inline styles from the JS Grid/SplitView engine. This is what makes sidebar/editor/panel non-overlapping siblings — see stackingContext."
+    },
+    "sash": {
+      "selector": ".monaco-sash",
+      "parentChain": [".monaco-split-view2", ".sash-container", ".monaco-sash"],
+      "ownBackground": "None (invisible hit-target; cursor changes only).",
+      "cssVars": [],
+      "notes": "z-index:35 on the sash itself (via `.monaco-sash:not(.disabled)>.orthogonal-drag-handle`); `.sash-container{position:absolute;width:100%;height:100%;pointer-events:none}` overlays the WHOLE split-view region with pointer-events re-enabled only on individual sash handles. The draggable resize divider between parts."
+    },
+    "monacoList": {
+      "selector": ".monaco-list",
+      "parentChain": ["(sidebar/panel views, quick-input, suggest, etc.)", ".monaco-list", ".monaco-list-rows", ".monaco-list-row"],
+      "ownBackground": "Not set at base (background comes from the containing view, e.g. sideBar-background); `.monaco-tree-sticky-container{background-color: var(--vscode-sideBar-background)}` for sticky scroll headers within lists.",
+      "cssVars": ["--vscode-sideBar-background", "--vscode-list-hoverBackground", "--vscode-list-activeSelectionBackground"],
+      "notes": "position:relative;height:100%;width:100%;overflow:hidden. Rows are `position:absolute` (virtualized list)."
+    },
+    "paneCompositeTitle": {
+      "selector": ".monaco-workbench .part>.composite.title",
+      "parentChain": [".part.sidebar / .part.panel / .part.auxiliarybar", ".composite.title", ".title-actions"],
+      "ownBackground": "Not set directly (inherits part background); border added: `.part.panel.bottom .composite.title{border-top-width:1px}`.",
+      "cssVars": ["--vscode-panelTitle-activeBorder", "--vscode-sideBarTitle-background"],
+      "notes": "modern-ui adds padding + `overflow:visible` to `.part.basepanel:is(.bottom,.top,.left,.right) .composite.title` and removes the top border in favor of the floating-card border."
+    },
+    "terminal": {
+      "selector": ".monaco-workbench .xterm",
+      "parentChain": [".part.panel or .part.sidebar or .part.auxiliarybar", ".pane-body.integrated-terminal", ".terminal-outer-container", ".xterm", ".xterm-viewport", ".xterm-screen"],
+      "ownBackground": "`.pane-body.integrated-terminal .terminal-outer-container{background-color: var(--vscode-terminal-background, var(--vscode-sideBar-background))}`.",
+      "cssVars": ["--vscode-terminal-background", "--vscode-sideBar-background", "--vscode-terminalStickyScroll-background"],
+      "notes": "xterm.js renders to a `<canvas>` by default (GPU) or DOM rows if `terminal.integrated.gpuAcceleration:\"off\"` (Vibrancy's own README recommends DOM mode for its effect to show through — same caveat applies to glass.css: canvas-rendered terminal content paints OPAQUE pixels that backdrop-filter/transparency tricks on ancestors won't see through)."
+    },
+    "welcomeView": {
+      "selector": ".monaco-workbench .pane>.pane-body>.welcome-view",
+      "parentChain": [".pane", ".pane-body", ".welcome-view", ".welcome-view-content"],
+      "ownBackground": "Not set (transparent, shows sidebar/panel background).",
+      "cssVars": [],
+      "notes": "Empty-state view shown in sidebar panes with no content (e.g. Source Control with no repo open)."
+    },
+    "gettingStarted": {
+      "selector": ".monaco-workbench .part.editor>.content .gettingStartedContainer",
+      "parentChain": [".part.editor", ".content", ".gettingStartedContainer", ".gettingStartedSlide", ".getting-started-category"],
+      "ownBackground": "Not set at the container level in grepped rules (category cards get their own hover/border styling via `--vscode-welcomePage-*` elsewhere).",
+      "cssVars": ["--vscode-bodyFontSize"],
+      "notes": "Rendered as a full editor-tab replacement (occupies the editor-group-container like a normal editor)."
+    },
+    "settingsEditor": {
+      "selector": ".settings-editor",
+      "parentChain": [".part.editor", ".content", ".editor-group-container", ".settings-editor", ".settings-header", ".search-container"],
+      "ownBackground": "Not set on `.settings-editor` root (transparent, shows editor background); `.monaco-workbench.vs .settings-editor>.settings-header>.search-container>.suggest-input-container{border:1px solid #ddd}` is a light-theme-only hardcoded border (not a var!) worth noting for glass.css overrides.",
+      "cssVars": [],
+      "notes": "height:100%;overflow:hidden;max-width:1400px;margin:auto. Rendered as an editor-tab, not a separate part."
+    },
+    "extensionsViewlet": {
+      "selector": ".extensions-viewlet",
+      "parentChain": [".part.sidebar or .part.editor", ".content", ".extensions-viewlet", ".header", ".overlay"],
+      "ownBackground": "Not set directly (inherits container); `.overlay{position:absolute;inset:0;z-index:2}` is a loading/blocking scrim, not a glass surface.",
+      "cssVars": ["--vscode-problemsErrorIcon-foreground", "--vscode-problemsWarningIcon-foreground", "--vscode-problemsInfoIcon-foreground"],
+      "notes": "position:relative;height:100%. Can appear either in the sidebar (default) or as an editor tab (extensions.json / search results in a tab)."
+    },
+    "debugToolbar": {
+      "selector": ".monaco-workbench .debug-toolbar",
+      "parentChain": [".monaco-workbench", ".debug-toolbar", ".monaco-action-bar", ".drag-area"],
+      "ownBackground": "Not set directly at base (theme-driven `--vscode-debugToolBar-background` applied elsewhere); base rule sets geometry only.",
+      "cssVars": ["--vscode-debugToolBar-background", "--vscode-shadow-lg"],
+      "notes": "position:absolute;z-index:2520;height:28px;border-radius:var(--vscode-cornerRadius-large);-webkit-app-region:no-drag;box-shadow:var(--vscode-shadow-lg). Floating pill toolbar shown over the editor during a debug session — genuinely overlaps content, good backdrop-filter target."
+    },
+    "chatWidget": {
+      "selector": ".interactive-session",
+      "parentChain": [".part.auxiliarybar or .part.editor or .quick-input-widget (inline chat) or .zone-widget (inline chat in editor)", ".chat-widget", ".interactive-session", ".interactive-input-part", ".chat-input-container"],
+      "ownBackground": "`.chat-input-container{background-color: var(--vscode-input-background); border: var(--vscode-strokeThickness) solid var(--vscode-input-border, transparent)}`.",
+      "cssVars": ["--vscode-input-background", "--vscode-input-border", "--vscode-textLink-foreground", "--vscode-chat-font-size-body-m", "--vscode-chat-inputWorkingBorderColor1", "--vscode-cornerRadius-large"],
+      "notes": "Can be mounted in FOUR different places: the auxiliary sidebar (default Chat view), a full editor tab, an inline zone-widget INSIDE the editor (`.monaco-editor .zone-widget.inline-chat-widget`, which genuinely overlaps code — good backdrop-filter target), or inside `.quick-input-widget` (compact quick-chat). `--chat-input-radius` custom property varies per mount context (`.compact` variant in quick-input uses `--vscode-cornerRadius-xSmall` instead of `-large`)."
+    }
+  }
+}

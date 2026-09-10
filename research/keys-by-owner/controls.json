@@ -1,0 +1,2679 @@
+{
+ "owner": "controls",
+ "count": 243,
+ "keys": [
+  {
+   "id": "actionBar.toggledBackground",
+   "group": "Action Bar colors",
+   "description": "Background color for toggled action items in action bar.",
+   "defaults": {
+    "dark": "@inputOption.activeBackground",
+    "light": "@inputOption.activeBackground",
+    "hcDark": "@inputOption.activeBackground",
+    "hcLight": "@inputOption.activeBackground"
+   }
+  },
+  {
+   "id": "badge.background",
+   "group": "Badge",
+   "description": "Badge background color.",
+   "defaults": {
+    "dark": "#4D4D4D",
+    "light": "#C4C4C4",
+    "hcDark": "#000000",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "badge.foreground",
+   "group": "Badge",
+   "description": "Badge foreground color.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#333",
+    "hcDark": "#ffffff",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "browser.border",
+   "group": "Simple Browser colors (undocumented)",
+   "description": "Border color for integrated browser pages.",
+   "defaults": {
+    "dark": "@tab.border",
+    "light": "@tab.border",
+    "hcDark": "@tab.border",
+    "hcLight": "@tab.border"
+   }
+  },
+  {
+   "id": "button.background",
+   "group": "Button control",
+   "description": "Button background color.",
+   "defaults": {
+    "dark": "#0E639C",
+    "light": "#007ACC",
+    "hcDark": "#000000",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "button.border",
+   "group": "Button control",
+   "description": "Button border color.",
+   "defaults": {
+    "dark": "@contrastBorder",
+    "light": "@contrastBorder",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "button.foreground",
+   "group": "Button control",
+   "description": "Button foreground color.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#ffffff",
+    "hcDark": "#ffffff",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "button.hoverBackground",
+   "group": "Button control",
+   "description": "Button background color when hovering.",
+   "defaults": {
+    "dark": "expr:Pf(@button.background,.2)",
+    "light": "expr:Mu(@button.background,.2)",
+    "hcDark": "@button.background",
+    "hcLight": "@button.background"
+   }
+  },
+  {
+   "id": "button.secondaryBackground",
+   "group": "Button control",
+   "description": "Secondary button background color.",
+   "defaults": {
+    "dark": "@list.hoverBackground",
+    "light": "@list.hoverBackground",
+    "hcDark": null,
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "button.secondaryBorder",
+   "group": "Button control",
+   "description": "Secondary button border color.",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.15)",
+    "light": "expr:pi(@foreground,.15)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "button.secondaryForeground",
+   "group": "Button control",
+   "description": "Secondary button foreground color.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "#ffffff",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "button.secondaryHoverBackground",
+   "group": "Button control",
+   "description": "Secondary button background color when hovering.",
+   "defaults": {
+    "dark": "expr:Pf(@list.hoverBackground,.2)",
+    "light": "expr:Pf(@list.hoverBackground,.2)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "button.separator",
+   "group": "Button control",
+   "description": "Button separator color.",
+   "defaults": {
+    "dark": "expr:pi(@button.foreground,.4)",
+    "light": "expr:pi(@button.foreground,.4)",
+    "hcDark": "expr:pi(@button.foreground,.4)",
+    "hcLight": "expr:pi(@button.foreground,.4)"
+   }
+  },
+  {
+   "id": "checkbox.background",
+   "group": "Button control",
+   "description": "Background color of checkbox widget.",
+   "defaults": {
+    "dark": "@dropdown.background",
+    "light": "@dropdown.background",
+    "hcDark": "@dropdown.background",
+    "hcLight": "@dropdown.background"
+   }
+  },
+  {
+   "id": "checkbox.border",
+   "group": "Button control",
+   "description": "Border color of checkbox widget.",
+   "defaults": {
+    "dark": "@dropdown.border",
+    "light": "@dropdown.border",
+    "hcDark": "@dropdown.border",
+    "hcLight": "@dropdown.border"
+   }
+  },
+  {
+   "id": "checkbox.disabled.background",
+   "group": "Button control",
+   "description": "Background of a disabled checkbox.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "checkbox.disabled.foreground",
+   "group": "Button control",
+   "description": "Foreground of a disabled checkbox.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "checkbox.foreground",
+   "group": "Button control",
+   "description": "Foreground color of checkbox widget.",
+   "defaults": {
+    "dark": "@dropdown.foreground",
+    "light": "@dropdown.foreground",
+    "hcDark": "@dropdown.foreground",
+    "hcLight": "@dropdown.foreground"
+   }
+  },
+  {
+   "id": "checkbox.selectBackground",
+   "group": "Button control",
+   "description": "Background color of checkbox widget when the element it's in is selected.",
+   "defaults": {
+    "dark": "@editorWidget.background",
+    "light": "@editorWidget.background",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "checkbox.selectBorder",
+   "group": "Button control",
+   "description": "Border color of checkbox widget when the element it's in is selected.",
+   "defaults": {
+    "dark": "@icon.foreground",
+    "light": "@icon.foreground",
+    "hcDark": "@icon.foreground",
+    "hcLight": "@icon.foreground"
+   }
+  },
+  {
+   "id": "commentsView.resolvedIcon",
+   "group": "Comments View colors",
+   "description": "Icon color for resolved comments.",
+   "defaults": {
+    "dark": "@disabledForeground",
+    "light": "@disabledForeground",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "commentsView.unresolvedIcon",
+   "group": "Comments View colors",
+   "description": "Icon color for unresolved comments.",
+   "defaults": {
+    "dark": "@list.focusOutline",
+    "light": "@list.focusOutline",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "debugExceptionWidget.background",
+   "group": "Editor widget colors",
+   "description": "Exception widget background color.",
+   "defaults": {
+    "dark": "#420b0d",
+    "light": "#f1dfde",
+    "hcDark": "#420b0d",
+    "hcLight": "#f1dfde"
+   }
+  },
+  {
+   "id": "debugExceptionWidget.border",
+   "group": "Editor widget colors",
+   "description": "Exception widget border color.",
+   "defaults": {
+    "dark": "#a31515",
+    "light": "#a31515",
+    "hcDark": "#a31515",
+    "hcLight": "#a31515"
+   }
+  },
+  {
+   "id": "dropdown.background",
+   "group": "Dropdown control",
+   "description": "Dropdown background.",
+   "defaults": {
+    "dark": "#3C3C3C",
+    "light": "#ffffff",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "dropdown.border",
+   "group": "Dropdown control",
+   "description": "Dropdown border.",
+   "defaults": {
+    "dark": "@dropdown.background",
+    "light": "#CECECE",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "dropdown.foreground",
+   "group": "Dropdown control",
+   "description": "Dropdown foreground.",
+   "defaults": {
+    "dark": "#F0F0F0",
+    "light": "@foreground",
+    "hcDark": "#ffffff",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "dropdown.listBackground",
+   "group": "Dropdown control",
+   "description": "Dropdown list background.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "editorActionList.background",
+   "group": "Action colors",
+   "description": "Action List background color.",
+   "defaults": {
+    "dark": "@editorWidget.background",
+    "light": "@editorWidget.background",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "editorActionList.focusBackground",
+   "group": "Action colors",
+   "description": "Action List background color for the focused item.",
+   "defaults": {
+    "dark": "@list.activeSelectionBackground",
+    "light": "@list.activeSelectionBackground",
+    "hcDark": "@list.activeSelectionBackground",
+    "hcLight": "@list.activeSelectionBackground"
+   }
+  },
+  {
+   "id": "editorActionList.focusForeground",
+   "group": "Action colors",
+   "description": "Action List foreground color for the focused item.",
+   "defaults": {
+    "dark": "@list.activeSelectionForeground",
+    "light": "@list.activeSelectionForeground",
+    "hcDark": "@list.activeSelectionForeground",
+    "hcLight": "@list.activeSelectionForeground"
+   }
+  },
+  {
+   "id": "editorActionList.foreground",
+   "group": "Action colors",
+   "description": "Action List foreground color.",
+   "defaults": {
+    "dark": "@editorWidget.foreground",
+    "light": "@editorWidget.foreground",
+    "hcDark": "@editorWidget.foreground",
+    "hcLight": "@editorWidget.foreground"
+   }
+  },
+  {
+   "id": "editorActiveLineNumber.foreground",
+   "group": "Editor widget colors (undocumented)",
+   "description": "Color of editor active line number",
+   "defaults": {
+    "dark": "#c6c6c6",
+    "light": "#0B216F",
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "editorGhostText.background",
+   "group": "Editor widget colors",
+   "description": "Background color of the ghost text in the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorGhostText.border",
+   "group": "Editor widget colors",
+   "description": "Border color of the ghost text shown by inline completion providers and the suggest preview.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "expr:qe.fromHex(\"#fff\").transparent(.8)",
+    "hcLight": "expr:qe.fromHex(\"#292929\").transparent(.8)"
+   }
+  },
+  {
+   "id": "editorGhostText.foreground",
+   "group": "Editor widget colors",
+   "description": "Foreground color of the ghost text shown by inline completion providers and the suggest preview.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#ffffff56\")",
+    "light": "expr:qe.fromHex(\"#0007\")",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorHoverWidget.background",
+   "group": "Editor widget colors",
+   "description": "Background color of the editor hover.",
+   "defaults": {
+    "dark": "@editorWidget.background",
+    "light": "@editorWidget.background",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "editorHoverWidget.border",
+   "group": "Editor widget colors",
+   "description": "Border color of the editor hover.",
+   "defaults": {
+    "dark": "@editorWidget.border",
+    "light": "@editorWidget.border",
+    "hcDark": "@editorWidget.border",
+    "hcLight": "@editorWidget.border"
+   }
+  },
+  {
+   "id": "editorHoverWidget.foreground",
+   "group": "Editor widget colors",
+   "description": "Foreground color of the editor hover.",
+   "defaults": {
+    "dark": "@editorWidget.foreground",
+    "light": "@editorWidget.foreground",
+    "hcDark": "@editorWidget.foreground",
+    "hcLight": "@editorWidget.foreground"
+   }
+  },
+  {
+   "id": "editorHoverWidget.highlightForeground",
+   "group": "Editor widget colors",
+   "description": "Foreground color of the active item in the parameter hint.",
+   "defaults": {
+    "dark": "@list.highlightForeground",
+    "light": "@list.highlightForeground",
+    "hcDark": "@list.highlightForeground",
+    "hcLight": "@list.highlightForeground"
+   }
+  },
+  {
+   "id": "editorHoverWidget.statusBarBackground",
+   "group": "Editor widget colors",
+   "description": "Background color of the editor hover status bar.",
+   "defaults": {
+    "dark": "expr:Pf(@editorHoverWidget.background,.2)",
+    "light": "expr:Mu(@editorHoverWidget.background,.05)",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "editorMarkerNavigation.background",
+   "group": "Editor widget colors",
+   "description": "Editor marker navigation widget background.",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@editor.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "editorMarkerNavigationError.background",
+   "group": "Editor widget colors",
+   "description": "Editor marker navigation widget error color.",
+   "defaults": {
+    "dark": "$jPo",
+    "light": "$jPo",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorMarkerNavigationError.headerBackground",
+   "group": "Editor widget colors",
+   "description": "Editor marker navigation widget error heading background.",
+   "defaults": {
+    "dark": "expr:pi(@editorMarkerNavigationError.background,.1)",
+    "light": "expr:pi(@editorMarkerNavigationError.background,.1)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorMarkerNavigationInfo.background",
+   "group": "Editor widget colors",
+   "description": "Editor marker navigation widget info color.",
+   "defaults": {
+    "dark": "$YPo",
+    "light": "$YPo",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorMarkerNavigationInfo.headerBackground",
+   "group": "Editor widget colors",
+   "description": "Editor marker navigation widget info heading background.",
+   "defaults": {
+    "dark": "expr:pi(@editorMarkerNavigationInfo.background,.1)",
+    "light": "expr:pi(@editorMarkerNavigationInfo.background,.1)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "editorMarkerNavigationWarning.background",
+   "group": "Editor widget colors",
+   "description": "Editor marker navigation widget warning color.",
+   "defaults": {
+    "dark": "$QPo",
+    "light": "$QPo",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorMarkerNavigationWarning.headerBackground",
+   "group": "Editor widget colors",
+   "description": "Editor marker navigation widget warning heading background.",
+   "defaults": {
+    "dark": "expr:pi(@editorMarkerNavigationWarning.background,.1)",
+    "light": "expr:pi(@editorMarkerNavigationWarning.background,.1)",
+    "hcDark": "#0C141F",
+    "hcLight": "expr:pi(@editorMarkerNavigationWarning.background,.2)"
+   }
+  },
+  {
+   "id": "editorStickyScroll.background",
+   "group": "Editor widget colors",
+   "description": "Editor sticky scroll background color.",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@editor.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "editorStickyScroll.border",
+   "group": "Editor widget colors",
+   "description": "Border color of sticky scroll in the editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorStickyScroll.shadow",
+   "group": "Editor widget colors",
+   "description": "Shadow color of sticky scroll in the editor.",
+   "defaults": {
+    "dark": "@scrollbar.shadow",
+    "light": "@scrollbar.shadow",
+    "hcDark": "@scrollbar.shadow",
+    "hcLight": "@scrollbar.shadow"
+   }
+  },
+  {
+   "id": "editorStickyScrollGutter.background",
+   "group": "Editor widget colors",
+   "description": "Background color of the gutter part of sticky scroll in the editor.",
+   "defaults": {
+    "dark": "@editor.background",
+    "light": "@editor.background",
+    "hcDark": "@editor.background",
+    "hcLight": "@editor.background"
+   }
+  },
+  {
+   "id": "editorStickyScrollHover.background",
+   "group": "Editor widget colors",
+   "description": "Editor sticky scroll on hover background color.",
+   "defaults": {
+    "dark": "#2A2D2E",
+    "light": "#F0F0F0",
+    "hcDark": null,
+    "hcLight": "expr:qe.fromHex(\"#0F4A85\").transparent(.1)"
+   }
+  },
+  {
+   "id": "editorSuggestWidget.background",
+   "group": "Editor widget colors",
+   "description": "Background color of the suggestion widget.",
+   "defaults": {
+    "dark": "@editorWidget.background",
+    "light": "@editorWidget.background",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "editorSuggestWidget.border",
+   "group": "Editor widget colors",
+   "description": "Border color of the suggestion widget.",
+   "defaults": {
+    "dark": "@editorWidget.border",
+    "light": "@editorWidget.border",
+    "hcDark": "@editorWidget.border",
+    "hcLight": "@editorWidget.border"
+   }
+  },
+  {
+   "id": "editorSuggestWidget.focusHighlightForeground",
+   "group": "Editor widget colors",
+   "description": "Color of the match highlights in the suggest widget when an item is focused.",
+   "defaults": {
+    "dark": "@list.focusHighlightForeground",
+    "light": "@list.focusHighlightForeground",
+    "hcDark": "@editorSuggestWidget.selectedForeground",
+    "hcLight": "@editorSuggestWidget.selectedForeground"
+   }
+  },
+  {
+   "id": "editorSuggestWidget.focusOutline",
+   "group": "Editor widget colors (undocumented)",
+   "description": "Outline color of the focused (keyboard-navigated) entry in the suggest widget.",
+   "defaults": {
+    "dark": "@contrastActiveBorder",
+    "light": "@contrastActiveBorder",
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "editorSuggestWidget.foreground",
+   "group": "Editor widget colors",
+   "description": "Foreground color of the suggestion widget.",
+   "defaults": {
+    "dark": "@editor.foreground",
+    "light": "@editor.foreground",
+    "hcDark": "@editor.foreground",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "editorSuggestWidget.highlightForeground",
+   "group": "Editor widget colors",
+   "description": "Color of the match highlights in the suggestion widget.",
+   "defaults": {
+    "dark": "@list.highlightForeground",
+    "light": "@list.highlightForeground",
+    "hcDark": "@list.highlightForeground",
+    "hcLight": "@list.highlightForeground"
+   }
+  },
+  {
+   "id": "editorSuggestWidget.selectedBackground",
+   "group": "Editor widget colors",
+   "description": "Background color of the selected entry in the suggestion widget.",
+   "defaults": {
+    "dark": "@quickInputList.focusBackground",
+    "light": "@quickInputList.focusBackground",
+    "hcDark": "@editorSuggestWidget.foreground",
+    "hcLight": "@editorSuggestWidget.foreground"
+   }
+  },
+  {
+   "id": "editorSuggestWidget.selectedForeground",
+   "group": "Editor widget colors",
+   "description": "Foreground color of the selected entry in the suggest widget.",
+   "defaults": {
+    "dark": "@quickInputList.focusForeground",
+    "light": "@quickInputList.focusForeground",
+    "hcDark": "@editorSuggestWidget.background",
+    "hcLight": "@editorSuggestWidget.background"
+   }
+  },
+  {
+   "id": "editorSuggestWidget.selectedIconForeground",
+   "group": "Editor widget colors",
+   "description": "Icon foreground color of the selected entry in the suggest widget.",
+   "defaults": {
+    "dark": "@quickInputList.focusIconForeground",
+    "light": "@quickInputList.focusIconForeground",
+    "hcDark": "@editorSuggestWidget.background",
+    "hcLight": "@editorSuggestWidget.background"
+   }
+  },
+  {
+   "id": "editorSuggestWidgetStatus.foreground",
+   "group": "Editor widget colors",
+   "description": "Foreground color of the suggest widget status.",
+   "defaults": {
+    "dark": "expr:pi(@editorSuggestWidget.foreground,.5)",
+    "light": "expr:pi(@editorSuggestWidget.foreground,.5)",
+    "hcDark": "expr:pi(@editorSuggestWidget.foreground,.5)",
+    "hcLight": "expr:pi(@editorSuggestWidget.foreground,.5)"
+   }
+  },
+  {
+   "id": "editorWidget.background",
+   "group": "Editor widget colors",
+   "description": "Background color of editor widgets, such as Find/Replace.",
+   "defaults": {
+    "dark": "#252526",
+    "light": "#F3F3F3",
+    "hcDark": "#0C141F",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "editorWidget.border",
+   "group": "Editor widget colors",
+   "description": "Border color of the editor widget unless the widget does not contain a border or defines its own border color.",
+   "defaults": {
+    "dark": "expr:pi(@editorWidget.foreground,.2)",
+    "light": "expr:pi(@editorWidget.foreground,.2)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "editorWidget.foreground",
+   "group": "Editor widget colors",
+   "description": "Foreground color of editor widgets, such as find/replace.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "editorWidget.resizeBorder",
+   "group": "Editor widget colors",
+   "description": "Border color of the resize bar of editor widgets. The color is only used if the widget chooses to have a resize border and if the color is not overridden by a w",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "extensionBadge.remoteBackground",
+   "group": "Extensions colors",
+   "description": "Background color for the remote badge in the extensions view.",
+   "defaults": {
+    "dark": "@activityBarBadge.background",
+    "light": "@activityBarBadge.background",
+    "hcDark": "@activityBarBadge.background",
+    "hcLight": "@activityBarBadge.background"
+   }
+  },
+  {
+   "id": "extensionBadge.remoteForeground",
+   "group": "Extensions colors",
+   "description": "Foreground color for the remote badge in the extensions view.",
+   "defaults": {
+    "dark": "@activityBarBadge.foreground",
+    "light": "@activityBarBadge.foreground",
+    "hcDark": "@activityBarBadge.foreground",
+    "hcLight": "@activityBarBadge.foreground"
+   }
+  },
+  {
+   "id": "extensionButton.background",
+   "group": "Extensions colors",
+   "description": "Button background color for extension actions.",
+   "defaults": {
+    "dark": "@button.secondaryBackground",
+    "light": "@button.secondaryBackground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "extensionButton.border",
+   "group": "Extensions colors",
+   "description": "Button border color for extension actions.",
+   "defaults": {
+    "dark": "@button.secondaryBorder",
+    "light": "@button.secondaryBorder",
+    "hcDark": "@button.secondaryBorder",
+    "hcLight": "@button.secondaryBorder"
+   }
+  },
+  {
+   "id": "extensionButton.foreground",
+   "group": "Extensions colors",
+   "description": "Button foreground color for extension actions.",
+   "defaults": {
+    "dark": "@button.secondaryForeground",
+    "light": "@button.secondaryForeground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "extensionButton.hoverBackground",
+   "group": "Extensions colors",
+   "description": "Button background hover color for extension actions.",
+   "defaults": {
+    "dark": "@button.secondaryHoverBackground",
+    "light": "@button.secondaryHoverBackground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "extensionButton.prominentBackground",
+   "group": "Extensions colors",
+   "description": "Extension view button background color.",
+   "defaults": {
+    "dark": "@button.background",
+    "light": "@button.background",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "extensionButton.prominentForeground",
+   "group": "Extensions colors",
+   "description": "Extension view button foreground color (for example Install button).",
+   "defaults": {
+    "dark": "@button.foreground",
+    "light": "@button.foreground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "extensionButton.prominentHoverBackground",
+   "group": "Extensions colors",
+   "description": "Extension view button background hover color.",
+   "defaults": {
+    "dark": "@button.hoverBackground",
+    "light": "@button.hoverBackground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "extensionButton.separator",
+   "group": "Extensions colors",
+   "description": "Button separator color for extension actions.",
+   "defaults": {
+    "dark": "@button.separator",
+    "light": "@button.separator",
+    "hcDark": "@button.separator",
+    "hcLight": "@button.separator"
+   }
+  },
+  {
+   "id": "extensionIcon.preReleaseForeground",
+   "group": "Extensions colors",
+   "description": "The icon color for pre-release extension.",
+   "defaults": {
+    "dark": "#1d9271",
+    "light": "#1d9271",
+    "hcDark": "#1d9271",
+    "hcLight": "@textLink.foreground"
+   }
+  },
+  {
+   "id": "extensionIcon.privateForeground",
+   "group": "Extensions colors",
+   "description": "The icon color for private extensions.",
+   "defaults": {
+    "dark": "#ffffff60",
+    "light": "#00000060",
+    "hcDark": "#ffffff60",
+    "hcLight": "#00000060"
+   }
+  },
+  {
+   "id": "extensionIcon.sponsorForeground",
+   "group": "Extensions colors",
+   "description": "The icon color for extension sponsor.",
+   "defaults": {
+    "dark": "#D758B3",
+    "light": "#B51E78",
+    "hcDark": null,
+    "hcLight": "#B51E78"
+   }
+  },
+  {
+   "id": "extensionIcon.starForeground",
+   "group": "Extensions colors",
+   "description": "The icon color for extension ratings.",
+   "defaults": {
+    "dark": "#FF8E00",
+    "light": "#DF6100",
+    "hcDark": "#FF8E00",
+    "hcLight": "@textLink.foreground"
+   }
+  },
+  {
+   "id": "extensionIcon.verifiedForeground",
+   "group": "Extensions colors",
+   "description": "The icon color for extension verified publisher.",
+   "defaults": {
+    "dark": "@textLink.foreground",
+    "light": "@textLink.foreground",
+    "hcDark": "@textLink.foreground",
+    "hcLight": "@textLink.foreground"
+   }
+  },
+  {
+   "id": "gauge.background",
+   "group": "Gauge colors",
+   "description": "Gauge background color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gauge.border",
+   "group": "Gauge colors",
+   "description": "Gauge border color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gauge.errorBackground",
+   "group": "Gauge colors",
+   "description": "Gauge error background color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gauge.errorForeground",
+   "group": "Gauge colors",
+   "description": "Gauge error foreground color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gauge.foreground",
+   "group": "Gauge colors",
+   "description": "Gauge foreground color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gauge.warningBackground",
+   "group": "Gauge colors",
+   "description": "Gauge warning background color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "gauge.warningForeground",
+   "group": "Gauge colors",
+   "description": "Gauge warning foreground color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "input.background",
+   "group": "Input control",
+   "description": "Input box background.",
+   "defaults": {
+    "dark": "#3C3C3C",
+    "light": "#ffffff",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "input.border",
+   "group": "Input control",
+   "description": "Input box border.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "input.foreground",
+   "group": "Input control",
+   "description": "Input box foreground.",
+   "defaults": {
+    "dark": "@foreground",
+    "light": "@foreground",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "input.placeholderForeground",
+   "group": "Input control",
+   "description": "Input box foreground color for placeholder text.",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.5)",
+    "light": "expr:pi(@foreground,.5)",
+    "hcDark": "expr:pi(@foreground,.7)",
+    "hcLight": "expr:pi(@foreground,.7)"
+   }
+  },
+  {
+   "id": "inputOption.activeBackground",
+   "group": "Input control",
+   "description": "Background color of activated options in input fields.",
+   "defaults": {
+    "dark": "expr:pi(@focusBorder,.4)",
+    "light": "expr:pi(@focusBorder,.2)",
+    "hcDark": "transparent",
+    "hcLight": "transparent"
+   }
+  },
+  {
+   "id": "inputOption.activeBorder",
+   "group": "Input control",
+   "description": "Border color of activated options in input fields.",
+   "defaults": {
+    "dark": "#007ACC",
+    "light": "#007ACC",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "inputOption.activeForeground",
+   "group": "Input control",
+   "description": "Foreground color of activated options in input fields.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#000000",
+    "hcDark": "@foreground",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "inputOption.hoverBackground",
+   "group": "Input control",
+   "description": "Background color of activated options in input fields.",
+   "defaults": {
+    "dark": "#5a5d5e80",
+    "light": "#b8b8b850",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "inputValidation.errorBackground",
+   "group": "Input control",
+   "description": "Input validation background color for error severity.",
+   "defaults": {
+    "dark": "#5A1D1D",
+    "light": "#F2DEDE",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "inputValidation.errorBorder",
+   "group": "Input control",
+   "description": "Input validation border color for error severity.",
+   "defaults": {
+    "dark": "#BE1100",
+    "light": "#BE1100",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "inputValidation.errorForeground",
+   "group": "Input control",
+   "description": "Input validation foreground color for error severity.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "inputValidation.infoBackground",
+   "group": "Input control",
+   "description": "Input validation background color for information severity.",
+   "defaults": {
+    "dark": "#063B49",
+    "light": "#D6ECF2",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "inputValidation.infoBorder",
+   "group": "Input control",
+   "description": "Input validation border color for information severity.",
+   "defaults": {
+    "dark": "#007acc",
+    "light": "#007acc",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "inputValidation.infoForeground",
+   "group": "Input control",
+   "description": "Input validation foreground color for information severity.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "inputValidation.warningBackground",
+   "group": "Input control",
+   "description": "Input validation background color for information warning.",
+   "defaults": {
+    "dark": "#352A05",
+    "light": "#F6F5D2",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "inputValidation.warningBorder",
+   "group": "Input control",
+   "description": "Input validation border color for warning severity.",
+   "defaults": {
+    "dark": "#B89500",
+    "light": "#B89500",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "inputValidation.warningForeground",
+   "group": "Input control",
+   "description": "Input validation foreground color for warning severity.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "keybindingLabel.background",
+   "group": "Keybinding label colors",
+   "description": "Keybinding label background color. The keybinding label is used to represent a keyboard shortcut.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(128,128,128,.17))",
+    "light": "expr:new qe(new ri(221,221,221,.4))",
+    "hcDark": "transparent",
+    "hcLight": "transparent"
+   }
+  },
+  {
+   "id": "keybindingLabel.border",
+   "group": "Keybinding label colors",
+   "description": "Keybinding label border color. The keybinding label is used to represent a keyboard shortcut.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(51,51,51,.6))",
+    "light": "expr:new qe(new ri(204,204,204,.4))",
+    "hcDark": "expr:new qe(new ri(111,195,223))",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "keybindingLabel.bottomBorder",
+   "group": "Keybinding label colors",
+   "description": "Keybinding label border bottom color. The keybinding label is used to represent a keyboard shortcut.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(68,68,68,.6))",
+    "light": "expr:new qe(new ri(187,187,187,.4))",
+    "hcDark": "expr:new qe(new ri(111,195,223))",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "keybindingLabel.foreground",
+   "group": "Keybinding label colors",
+   "description": "Keybinding label foreground color. The keybinding label is used to represent a keyboard shortcut.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#CCCCCC\")",
+    "light": "expr:qe.fromHex(\"#555555\")",
+    "hcDark": "#ffffff",
+    "hcLight": "@foreground"
+   }
+  },
+  {
+   "id": "keybindingTable.headerBackground",
+   "group": "Keyboard shortcut table colors",
+   "description": "Background color for the keyboard shortcuts table header.",
+   "defaults": {
+    "dark": "@tree.tableOddRowsBackground",
+    "light": "@tree.tableOddRowsBackground",
+    "hcDark": "@tree.tableOddRowsBackground",
+    "hcLight": "@tree.tableOddRowsBackground"
+   }
+  },
+  {
+   "id": "keybindingTable.rowsBackground",
+   "group": "Keyboard shortcut table colors",
+   "description": "Background color for the keyboard shortcuts table alternating rows.",
+   "defaults": {
+    "dark": "@tree.tableOddRowsBackground",
+    "light": "@tree.tableOddRowsBackground",
+    "hcDark": "@tree.tableOddRowsBackground",
+    "hcLight": "@tree.tableOddRowsBackground"
+   }
+  },
+  {
+   "id": "list.activeSelectionBackground",
+   "group": "Lists and trees",
+   "description": "List/Tree background color for the selected item when the list/tree is active.",
+   "defaults": {
+    "dark": "#04395E",
+    "light": "#0060C0",
+    "hcDark": null,
+    "hcLight": "expr:qe.fromHex(\"#0F4A85\").transparent(.1)"
+   }
+  },
+  {
+   "id": "list.activeSelectionForeground",
+   "group": "Lists and trees",
+   "description": "List/Tree foreground color for the selected item when the list/tree is active.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#ffffff",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.activeSelectionIconForeground",
+   "group": "Lists and trees",
+   "description": "List/Tree icon foreground color for the selected item when the list/tree is active. An active list/tree has keyboard focus, an inactive does not.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.deemphasizedForeground",
+   "group": "Lists and trees",
+   "description": "List/Tree foreground color for items that are deemphasized.",
+   "defaults": {
+    "dark": "#8C8C8C",
+    "light": "#8E8E90",
+    "hcDark": "#A7A8A9",
+    "hcLight": "#666666"
+   }
+  },
+  {
+   "id": "list.dropBackground",
+   "group": "Lists and trees",
+   "description": "List/Tree drag and drop background when moving items around using the mouse.",
+   "defaults": {
+    "dark": "#062F4A",
+    "light": "#D6EBFF",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.dropBetweenBackground",
+   "group": "Lists and trees",
+   "description": "List/Tree drag and drop border color when moving items between items when using the mouse.",
+   "defaults": {
+    "dark": "@icon.foreground",
+    "light": "@icon.foreground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.errorForeground",
+   "group": "Lists and trees",
+   "description": "Foreground color of list items containing errors.",
+   "defaults": {
+    "dark": "#F88070",
+    "light": "#B01011",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.filterMatchBackground",
+   "group": "Lists and trees",
+   "description": "Background color of the filtered matches in lists and trees.",
+   "defaults": {
+    "dark": "@editor.findMatchHighlightBackground",
+    "light": "@editor.findMatchHighlightBackground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.filterMatchBorder",
+   "group": "Lists and trees",
+   "description": "Border color of the filtered matches in lists and trees.",
+   "defaults": {
+    "dark": "@editor.findMatchHighlightBorder",
+    "light": "@editor.findMatchHighlightBorder",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "list.focusAndSelectionOutline",
+   "group": "Lists and trees",
+   "description": "List/Tree outline color for the focused item when the list/tree is active and selected. An active list/tree has keyboard focus, an inactive does not.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.focusBackground",
+   "group": "Lists and trees",
+   "description": "List/Tree background color for the focused item when the list/tree is active.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.focusForeground",
+   "group": "Lists and trees",
+   "description": "List/Tree foreground color for the focused item when the list/tree is active. An active list/tree has keyboard focus, an inactive does not.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.focusHighlightForeground",
+   "group": "Lists and trees",
+   "description": "List/Tree foreground color of the match highlights on actively focused items when searching inside the list/tree.",
+   "defaults": {
+    "dark": "@list.highlightForeground",
+    "light": "expr:ofe(@list.activeSelectionBackground,@list.highlightForeground,\"#BBE7FF\")",
+    "hcDark": "@list.highlightForeground",
+    "hcLight": "@list.highlightForeground"
+   }
+  },
+  {
+   "id": "list.focusOutline",
+   "group": "Lists and trees",
+   "description": "List/Tree outline color for the focused item when the list/tree is active. An active list/tree has keyboard focus, an inactive does not.",
+   "defaults": {
+    "dark": "@focusBorder",
+    "light": "@focusBorder",
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "list.highlightForeground",
+   "group": "Lists and trees",
+   "description": "List/Tree foreground color of the match highlights when searching inside the list/tree.",
+   "defaults": {
+    "dark": "#2AAAFF",
+    "light": "#0066BF",
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "list.hoverBackground",
+   "group": "Lists and trees",
+   "description": "List/Tree background when hovering over items using the mouse.",
+   "defaults": {
+    "dark": "#2A2D2E",
+    "light": "#F0F0F0",
+    "hcDark": "expr:#ffffff.transparent(.1)",
+    "hcLight": "expr:qe.fromHex(\"#0F4A85\").transparent(.1)"
+   }
+  },
+  {
+   "id": "list.hoverForeground",
+   "group": "Lists and trees",
+   "description": "List/Tree foreground when hovering over items using the mouse.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.inactiveFocusBackground",
+   "group": "Lists and trees",
+   "description": "List background color for the focused item when the list is inactive. An active list has keyboard focus, an inactive does not. Currently only supported in lists",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.inactiveFocusOutline",
+   "group": "Lists and trees",
+   "description": "List/Tree outline color for the focused item when the list/tree is inactive. An active list/tree has keyboard focus, an inactive does not.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.inactiveSelectionBackground",
+   "group": "Lists and trees",
+   "description": "List/Tree background color for the selected item when the list/tree is inactive.",
+   "defaults": {
+    "dark": "#37373D",
+    "light": "#E4E6F1",
+    "hcDark": null,
+    "hcLight": "expr:qe.fromHex(\"#0F4A85\").transparent(.1)"
+   }
+  },
+  {
+   "id": "list.inactiveSelectionForeground",
+   "group": "Lists and trees",
+   "description": "List/Tree foreground color for the selected item when the list/tree is inactive. An active list/tree has keyboard focus, an inactive does not.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.inactiveSelectionIconForeground",
+   "group": "Lists and trees",
+   "description": "List/Tree icon foreground color for the selected item when the list/tree is inactive. An active list/tree has keyboard focus, an inactive does not.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "list.invalidItemForeground",
+   "group": "Lists and trees",
+   "description": "List/Tree foreground color for invalid items, for example an unresolved root in explorer.",
+   "defaults": {
+    "dark": "#B89500",
+    "light": "#B89500",
+    "hcDark": "#B89500",
+    "hcLight": "#B5200D"
+   }
+  },
+  {
+   "id": "list.warningForeground",
+   "group": "Lists and trees",
+   "description": "Foreground color of list items containing warnings.",
+   "defaults": {
+    "dark": "#CCA700",
+    "light": "#855F00",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "listFilterWidget.background",
+   "group": "Lists and trees",
+   "description": "List/Tree Filter background color of typed text when searching inside the list/tree.",
+   "defaults": {
+    "dark": "expr:Pf(@editorWidget.background,0)",
+    "light": "expr:Mu(@editorWidget.background,0)",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "listFilterWidget.noMatchesOutline",
+   "group": "Lists and trees",
+   "description": "List/Tree Filter Widget's outline color when no match is found of typed text when searching inside the list/tree.",
+   "defaults": {
+    "dark": "#BE1100",
+    "light": "#BE1100",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "listFilterWidget.outline",
+   "group": "Lists and trees",
+   "description": "List/Tree Filter Widget's outline color of typed text when searching inside the list/tree.",
+   "defaults": {
+    "dark": "transparent",
+    "light": "transparent",
+    "hcDark": "#f38518",
+    "hcLight": "#007ACC"
+   }
+  },
+  {
+   "id": "listFilterWidget.shadow",
+   "group": "Lists and trees",
+   "description": "Shadow color of the type filter widget in lists and tree.",
+   "defaults": {
+    "dark": "@widget.shadow",
+    "light": "@widget.shadow",
+    "hcDark": "@widget.shadow",
+    "hcLight": "@widget.shadow"
+   }
+  },
+  {
+   "id": "mcpIcon.starForeground",
+   "group": "Extensions colors",
+   "description": "The icon color for mcp starred.",
+   "defaults": {
+    "dark": "#FF8E00",
+    "light": "#DF6100",
+    "hcDark": "#FF8E00",
+    "hcLight": "@textLink.foreground"
+   }
+  },
+  {
+   "id": "menu.background",
+   "group": "Menu Bar colors",
+   "description": "Background color of menu items.",
+   "defaults": {
+    "dark": "@dropdown.background",
+    "light": "@dropdown.background",
+    "hcDark": "@dropdown.background",
+    "hcLight": "@dropdown.background"
+   }
+  },
+  {
+   "id": "menu.border",
+   "group": "Menu Bar colors",
+   "description": "Border color of menus.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "menu.foreground",
+   "group": "Menu Bar colors",
+   "description": "Foreground color of menu items.",
+   "defaults": {
+    "dark": "@dropdown.foreground",
+    "light": "@dropdown.foreground",
+    "hcDark": "@dropdown.foreground",
+    "hcLight": "@dropdown.foreground"
+   }
+  },
+  {
+   "id": "menu.selectionBackground",
+   "group": "Menu Bar colors",
+   "description": "Background color of the selected menu item in menus.",
+   "defaults": {
+    "dark": "@list.activeSelectionBackground",
+    "light": "@list.activeSelectionBackground",
+    "hcDark": "@list.activeSelectionBackground",
+    "hcLight": "@list.activeSelectionBackground"
+   }
+  },
+  {
+   "id": "menu.selectionBorder",
+   "group": "Menu Bar colors",
+   "description": "Border color of the selected menu item in menus.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "menu.selectionForeground",
+   "group": "Menu Bar colors",
+   "description": "Foreground color of the selected menu item in menus.",
+   "defaults": {
+    "dark": "@list.activeSelectionForeground",
+    "light": "@list.activeSelectionForeground",
+    "hcDark": "@list.activeSelectionForeground",
+    "hcLight": "@list.activeSelectionForeground"
+   }
+  },
+  {
+   "id": "menu.separatorBackground",
+   "group": "Menu Bar colors",
+   "description": "Color of a separator menu item in menus.",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.2)",
+    "light": "expr:pi(@foreground,.2)",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "menubar.selectionBackground",
+   "group": "Menu Bar colors",
+   "description": "Background color of the selected menu item in the menubar.",
+   "defaults": {
+    "dark": "@toolbar.hoverBackground",
+    "light": "@toolbar.hoverBackground",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "menubar.selectionBorder",
+   "group": "Menu Bar colors",
+   "description": "Border color of the selected menu item in the menubar.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "menubar.selectionForeground",
+   "group": "Menu Bar colors",
+   "description": "Foreground color of the selected menu item in the menubar.",
+   "defaults": {
+    "dark": "@titleBar.activeForeground",
+    "light": "@titleBar.activeForeground",
+    "hcDark": "@titleBar.activeForeground",
+    "hcLight": "@titleBar.activeForeground"
+   }
+  },
+  {
+   "id": "notificationCenter.border",
+   "group": "Notification colors",
+   "description": "Notification Center border color.",
+   "defaults": {
+    "dark": "@widget.border",
+    "light": "@widget.border",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "notificationCenterHeader.background",
+   "group": "Notification colors",
+   "description": "Notification Center header background color.",
+   "defaults": {
+    "dark": "expr:Pf(@notifications.background,.3)",
+    "light": "expr:Mu(@notifications.background,.05)",
+    "hcDark": "@notifications.background",
+    "hcLight": "@notifications.background"
+   }
+  },
+  {
+   "id": "notificationCenterHeader.foreground",
+   "group": "Notification colors",
+   "description": "Notification Center header foreground color.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "notificationLink.foreground",
+   "group": "Notification colors",
+   "description": "Notification links foreground color.",
+   "defaults": {
+    "dark": "@textLink.foreground",
+    "light": "@textLink.foreground",
+    "hcDark": "@textLink.foreground",
+    "hcLight": "@textLink.foreground"
+   }
+  },
+  {
+   "id": "notificationToast.border",
+   "group": "Notification colors",
+   "description": "Notification toast border color.",
+   "defaults": {
+    "dark": "@widget.border",
+    "light": "@widget.border",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "notifications.background",
+   "group": "Notification colors",
+   "description": "Notification background color.",
+   "defaults": {
+    "dark": "@editorWidget.background",
+    "light": "@editorWidget.background",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "notifications.border",
+   "group": "Notification colors",
+   "description": "Notification border color separating from other notifications in the Notification Center.",
+   "defaults": {
+    "dark": "@notificationCenterHeader.background",
+    "light": "@notificationCenterHeader.background",
+    "hcDark": "@notificationCenterHeader.background",
+    "hcLight": "@notificationCenterHeader.background"
+   }
+  },
+  {
+   "id": "notifications.foreground",
+   "group": "Notification colors",
+   "description": "Notification foreground color.",
+   "defaults": {
+    "dark": "@editorWidget.foreground",
+    "light": "@editorWidget.foreground",
+    "hcDark": "@editorWidget.foreground",
+    "hcLight": "@editorWidget.foreground"
+   }
+  },
+  {
+   "id": "notificationsErrorIcon.foreground",
+   "group": "Notification colors",
+   "description": "The color used for the notification error icon.",
+   "defaults": {
+    "dark": "@editorError.foreground",
+    "light": "@editorError.foreground",
+    "hcDark": "@editorError.foreground",
+    "hcLight": "@editorError.foreground"
+   }
+  },
+  {
+   "id": "notificationsInfoIcon.foreground",
+   "group": "Notification colors",
+   "description": "The color used for the notification info icon.",
+   "defaults": {
+    "dark": "@editorInfo.foreground",
+    "light": "@editorInfo.foreground",
+    "hcDark": "@editorInfo.foreground",
+    "hcLight": "@editorInfo.foreground"
+   }
+  },
+  {
+   "id": "notificationsWarningIcon.foreground",
+   "group": "Notification colors",
+   "description": "The color used for the notification warning icon.",
+   "defaults": {
+    "dark": "@editorWarning.foreground",
+    "light": "@editorWarning.foreground",
+    "hcDark": "@editorWarning.foreground",
+    "hcLight": "@editorWarning.foreground"
+   }
+  },
+  {
+   "id": "peekView.border",
+   "group": "Peek view colors",
+   "description": "Color of the peek view borders and arrow.",
+   "defaults": {
+    "dark": "@editorInfo.foreground",
+    "light": "@editorInfo.foreground",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "peekViewEditor.background",
+   "group": "Peek view colors",
+   "description": "Background color of the peek view editor.",
+   "defaults": {
+    "dark": "#001F33",
+    "light": "#F2F8FC",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "peekViewEditor.matchHighlightBackground",
+   "group": "Peek view colors",
+   "description": "Match highlight color in the peek view editor.",
+   "defaults": {
+    "dark": "#ff8f0099",
+    "light": "#f5d802de",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "peekViewEditor.matchHighlightBorder",
+   "group": "Peek view colors",
+   "description": "Match highlight border color in the peek view editor.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "peekViewEditorGutter.background",
+   "group": "Peek view colors",
+   "description": "Background color of the gutter in the peek view editor.",
+   "defaults": {
+    "dark": "@peekViewEditor.background",
+    "light": "@peekViewEditor.background",
+    "hcDark": "@peekViewEditor.background",
+    "hcLight": "@peekViewEditor.background"
+   }
+  },
+  {
+   "id": "peekViewEditorStickyScroll.background",
+   "group": "Peek view colors",
+   "description": "Background color of sticky scroll in the peek view editor.",
+   "defaults": {
+    "dark": "@peekViewEditor.background",
+    "light": "@peekViewEditor.background",
+    "hcDark": "@peekViewEditor.background",
+    "hcLight": "@peekViewEditor.background"
+   }
+  },
+  {
+   "id": "peekViewEditorStickyScrollGutter.background",
+   "group": "Peek view colors",
+   "description": "Background color of the gutter part of sticky scroll in the peek view editor.",
+   "defaults": {
+    "dark": "@peekViewEditor.background",
+    "light": "@peekViewEditor.background",
+    "hcDark": "@peekViewEditor.background",
+    "hcLight": "@peekViewEditor.background"
+   }
+  },
+  {
+   "id": "peekViewResult.background",
+   "group": "Peek view colors",
+   "description": "Background color of the peek view result list.",
+   "defaults": {
+    "dark": "#252526",
+    "light": "#F3F3F3",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "peekViewResult.fileForeground",
+   "group": "Peek view colors",
+   "description": "Foreground color for file nodes in the peek view result list.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#1E1E1E",
+    "hcDark": "#ffffff",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "peekViewResult.lineForeground",
+   "group": "Peek view colors",
+   "description": "Foreground color for line nodes in the peek view result list.",
+   "defaults": {
+    "dark": "#bbbbbb",
+    "light": "#646465",
+    "hcDark": "#ffffff",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "peekViewResult.matchHighlightBackground",
+   "group": "Peek view colors",
+   "description": "Match highlight color in the peek view result list.",
+   "defaults": {
+    "dark": "#ea5c004d",
+    "light": "#ea5c004d",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "peekViewResult.selectionBackground",
+   "group": "Peek view colors",
+   "description": "Background color of the selected entry in the peek view result list.",
+   "defaults": {
+    "dark": "#3399ff33",
+    "light": "#3399ff33",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "peekViewResult.selectionForeground",
+   "group": "Peek view colors",
+   "description": "Foreground color of the selected entry in the peek view result list.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#6C6C6C",
+    "hcDark": "#ffffff",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "peekViewTitle.background",
+   "group": "Peek view colors",
+   "description": "Background color of the peek view title area.",
+   "defaults": {
+    "dark": "#252526",
+    "light": "#F3F3F3",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "peekViewTitleDescription.foreground",
+   "group": "Peek view colors",
+   "description": "Color of the peek view title info.",
+   "defaults": {
+    "dark": "#ccccccb3",
+    "light": "#616161",
+    "hcDark": "#FFFFFF99",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "peekViewTitleLabel.foreground",
+   "group": "Peek view colors",
+   "description": "Color of the peek view title.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#000000",
+    "hcDark": "#ffffff",
+    "hcLight": "@editor.foreground"
+   }
+  },
+  {
+   "id": "pickerGroup.border",
+   "group": "Quick picker colors",
+   "description": "Quick picker (Quick Open) color for grouping borders.",
+   "defaults": {
+    "dark": "#3F3F46",
+    "light": "#CCCEDB",
+    "hcDark": "#ffffff",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "pickerGroup.foreground",
+   "group": "Quick picker colors",
+   "description": "Quick picker (Quick Open) color for grouping labels.",
+   "defaults": {
+    "dark": "#3794FF",
+    "light": "#0066BF",
+    "hcDark": "#ffffff",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "ports.iconRunningProcessForeground",
+   "group": "Ports colors",
+   "description": "The color of the icon for a port that has an associated running process.",
+   "defaults": {
+    "dark": "@statusBarItem.remoteBackground",
+    "light": "@statusBarItem.remoteBackground",
+    "hcDark": "@statusBarItem.remoteBackground",
+    "hcLight": "@statusBarItem.remoteBackground"
+   }
+  },
+  {
+   "id": "progressBar.background",
+   "group": "Progress bar",
+   "description": "Background color of the progress bar shown for long running operations.",
+   "defaults": {
+    "dark": "expr:qe.fromHex(\"#0E70C0\")",
+    "light": "expr:qe.fromHex(\"#0E70C0\")",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "quickInput.background",
+   "group": "Quick picker colors",
+   "description": "Quick input background color. The quick input widget is the container for views like the color theme picker.",
+   "defaults": {
+    "dark": "@editorWidget.background",
+    "light": "@editorWidget.background",
+    "hcDark": "@editorWidget.background",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "quickInput.foreground",
+   "group": "Quick picker colors",
+   "description": "Quick input foreground color. The quick input widget is the container for views like the color theme picker.",
+   "defaults": {
+    "dark": "@editorWidget.foreground",
+    "light": "@editorWidget.foreground",
+    "hcDark": "@editorWidget.foreground",
+    "hcLight": "@editorWidget.foreground"
+   }
+  },
+  {
+   "id": "quickInput.list.focusBackground",
+   "group": "Quick picker colors (undocumented)",
+   "description": "(no description string found; alpha-only registration)",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "quickInputList.focusBackground",
+   "group": "Quick picker colors",
+   "description": "Quick picker background color for the focused item.",
+   "defaults": {
+    "dark": "expr:hA(@quickInput.list.focusBackground,@list.activeSelectionBackground)",
+    "light": "expr:hA(@quickInput.list.focusBackground,@list.activeSelectionBackground)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "quickInputList.focusForeground",
+   "group": "Quick picker colors",
+   "description": "Quick picker foreground color for the focused item.",
+   "defaults": {
+    "dark": "@list.activeSelectionForeground",
+    "light": "@list.activeSelectionForeground",
+    "hcDark": "@list.activeSelectionForeground",
+    "hcLight": "@list.activeSelectionForeground"
+   }
+  },
+  {
+   "id": "quickInputList.focusHighlightForeground",
+   "group": "Quick picker colors (undocumented)",
+   "description": "Quick picker foreground color of the match highlights on the focused item.",
+   "defaults": {
+    "dark": "@list.focusHighlightForeground",
+    "light": "@list.focusHighlightForeground",
+    "hcDark": "@list.focusHighlightForeground",
+    "hcLight": "@list.focusHighlightForeground"
+   }
+  },
+  {
+   "id": "quickInputList.focusIconForeground",
+   "group": "Quick picker colors",
+   "description": "Quick picker icon foreground color for the focused item.",
+   "defaults": {
+    "dark": "@list.activeSelectionIconForeground",
+    "light": "@list.activeSelectionIconForeground",
+    "hcDark": "@list.activeSelectionIconForeground",
+    "hcLight": "@list.activeSelectionIconForeground"
+   }
+  },
+  {
+   "id": "quickInputTitle.background",
+   "group": "Quick picker colors",
+   "description": "Quick picker title background color. The quick picker widget is the container for pickers like the Command Palette.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(255,255,255,.105))",
+    "light": "expr:new qe(new ri(0,0,0,.06))",
+    "hcDark": "#000000",
+    "hcLight": "#ffffff"
+   }
+  },
+  {
+   "id": "radio.activeBackground",
+   "group": "Button control",
+   "description": "Background color of active radio option.",
+   "defaults": {
+    "dark": "@inputOption.activeBackground",
+    "light": "@inputOption.activeBackground",
+    "hcDark": "@inputOption.activeBackground",
+    "hcLight": "@inputOption.activeBackground"
+   }
+  },
+  {
+   "id": "radio.activeBorder",
+   "group": "Button control",
+   "description": "Border color of the active radio option.",
+   "defaults": {
+    "dark": "@inputOption.activeBorder",
+    "light": "@inputOption.activeBorder",
+    "hcDark": "@inputOption.activeBorder",
+    "hcLight": "@inputOption.activeBorder"
+   }
+  },
+  {
+   "id": "radio.activeForeground",
+   "group": "Button control",
+   "description": "Foreground color of active radio option.",
+   "defaults": {
+    "dark": "@inputOption.activeForeground",
+    "light": "@inputOption.activeForeground",
+    "hcDark": "@inputOption.activeForeground",
+    "hcLight": "@inputOption.activeForeground"
+   }
+  },
+  {
+   "id": "radio.inactiveBackground",
+   "group": "Button control",
+   "description": "Background color of inactive radio option.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "radio.inactiveBorder",
+   "group": "Button control",
+   "description": "Border color of the inactive radio option.",
+   "defaults": {
+    "dark": "expr:pi(@radio.activeForeground,.2)",
+    "light": "expr:pi(@radio.activeForeground,.2)",
+    "hcDark": "expr:pi(@radio.activeForeground,.4)",
+    "hcLight": "expr:pi(@radio.activeForeground,.2)"
+   }
+  },
+  {
+   "id": "radio.inactiveForeground",
+   "group": "Button control",
+   "description": "Foreground color of inactive radio option.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "radio.inactiveHoverBackground",
+   "group": "Button control",
+   "description": "Background color of inactive active radio option when hovering.",
+   "defaults": {
+    "dark": "@inputOption.hoverBackground",
+    "light": "@inputOption.hoverBackground",
+    "hcDark": "@inputOption.hoverBackground",
+    "hcLight": "@inputOption.hoverBackground"
+   }
+  },
+  {
+   "id": "settings.checkboxBackground",
+   "group": "Settings Editor colors",
+   "description": "Checkbox background.",
+   "defaults": {
+    "dark": "@checkbox.background",
+    "light": "@checkbox.background",
+    "hcDark": "@checkbox.background",
+    "hcLight": "@checkbox.background"
+   }
+  },
+  {
+   "id": "settings.checkboxBorder",
+   "group": "Settings Editor colors",
+   "description": "Checkbox border.",
+   "defaults": {
+    "dark": "@checkbox.border",
+    "light": "@checkbox.border",
+    "hcDark": "@checkbox.border",
+    "hcLight": "@checkbox.border"
+   }
+  },
+  {
+   "id": "settings.checkboxForeground",
+   "group": "Settings Editor colors",
+   "description": "Checkbox foreground.",
+   "defaults": {
+    "dark": "@checkbox.foreground",
+    "light": "@checkbox.foreground",
+    "hcDark": "@checkbox.foreground",
+    "hcLight": "@checkbox.foreground"
+   }
+  },
+  {
+   "id": "settings.dropdownBackground",
+   "group": "Settings Editor colors",
+   "description": "Dropdown background.",
+   "defaults": {
+    "dark": "@dropdown.background",
+    "light": "@dropdown.background",
+    "hcDark": "@dropdown.background",
+    "hcLight": "@dropdown.background"
+   }
+  },
+  {
+   "id": "settings.dropdownBorder",
+   "group": "Settings Editor colors",
+   "description": "Dropdown border.",
+   "defaults": {
+    "dark": "@dropdown.border",
+    "light": "@dropdown.border",
+    "hcDark": "@dropdown.border",
+    "hcLight": "@dropdown.border"
+   }
+  },
+  {
+   "id": "settings.dropdownForeground",
+   "group": "Settings Editor colors",
+   "description": "Dropdown foreground.",
+   "defaults": {
+    "dark": "@dropdown.foreground",
+    "light": "@dropdown.foreground",
+    "hcDark": "@dropdown.foreground",
+    "hcLight": "@dropdown.foreground"
+   }
+  },
+  {
+   "id": "settings.dropdownListBorder",
+   "group": "Settings Editor colors",
+   "description": "Dropdown list border.",
+   "defaults": {
+    "dark": "@editorWidget.border",
+    "light": "@editorWidget.border",
+    "hcDark": "@editorWidget.border",
+    "hcLight": "@editorWidget.border"
+   }
+  },
+  {
+   "id": "settings.focusedRowBackground",
+   "group": "Settings Editor colors",
+   "description": "Background color of a focused setting row.",
+   "defaults": {
+    "dark": "expr:pi(@list.hoverBackground,.6)",
+    "light": "expr:pi(@list.hoverBackground,.6)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "settings.focusedRowBorder",
+   "group": "Settings Editor colors",
+   "description": "The color of the row's top and bottom border when the row is focused.",
+   "defaults": {
+    "dark": "@focusBorder",
+    "light": "@focusBorder",
+    "hcDark": "@focusBorder",
+    "hcLight": "@focusBorder"
+   }
+  },
+  {
+   "id": "settings.headerBorder",
+   "group": "Settings Editor colors",
+   "description": "The color of the header container border.",
+   "defaults": {
+    "dark": "@panel.border",
+    "light": "@panel.border",
+    "hcDark": "@panel.border",
+    "hcLight": "@panel.border"
+   }
+  },
+  {
+   "id": "settings.headerForeground",
+   "group": "Settings Editor colors",
+   "description": "The foreground color for a section header or active title.",
+   "defaults": {
+    "dark": "#e7e7e7",
+    "light": "#444444",
+    "hcDark": "#ffffff",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "settings.modifiedItemIndicator",
+   "group": "Settings Editor colors",
+   "description": "The line that indicates a modified setting.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(12,125,157))",
+    "light": "expr:new qe(new ri(102,175,224))",
+    "hcDark": "expr:new qe(new ri(0,73,122))",
+    "hcLight": "expr:new qe(new ri(102,175,224))"
+   }
+  },
+  {
+   "id": "settings.numberInputBackground",
+   "group": "Settings Editor colors",
+   "description": "Number input box background.",
+   "defaults": {
+    "dark": "@input.background",
+    "light": "@input.background",
+    "hcDark": "@input.background",
+    "hcLight": "@input.background"
+   }
+  },
+  {
+   "id": "settings.numberInputBorder",
+   "group": "Settings Editor colors",
+   "description": "Number input box border.",
+   "defaults": {
+    "dark": "@input.border",
+    "light": "@input.border",
+    "hcDark": "@input.border",
+    "hcLight": "@input.border"
+   }
+  },
+  {
+   "id": "settings.numberInputForeground",
+   "group": "Settings Editor colors",
+   "description": "Number input box foreground.",
+   "defaults": {
+    "dark": "@input.foreground",
+    "light": "@input.foreground",
+    "hcDark": "@input.foreground",
+    "hcLight": "@input.foreground"
+   }
+  },
+  {
+   "id": "settings.rowHoverBackground",
+   "group": "Settings Editor colors",
+   "description": "The background color of a settings row when hovered.",
+   "defaults": {
+    "dark": "expr:pi(@list.hoverBackground,.3)",
+    "light": "expr:pi(@list.hoverBackground,.3)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "settings.sashBorder",
+   "group": "Settings Editor colors",
+   "description": "The color of the Settings editor splitview sash border.",
+   "defaults": {
+    "dark": "@panel.border",
+    "light": "@panel.border",
+    "hcDark": "@panel.border",
+    "hcLight": "@panel.border"
+   }
+  },
+  {
+   "id": "settings.settingsHeaderHoverForeground",
+   "group": "Settings Editor colors",
+   "description": "The foreground color for a section header or hovered title.",
+   "defaults": {
+    "dark": "expr:pi(@settings.headerForeground,.7)",
+    "light": "expr:pi(@settings.headerForeground,.7)",
+    "hcDark": "expr:pi(@settings.headerForeground,.7)",
+    "hcLight": "expr:pi(@settings.headerForeground,.7)"
+   }
+  },
+  {
+   "id": "settings.textInputBackground",
+   "group": "Settings Editor colors",
+   "description": "Text input box background.",
+   "defaults": {
+    "dark": "@input.background",
+    "light": "@input.background",
+    "hcDark": "@input.background",
+    "hcLight": "@input.background"
+   }
+  },
+  {
+   "id": "settings.textInputBorder",
+   "group": "Settings Editor colors",
+   "description": "Text input box border.",
+   "defaults": {
+    "dark": "@input.border",
+    "light": "@input.border",
+    "hcDark": "@input.border",
+    "hcLight": "@input.border"
+   }
+  },
+  {
+   "id": "settings.textInputForeground",
+   "group": "Settings Editor colors",
+   "description": "Text input box foreground.",
+   "defaults": {
+    "dark": "@input.foreground",
+    "light": "@input.foreground",
+    "hcDark": "@input.foreground",
+    "hcLight": "@input.foreground"
+   }
+  },
+  {
+   "id": "simpleFindWidget.sashBorder",
+   "group": "Simple Find Widget colors",
+   "description": "Border color of the sash border.",
+   "defaults": {
+    "dark": "#454545",
+    "light": "#C8C8C8",
+    "hcDark": "#6FC3DF",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "textBlockQuote.background",
+   "group": "Text colors",
+   "description": "Background color for block quotes in text.",
+   "defaults": {
+    "dark": "#222222",
+    "light": "#f2f2f2",
+    "hcDark": null,
+    "hcLight": "#F2F2F2"
+   }
+  },
+  {
+   "id": "textBlockQuote.border",
+   "group": "Text colors",
+   "description": "Border color for block quotes in text.",
+   "defaults": {
+    "dark": "#007acc80",
+    "light": "#007acc80",
+    "hcDark": "#ffffff",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "textCodeBlock.background",
+   "group": "Text colors",
+   "description": "Background color for code blocks in text.",
+   "defaults": {
+    "dark": "#0a0a0a66",
+    "light": "#dcdcdc66",
+    "hcDark": "#000000",
+    "hcLight": "#F2F2F2"
+   }
+  },
+  {
+   "id": "textLink.activeForeground",
+   "group": "Text colors",
+   "description": "Foreground color for links in text when clicked on and on mouse hover.",
+   "defaults": {
+    "dark": "#3794FF",
+    "light": "#006AB1",
+    "hcDark": "#21A6FF",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "textLink.foreground",
+   "group": "Text colors",
+   "description": "Foreground color for links in text.",
+   "defaults": {
+    "dark": "#3794FF",
+    "light": "#006AB1",
+    "hcDark": "#21A6FF",
+    "hcLight": "#0F4A85"
+   }
+  },
+  {
+   "id": "textPreformat.background",
+   "group": "Text colors",
+   "description": "Background color for preformatted text segments.",
+   "defaults": {
+    "dark": "#FFFFFF1A",
+    "light": "#0000001A",
+    "hcDark": null,
+    "hcLight": "#09345f"
+   }
+  },
+  {
+   "id": "textPreformat.border",
+   "group": "Text colors",
+   "description": "Border color for preformatted text segments.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastBorder",
+    "hcLight": null
+   }
+  },
+  {
+   "id": "textPreformat.foreground",
+   "group": "Text colors",
+   "description": "Foreground color for preformatted text segments.",
+   "defaults": {
+    "dark": "#D7BA7D",
+    "light": "#A31515",
+    "hcDark": "#FFFFFF",
+    "hcLight": "#FFFFFF"
+   }
+  },
+  {
+   "id": "textSeparator.foreground",
+   "group": "Text colors",
+   "description": "Color for text separators.",
+   "defaults": {
+    "dark": "#ffffff2e",
+    "light": "#0000002e",
+    "hcDark": "#000000",
+    "hcLight": "#292929"
+   }
+  },
+  {
+   "id": "toolbar.activeBackground",
+   "group": "Action colors",
+   "description": "Toolbar background when holding the mouse over actions",
+   "defaults": {
+    "dark": "expr:Pf(@toolbar.hoverBackground,.1)",
+    "light": "expr:Mu(@toolbar.hoverBackground,.1)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "toolbar.hoverBackground",
+   "group": "Action colors",
+   "description": "Toolbar background when hovering over actions using the mouse",
+   "defaults": {
+    "dark": "#5a5d5e50",
+    "light": "#b8b8b850",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "toolbar.hoverOutline",
+   "group": "Action colors",
+   "description": "Toolbar outline when hovering over actions using the mouse",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": "@contrastActiveBorder",
+    "hcLight": "@contrastActiveBorder"
+   }
+  },
+  {
+   "id": "tree.inactiveIndentGuidesStroke",
+   "group": "Lists and trees",
+   "description": "Tree stroke color for the indentation guides that are not active.",
+   "defaults": {
+    "dark": "expr:pi(@tree.indentGuidesStroke,.4)",
+    "light": "expr:pi(@tree.indentGuidesStroke,.4)",
+    "hcDark": "expr:pi(@tree.indentGuidesStroke,.4)",
+    "hcLight": "expr:pi(@tree.indentGuidesStroke,.4)"
+   }
+  },
+  {
+   "id": "tree.indentGuidesStroke",
+   "group": "Lists and trees",
+   "description": "Tree Widget's stroke color for indent guides.",
+   "defaults": {
+    "dark": "#585858",
+    "light": "#a9a9a9",
+    "hcDark": "#a9a9a9",
+    "hcLight": "#a5a5a5"
+   }
+  },
+  {
+   "id": "tree.tableColumnsBorder",
+   "group": "Lists and trees",
+   "description": "Tree stroke color for the indentation guides.",
+   "defaults": {
+    "dark": "#CCCCCC20",
+    "light": "#61616120",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "tree.tableOddRowsBackground",
+   "group": "Lists and trees",
+   "description": "Background color for odd table rows.",
+   "defaults": {
+    "dark": "expr:pi(@foreground,.04)",
+    "light": "expr:pi(@foreground,.04)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "walkThrough.embeddedEditorBackground",
+   "group": "Welcome page colors",
+   "description": "Background color for the embedded editors on the Interactive Playground.",
+   "defaults": {
+    "dark": "expr:new qe(new ri(0,0,0,.4))",
+    "light": "#f4f4f4",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "walkthrough.stepTitle.foreground",
+   "group": "Welcome page colors",
+   "description": "Foreground color of the heading of each walkthrough step.",
+   "defaults": {
+    "dark": "#ffffff",
+    "light": "#000000",
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "welcomePage.background",
+   "group": "Welcome page colors",
+   "description": "Background color for the Welcome page.",
+   "defaults": {
+    "dark": null,
+    "light": null,
+    "hcDark": null,
+    "hcLight": null
+   }
+  },
+  {
+   "id": "welcomePage.progress.background",
+   "group": "Welcome page colors",
+   "description": "Foreground color for the Welcome page progress bars.",
+   "defaults": {
+    "dark": "@input.background",
+    "light": "@input.background",
+    "hcDark": "@input.background",
+    "hcLight": "@input.background"
+   }
+  },
+  {
+   "id": "welcomePage.progress.foreground",
+   "group": "Welcome page colors",
+   "description": "Background color for the Welcome page progress bars.",
+   "defaults": {
+    "dark": "@textLink.foreground",
+    "light": "@textLink.foreground",
+    "hcDark": "@textLink.foreground",
+    "hcLight": "@textLink.foreground"
+   }
+  },
+  {
+   "id": "welcomePage.tileBackground",
+   "group": "Welcome page colors",
+   "description": "Background color for the tiles on the Welcome page.",
+   "defaults": {
+    "dark": "@editorWidget.background",
+    "light": "@editorWidget.background",
+    "hcDark": "#000",
+    "hcLight": "@editorWidget.background"
+   }
+  },
+  {
+   "id": "welcomePage.tileBorder",
+   "group": "Welcome page colors",
+   "description": "Border color for the tiles on the Welcome page.",
+   "defaults": {
+    "dark": "#ffffff1a",
+    "light": "#0000001a",
+    "hcDark": "@contrastBorder",
+    "hcLight": "@contrastBorder"
+   }
+  },
+  {
+   "id": "welcomePage.tileHoverBackground",
+   "group": "Welcome page colors",
+   "description": "Hover background color for the tiles on the Welcome page.",
+   "defaults": {
+    "dark": "expr:Pf(@editorWidget.background,.2)",
+    "light": "expr:Mu(@editorWidget.background,.1)",
+    "hcDark": null,
+    "hcLight": null
+   }
+  }
+ ]
+}
