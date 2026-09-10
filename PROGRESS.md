@@ -23,7 +23,7 @@ Durable state for the build. Updated at the end of every phase (and mid-phase wh
 | 3b Effects layer | done (tuning continues in Phase 4) | `src/glass/glass.css` → `glass/glass.css` (+ `glass-transparent.css` addon): frosted-centre/clear-rim lens with chromatic aberration, specular rings, thickness, wallpaper ground, floating cards, concentric radii, vibrancy blend, Control-Center-style glass buttons, liquid press response, reduced-motion/transparency guards |
 | 4 Verify/iterate | in progress | audits written and passing (coverage 974/988 + 14 documented omissions; contrast PASS with 7/5/2/2 justified exceptions; schema PASS); perf (visible window, 120 Hz): editor scroll ON p50 8.3 / p95 10.2 ms vs OFF 8.3 / 9.8; scroll under open palette ON p50 8.3 / p95 16.7 ms (5.2 % > 16.7 ms) vs OFF 8.3 / 10.1; screenshot matrix (97 PNGs) done; adversarial review round 1 running |
 | 5 Docs/packaging | in progress | CI/release workflows, issue/PR templates, LICENSE, CoC, CONTRIBUTING, CHANGELOG, glass/install.md, scripts/inject.sh, icon done; README, DESIGN.md, landing page pending |
-| 6 Publish | pending | |
+| 6 Publish | in progress | repo `github.com/MilosHampl/vs-glass` created (public, description, 10 topics, homepage); CI green after a `mkdir -p dist` fix; GitHub Pages live at https://miloshampl.github.io/vs-glass/ (docs/ on main); release tag + end-to-end install verification pending final CSS |
 
 ## Decisions made without asking
 
