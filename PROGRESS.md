@@ -17,10 +17,10 @@ Durable state for the build. Updated at the end of every phase (and mid-phase wh
 | Phase | Status | Notes |
 |---|---|---|
 | 0 Scaffold | done | hand-written package.json + themes/ (generator is interactive; a color theme needs nothing else) |
-| 1 Research | in progress | 6 agents launched concurrently, outputs in `research/` |
-| 2 Palette | pending | |
-| 3a Theme | pending | |
-| 3b Effects layer | pending | |
+| 1 Research | done | 6 agents, outputs in `research/`; key claims re-verified empirically (see below) |
+| 2 Palette | done | `src/palette.ts` OKLCH ladder, 4 variants, `src/color.ts`, `src/lens.ts`, `src/png.ts`, `src/build.ts` |
+| 3a Theme | done | 4 parallel modules (`src/colors/*.ts`) + `src/tokens.ts`/`src/semantic.ts`: 974/988 keys, 95 token rules, 50 semantic rules; 14 documented deliberate omissions |
+| 3b Effects layer | in progress | `src/glass/glass.css` template → `glass/glass.css`; frosted-centre + clear-rim lens filter working on quick input/hover/suggest; cards, strips, vibrancy, motion in place; tuning + perf next |
 | 4 Verify/iterate | pending | |
 | 5 Docs/packaging | pending | |
 | 6 Publish | pending | |

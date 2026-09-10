@@ -1,1 +1,429 @@
-/* Layer 2 effects template — filled in Phase 3b. */
+/*
+ * VS Glass — Layer 2 effects template.
+ * `@G` is replaced at build time with the guard selector:
+ *   .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)
+ * so the effects only exist while a VS Glass theme (other than Glass Opaque) is active. Switching
+ * theme switches the optics off; adding `.vs-glass-off` to .monaco-workbench force-disables them.
+ * Every value comes from a generated --vsg-* token (see the block above this template in glass.css).
+ *
+ * Rules of the layer:
+ *  - refraction/blur applies only to what is BEHIND glass, never to editor text;
+ *  - one backdrop-filter per surface, on a small fixed set of surfaces (perf);
+ *  - specular ring = ::before, sheen + Clear dimming = ::after (below content via isolation);
+ *  - radii are concentric: parent radius − padding.
+ */
+
+/* ---------- 0. Typed custom properties for the liquid response ---------- */
+@property --vsg-hl-x { syntax: '<percentage>'; inherits: false; initial-value: 22%; }
+@property --vsg-hl-y { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --vsg-hl-a { syntax: '<number>'; inherits: false; initial-value: 0.10; }
+
+/* ---------- 1. Tokens derived for this layer ---------- */
+@G {
+  /* concentric geometry: retune VS Code's own radius tokens */
+  --vscode-cornerRadius-small: var(--vsg-radius-inner);
+  --vscode-cornerRadius-medium: var(--vsg-radius-control);
+  --vscode-cornerRadius-large: var(--vsg-radius-card);
+  --vscode-cornerRadius-xLarge: calc(var(--vsg-radius-card) + 4px);
+  /* backdrop filter stacks */
+  --vsg-filter-chrome: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
+  --vsg-filter-widget: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
+  /* material thickness: inset light on top, inset shade at the bottom, interior falloff, contact shadows */
+  --vsg-thickness-chrome:
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-mid) * 0.9)),
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.28),
+    inset 1px 0 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-lo) * 1.2)),
+    inset -1px 0 0 rgba(var(--vsg-shadow-rgb), 0.16),
+    inset 0 0 22px rgba(var(--vsg-shadow-rgb), 0.10),
+    0 10px 30px rgba(var(--vsg-shadow-rgb), 0.35),
+    0 1px 3px rgba(var(--vsg-shadow-rgb), 0.30);
+  --vsg-thickness-widget:
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-widget-spec-mid) * 0.9)),
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.30),
+    inset 0 0 18px rgba(var(--vsg-shadow-rgb), 0.08),
+    0 18px 48px rgba(var(--vsg-shadow-rgb), 0.45),
+    0 2px 8px rgba(var(--vsg-shadow-rgb), 0.35);
+  --vsg-ring-chrome: conic-gradient(from var(--vsg-light-angle) at 22% 12%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 0deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)) 60deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 130deg,
+    rgba(var(--vsg-spec-rgb), 0) 200deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 300deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 360deg);
+  --vsg-ring-widget: conic-gradient(from var(--vsg-light-angle) at 22% 12%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 0deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 60deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 130deg,
+    rgba(var(--vsg-spec-rgb), 0) 200deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 300deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 360deg);
+}
+
+/* ---------- 2. Ground: the wallpaper the glass floats over ---------- */
+@G { background: var(--vsg-wallpaper) !important; background-attachment: fixed !important; }
+@G > .monaco-grid-view { background: transparent !important; }
+
+/* ---------- 3. Strips: title bar, status bar, tab strip ---------- */
+@G .part.titlebar,
+@G .part.titlebar > .titlebar-container {
+  background: transparent !important;
+}
+@G .part.titlebar {
+  background: var(--vsg-chrome-glass) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
+  backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
+  box-shadow: inset 0 -1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
+}
+@G .part.statusbar {
+  background: var(--vsg-chrome-glass) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
+  backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
+  border-top: none !important;
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
+}
+@G .part.editor > .content .editor-group-container > .title {
+  background: var(--vsg-chrome-glass) !important;
+  box-shadow: inset 0 -1px 0 var(--vsg-hairline);
+}
+
+/* ---------- 4. Floating cards: activity bar, side bars, panel ---------- */
+@G .part.sidebar,
+@G .part.auxiliarybar,
+@G .part.panel,
+@G .part.activitybar {
+  position: relative;
+  isolation: isolate;
+  background: var(--vsg-chrome-glass) !important;
+  border-color: transparent !important;
+  box-shadow: var(--vsg-thickness-chrome);
+  -webkit-backdrop-filter: var(--vsg-lens-sidebar) var(--vsg-filter-chrome);
+  backdrop-filter: var(--vsg-lens-sidebar) var(--vsg-filter-chrome);
+  transition: box-shadow var(--vsg-motion-slow) var(--vsg-ease);
+}
+@G .part.panel {
+  -webkit-backdrop-filter: var(--vsg-lens-panel) var(--vsg-filter-chrome);
+  backdrop-filter: var(--vsg-lens-panel) var(--vsg-filter-chrome);
+}
+@G .part.activitybar {
+  -webkit-backdrop-filter: var(--vsg-lens-column) var(--vsg-filter-chrome);
+  backdrop-filter: var(--vsg-lens-column) var(--vsg-filter-chrome);
+}
+/* classic (non-floating) layout: the cards butt against the editor; give them a soft seam instead of a ring */
+@G:not(.floating-panels) .part.sidebar,
+@G:not(.floating-panels) .part.auxiliarybar,
+@G:not(.floating-panels) .part.panel,
+@G:not(.floating-panels) .part.activitybar {
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)), 0 0 24px rgba(var(--vsg-shadow-rgb), 0.25);
+}
+/* the sidebar's own inner surfaces must not paint over the glass */
+@G .part.sidebar > .content,
+@G .part.auxiliarybar > .content,
+@G .part.panel > .content,
+@G .part.sidebar .composite.title,
+@G .part.auxiliarybar .composite.title,
+@G .part.panel .composite.title,
+@G .part.sidebar .monaco-pane-view .pane > .pane-header,
+@G .part.auxiliarybar .monaco-pane-view .pane > .pane-header,
+@G .part.sidebar .monaco-list,
+@G .part.auxiliarybar .monaco-list,
+@G .part.panel .monaco-list,
+@G .part.panel .xterm,
+@G .part.panel .terminal-wrapper,
+@G .part.activitybar > .content {
+  background: transparent !important;
+}
+
+/* specular ring (::before) — brightest where the virtual light strikes, fading around the radius */
+@G .part.sidebar::before,
+@G .part.auxiliarybar::before,
+@G .part.panel::before,
+@G .part.activitybar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--vsg-ring-chrome);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 100;
+}
+/* sheen + Clear dimming (::after) — sits between the glass and its content */
+@G .part.sidebar::after,
+@G .part.auxiliarybar::after,
+@G .part.panel::after,
+@G .part.activitybar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 60% at var(--vsg-hl-x) var(--vsg-hl-y), rgba(var(--vsg-spec-rgb), var(--vsg-hl-a)), transparent 60%),
+    rgba(0, 0, 0, var(--vsg-dim));
+  pointer-events: none;
+  z-index: -1;
+  transition: --vsg-hl-x var(--vsg-motion-slow) var(--vsg-ease), --vsg-hl-y var(--vsg-motion-slow) var(--vsg-ease), --vsg-hl-a var(--vsg-motion-slow) var(--vsg-ease);
+}
+@G .part.sidebar:hover::after,
+@G .part.auxiliarybar:hover::after,
+@G .part.panel:hover::after {
+  --vsg-hl-x: 40%;
+  --vsg-hl-y: 6%;
+  --vsg-hl-a: 0.14;
+}
+
+/* editor card: the content plane. Slight translucency = adaptive tint bleeding in; text stays crisp (no filter). */
+@G.floating-panels .part.editor > .content {
+  background: var(--vsg-content-bg-glass) !important;
+  box-shadow: 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) inset, 0 8px 28px rgba(var(--vsg-shadow-rgb), 0.28);
+}
+@G .part.editor .monaco-editor,
+@G .part.editor .monaco-editor .monaco-editor-background,
+@G .part.editor .monaco-editor .margin {
+  --vscode-editor-background: var(--vsg-content-bg-glass);
+}
+@G .part.editor > .content .editor-group-container {
+  background: transparent !important;
+}
+
+/* ---------- 5. Floating widgets (overlap code → real refraction) ---------- */
+@G .quick-input-widget,
+@G .monaco-hover,
+@G .monaco-editor .suggest-widget,
+@G .monaco-editor .suggest-details,
+@G .workbench-suggest-widget,
+@G .monaco-editor .parameter-hints-widget,
+@G .monaco-editor .find-widget,
+@G .monaco-editor .rename-box,
+@G .monaco-editor .action-widget,
+@G .action-widget,
+@G .notification-toast,
+@G .notifications-center,
+@G .context-view .monaco-menu-container,
+@G .monaco-select-box-dropdown-container,
+@G .debug-toolbar,
+@G .monaco-dialog-box,
+@G .breadcrumbs-picker .monaco-list {
+  isolation: isolate;
+  background: var(--vsg-widget-glass) !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--vsg-radius-widget) !important;
+  box-shadow: var(--vsg-thickness-widget) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-widget) var(--vsg-filter-widget);
+  backdrop-filter: var(--vsg-lens-widget) var(--vsg-filter-widget);
+}
+@G .context-view .monaco-menu-container,
+@G .monaco-select-box-dropdown-container {
+  -webkit-backdrop-filter: var(--vsg-lens-menu) var(--vsg-filter-widget);
+  backdrop-filter: var(--vsg-lens-menu) var(--vsg-filter-widget);
+}
+@G .notification-toast { position: relative; }
+/* inner surfaces of widgets stay transparent so the glass reads through */
+@G .quick-input-widget .quick-input-titlebar,
+@G .quick-input-widget .quick-input-header,
+@G .quick-input-widget .quick-input-list,
+@G .quick-input-widget .monaco-list,
+@G .notifications-list-container,
+@G .notification-toast .monaco-list,
+@G .notifications-center .notifications-center-header,
+@G .monaco-menu-container .monaco-menu,
+@G .monaco-menu .monaco-action-bar.vertical,
+@G .monaco-editor .suggest-widget .monaco-list,
+@G .monaco-editor .suggest-widget .suggest-status-bar,
+@G .monaco-editor .parameter-hints-widget .phwrapper,
+@G .monaco-hover .hover-contents,
+@G .monaco-hover .hover-row {
+  background: transparent !important;
+}
+@G .quick-input-widget .quick-input-titlebar,
+@G .notifications-center .notifications-center-header,
+@G .monaco-editor .suggest-widget .suggest-status-bar,
+@G .monaco-hover .hover-row.status-bar {
+  box-shadow: inset 0 -1px 0 var(--vsg-hairline);
+}
+@G .monaco-hover .hover-row.status-bar { box-shadow: inset 0 1px 0 var(--vsg-hairline); }
+
+/* widget specular ring */
+@G .quick-input-widget::before,
+@G .monaco-hover::before,
+@G .monaco-editor .suggest-widget::before,
+@G .monaco-editor .parameter-hints-widget::before,
+@G .monaco-editor .find-widget::before,
+@G .notification-toast::before,
+@G .notifications-center::before,
+@G .context-view .monaco-menu-container::before,
+@G .monaco-select-box-dropdown-container::before,
+@G .debug-toolbar::before,
+@G .monaco-dialog-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--vsg-ring-widget);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 100;
+}
+/* widget sheen (+ Clear dimming), animated highlight position = the liquid response */
+@G .quick-input-widget::after,
+@G .monaco-hover::after,
+@G .monaco-editor .suggest-widget::after,
+@G .monaco-editor .parameter-hints-widget::after,
+@G .notification-toast::after,
+@G .notifications-center::after,
+@G .context-view .monaco-menu-container::after,
+@G .monaco-dialog-box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(90% 55% at var(--vsg-hl-x) var(--vsg-hl-y), rgba(var(--vsg-spec-rgb), calc(var(--vsg-hl-a) * 1.6)), transparent 62%),
+    rgba(0, 0, 0, var(--vsg-dim));
+  pointer-events: none;
+  z-index: -1;
+  transition: --vsg-hl-x var(--vsg-motion-base) var(--vsg-ease), --vsg-hl-y var(--vsg-motion-base) var(--vsg-ease), --vsg-hl-a var(--vsg-motion-base) var(--vsg-ease);
+}
+@G .quick-input-widget:focus-within::after,
+@G .quick-input-widget:hover::after,
+@G .monaco-hover:hover::after,
+@G .monaco-editor .suggest-widget:hover::after,
+@G .notification-toast:hover::after,
+@G .context-view .monaco-menu-container:hover::after,
+@G .monaco-dialog-box:hover::after {
+  --vsg-hl-x: 55%;
+  --vsg-hl-y: 8%;
+  --vsg-hl-a: 0.16;
+}
+
+/* sticky scroll: glass strip over the code that scrolls beneath it */
+@G .monaco-editor .sticky-widget {
+  background: var(--vsg-raised-glass) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-strip) saturate(var(--vsg-saturate));
+  backdrop-filter: var(--vsg-lens-strip) saturate(var(--vsg-saturate));
+  box-shadow: inset 0 -1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)), 0 6px 18px rgba(var(--vsg-shadow-rgb), 0.35) !important;
+}
+@G .monaco-editor .sticky-widget .sticky-widget-lines-scrollable,
+@G .monaco-editor .sticky-widget .sticky-widget-line-numbers {
+  background: transparent !important;
+}
+
+/* ---------- 6. Concentric inner geometry ---------- */
+@G .monaco-list:not(.element-focused) .monaco-list-row,
+@G .monaco-list .monaco-list-row {
+  border-radius: var(--vsg-radius-inner);
+}
+@G .quick-input-widget .monaco-list-row,
+@G .monaco-menu .action-item,
+@G .monaco-editor .suggest-widget .monaco-list-row {
+  border-radius: calc(var(--vsg-radius-widget) - 6px);
+}
+@G .monaco-inputbox,
+@G .monaco-button,
+@G .monaco-select-box,
+@G .monaco-text-button,
+@G .quick-input-widget .monaco-inputbox,
+@G .monaco-findInput,
+@G .keybinding-key {
+  border-radius: var(--vsg-radius-control) !important;
+}
+@G .part.activitybar .monaco-action-bar .action-item .active-item-indicator:before {
+  border-radius: 2px;
+}
+@G .part.activitybar .monaco-action-bar .action-item.checked,
+@G .part.activitybar .monaco-action-bar .action-item:hover {
+  border-radius: var(--vsg-radius-control);
+}
+
+/* ---------- 7. Vibrancy: chrome text/icons take colour from behind the glass ---------- */
+@G .part.titlebar .window-title,
+@G .part.titlebar .command-center,
+@G .part.statusbar .statusbar-item > .statusbar-item-label,
+@G .part.activitybar .monaco-action-bar .action-label,
+@G .part.sidebar .composite.title .title-label,
+@G .part.auxiliarybar .composite.title .title-label,
+@G .part.sidebar .pane-header .title,
+@G .part.auxiliarybar .pane-header .title,
+@G .part.panel .composite.title .monaco-action-bar .action-label,
+@G .part.editor .tabs-container .tab:not(.active) .label-name,
+@G .breadcrumbs-control .monaco-breadcrumb-item {
+  mix-blend-mode: var(--vsg-vibrancy-blend);
+}
+/* separators dissolve into the material */
+@G .monaco-sash:not(.hover):not(.active),
+@G .part.sidebar .pane-header,
+@G .split-view-view > .pane > .pane-header {
+  border-color: var(--vsg-hairline) !important;
+}
+
+/* ---------- 8. Liquid response ---------- */
+@keyframes vsg-pop {
+  from { transform: scale(0.985) translateY(2px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+@G .quick-input-widget,
+@G .monaco-editor .suggest-widget,
+@G .monaco-editor .parameter-hints-widget,
+@G .monaco-hover,
+@G .action-widget,
+@G .context-view .monaco-menu-container {
+  animation: vsg-pop var(--vsg-motion-base) var(--vsg-ease) both;
+}
+@G .monaco-list-row,
+@G .monaco-menu .action-item,
+@G .part.editor .tabs-container .tab,
+@G .part.statusbar .statusbar-item,
+@G .part.activitybar .monaco-action-bar .action-item,
+@G .monaco-button,
+@G .monaco-text-button,
+@G .monaco-inputbox {
+  transition:
+    background-color var(--vsg-motion-fast) var(--vsg-ease),
+    color var(--vsg-motion-fast) var(--vsg-ease),
+    box-shadow var(--vsg-motion-fast) var(--vsg-ease),
+    border-color var(--vsg-motion-fast) var(--vsg-ease),
+    transform var(--vsg-motion-fast) var(--vsg-ease),
+    filter var(--vsg-motion-fast) var(--vsg-ease);
+}
+@G .monaco-button:hover,
+@G .monaco-text-button:hover { filter: brightness(1.08); }
+@G .monaco-button:active,
+@G .monaco-text-button:active { transform: scale(0.985); filter: brightness(0.96); }
+@G .part.activitybar .monaco-action-bar .action-item .action-label { transition: transform var(--vsg-motion-fast) var(--vsg-ease); }
+@G .part.activitybar .monaco-action-bar .action-item:hover .action-label { transform: scale(1.06); }
+@G .part.activitybar .monaco-action-bar .action-item:active .action-label { transform: scale(0.96); }
+@G .monaco-inputbox.synthetic-focus,
+@G .monaco-inputbox:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 32%, transparent) !important;
+}
+@G .monaco-list.element-focused .monaco-list-row.focused,
+@G .monaco-list .monaco-list-row.selected {
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo));
+}
+
+/* ---------- 9. Accessibility ---------- */
+@media (prefers-reduced-transparency: reduce) {
+  @G .part.sidebar, @G .part.auxiliarybar, @G .part.panel, @G .part.activitybar, @G .part.titlebar, @G .part.statusbar,
+  @G .part.editor > .content .editor-group-container > .title,
+  @G .quick-input-widget, @G .monaco-hover, @G .monaco-editor .suggest-widget, @G .monaco-editor .suggest-details, @G .monaco-editor .parameter-hints-widget,
+  @G .monaco-editor .find-widget, @G .monaco-editor .rename-box, @G .action-widget, @G .notification-toast, @G .notifications-center,
+  @G .context-view .monaco-menu-container, @G .monaco-select-box-dropdown-container, @G .debug-toolbar, @G .monaco-dialog-box, @G .monaco-editor .sticky-widget {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: var(--vsg-widget-solid) !important;
+  }
+  @G .part.sidebar, @G .part.auxiliarybar, @G .part.panel, @G .part.activitybar, @G .part.titlebar, @G .part.statusbar { background: var(--vsg-chrome-solid) !important; }
+  @G { background: var(--vsg-ground) !important; }
+  @G.floating-panels .part.editor > .content { background: var(--vsg-content-bg) !important; }
+  @G .part.editor .monaco-editor { --vscode-editor-background: var(--vsg-content-bg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  @G *, @G *::before, @G *::after { transition: none !important; animation: none !important; }
+}

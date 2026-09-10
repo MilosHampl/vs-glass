@@ -353,18 +353,23 @@ function build(k: Knobs): Palette {
   const charts: Palette['charts'] = { red: accent.red, blue: accent.blue, yellow: accent.yellow, orange: accent.orange, green: accent.green, purple: accent.purple, foreground: fg, lines: alpha(sep, 0.2) };
 
   const vivid = k.wallpaperVividness;
+  const cap = (a: number) => Math.min(0.92, a);
   const wallpaper: Palette['wallpaper'] = isDark
     ? { base: ground, blobs: [
-        { color: oklch(0.42, 0.12, 275), alpha: 0.42 * vivid, x: '12%', y: '8%', size: '60%' },   // indigo, top-left
-        { color: oklch(0.4, 0.11, 320), alpha: 0.34 * vivid, x: '88%', y: '92%', size: '55%' },   // violet-pink, bottom-right
-        { color: oklch(0.45, 0.09, 200), alpha: 0.3 * vivid, x: '92%', y: '10%', size: '45%' },    // teal, top-right
-        { color: oklch(0.38, 0.1, 250), alpha: 0.28 * vivid, x: '20%', y: '95%', size: '50%' },    // blue, bottom-left
+        { color: oklch(0.5, 0.15, 275), alpha: cap(0.62 * vivid), x: '10%', y: '6%', size: '62%' },    // indigo, top-left
+        { color: oklch(0.46, 0.14, 325), alpha: cap(0.5 * vivid), x: '90%', y: '94%', size: '58%' },   // magenta-violet, bottom-right
+        { color: oklch(0.5, 0.11, 200), alpha: cap(0.44 * vivid), x: '94%', y: '8%', size: '46%' },    // teal, top-right
+        { color: oklch(0.44, 0.13, 250), alpha: cap(0.42 * vivid), x: '18%', y: '96%', size: '52%' },  // blue, bottom-left
+        { color: oklch(0.5, 0.12, 350), alpha: cap(0.26 * vivid), x: '58%', y: '34%', size: '28%' },   // pink core, centre-right
+        { color: oklch(0.5, 0.1, 170), alpha: cap(0.22 * vivid), x: '38%', y: '70%', size: '26%' },    // mint core, centre-left
       ] }
     : { base: ground, blobs: [
-        { color: oklch(0.86, 0.07, 275), alpha: 0.7 * vivid, x: '12%', y: '8%', size: '60%' },
-        { color: oklch(0.88, 0.06, 340), alpha: 0.6 * vivid, x: '88%', y: '92%', size: '55%' },
-        { color: oklch(0.9, 0.06, 190), alpha: 0.55 * vivid, x: '92%', y: '10%', size: '45%' },
-        { color: oklch(0.87, 0.06, 240), alpha: 0.5 * vivid, x: '20%', y: '95%', size: '50%' },
+        { color: oklch(0.84, 0.09, 275), alpha: cap(0.8 * vivid), x: '10%', y: '6%', size: '62%' },
+        { color: oklch(0.86, 0.08, 340), alpha: cap(0.7 * vivid), x: '90%', y: '94%', size: '58%' },
+        { color: oklch(0.88, 0.08, 190), alpha: cap(0.65 * vivid), x: '94%', y: '8%', size: '46%' },
+        { color: oklch(0.85, 0.08, 240), alpha: cap(0.6 * vivid), x: '18%', y: '96%', size: '52%' },
+        { color: oklch(0.88, 0.07, 20), alpha: cap(0.4 * vivid), x: '58%', y: '34%', size: '28%' },
+        { color: oklch(0.9, 0.07, 160), alpha: cap(0.35 * vivid), x: '38%', y: '70%', size: '26%' },
       ] };
 
   const content: Palette['content'] = {
@@ -407,7 +412,7 @@ export const regularDark = build({
   ladder: { ground: 0.165, groundDeep: 0.11, content: 0.205, chrome: 0.255, raised: 0.295, widget: 0.335, overlay: 0.375 },
   alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.5, widgetGlass: 0.62, content: 0.94 },
   labelBoost: 0, wallpaperVividness: 1,
-  effects: { blur: 18, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 11, lensEdge: 30, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
+  effects: { blur: 18, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 10, lensEdge: 26, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
 
 export const regularLight = build({
@@ -415,7 +420,7 @@ export const regularLight = build({
   ladder: { ground: 0.9, groundDeep: 0.8, content: 0.985, chrome: 0.955, raised: 0.97, widget: 0.98, overlay: 0.99 },
   alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.55, widgetGlass: 0.68, content: 0.96 },
   labelBoost: 0, wallpaperVividness: 1,
-  effects: { blur: 22, blurWidget: 26, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 10, lensEdge: 30, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
+  effects: { blur: 22, blurWidget: 26, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 9, lensEdge: 26, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
 });
 
 export const clear = build({
@@ -423,7 +428,7 @@ export const clear = build({
   ladder: { ground: 0.15, groundDeep: 0.1, content: 0.19, chrome: 0.235, raised: 0.275, widget: 0.32, overlay: 0.36 },
   alphas: { chrome: 0.34, raised: 0.42, widget: 0.9, overlay: 0.94, chromeGlass: 0.26, widgetGlass: 0.42, content: 0.86 },
   labelBoost: 0.1, wallpaperVividness: 1.7,
-  effects: { blur: 8, blurWidget: 12, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 15, lensEdge: 36, dim: 0.35, radius, shadowColor: '#02030a', lightAngle: 225, motion },
+  effects: { blur: 8, blurWidget: 12, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 13, lensEdge: 30, dim: 0.35, radius, shadowColor: '#02030a', lightAngle: 225, motion },
 });
 
 export const opaqueTheme = build({

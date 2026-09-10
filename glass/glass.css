@@ -4,7 +4,7 @@
 /* ===== Generated palette tokens ===== */
 /* Glass Regular Dark */
 .monaco-workbench.vs-glass,
-.monaco-workbench.vscode-theme-vs-glass-themes-glass-regular-dark-color-theme-json {
+.monaco-workbench.MilosHampl-vs-glass-themes-glass-regular-dark-color-theme-json {
   --vsg-ground: #0a0e17;
   --vsg-ground-deep: #02040b;
   --vsg-content-bg: #13171f;
@@ -34,7 +34,8 @@
   --vsg-motion-base: 240ms;
   --vsg-motion-slow: 320ms;
   --vsg-ease: cubic-bezier(.2,.8,.2,1);
-  --vsg-wallpaper: radial-gradient(ellipse 60% 60% at 12% 8%, rgba(60, 68, 141, 0.420), transparent 70%), radial-gradient(ellipse 55% 55% at 88% 92%, rgba(97, 49, 108, 0.340), transparent 70%), radial-gradient(ellipse 45% 45% at 92% 10%, rgba(6, 97, 102, 0.300), transparent 70%), radial-gradient(ellipse 50% 50% at 20% 95%, rgba(10, 68, 117, 0.280), transparent 70%), #0a0e17;
+  --vsg-vibrancy-blend: plus-lighter;
+  --vsg-wallpaper: radial-gradient(ellipse 62% 62% at 10% 6%, rgba(77, 87, 183, 0.620), transparent 70%), radial-gradient(ellipse 58% 58% at 90% 94%, rgba(125, 54, 130, 0.500), transparent 70%), radial-gradient(ellipse 46% 46% at 94% 8%, rgba(18, 113, 117, 0.440), transparent 70%), radial-gradient(ellipse 52% 52% at 18% 96%, rgba(4, 84, 146, 0.420), transparent 70%), radial-gradient(ellipse 28% 28% at 58% 34%, rgba(148, 67, 109, 0.260), transparent 70%), radial-gradient(ellipse 26% 26% at 38% 70%, rgba(18, 116, 91, 0.220), transparent 70%), #0a0e17;
   --vsg-chrome-solid: #1e232d;
   --vsg-chrome-bg: rgba(42, 48, 58, 0.62);
   --vsg-chrome-glass: rgba(50, 56, 67, 0.502);
@@ -63,16 +64,16 @@
   --vsg-overlay-spec-hi: 0.72;
   --vsg-overlay-spec-mid: 0.24;
   --vsg-overlay-spec-lo: 0.06;
-  --vsg-lens-widget: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-widget'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAGAAAABACAYAAADlNHIOAAAB5ElEQVR42u3RoRGkQABE0Utig5ksMESAw%2BGoQswfQRUOhyMCDFkQzAbx7zaCM8gWX7Xr9%2Bf54v3F84v7F9cvti%2BSXq1%2Bcfni9MXhi90Xy7%2Ftz%2FPg%2FeD54P7g%2BmB7kPRq9cHlwenB4cHuwfL8AC68Lzwv3C9cL2wXkl6tXrhcOF04XNhdWK4fwIH3geeB%2B4Hrge1A0qvVA5cDpwOHA7sDy%2FED2PDe8Nxw33DdsG1IerW64bLhtOGwYbdh2X4ADe%2BGZ8O94dqwNSS9Wm24NJwaDg27hqX9AMAbPMEdXMEGkl6tggs4gQPYgYUABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQghwUgACkAAUgBCEAKQABSAAKQAhCAFIAApAAEIAUgACkAAUgBCEAKQABSAAKQAhCAFIAApAAEIAUgACkAAUgBCED6D0DFu%2BJZca%2B4VmwVSa9WKy4Vp4pDxa5iqT%2BAGe8Zzxn3GdcZ24ykV6szLjNOMw4zdjOW%2BQcw4j3iOeI%2B4jpiG5H0anXEZcRpxGHEbsQy%2FgB6vHs8e9x7XHtsPZJerfa49Dj1OPTY9Vj6H0DBu%2BBZcC%2B4FmwFSa9WCy4Fp4JDwa5gKT%2BAD94fPD%2B4f3D9YPsg6dXqB5cPTh8cPth9sPzb%2FgIOmOt2NuYEjwAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.02292'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-widget");
-  --vsg-lens-menu: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-menu'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAABACAYAAABcIPRGAAABsElEQVR42u3PoZGgQBQA0U2CPLCkgMejMdgpzPQYCotB48eTApY8Noi%2BJYRziC9atXo%2Fvw%2FeD9YHjwe3B8uDfKz8YHpwenB4sHuw%2BXs%2FvxfeF9YLjwu3C8uFfKx8YbpwunC4sLuwuV7AifeJ9cTjxO3EciIfK5%2BYTpxOHE7sTmzOF7DjvWPd8dhx27HsyMfKO6Ydpx2HHbsdm%2F0FrHivWFc8VtxWLCvysfKKacVpxWHFbsVmfQEF74K14FFwK1gK8rFywVRwKjgU7Ao25QWAN1jBA9zAAvKxMpjACRzADmwIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAE4D8AGe%2BMNeORcctYMvKxcsaUcco4ZOwyNvkFLHgvWBc8FtwWLAvysfKCacFpwWHBbsFmeQEz3jPWGY8ZtxnLjHysPGOacZpxmLGbsZlfwIj3iHXEY8RtxDIiHyuPmEacRhxG7EZsxhfQ491j7fHoceux9MjHyj2mHqcehx67Hpv%2BBbR4t1hbPFrcWiwt8rFyi6nFqcWhxa7F5u%2F9A8wQ9bRD4fXOAAAAAElFTkSuQmCC'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.04583'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-menu");
-  --vsg-lens-sidebar: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-sidebar'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAACACAYAAABNyOryAAABN0lEQVR42u3PoZGoMAAG4asj9aQLZCQeFDM7gwoeiaSL1HNt%2FO8wr4aIFWvWfT%2B%2FLxkveV7SX8Lk7S9pL6kvKX%2Fv5%2Fcm4ybPTfpNmLz9Ju0m9Sbl%2FgAXGRd5LtIvwuTtF2kXqRcp1wc4yTjJc5J%2BEiZvP0k7ST1JOT8AZEAeSIcweTukQSqkIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIOA%2F4CDjIM9B%2BkGYvP0g7SD1IOX4ABsZG3k20jfC5O0baRupGynbB1jJWMmzkr4SJm9fSVtJXUlZP8BCxkKehfSFMHn7QtpC6kLK3%2FsH4HvrdmZ6PT8AAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.03667'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-sidebar");
-  --vsg-lens-panel: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-panel'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAoCAYAAAA2cfJIAAAA70lEQVR42u3SMa3EMAAE0aMSSuFgApFbyxO5tULgOIRSoOy%2FwPjyFK%2FYdjWf70PmQ8ZD0BLaQ%2BpDym9%2FvjeZNxk3QUtoN6k3KfcbwEXmRcZF0BLaRepFyvUGcJJ5knEStIR2knqScr4BQCZkQNASGqRCCgZgAAZgAAZgAAZgAB5jAJ5jADIAGYAMQAYgA5AByABkADIAGYAMQAYgA5AByABkADIAGYAMQAYgA5AByABkAPo3AXQyOxmdoCW0Tmonpb8BHGQeZBwELaEdpB6kHG8AO5k7GTtBS2g7qTsp%2BxvARuZGxkbQEtpG6kbKb%2F8BAQfu4FekSowAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.01000'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-panel");
-  --vsg-lens-column: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-column'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAAwAAACACAYAAAA%2FB4hEAAAAUElEQVR42u3LMQFAUAAA0V9BEjWEEMFuvdUughBqSCLCaSDBvf2NF3zAG7zAEzzAHdzAFVzAGZzAUSgUCoVCoVAoFAqFQqFQKBQKhUKh8B8%2BIP%2F607i5pvQAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.22917'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-column");
-  --vsg-lens-strip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-strip'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAMCAYAAACqTLVoAAAAU0lEQVR42u3DgRSAQABEwRXIIokUQgggjs8RwCGcQhJZBLAHsjvvjfhx5xYf7tzixZ1bTNy5xcCdWzy4c4sbd25x4c4tTty5xYE7t9hx5xYb7twLlpb6058cLlkAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.30556'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-strip");
+  --vsg-lens-widget: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-widget'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAHAAAABICAYAAAAuyXGLAAABbUlEQVR42u3doY3uMBBF4b%2BPldKLeRoIcgNhxrEsBw9LA%2B4hdLS9hE0VdzcFLHvATzrgkAvnK2A%2B309oPCF7Qv0JNZq6%2BoTKE8pPKP1un%2B87NG6X3a5%2BuxpNXb1d5Xbl25XuF%2FAKjctll6lfpkZTVy9TuUz5cqXrBTxD43TZaernpkZTV89N5TTl05XOF7CFRnNZM%2FW2qbUvmrjaNpVmys2V2p%2BAH5oyAAEkAAlAAAEEkAAkAAEEEEACkAAEEEAACUACEECOBSABSAACSAASgAQggAQgAQgggAASgAQggAACSAASgAACCCABSAACCCCABCABCCABSAASgAASgAQgAQggAUgAAggggAQgAQgggAASgPTvAen%2FeT93hMbhssPUj02Npq4em8phyocrHS%2FgHhq7y3ZT302Npq7uprKb8u5K%2Bwu4hsbqstXVV1ejqaurq6yuvLrS%2BgIuobGEbAn1JdRo6uoSKksoL6H0u%2F0AUCKPY%2FNMIMAAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.03929%200.06111'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.01429'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00107%200.00167'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-widget");
+  --vsg-lens-menu: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-menu'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAABACAYAAABcIPRGAAAA10lEQVR42u3aoZFEIRRE0Ulg0yCLnwoCQRIgnoAkkFS9SH4WI18iPfP9yhVL1RVXtDy%2BX%2B87tO%2FQvEN2SO0O5TuUvvv1XqG9XHO57JDacuXlSusBjNAerjmK7JDaKMrDlcYDsNA217Qis58jalaUzZXsV8DrnwcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgbwCnHV97aHfX7EV2SK0X5e5K%2FQHU0K6uWV12SK26cnWl%2BgCu0L5C8wrZIbUrlK9Q%2Bu4P%2FymYYJPlO9YAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.09167%200.06875'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.02500'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00250%200.00187'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-menu");
+  --vsg-lens-sidebar: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-sidebar'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAACACAYAAABNyOryAAABNklEQVR42u3csY3EIBgF4W3FhVy0HTinB0SKJX4HpBY9kDtB1LMZlPFWzi%2B4kJMmmAK%2BBub1qVN3Hbrq0FmHbPFSHQp1aK9DW516fcrUXbqu0nSWJlu8VJpCadpL11YeQJ66c9eVk858yBYv5UMhJ%2B25a8sPwKZu67os6bS3zH6WLtlbwZJ269rsV8Br6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8FfDfxtlx6o5dV0w64yFbvBQPhZi0x64tPgA%2FdfuuyzedvskWL%2Fmm4Jt237X5B%2BCmbjd0uaHTDdniJTcU3NDuhjY39QWPjQr%2BBiwPqgAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.06000%200.02195'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.03000'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00200%200.00073'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-sidebar");
+  --vsg-lens-panel: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-panel'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAoCAYAAAA2cfJIAAAAzElEQVR42u3SsQ3EIBBEUdpxJe7ABZBQAwHSSgSUgJxAWc4QnczZZZz2B1%2BaePTC%2FWy1Z8vIVfnZSu8O91hqY8rIVXlMpbEU7rrUapfVixyVa1eqHwBbatZldsoskItOZetKBgAAAAAAAAAAAAAAAABwDAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQA%2BgMAZamVLisXOSqXrlQ%2BAHGpxSkjV%2BU4leIH4Nhqx5aRq%2FKxld79A4ddPYe%2FMRkGAAAAAElFTkSuQmCC'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.01636%200.05625'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.00818'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00055%200.00187'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-panel");
+  --vsg-lens-column: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-column'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAAwAAACACAYAAAA%2FB4hEAAAATElEQVR42u3LIQGAQAAEsA%2BCJRUJiIA7RxLEZ0IS5PAIEkxMbtx5emX2zN5kaTI%2Blh7Zu2V2zdMhCIIgCIIgCIIgCIIgCIIgCILwH168WQvTEF20qwAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.37500%200.02195'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.10417'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.01250%200.00073'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-column");
+  --vsg-lens-strip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-dark-strip'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAMCAYAAACqTLVoAAAATElEQVR42u3SMQ3AMAADQbMJqkgFksFDgUQKqo5B4gLxD0fg9fJ3g17yPkEv%2BZ1BL9kKejEAAxCBAcAAYABUDrBm0Et%2BTtBLHjfo9QPpPtvEkdO%2F1QAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.00857%200.33333'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.09722'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00043%200.01667'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-dark-strip");
 }
 
 /* Glass Regular Light */
-.monaco-workbench.vscode-theme-vs-glass-themes-glass-regular-light-color-theme-json {
+.monaco-workbench.MilosHampl-vs-glass-themes-glass-regular-light-color-theme-json {
   --vsg-ground: #dadee6;
   --vsg-ground-deep: #b9bec6;
   --vsg-content-bg: #f8fafe;
@@ -102,7 +103,8 @@
   --vsg-motion-base: 240ms;
   --vsg-motion-slow: 320ms;
   --vsg-ease: cubic-bezier(.2,.8,.2,1);
-  --vsg-wallpaper: radial-gradient(ellipse 60% 60% at 12% 8%, rgba(196, 206, 253, 0.700), transparent 70%), radial-gradient(ellipse 55% 55% at 88% 92%, rgba(244, 201, 228, 0.600), transparent 70%), radial-gradient(ellipse 45% 45% at 92% 10%, rgba(176, 235, 231, 0.550), transparent 70%), radial-gradient(ellipse 50% 50% at 20% 95%, rgba(177, 218, 248, 0.500), transparent 70%), #dadee6;
+  --vsg-vibrancy-blend: multiply;
+  --vsg-wallpaper: radial-gradient(ellipse 62% 62% at 10% 6%, rgba(187, 199, 255, 0.800), transparent 70%), radial-gradient(ellipse 58% 58% at 90% 94%, rgba(246, 189, 226, 0.700), transparent 70%), radial-gradient(ellipse 46% 46% at 94% 8%, rgba(152, 233, 227, 0.650), transparent 70%), radial-gradient(ellipse 52% 52% at 18% 96%, rgba(158, 213, 253, 0.600), transparent 70%), radial-gradient(ellipse 28% 28% at 58% 34%, rgba(254, 200, 199, 0.400), transparent 70%), radial-gradient(ellipse 26% 26% at 38% 70%, rgba(182, 237, 206, 0.350), transparent 70%), #dadee6;
   --vsg-chrome-solid: #ecf0f8;
   --vsg-chrome-bg: rgba(243, 247, 255, 0.722);
   --vsg-chrome-glass: rgba(242, 246, 254, 0.749);
@@ -131,16 +133,16 @@
   --vsg-overlay-spec-hi: 1;
   --vsg-overlay-spec-mid: 0.75;
   --vsg-overlay-spec-lo: 0.35;
-  --vsg-lens-widget: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-widget'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAGAAAABACAYAAADlNHIOAAAB5ElEQVR42u3RoRGkQABE0Utig5ksMESAw%2BGoQswfQRUOhyMCDFkQzAbx7zaCM8gWX7Xr9%2Bf54v3F84v7F9cvti%2BSXq1%2Bcfni9MXhi90Xy7%2Ftz%2FPg%2FeD54P7g%2BmB7kPRq9cHlwenB4cHuwfL8AC68Lzwv3C9cL2wXkl6tXrhcOF04XNhdWK4fwIH3geeB%2B4Hrge1A0qvVA5cDpwOHA7sDy%2FED2PDe8Nxw33DdsG1IerW64bLhtOGwYbdh2X4ADe%2BGZ8O94dqwNSS9Wm24NJwaDg27hqX9AMAbPMEdXMEGkl6tggs4gQPYgYUABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQghwUgACkAAUgBCEAKQABSAAKQAhCAFIAApAAEIAUgACkAAUgBCEAKQABSAAKQAhCAFIAApAAEIAUgACkAAUgBCED6D0DFu%2BJZca%2B4VmwVSa9WKy4Vp4pDxa5iqT%2BAGe8Zzxn3GdcZ24ykV6szLjNOMw4zdjOW%2BQcw4j3iOeI%2B4jpiG5H0anXEZcRpxGHEbsQy%2FgB6vHs8e9x7XHtsPZJerfa49Dj1OPTY9Vj6H0DBu%2BBZcC%2B4FmwFSa9WCy4Fp4JDwa5gKT%2BAD94fPD%2B4f3D9YPsg6dXqB5cPTh8cPth9sPzb%2FgIOmOt2NuYEjwAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.02083'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-widget");
-  --vsg-lens-menu: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-menu'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAABACAYAAABcIPRGAAABsElEQVR42u3PoZGgQBQA0U2CPLCkgMejMdgpzPQYCotB48eTApY8Noi%2BJYRziC9atXo%2Fvw%2FeD9YHjwe3B8uDfKz8YHpwenB4sHuw%2BXs%2FvxfeF9YLjwu3C8uFfKx8YbpwunC4sLuwuV7AifeJ9cTjxO3EciIfK5%2BYTpxOHE7sTmzOF7DjvWPd8dhx27HsyMfKO6Ydpx2HHbsdm%2F0FrHivWFc8VtxWLCvysfKKacVpxWHFbsVmfQEF74K14FFwK1gK8rFywVRwKjgU7Ao25QWAN1jBA9zAAvKxMpjACRzADmwIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAE4D8AGe%2BMNeORcctYMvKxcsaUcco4ZOwyNvkFLHgvWBc8FtwWLAvysfKCacFpwWHBbsFmeQEz3jPWGY8ZtxnLjHysPGOacZpxmLGbsZlfwIj3iHXEY8RtxDIiHyuPmEacRhxG7EZsxhfQ491j7fHoceux9MjHyj2mHqcehx67Hpv%2BBbR4t1hbPFrcWiwt8rFyi6nFqcWhxa7F5u%2F9A8wQ9bRD4fXOAAAAAElFTkSuQmCC'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.04167'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-menu");
-  --vsg-lens-sidebar: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-sidebar'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAACACAYAAABNyOryAAABN0lEQVR42u3PoZGoMAAG4asj9aQLZCQeFDM7gwoeiaSL1HNt%2FO8wr4aIFWvWfT%2B%2FLxkveV7SX8Lk7S9pL6kvKX%2Fv5%2Fcm4ybPTfpNmLz9Ju0m9Sbl%2FgAXGRd5LtIvwuTtF2kXqRcp1wc4yTjJc5J%2BEiZvP0k7ST1JOT8AZEAeSIcweTukQSqkIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIOA%2F4CDjIM9B%2BkGYvP0g7SD1IOX4ABsZG3k20jfC5O0baRupGynbB1jJWMmzkr4SJm9fSVtJXUlZP8BCxkKehfSFMHn7QtpC6kLK3%2FsH4HvrdmZ6PT8AAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.03333'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-sidebar");
-  --vsg-lens-panel: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-panel'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAoCAYAAAA2cfJIAAAA70lEQVR42u3SMa3EMAAE0aMSSuFgApFbyxO5tULgOIRSoOy%2FwPjyFK%2FYdjWf70PmQ8ZD0BLaQ%2BpDym9%2FvjeZNxk3QUtoN6k3KfcbwEXmRcZF0BLaRepFyvUGcJJ5knEStIR2knqScr4BQCZkQNASGqRCCgZgAAZgAAZgAAZgAB5jAJ5jADIAGYAMQAYgA5AByABkADIAGYAMQAYgA5AByABkADIAGYAMQAYgA5AByABkAPo3AXQyOxmdoCW0Tmonpb8BHGQeZBwELaEdpB6kHG8AO5k7GTtBS2g7qTsp%2BxvARuZGxkbQEtpG6kbKb%2F8BAQfu4FekSowAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.00909'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-panel");
-  --vsg-lens-column: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-column'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAAwAAACACAYAAAA%2FB4hEAAAAUElEQVR42u3LMQFAUAAA0V9BEjWEEMFuvdUughBqSCLCaSDBvf2NF3zAG7zAEzzAHdzAFVzAGZzAUSgUCoVCoVAoFAqFQqFQKBQKhUKh8B8%2BIP%2F607i5pvQAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.20833'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-column");
-  --vsg-lens-strip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-strip'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAMCAYAAACqTLVoAAAAU0lEQVR42u3DgRSAQABEwRXIIokUQgggjs8RwCGcQhJZBLAHsjvvjfhx5xYf7tzixZ1bTNy5xcCdWzy4c4sbd25x4c4tTty5xYE7t9hx5xYb7twLlpb6058cLlkAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.27778'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-strip");
+  --vsg-lens-widget: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-widget'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAHAAAABICAYAAAAuyXGLAAABbUlEQVR42u3doY3uMBBF4b%2BPldKLeRoIcgNhxrEsBw9LA%2B4hdLS9hE0VdzcFLHvATzrgkAvnK2A%2B309oPCF7Qv0JNZq6%2BoTKE8pPKP1un%2B87NG6X3a5%2BuxpNXb1d5Xbl25XuF%2FAKjctll6lfpkZTVy9TuUz5cqXrBTxD43TZaernpkZTV89N5TTl05XOF7CFRnNZM%2FW2qbUvmrjaNpVmys2V2p%2BAH5oyAAEkAAlAAAEEkAAkAAEEEEACkAAEEEAACUACEECOBSABSAACSAASgAQggAQgAQgggAASgAQggAACSAASgAACCCABSAACCCCABCABCCABSAASgAASgAQgAQggAUgAAggggAQgAQgggAASgPTvAen%2FeT93hMbhssPUj02Npq4em8phyocrHS%2FgHhq7y3ZT302Npq7uprKb8u5K%2Bwu4hsbqstXVV1ejqaurq6yuvLrS%2BgIuobGEbAn1JdRo6uoSKksoL6H0u%2F0AUCKPY%2FNMIMAAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.04643%200.07222'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.01286'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00107%200.00167'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-widget");
+  --vsg-lens-menu: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-menu'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAABACAYAAABcIPRGAAAA10lEQVR42u3aoZFEIRRE0Ulg0yCLnwoCQRIgnoAkkFS9SH4WI18iPfP9yhVL1RVXtDy%2BX%2B87tO%2FQvEN2SO0O5TuUvvv1XqG9XHO57JDacuXlSusBjNAerjmK7JDaKMrDlcYDsNA217Qis58jalaUzZXsV8DrnwcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgbwCnHV97aHfX7EV2SK0X5e5K%2FQHU0K6uWV12SK26cnWl%2BgCu0L5C8wrZIbUrlK9Q%2Bu4P%2FymYYJPlO9YAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.10833%200.08125'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.02250'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00250%200.00187'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-menu");
+  --vsg-lens-sidebar: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-sidebar'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAACACAYAAABNyOryAAABNklEQVR42u3csY3EIBgF4W3FhVy0HTinB0SKJX4HpBY9kDtB1LMZlPFWzi%2B4kJMmmAK%2BBub1qVN3Hbrq0FmHbPFSHQp1aK9DW516fcrUXbqu0nSWJlu8VJpCadpL11YeQJ66c9eVk858yBYv5UMhJ%2B25a8sPwKZu67os6bS3zH6WLtlbwZJ269rsV8Br6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8FfDfxtlx6o5dV0w64yFbvBQPhZi0x64tPgA%2FdfuuyzedvskWL%2Fmm4Jt237X5B%2BCmbjd0uaHTDdniJTcU3NDuhjY39QWPjQr%2BBiwPqgAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.07333%200.02683'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.02700'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00200%200.00073'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-sidebar");
+  --vsg-lens-panel: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-panel'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAoCAYAAAA2cfJIAAAAzElEQVR42u3SsQ3EIBBEUdpxJe7ABZBQAwHSSgSUgJxAWc4QnczZZZz2B1%2BaePTC%2FWy1Z8vIVfnZSu8O91hqY8rIVXlMpbEU7rrUapfVixyVa1eqHwBbatZldsoskItOZetKBgAAAAAAAAAAAAAAAABwDAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQAAgABgABAACAAEAAIAAQA%2BgMAZamVLisXOSqXrlQ%2BAHGpxSkjV%2BU4leIH4Nhqx5aRq%2FKxld79A4ddPYe%2FMRkGAAAAAElFTkSuQmCC'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.02000%200.06875'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.00736'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00055%200.00187'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-panel");
+  --vsg-lens-column: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-column'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAAwAAACACAYAAAA%2FB4hEAAAATElEQVR42u3LIQGAQAAEsA%2BCJRUJiIA7RxLEZ0IS5PAIEkxMbtx5emX2zN5kaTI%2Blh7Zu2V2zdMhCIIgCIIgCIIgCIIgCIIgCILwH168WQvTEF20qwAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.45833%200.02683'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.09375'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.01250%200.00073'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-column");
+  --vsg-lens-strip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-regular-light-strip'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAMCAYAAACqTLVoAAAATElEQVR42u3SMQ3AMAADQbMJqkgFksFDgUQKqo5B4gLxD0fg9fJ3g17yPkEv%2BZ1BL9kKejEAAxCBAcAAYABUDrBm0Et%2BTtBLHjfo9QPpPtvEkdO%2F1QAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.00857%200.33333'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.08750'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00043%200.01667'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-regular-light-strip");
 }
 
 /* Glass Clear */
-.monaco-workbench.vscode-theme-vs-glass-themes-glass-clear-color-theme-json {
+.monaco-workbench.MilosHampl-vs-glass-themes-glass-clear-color-theme-json {
   --vsg-ground: #070b14;
   --vsg-ground-deep: #010309;
   --vsg-content-bg: #10141c;
@@ -170,7 +172,8 @@
   --vsg-motion-base: 240ms;
   --vsg-motion-slow: 320ms;
   --vsg-ease: cubic-bezier(.2,.8,.2,1);
-  --vsg-wallpaper: radial-gradient(ellipse 60% 60% at 12% 8%, rgba(60, 68, 141, 0.714), transparent 70%), radial-gradient(ellipse 55% 55% at 88% 92%, rgba(97, 49, 108, 0.578), transparent 70%), radial-gradient(ellipse 45% 45% at 92% 10%, rgba(6, 97, 102, 0.510), transparent 70%), radial-gradient(ellipse 50% 50% at 20% 95%, rgba(10, 68, 117, 0.476), transparent 70%), #070b14;
+  --vsg-vibrancy-blend: plus-lighter;
+  --vsg-wallpaper: radial-gradient(ellipse 62% 62% at 10% 6%, rgba(77, 87, 183, 0.920), transparent 70%), radial-gradient(ellipse 58% 58% at 90% 94%, rgba(125, 54, 130, 0.850), transparent 70%), radial-gradient(ellipse 46% 46% at 94% 8%, rgba(18, 113, 117, 0.748), transparent 70%), radial-gradient(ellipse 52% 52% at 18% 96%, rgba(4, 84, 146, 0.714), transparent 70%), radial-gradient(ellipse 28% 28% at 58% 34%, rgba(148, 67, 109, 0.442), transparent 70%), radial-gradient(ellipse 26% 26% at 38% 70%, rgba(18, 116, 91, 0.374), transparent 70%), #070b14;
   --vsg-chrome-solid: #191e28;
   --vsg-chrome-bg: rgba(60, 67, 79, 0.341);
   --vsg-chrome-glass: rgba(76, 84, 97, 0.259);
@@ -199,16 +202,16 @@
   --vsg-overlay-spec-hi: 0.72;
   --vsg-overlay-spec-mid: 0.24;
   --vsg-overlay-spec-lo: 0.06;
-  --vsg-lens-widget: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-widget'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAGAAAABACAYAAADlNHIOAAACZklEQVR42u3RoRGkWhgF4Y1hIsGRA6RAEQAChaEQt6%2BgMCgEAVCkADmsI5JJod9OBk8gf9HquPP9%2BfvF64vnF%2Fcvrl%2Bcv5i%2FSPRK6YvTF4cvdl9svlh%2Fsfy3%2F%2Fn74PXg%2BeD%2B4Prg%2FGB%2BkOiV0oPTg8OD3YPNg%2FWD5fMDuPG68bxxv3G9cb4x30j0SunG6cbhxu7G5sb6xvL%2BARx4HXgeuB%2B4HjgfmA8keqV04HTgcGB3YHNgfWB5%2FAA2vDY8N9w3XDecN8wbEr1S2nDacNiw27DZsN6w3H4AC14LngvuC64LzgvmBYleKS04LTgs2C3YLFgvWC4%2FgIxXxjPjnnHNOGfMGYleKWWcMg4Zu4xNxjpjmX8A4AWe4A6u4AxmkOiVEjiBA9iBDViDJQEQAAEQAAEQAAEQAAEQAAEQAAEQAAEQAAEQAAEQAAEQxwVAAEQBEABRAARAFAABEAVAAEQBEABRAARAFAABEAVAAEQBEABRAARAFAABEAVAAEQBEABRAARAFAABEAVAAET%2FAyDhlfBMuCdcE84Jc0KiV0oJp4RDwi5hk7BOWKYfwIjXiOeI%2B4jriPOIeUSiV0ojTiMOI3YjNiPWI5bjD6DHq8ezx73Htce5x9wj0SulHqcehx67Hpse6x7L%2FgfQ4tXi2eLe4tri3GJukeiVUotTi0OLXYtNi3WLZfsDqPCq8Kxwr3CtcK4wV0j0SqnCqcKhwq7CpsK6wrL6ARR4FXgWuBe4FjgXmAskeqVU4FTgUGBXYFNgXWBZ%2FAA%2BeH3w%2FOD%2BwfWD8wfzB4leKX1w%2BuDwwe6DzQfrD5b%2F9v8ANlbrdoAyVR8AAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.03125'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-widget");
-  --vsg-lens-menu: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-menu'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAABACAYAAABcIPRGAAACM0lEQVR42u3PoQ2mQAAF4auBQv5QBIoGcFgcBkUQOysICoPD4mgARRGEQq6FOeiCS1aMeuZ9f%2F7eeN143LjduNw43Rhv5COFG%2Fsb2xvrG8sb8%2Bdr9ux%2F%2Fp54nXicuJ24nDidGE%2FkI4UT%2BxPbE%2BsTyxPz52t2voAdrx2PHbcdlx2nHeOOfKSwY79ju2O9Y7lj%2FnzN9hew4rXiseK24rLitGJckY8UVuxXbFesVyxXzJ%2Bv2foCZrxmPGbcZlxmnGaMM%2FKRwoz9jO2M9YzljPnzNZtfwIjXiMeI24jLiNOIcUQ%2BUhixH7EdsR6xHDF%2FvmbjC4h4RTwibhGXiFPEGJGPFCL2EduIdcQyYv58zeILAC%2FwADdwAScwgnykAPZgC9ZgCebP14wESIAESIAESIAESIAESIAESIAESIAESIAESIAESIAESIAESIAESIAESIAESIAESIAESIAESID%2FChDwCngE3AIuAaeAMSAfKQTsA7YB64BlwPz5moUXMOA14DHgNuAy4DRgHJCPFAbsB2wHrAcsB8yfr9nwAjq8Ojw63DpcOpw6jB3ykUKHfYdth3WHZYf58zXrXkCDV4NHg1uDS4NTg7FBPlJosG%2BwbbBusGwwf75mzQuo8KrwqHCrcKlwqjBWyEcKFfYVthXWFZYV5s%2FXrHoBBV4FHgVuBS4FTgXGAvlIocC%2BwLbAusCywPz5mhUv4IfXD48fbj9cfjj9MP6QjxR%2B2P%2Bw%2FWH9w%2FKH%2BfM1e%2FZ%2F9vv1tFovSLAAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.06250'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-menu");
-  --vsg-lens-sidebar: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-sidebar'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAACACAYAAABNyOryAAABjElEQVR42u3PIZGAUAAG4UtBGYIwJMCgcCCYHQQ4FIYEDEFemSuxd7R44hdr1n0%2Fvw%2BWB98Hrwf3B6m05cHxwe7B9sHm%2F%2F%2F83lhufG%2B8btxvpNKWG8cbuxvbG5v7A5xYTnxPvE7cT6TSlhPHE7sT2xOb8wMcWA58D7wO3A%2Bk0pYDxwO7A9sDm%2BMDbFg2fDe8Ntw3pNKWDccNuw3bDZvtA4AFfMEL3EEqbQFHsANbsCGAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAKoCLBiWfFd8VpxX5FKW1YcV%2BxWbFds1g8wY5nxnfGacZ%2BRSltmHGfsZmxnbOYPMGGZ8J3wmnCfkEpbJhwn7CZsJ2ymDzBgGfAd8BpwH5BKWwYcB%2BwGbAdshg%2FQY%2Bnx7fHqce%2BRSlt6HHvsemx7bP7%2FHyam63aaC361AAAAAElFTkSuQmCC'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.05000'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-sidebar");
-  --vsg-lens-panel: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-panel'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAoCAYAAAA2cfJIAAABE0lEQVR42u3SoZHgMAAEwQvEATkPAWNREY2IqLDB5eGAnMf%2BOYxXDRiycKt%2Ffl%2ByXjJfMl6CbV1%2FSXtJfUn5235%2BH7IeMh8yHoJtXX9Ie0h9SHk%2BADdZN5k3GTfBtq7fpN2k3qTcH4BJ1iRzkjEJtnV9kjZJnaTMDwBkQSZkQLCt65AGqZCCAAQgAAEIQAACEIAABCAAAXiSAEwAJgATgAnABGACMAGYAEwAJgATgAnABGACMAGYAEwAJgATgAnABGACMAHYfwOgkdXIbGQ0gm1db6Q1Uhsp7QNwkXWReZFxEWzr%2BkXaRepFyvUBOMk6yTzJOAm2df0k7ST1JOX8ABxkHWQeZBwE27p%2BkHaQepDyt%2F0DK4fu4DjWU9gAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.01364'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-panel");
-  --vsg-lens-column: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-column'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAAwAAACACAYAAAA%2FB4hEAAAAUUlEQVR42u3L0QCAUADAwGeQRhQ5ZJBADnNIIIMcokgjgmUQwe7%2Fxgs%2B4A1e4Ake4A5u4Aou4AxO4CgUCoVCoVAoFAqFQqFQKBQKhUKhUPgPHyEd%2BtOoTHvbAAAAAElFTkSuQmCC'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.31250'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-column");
-  --vsg-lens-strip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-strip'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAMCAYAAACqTLVoAAAAVUlEQVR42u3WwQCAQABE0bkHkUIIS5BAMl8mgQgWIYUgOk95zByewxMvrlziwZVL3LhyiYkrl7hw5RInrlziwJVL7LhyifFnoGKJDVcuseLKJRZcuT4VcvrTz8Lf2QAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.41667'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-strip");
+  --vsg-lens-widget: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-widget'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAHAAAABICAYAAAAuyXGLAAABdklEQVR42u3doa3mMBRE4V%2FaLlKMwSpNGAebhEQyMooUbHyxmwh64JYSdHuYfSlgwTK%2F1QGHDP0KmM%2FXExpPqD%2Bh8wk1mrr6hMoTyk8ofW%2Bfrzs0ble%2FXeftajR19XaV25VvV7pfQAsNc3UznWZqNHXVTMVM2VzJXsArNC5Xv0zntavR1NVrV7lM%2BXKl6wVsodFcvZnOtqu13zRxte0qzZSbK7W%2FAv6iKfsnwA9NFYAAEoAEIIAAAkgAEoAAAgggAUgAAggggAQgAQgggAASgAQggAQgAUgAAkgAEoAAAgggAUgAAggggAQgAQgggAASgAQggAACSAASgAACCCABSAACSAASgAQggAQgAQgggAASgAQggAD%2B74D0g8%2Bv6Ofczx2hcbj6YTqPXY2mrh67ymHKhysdL%2BAWGpurb6ZzMzWaurqZymbKmyttL%2BAaGqurr65zdTWaurq6yurKqyutL%2BASGkuoL6FzCTWaurqEyhLKSyh9b38AS8MNjh7fe2QAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.02143%200.03333'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.01857'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00107%200.00167'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-widget");
+  --vsg-lens-menu: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-menu'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAABACAYAAABcIPRGAAAA10lEQVR42u3aoY0EMRBE0YnFWTgQcwdhaSSjppYchLlZJzFZLOw06nb4wQNn6YMPCj5e1%2BcJ7Sc0n5AdUntC5Qml774%2BK7SXay6XHVJbrrJcab2AEdrDNUeXHVIbXWW40ngBFtrmmtZllo%2BoWVcxV7JfAdc%2FDwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDfAE47vt6hfbvm3WWH1O6ucrvS%2FQJqaFfXrC47pFZdpbpSfQE5tHNo5pAdUsuhkkPpu38AkeHbZOmnNJwAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.05000%200.03750'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.03250'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00250%200.00187'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-menu");
+  --vsg-lens-sidebar: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-sidebar'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAACACAYAAABNyOryAAABbElEQVR42u3coY3EMBRF0WnEWri9pIaAUIPwSAH%2BAZbCRnKAG0gNgXExy34TbzcFLPdIF1zy2GngvX5O13W66unKp8s6bz1d8XQNpyv8ba%2Bfw3UdTfW4lY9b1nnrcSset4ajKRwPYHdde1Pdi%2FL%2BlnXeur8V96Jhbwr7A9hc19ZUt6K8TbJt7Lp1mxS3omFrCtsDMNdlTdWKsk0y%2B5bZV6d9a7VJ0YoGawr2L%2BDVaQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACATwN80m1zcl2pqaainCZZGrtuTZNiKhpSU0gPYHFdS1NdivLylnXeurwVl6JhaQrLA5hd19xU51t5vmWdt8634nxrmJvC%2FABG1zW66ujKo8s6bx1dcXQNoyv8bb9AG4jKJKeUSwAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.02667%200.00976'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.03900'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00200%200.00073'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-sidebar");
+  --vsg-lens-panel: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-panel'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAoCAYAAAA2cfJIAAAA%2FklEQVR42u3coY3EMBRF0ZQwRQRMS8EjGQfZzPoys0tIATZyR0GW%2B3g7wVvBri%2B44NGvg%2F923VPlnkr3lNESxXvK31Puu7erDZXWlVqX0RLF1uVbl2tD25WHSq5K%2BZTREsV8yucqlx8ANlSsKtlHZm9aoGgfeaty9gvAS2Yb%2FeteAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwIEAQAAgABAACAAEAAIAAYAAQAAgABAACAAEAAIAAYAAQAAgABAA6M8D4HnCeg8iwlAJVSmcMlqiGE75UOXCA%2BAYKkdXOrqMligeXf7ocscDYJ8q%2B1Tap4yWKO5Tfp9y3%2F0D0xqfd8ZOxywAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.00727%200.02500'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.01064'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00055%200.00187'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-panel");
+  --vsg-lens-column: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-column'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAAwAAACACAYAAAA%2FB4hEAAAAUElEQVR42u3LMQGAMBAEwbeCljhACgZ%2BMYAUuuihjIyjpkHBFlNOPazczFx0TkagPpqRg87OzMZKGQwGg8FgMBgMBoPBYDAYDAaDwWAw%2FIcXczhY03bKMcAAAAAASUVORK5CYII%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.16667%200.00976'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.13542'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.01250%200.00073'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-column");
+  --vsg-lens-strip: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cfilter%20id%3D'vsg-lens-glass-clear-strip'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20filterUnits%3D'objectBoundingBox'%20primitiveUnits%3D'objectBoundingBox'%20color-interpolation-filters%3D'sRGB'%3E%3CfeImage%20href%3D'data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAAAMCAYAAACqTLVoAAAAUklEQVR42u3WMRXAMAACUbzEQc1USTIz10m3GOoYHVQIN3wDvBuQvxP0kt8d9JKfGfSSfQW9ZCvoRQAEwAgEgOYAOELdJ3DNoJd876CXPE7Q6wd7MDbTNeEJrQAAAABJRU5ErkJggg%3D%3D'%20x%3D'0'%20y%3D'0'%20width%3D'1'%20height%3D'1'%20preserveAspectRatio%3D'none'%20result%3D'map'%2F%3E%3CfeColorMatrix%20in%3D'map'%20type%3D'matrix'%20values%3D'0%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%201%200%200'%20result%3D'rimA'%2F%3E%3CfeGaussianBlur%20in%3D'SourceGraphic'%20stdDeviation%3D'0.00571%200.22222'%20result%3D'frost'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'map'%20scale%3D'0.12639'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%20result%3D'lens'%2F%3E%3CfeGaussianBlur%20in%3D'lens'%20stdDeviation%3D'0.00043%200.01667'%20result%3D'lensSoft'%2F%3E%3CfeComponentTransfer%20in%3D'lensSoft'%20result%3D'lensLit'%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.01'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1.07'%20intercept%3D'0.012'%2F%3E%3C%2FfeComponentTransfer%3E%3CfeComposite%20in%3D'lensLit'%20in2%3D'rimA'%20operator%3D'in'%20result%3D'rim'%2F%3E%3CfeComposite%20in%3D'rim'%20in2%3D'frost'%20operator%3D'over'%2F%3E%3C%2Ffilter%3E%3C%2Fsvg%3E#vsg-lens-glass-clear-strip");
 }
 
 /* Glass Opaque */
-.monaco-workbench.vscode-theme-vs-glass-themes-glass-opaque-color-theme-json {
+.monaco-workbench.MilosHampl-vs-glass-themes-glass-opaque-color-theme-json {
   --vsg-ground: #070b14;
   --vsg-ground-deep: #010309;
   --vsg-content-bg: #10141c;
@@ -238,7 +241,8 @@
   --vsg-motion-base: 240ms;
   --vsg-motion-slow: 320ms;
   --vsg-ease: cubic-bezier(.2,.8,.2,1);
-  --vsg-wallpaper: radial-gradient(ellipse 60% 60% at 12% 8%, rgba(60, 68, 141, 0.000), transparent 70%), radial-gradient(ellipse 55% 55% at 88% 92%, rgba(97, 49, 108, 0.000), transparent 70%), radial-gradient(ellipse 45% 45% at 92% 10%, rgba(6, 97, 102, 0.000), transparent 70%), radial-gradient(ellipse 50% 50% at 20% 95%, rgba(10, 68, 117, 0.000), transparent 70%), #070b14;
+  --vsg-vibrancy-blend: plus-lighter;
+  --vsg-wallpaper: radial-gradient(ellipse 62% 62% at 10% 6%, rgba(77, 87, 183, 0.000), transparent 70%), radial-gradient(ellipse 58% 58% at 90% 94%, rgba(125, 54, 130, 0.000), transparent 70%), radial-gradient(ellipse 46% 46% at 94% 8%, rgba(18, 113, 117, 0.000), transparent 70%), radial-gradient(ellipse 52% 52% at 18% 96%, rgba(4, 84, 146, 0.000), transparent 70%), radial-gradient(ellipse 28% 28% at 58% 34%, rgba(148, 67, 109, 0.000), transparent 70%), radial-gradient(ellipse 26% 26% at 38% 70%, rgba(18, 116, 91, 0.000), transparent 70%), #070b14;
   --vsg-chrome-solid: #1b212a;
   --vsg-chrome-bg: #1b212a;
   --vsg-chrome-glass: #1b212a;
@@ -276,4 +280,432 @@
 }
 
 /* ===== Effects ===== */
-/* Layer 2 effects template — filled in Phase 3b. */
+/*
+ * VS Glass — Layer 2 effects template.
+ * `.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)` is replaced at build time with the guard selector:
+ *   .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)
+ * so the effects only exist while a VS Glass theme (other than Glass Opaque) is active. Switching
+ * theme switches the optics off; adding `.vs-glass-off` to .monaco-workbench force-disables them.
+ * Every value comes from a generated --vsg-* token (see the block above this template in glass.css).
+ *
+ * Rules of the layer:
+ *  - refraction/blur applies only to what is BEHIND glass, never to editor text;
+ *  - one backdrop-filter per surface, on a small fixed set of surfaces (perf);
+ *  - specular ring = ::before, sheen + Clear dimming = ::after (below content via isolation);
+ *  - radii are concentric: parent radius − padding.
+ */
+
+/* ---------- 0. Typed custom properties for the liquid response ---------- */
+@property --vsg-hl-x { syntax: '<percentage>'; inherits: false; initial-value: 22%; }
+@property --vsg-hl-y { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --vsg-hl-a { syntax: '<number>'; inherits: false; initial-value: 0.10; }
+
+/* ---------- 1. Tokens derived for this layer ---------- */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) {
+  /* concentric geometry: retune VS Code's own radius tokens */
+  --vscode-cornerRadius-small: var(--vsg-radius-inner);
+  --vscode-cornerRadius-medium: var(--vsg-radius-control);
+  --vscode-cornerRadius-large: var(--vsg-radius-card);
+  --vscode-cornerRadius-xLarge: calc(var(--vsg-radius-card) + 4px);
+  /* backdrop filter stacks */
+  --vsg-filter-chrome: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
+  --vsg-filter-widget: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
+  /* material thickness: inset light on top, inset shade at the bottom, interior falloff, contact shadows */
+  --vsg-thickness-chrome:
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-mid) * 0.9)),
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.28),
+    inset 1px 0 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-lo) * 1.2)),
+    inset -1px 0 0 rgba(var(--vsg-shadow-rgb), 0.16),
+    inset 0 0 22px rgba(var(--vsg-shadow-rgb), 0.10),
+    0 10px 30px rgba(var(--vsg-shadow-rgb), 0.35),
+    0 1px 3px rgba(var(--vsg-shadow-rgb), 0.30);
+  --vsg-thickness-widget:
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), calc(var(--vsg-widget-spec-mid) * 0.9)),
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.30),
+    inset 0 0 18px rgba(var(--vsg-shadow-rgb), 0.08),
+    0 18px 48px rgba(var(--vsg-shadow-rgb), 0.45),
+    0 2px 8px rgba(var(--vsg-shadow-rgb), 0.35);
+  --vsg-ring-chrome: conic-gradient(from var(--vsg-light-angle) at 22% 12%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 0deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)) 60deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 130deg,
+    rgba(var(--vsg-spec-rgb), 0) 200deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 300deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 360deg);
+  --vsg-ring-widget: conic-gradient(from var(--vsg-light-angle) at 22% 12%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 0deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 60deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 130deg,
+    rgba(var(--vsg-spec-rgb), 0) 200deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 300deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 360deg);
+}
+
+/* ---------- 2. Ground: the wallpaper the glass floats over ---------- */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) { background: var(--vsg-wallpaper) !important; background-attachment: fixed !important; }
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) > .monaco-grid-view { background: transparent !important; }
+
+/* ---------- 3. Strips: title bar, status bar, tab strip ---------- */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.titlebar,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.titlebar > .titlebar-container {
+  background: transparent !important;
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.titlebar {
+  background: var(--vsg-chrome-glass) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
+  backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
+  box-shadow: inset 0 -1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.statusbar {
+  background: var(--vsg-chrome-glass) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
+  backdrop-filter: var(--vsg-lens-strip) var(--vsg-filter-chrome);
+  border-top: none !important;
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.editor > .content .editor-group-container > .title {
+  background: var(--vsg-chrome-glass) !important;
+  box-shadow: inset 0 -1px 0 var(--vsg-hairline);
+}
+
+/* ---------- 4. Floating cards: activity bar, side bars, panel ---------- */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar {
+  position: relative;
+  isolation: isolate;
+  background: var(--vsg-chrome-glass) !important;
+  border-color: transparent !important;
+  box-shadow: var(--vsg-thickness-chrome);
+  -webkit-backdrop-filter: var(--vsg-lens-sidebar) var(--vsg-filter-chrome);
+  backdrop-filter: var(--vsg-lens-sidebar) var(--vsg-filter-chrome);
+  transition: box-shadow var(--vsg-motion-slow) var(--vsg-ease);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel {
+  -webkit-backdrop-filter: var(--vsg-lens-panel) var(--vsg-filter-chrome);
+  backdrop-filter: var(--vsg-lens-panel) var(--vsg-filter-chrome);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar {
+  -webkit-backdrop-filter: var(--vsg-lens-column) var(--vsg-filter-chrome);
+  backdrop-filter: var(--vsg-lens-column) var(--vsg-filter-chrome);
+}
+/* classic (non-floating) layout: the cards butt against the editor; give them a soft seam instead of a ring */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off):not(.floating-panels) .part.sidebar,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off):not(.floating-panels) .part.auxiliarybar,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off):not(.floating-panels) .part.panel,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off):not(.floating-panels) .part.activitybar {
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)), 0 0 24px rgba(var(--vsg-shadow-rgb), 0.25);
+}
+/* the sidebar's own inner surfaces must not paint over the glass */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar > .content,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar > .content,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel > .content,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar .composite.title,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar .composite.title,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel .composite.title,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar .monaco-pane-view .pane > .pane-header,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar .monaco-pane-view .pane > .pane-header,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar .monaco-list,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar .monaco-list,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel .monaco-list,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel .xterm,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel .terminal-wrapper,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar > .content {
+  background: transparent !important;
+}
+
+/* specular ring (::before) — brightest where the virtual light strikes, fading around the radius */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--vsg-ring-chrome);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 100;
+}
+/* sheen + Clear dimming (::after) — sits between the glass and its content */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 60% at var(--vsg-hl-x) var(--vsg-hl-y), rgba(var(--vsg-spec-rgb), var(--vsg-hl-a)), transparent 60%),
+    rgba(0, 0, 0, var(--vsg-dim));
+  pointer-events: none;
+  z-index: -1;
+  transition: --vsg-hl-x var(--vsg-motion-slow) var(--vsg-ease), --vsg-hl-y var(--vsg-motion-slow) var(--vsg-ease), --vsg-hl-a var(--vsg-motion-slow) var(--vsg-ease);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar:hover::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar:hover::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel:hover::after {
+  --vsg-hl-x: 40%;
+  --vsg-hl-y: 6%;
+  --vsg-hl-a: 0.14;
+}
+
+/* editor card: the content plane. Slight translucency = adaptive tint bleeding in; text stays crisp (no filter). */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off).floating-panels .part.editor > .content {
+  background: var(--vsg-content-bg-glass) !important;
+  box-shadow: 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) inset, 0 8px 28px rgba(var(--vsg-shadow-rgb), 0.28);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.editor .monaco-editor,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.editor .monaco-editor .monaco-editor-background,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.editor .monaco-editor .margin {
+  --vscode-editor-background: var(--vsg-content-bg-glass);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.editor > .content .editor-group-container {
+  background: transparent !important;
+}
+
+/* ---------- 5. Floating widgets (overlap code → real refraction) ---------- */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-hover,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-details,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .workbench-suggest-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .parameter-hints-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .find-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .rename-box,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .action-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .action-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notification-toast,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notifications-center,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .context-view .monaco-menu-container,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-select-box-dropdown-container,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .debug-toolbar,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-dialog-box,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .breadcrumbs-picker .monaco-list {
+  isolation: isolate;
+  background: var(--vsg-widget-glass) !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--vsg-radius-widget) !important;
+  box-shadow: var(--vsg-thickness-widget) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-widget) var(--vsg-filter-widget);
+  backdrop-filter: var(--vsg-lens-widget) var(--vsg-filter-widget);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .context-view .monaco-menu-container,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-select-box-dropdown-container {
+  -webkit-backdrop-filter: var(--vsg-lens-menu) var(--vsg-filter-widget);
+  backdrop-filter: var(--vsg-lens-menu) var(--vsg-filter-widget);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notification-toast { position: relative; }
+/* inner surfaces of widgets stay transparent so the glass reads through */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget .quick-input-titlebar,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget .quick-input-header,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget .quick-input-list,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget .monaco-list,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notifications-list-container,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notification-toast .monaco-list,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notifications-center .notifications-center-header,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-menu-container .monaco-menu,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-menu .monaco-action-bar.vertical,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-widget .monaco-list,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-widget .suggest-status-bar,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .parameter-hints-widget .phwrapper,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-hover .hover-contents,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-hover .hover-row {
+  background: transparent !important;
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget .quick-input-titlebar,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notifications-center .notifications-center-header,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-widget .suggest-status-bar,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-hover .hover-row.status-bar {
+  box-shadow: inset 0 -1px 0 var(--vsg-hairline);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-hover .hover-row.status-bar { box-shadow: inset 0 1px 0 var(--vsg-hairline); }
+
+/* widget specular ring */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-hover::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-widget::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .parameter-hints-widget::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .find-widget::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notification-toast::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notifications-center::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .context-view .monaco-menu-container::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-select-box-dropdown-container::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .debug-toolbar::before,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-dialog-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--vsg-ring-widget);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 100;
+}
+/* widget sheen (+ Clear dimming), animated highlight position = the liquid response */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-hover::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-widget::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .parameter-hints-widget::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notification-toast::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notifications-center::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .context-view .monaco-menu-container::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-dialog-box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(90% 55% at var(--vsg-hl-x) var(--vsg-hl-y), rgba(var(--vsg-spec-rgb), calc(var(--vsg-hl-a) * 1.6)), transparent 62%),
+    rgba(0, 0, 0, var(--vsg-dim));
+  pointer-events: none;
+  z-index: -1;
+  transition: --vsg-hl-x var(--vsg-motion-base) var(--vsg-ease), --vsg-hl-y var(--vsg-motion-base) var(--vsg-ease), --vsg-hl-a var(--vsg-motion-base) var(--vsg-ease);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget:focus-within::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget:hover::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-hover:hover::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-widget:hover::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notification-toast:hover::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .context-view .monaco-menu-container:hover::after,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-dialog-box:hover::after {
+  --vsg-hl-x: 55%;
+  --vsg-hl-y: 8%;
+  --vsg-hl-a: 0.16;
+}
+
+/* sticky scroll: glass strip over the code that scrolls beneath it */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .sticky-widget {
+  background: var(--vsg-raised-glass) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-strip) saturate(var(--vsg-saturate));
+  backdrop-filter: var(--vsg-lens-strip) saturate(var(--vsg-saturate));
+  box-shadow: inset 0 -1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)), 0 6px 18px rgba(var(--vsg-shadow-rgb), 0.35) !important;
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .sticky-widget .sticky-widget-lines-scrollable,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .sticky-widget .sticky-widget-line-numbers {
+  background: transparent !important;
+}
+
+/* ---------- 6. Concentric inner geometry ---------- */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-list:not(.element-focused) .monaco-list-row,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-list .monaco-list-row {
+  border-radius: var(--vsg-radius-inner);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget .monaco-list-row,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-menu .action-item,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-widget .monaco-list-row {
+  border-radius: calc(var(--vsg-radius-widget) - 6px);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-inputbox,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-button,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-select-box,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-text-button,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget .monaco-inputbox,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-findInput,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .keybinding-key {
+  border-radius: var(--vsg-radius-control) !important;
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar .monaco-action-bar .action-item .active-item-indicator:before {
+  border-radius: 2px;
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar .monaco-action-bar .action-item.checked,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar .monaco-action-bar .action-item:hover {
+  border-radius: var(--vsg-radius-control);
+}
+
+/* ---------- 7. Vibrancy: chrome text/icons take colour from behind the glass ---------- */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.titlebar .window-title,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.titlebar .command-center,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.statusbar .statusbar-item > .statusbar-item-label,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar .monaco-action-bar .action-label,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar .composite.title .title-label,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar .composite.title .title-label,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar .pane-header .title,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar .pane-header .title,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel .composite.title .monaco-action-bar .action-label,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.editor .tabs-container .tab:not(.active) .label-name,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .breadcrumbs-control .monaco-breadcrumb-item {
+  mix-blend-mode: var(--vsg-vibrancy-blend);
+}
+/* separators dissolve into the material */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-sash:not(.hover):not(.active),
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar .pane-header,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .split-view-view > .pane > .pane-header {
+  border-color: var(--vsg-hairline) !important;
+}
+
+/* ---------- 8. Liquid response ---------- */
+@keyframes vsg-pop {
+  from { transform: scale(0.985) translateY(2px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .parameter-hints-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-hover,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .action-widget,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .context-view .monaco-menu-container {
+  animation: vsg-pop var(--vsg-motion-base) var(--vsg-ease) both;
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-list-row,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-menu .action-item,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.editor .tabs-container .tab,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.statusbar .statusbar-item,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar .monaco-action-bar .action-item,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-button,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-text-button,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-inputbox {
+  transition:
+    background-color var(--vsg-motion-fast) var(--vsg-ease),
+    color var(--vsg-motion-fast) var(--vsg-ease),
+    box-shadow var(--vsg-motion-fast) var(--vsg-ease),
+    border-color var(--vsg-motion-fast) var(--vsg-ease),
+    transform var(--vsg-motion-fast) var(--vsg-ease),
+    filter var(--vsg-motion-fast) var(--vsg-ease);
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-button:hover,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-text-button:hover { filter: brightness(1.08); }
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-button:active,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-text-button:active { transform: scale(0.985); filter: brightness(0.96); }
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar .monaco-action-bar .action-item .action-label { transition: transform var(--vsg-motion-fast) var(--vsg-ease); }
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar .monaco-action-bar .action-item:hover .action-label { transform: scale(1.06); }
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar .monaco-action-bar .action-item:active .action-label { transform: scale(0.96); }
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-inputbox.synthetic-focus,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-inputbox:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 32%, transparent) !important;
+}
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-list.element-focused .monaco-list-row.focused,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-list .monaco-list-row.selected {
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo));
+}
+
+/* ---------- 9. Accessibility ---------- */
+@media (prefers-reduced-transparency: reduce) {
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.titlebar, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.statusbar,
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.editor > .content .editor-group-container > .title,
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .quick-input-widget, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-hover, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-widget, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .suggest-details, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .parameter-hints-widget,
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .find-widget, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .rename-box, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .action-widget, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notification-toast, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .notifications-center,
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .context-view .monaco-menu-container, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-select-box-dropdown-container, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .debug-toolbar, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-dialog-box, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-editor .sticky-widget {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: var(--vsg-widget-solid) !important;
+  }
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.sidebar, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.auxiliarybar, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.panel, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.activitybar, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.titlebar, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.statusbar { background: var(--vsg-chrome-solid) !important; }
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) { background: var(--vsg-ground) !important; }
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off).floating-panels .part.editor > .content { background: var(--vsg-content-bg) !important; }
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .part.editor .monaco-editor { --vscode-editor-background: var(--vsg-content-bg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) *, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) *::before, .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) *::after { transition: none !important; animation: none !important; }
+}

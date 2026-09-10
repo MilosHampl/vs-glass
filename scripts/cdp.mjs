@@ -91,6 +91,29 @@ async function evalJs(c, expression) {
       fs.writeFileSync(out, Buffer.from(r.data, 'base64'));
       const dpr = await evalJs(c, 'window.devicePixelRatio');
       console.log(`wrote ${out} (css viewport ${metrics.cssVisualViewport.clientWidth}x${metrics.cssVisualViewport.clientHeight}, dpr ${dpr})`);
+    } else if (cmd === 'shotel') {
+      // shotel <css selector> <out.png> [padCss=24] — full 2x screenshot cropped to the element's box (+pad)
+      const [sel, out, padStr] = rest; const pad = Number(padStr ?? 24);
+      const rect = await evalJs(c, `(() => { const e = document.querySelector(${JSON.stringify(sel)}); if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height, dpr: window.devicePixelRatio, vw: innerWidth, vh: innerHeight }; })()`);
+      if (!rect) throw new Error('element not found: ' + sel);
+      const r = await c.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
+      const full = out.replace(/\.png$/, '') + '.full.png';
+      fs.writeFileSync(full, Buffer.from(r.data, 'base64'));
+      const { execFileSync } = await import('node:child_process');
+      const d = rect.dpr; const x = Math.max(0, Math.floor((rect.x - pad) * d)), y = Math.max(0, Math.floor((rect.y - pad) * d));
+      const w = Math.min(Math.floor((rect.w + 2 * pad) * d), rect.vw * d - x), h = Math.min(Math.floor((rect.h + 2 * pad) * d), rect.vh * d - y);
+      execFileSync('sips', ['-c', String(h), String(w), '--cropOffset', String(y), String(x), full, '--out', out], { stdio: 'ignore' });
+      fs.unlinkSync(full);
+      console.log(`wrote ${out} (${w}x${h} device px around ${sel})`);
+    } else if (cmd === 'mouse') {
+      // mouse move <x> <y> | mouse click <x> <y> [left|right]
+      const [action, xs, ys, btn = 'left'] = rest; const x = Number(xs), y = Number(ys);
+      if (action === 'move') { await c.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x - 30, y }); await new Promise(r => setTimeout(r, 60)); await c.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y }); }
+      else { await c.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y }); await c.send('Input.dispatchMouseEvent', { type: 'mousePressed', x, y, button: btn, clickCount: 1 }); await c.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x, y, button: btn, clickCount: 1 }); }
+      console.log('mouse', action, x, y);
+    } else if (cmd === 'rect') {
+      const v = await evalJs(c, `(() => { const e = document.querySelector(${JSON.stringify(rest[0])}); if (!e) return null; const r = e.getBoundingClientRect(); return { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height), cx: Math.round(r.x + r.width / 2), cy: Math.round(r.y + r.height / 2) }; })()`);
+      console.log(JSON.stringify(v));
     } else if (cmd === 'eval') {
       const v = await evalJs(c, rest.join(' '));
       console.log(typeof v === 'string' ? v : JSON.stringify(v, null, 2));

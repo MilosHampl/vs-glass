@@ -23,7 +23,9 @@ export type ColorModule = (p: Palette) => Record<string, string>;
 const MODULES: [string, ColorModule][] = [['chrome', chrome], ['editor', editor], ['controls', controls], ['panels', panels]];
 
 /** Class VS Code puts on .monaco-workbench for a theme file: vscode-theme-<ext>-<path>. */
-export const themeClass = (p: Palette) => `vscode-theme-vs-glass-themes-${p.id}-color-theme-json`;
+export const themeClass = (p: Palette) => `MilosHampl-vs-glass-themes-${p.id}-color-theme-json`;
+/** CSS-only guard: effects apply only while a VS Glass theme (other than Opaque) is active. `.vs-glass-off` force-disables. */
+export const GUARD = '.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)';
 
 function buildColors(p: Palette): Record<string, string> {
   const out: Record<string, string> = {};
@@ -57,7 +59,7 @@ function buildTheme(p: Palette) {
 // ---------------------------------------------------------------------------------------------
 // Layer 2: CSS variables + lens filters
 // ---------------------------------------------------------------------------------------------
-function glassVars(p: Palette): string {
+function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
   const e = p.effects, g = p.glass;
   const v: Record<string, string> = {
     '--vsg-ground': cssColor(p.ground),
@@ -89,6 +91,7 @@ function glassVars(p: Palette): string {
     '--vsg-motion-base': `${e.motion.base}ms`,
     '--vsg-motion-slow': `${e.motion.slow}ms`,
     '--vsg-ease': e.motion.ease,
+    '--vsg-vibrancy-blend': p.isDark ? 'plus-lighter' : 'multiply',
     '--vsg-wallpaper': p.wallpaper.blobs.length === 0 ? cssColor(p.wallpaper.base) :
       p.wallpaper.blobs.map(b => `radial-gradient(ellipse ${b.size} ${b.size} at ${b.x} ${b.y}, ${cssColor(b.color).replace(/^#(..)(..)(..)$/, (_, r, g2, bl) => `rgba(${parseInt(r, 16)}, ${parseInt(g2, 16)}, ${parseInt(bl, 16)}, ${b.alpha.toFixed(3)})`)}, transparent 70%)`).join(', ') + `, ${cssColor(p.wallpaper.base)}`,
   };
@@ -106,9 +109,10 @@ function glassVars(p: Palette): string {
   const filtersSvg: string[] = [];
   for (const cls of LENS_CLASSES) {
     if (e.lensScale <= 0) { v[`--vsg-lens-${cls.name}`] = 'none'; continue; }
-    const { uri } = makeMap(cls, e.lensEdge);
+    const { uri } = makeMap(cls, e.lensEdge * cls.rim);
     const id = `vsg-lens-${p.id}-${cls.name}`;
-    const markup = filterSvg(id, cls, uri, e.lensScale);
+    const blur = cls.name === 'widget' || cls.name === 'menu' ? e.blurWidget : cls.name === 'strip' ? Math.min(e.blur, 12) : e.blur;
+    const markup = filterSvg(id, cls, uri, e.lensScale * cls.rim, blur);
     filtersSvg.push(markup);
     v[`--vsg-lens-${cls.name}`] = filterDataUrl(markup, id);
   }
@@ -117,7 +121,7 @@ function glassVars(p: Palette): string {
 }
 
 function buildGlassCss(): { css: string; svg: string } {
-  const template = fs.readFileSync(path.join(ROOT, 'src', 'glass', 'glass.css'), 'utf8');
+  const template = fs.readFileSync(path.join(ROOT, 'src', 'glass', 'glass.css'), 'utf8').replaceAll('@G', GUARD);
   const blocks: string[] = [];
   const allFilters: string[] = [];
   const [first] = palettes;
