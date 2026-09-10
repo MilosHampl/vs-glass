@@ -21,9 +21,9 @@ Durable state for the build. Updated at the end of every phase (and mid-phase wh
 | 2 Palette | done | `src/palette.ts` OKLCH ladder, 4 variants, `src/color.ts`, `src/lens.ts`, `src/png.ts`, `src/build.ts` |
 | 3a Theme | done | 4 parallel modules (`src/colors/*.ts`) + `src/tokens.ts`/`src/semantic.ts`: 974/988 keys, 95 token rules, 50 semantic rules; 14 documented deliberate omissions |
 | 3b Effects layer | done (tuning continues in Phase 4) | `src/glass/glass.css` → `glass/glass.css` (+ `glass-transparent.css` addon): frosted-centre/clear-rim lens with chromatic aberration, specular rings, thickness, wallpaper ground, floating cards, concentric radii, vibrancy blend, Control-Center-style glass buttons, liquid press response, reduced-motion/transparency guards |
-| 4 Verify/iterate | in progress | audits written and passing (coverage 974/988 + 14 documented omissions; contrast PASS with 7/5/2/2 justified exceptions; schema PASS); perf (visible window, 120 Hz): editor scroll ON p50 8.3 / p95 10.2 ms vs OFF 8.3 / 9.8; scroll under open palette ON p50 8.3 / p95 16.7 ms (5.2 % > 16.7 ms) vs OFF 8.3 / 10.1; screenshot matrix (97 PNGs) done; adversarial review round 1 running |
-| 5 Docs/packaging | in progress | CI/release workflows, issue/PR templates, LICENSE, CoC, CONTRIBUTING, CHANGELOG, glass/install.md, scripts/inject.sh, icon done; README, DESIGN.md, landing page pending |
-| 6 Publish | in progress | repo `github.com/MilosHampl/vs-glass` created (public, description, 10 topics, homepage); CI green after a `mkdir -p dist` fix; GitHub Pages live at https://miloshampl.github.io/vs-glass/ (docs/ on main); release tag + end-to-end install verification pending final CSS |
+| 4 Verify/iterate | done | audits pass (coverage 974/988 + 14 documented omissions; contrast PASS with justified exceptions; schema PASS); perf on the final build: editor scroll ON p50 8.3 / p95 8.6 ms vs OFF 8.3 / 8.5; palette over scrolling code p95 9.2 ms; screenshot matrix regenerated (wallpaper mode 66 PNGs, transparent composites 19 + 8 tints); three adversarial review rounds archived (`research/review-round-{1,2,3}.md`), round-3 findings answered above |
+| 5 Docs/packaging | done | README, DESIGN.md, glass/install.md, CHANGELOG, release notes, landing page rewritten for the transparent-first material and the five addon families; CONTRIBUTING covers the two test beds; `.vsix` 34 files / 219 KB, zero vsce warnings |
+| 6 Publish | done | `main` @ c80665e, CI green, Pages live (https://miloshampl.github.io/vs-glass/), release v1.0.0 with 23 assets (https://github.com/MilosHampl/vs-glass/releases/tag/v1.0.0), verify-release.sh passed (gh + unauthenticated curl, isolated install, inject.sh from clean); Marketplace deliberately not published |
 
 ## Decisions made without asking
 
@@ -138,6 +138,13 @@ What did ship from that request: `glass/lens/glass-lens-{soft,strong}.css` (rim 
 To see it: quit VS Code fully (⌘Q) and reopen. Expect the one-time "installation appears to be corrupt" notice (Vibrancy's patch; click the gear → Don't Show Again). Density/tint/lens/aberration options: add the addon paths to `vscode_vibrancy.imports` after `glass.css`, run "Reload Vibrancy", restart.
 
 - **Evidence hygiene (final matrix):** the hover scene stopped producing a hover on the pristine bed (the `.monaco-hover` element exists but stays 0 px wide even with CDP focus emulation; the Vibrancy bed shows hovers fine), so the wallpaper-mode hover PNGs were stale and are deleted rather than shipped; hover/suggest evidence is the transparent-window set. Light-variant screenshots were pruned to the hero (the variant is de-emphasised). Context menus (`*-menu.png`) are Layer 1 only by construction (shadow root).
+
+## Shipped (2026-09-10, ~15:00)
+
+- Commit `c80665e` on `main` (transparent-first pivot, all of the above). CI green on the runner (build, generated-files diff, schema, coverage, contrast, package). GitHub Pages rebuilt from `docs/`: https://miloshampl.github.io/vs-glass/ serves the new landing page and the transparent hero.
+- Release **v1.0.0**: https://github.com/MilosHampl/vs-glass/releases/tag/v1.0.0 — hand-written notes (`.github/release-notes.md`), 23 assets: `vs-glass-1.0.0.vsix`, `glass.css`, `glass-wallpaper.css`, `glass-filters.svg`, 8 tints, 6 density, 2 lens, 3 aberration presets. The tag also ran the Release workflow (it re-validates and refreshes the same assets).
+- `scripts/verify-release.sh v1.0.0` passed as a stranger would: `gh release download` and an unauthenticated `curl` of the browser URL return byte-identical `.vsix`; 23 assets present (≥ 21 CSS); the vsix installs into a throw-away profile and contributes the four themes; `inject.sh install --wallpaper --tint indigo --density 150 --aberration strong` on a pristine VS Code copy writes the marker block and a matching checksum; `inject.sh uninstall` restores byte-exact.
+- Not done / open: Marketplace publishing (reserved by the owner, see below); refraction of the desktop behind the window (impossible from CSS, documented); the hover scene on the pristine test bed (no wallpaper-mode hover screenshot); the exact macOS 26 window corner radius (20 px is a token); a fourth adversarial round on the final build (round 3 is archived; the owner asked to review it himself next).
 
 ## GitHub (2026-09-10)
 
