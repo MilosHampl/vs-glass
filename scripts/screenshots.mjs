@@ -63,7 +63,10 @@ const shot = async (file, clipSel, pad = 24) => {
 };
 const openFile = async (name) => {
   // Quick Open ranks recently used files first ("glass.ts" would match GlassPane.tsx), so pick the exact label.
-  await key('meta+p'); await sleep(350); await type(name); await sleep(700);
+  await key('escape'); await sleep(100); await key('meta+p'); await sleep(400);
+  if (!(await quickInputOpen())) { await key('meta+p'); await sleep(500); }
+  if (!(await quickInputOpen())) throw new Error('quick open did not open');
+  await type(name); await sleep(700);
   const idx = await evalJs(`(() => { const rows = [...document.querySelectorAll('.quick-input-widget .monaco-list-row')]; return rows.findIndex(r => (r.querySelector('.label-name')?.textContent || '').trim() === ${JSON.stringify(name)}); })()`);
   for (let i = 0; i < Math.max(0, idx); i++) { await key('down'); await sleep(60); }
   await key('enter');
@@ -72,7 +75,15 @@ const openFile = async (name) => {
   if (process.env.VSG_DEBUG) console.log('    state:', await evalJs(`JSON.stringify({ tab: document.querySelector('.part.editor .tab.active .label-name')?.textContent, lines: document.querySelectorAll('.monaco-editor .view-lines .view-line').length, editors: document.querySelectorAll('.monaco-editor').length, quickOpen: getComputedStyle(document.querySelector('.quick-input-widget')).display })`));
   await sleep(500);
 };
-const runCommand = async (cmd) => { await key('meta+shift+p'); await sleep(350); await type(cmd); await sleep(700); await key('enter'); await sleep(900); };
+const quickInputOpen = async () => evalJs(`(() => { const q = document.querySelector('.quick-input-widget'); return !!q && getComputedStyle(q).display !== 'none' && q.getBoundingClientRect().height > 10; })()`);
+const runCommand = async (cmd) => {
+  // never type into the editor: only insert text once the quick input is really open
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await key('escape'); await sleep(120); await key('meta+shift+p'); await sleep(400);
+    if (await quickInputOpen()) { await type(cmd); await sleep(700); await key('enter'); await sleep(900); return; }
+  }
+  throw new Error('command palette did not open for: ' + cmd);
+};
 const closeAll = async () => { await key('escape'); await sleep(150); await key('escape'); await sleep(150); };
 const setTheme = async (variant) => {
   const file = path.join(profile, 'User', 'settings.json'); const s = JSON.parse(fs.readFileSync(file, 'utf8')); s['workbench.colorTheme'] = NAMES[variant]; fs.writeFileSync(file, JSON.stringify(s, null, 2));

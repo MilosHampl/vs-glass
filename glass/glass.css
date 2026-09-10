@@ -331,10 +331,9 @@
   --vscode-cornerRadius-medium: var(--vsg-radius-control);
   --vscode-cornerRadius-large: var(--vsg-radius-card);
   --vscode-cornerRadius-xLarge: var(--vsg-radius-card);
-  /* floating layout gaps: a touch wider than VS Code's default so the panes visibly float */
-  --modern-ui-floating-card-margin: 10px;
-  --modern-ui-floating-card-inner-margin: 8px;
-  --modern-ui-floating-card-outer-margin: 10px;
+  /* NOTE: the floating-card margins (--modern-ui-floating-card-*) are deliberately NOT overridden: VS Code's
+     grid layout computes pane sizes in JS from its own constants, so CSS-only margin changes make list rows
+     overflow their cards. */
   /* backdrop filter stacks */
   --vsg-filter-chrome: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
   --vsg-filter-widget: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
