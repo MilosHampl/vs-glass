@@ -489,21 +489,23 @@ events/s, reversing every 40 ticks) — in-page so CDP round-trip latency doesn'
 are sampled with glass **ON**, then again with `.vs-glass-off` added to `.monaco-workbench` (the
 `GUARD` kill-switch in `src/build.ts`), so the delta is the effects' cost.
 
-**Numbers** (editor-scroll scenario, 120Hz display, PROGRESS.md Phase-4 verification run):
+**Numbers** (120 Hz display, 4 s per run, window visible — Chromium pauses `requestAnimationFrame`
+entirely for occluded windows, which is what produced an earlier "no frames" result; `perf.mjs` now
+refuses to measure a hidden window):
 
-| | p50 | p95 | max | frames > 16.7ms |
-|---|---|---|---|---|
-| glass ON | 8.3 ms | 8.6 ms | 9.4 ms | 0.0% |
-| glass OFF | 8.3 ms | 9.0 ms | — | — |
+| scenario | state | p50 | p95 | max | frames > 16.7 ms | frames > 33 ms |
+|---|---|---|---|---|---|---|
+| editor scroll | glass ON | 8.3 ms | 10.2 ms | 36.4 ms | 0.4 % | 0.2 % |
+| editor scroll | glass OFF | 8.3 ms | 9.8 ms | 10.4 ms | 0.0 % | 0.0 % |
+| scroll under open command palette | glass ON | 8.3 ms | 16.7 ms | 58.4 ms | 5.2 % | 0.2 % |
+| scroll under open command palette | glass OFF | 8.3 ms | 10.1 ms | 10.4 ms | 0.0 % | 0.0 % |
 
-ON and OFF are indistinguishable at p50 and ON is tighter at p95 — editor scrolling never triggers a
-`backdrop-filter` repaint, since the lensed/blurred surfaces don't sit in the editor's own scroll
-path. The OFF run recorded one 1150ms outlier from the class-toggle's full workbench re-layout,
-excluded from these figures.
-
-**Known gap:** the command-palette-over-code scenario (`--scenario palette`) could not be sampled —
-the rAF sampler returned no frames while the quick-input widget held focus. Recorded as a gap to be
-re-measured (§9), not as a passing/failing result.
+Editor scrolling is unaffected: the seven persistent glass surfaces sit beside the editor, not over
+it, so nothing re-filters while code moves (two slow frames in 476 is the compositor tail, not a
+trend). The heaviest case is deliberately the pathological one — scrolling code *beneath an open
+command palette* re-runs the palette's displacement + 22 px blur over a 600×420 CSS-px backdrop every
+frame; p95 lands exactly on 16.7 ms (60 fps) with one frame above 33 ms in four seconds. Typing and
+scrolling with hovers, suggest widgets or menus open behaves the same way (smaller backdrops, cheaper).
 
 **Backdrop budget:** `css-liquid-glass.md` §g — "budget SVG-displacement `backdrop-filter` for at
 most a handful of chrome surfaces... do NOT apply... per list row... or inside a scrolling list."
@@ -608,10 +610,10 @@ is what the fallback produces.
   text-density detection; not attempted.
 - **Device-motion highlights are impossible**, not unimplemented — Electron has no accelerometer and
   VS Code's window doesn't tilt. Permanent, structural.
-- **Measuring the palette scenario** (§6) — `--scenario palette` returned no frames from the in-page
-  sampler while the quick-input widget held focus; needs root-causing (rAF throttling under widget
-  focus?) and a re-run before any claim can be made about the one scenario where refraction
-  genuinely live-repaints every scrolled frame.
+- **Cheaper widget blur while scrolling** (§6) — the one measurable cost is a 22 px SVG blur over the
+  command palette while code scrolls beneath it (p95 16.7 ms). A smaller blur radius for the widget
+  class, or `feGaussianBlur` at half resolution via `feImage`/`feTile` tricks, would buy headroom on
+  60 Hz machines; not done because 120 Hz never dropped below 60 fps.
 - **Windows/Linux Vibrancy materials** — §5's transparent-window mode was designed and verified only
   against macOS Vibrancy (`mica`/`under-window`/`sidebar`/`hud`). Vibrancy Continued also supports
   Windows 11 Acrylic/Mica and partial Linux (`prior-art.md` §1); the `--vsg-*-window` alphas were

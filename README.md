@@ -210,8 +210,9 @@ Materials). Layer 1 = the color theme; Layer 2 = the injected CSS.
 | 7 | Adaptive tint | Approximated | 1 + 2 | A wallpaper mesh in palette hues sits under low-alpha glass. Layer 1 alone is a fixed cool tint, not adaptive. In transparent-window mode, the OS blur of your actual desktop supplies real adaptive tint instead. |
 | 8 | Liquid response | Approximated | 2 | CSS transitions, ~120–240 ms with a damped ease. No spring physics, no morphing between shapes — Apple's motion model is elastic and undocumented numerically. |
 
-Performance: editor scrolling at 120 Hz measures p50 8.3 ms / p95 8.6 ms with every glass surface active —
-identical to effects off. See `DESIGN.md`.
+Performance: on a 120 Hz display, editor scrolling measures p50 8.3 ms / p95 10.2 ms with every glass surface
+active versus p50 8.3 ms / p95 9.8 ms with effects off. The heaviest case, scrolling code beneath an open
+command palette, holds p95 at 16.7 ms (60 fps). Method and full table in `DESIGN.md` §6.
 
 **What is not possible:** refracting the desktop behind a transparent window — CSS `backdrop-filter` can
 only bend what the page itself has painted, never another window or the desktop. True content-aware
