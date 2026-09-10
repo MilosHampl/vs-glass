@@ -20,9 +20,9 @@ Durable state for the build. Updated at the end of every phase (and mid-phase wh
 | 1 Research | done | 6 agents, outputs in `research/`; key claims re-verified empirically (see below) |
 | 2 Palette | done | `src/palette.ts` OKLCH ladder, 4 variants, `src/color.ts`, `src/lens.ts`, `src/png.ts`, `src/build.ts` |
 | 3a Theme | done | 4 parallel modules (`src/colors/*.ts`) + `src/tokens.ts`/`src/semantic.ts`: 974/988 keys, 95 token rules, 50 semantic rules; 14 documented deliberate omissions |
-| 3b Effects layer | in progress | `src/glass/glass.css` template → `glass/glass.css`; frosted-centre + clear-rim lens filter working on quick input/hover/suggest; cards, strips, vibrancy, motion in place; tuning + perf next |
-| 4 Verify/iterate | pending | |
-| 5 Docs/packaging | pending | |
+| 3b Effects layer | done (tuning continues in Phase 4) | `src/glass/glass.css` → `glass/glass.css` (+ `glass-transparent.css` addon): frosted-centre/clear-rim lens with chromatic aberration, specular rings, thickness, wallpaper ground, floating cards, concentric radii, vibrancy blend, Control-Center-style glass buttons, liquid press response, reduced-motion/transparency guards |
+| 4 Verify/iterate | in progress | audits written and passing (coverage 974/988 + 14 documented omissions; contrast PASS with 7/5/2/2 justified exceptions; schema PASS); perf: editor scroll p50 8.3 ms / p95 8.6 ms / 0 % > 16.7 ms with glass ON (120 Hz), identical to OFF; screenshot matrix + 3 adversarial review rounds next |
+| 5 Docs/packaging | in progress | CI/release workflows, issue/PR templates, LICENSE, CoC, CONTRIBUTING, CHANGELOG, glass/install.md, scripts/inject.sh, icon done; README, DESIGN.md, landing page pending |
 | 6 Publish | pending | |
 
 ## Decisions made without asking
@@ -31,6 +31,11 @@ Durable state for the build. Updated at the end of every phase (and mid-phase wh
 2. **Build toolchain: `tsx` (no compile step) + TypeScript for `src/palette.ts` / `src/build.ts`.** Simplest thing that gives typed palette code and a one-command build.
 3. **Apple reference imagery is downloaded for the critique loop but NOT committed.** Apple's marketing/HIG images are copyrighted; the conservative call is to keep only a `research/reference/SOURCES.md` with URLs in the repo and gitignore the PNGs.
 4. **Testing uses an isolated `--user-data-dir`** for controlled screenshots (the user's live profile has Vibrancy + `workbench.colorCustomizations` that would override theme keys). The real profile is only touched for the final end-to-end install verification, with backups in `.backup/`.
+
+5. **Mid-build directives from the user (2026-09-10, received while Phase 3 ran) — adopted:**
+   - *Study ruri.design/blog/liquid-glass for exaggerated effects.* The article is a client-rendered app; its blog chunk is a FAQ, but the Glass tool chunks contain the recipe: displacement map on the blurred backdrop **plus chromatic aberration** (R/G/B channels displaced by `scale±aberration`, re-added with `feComposite arithmetic`). Adopted as a per-variant `effects.aberration` token (Regular 0.7 px, Light 0.5 px, Clear 2.2 px, Opaque 0).
+   - *The entire window should be transparent with the liquid glass effect.* CSS `backdrop-filter` cannot see the desktop, so window transparency comes from Vibrancy Continued (OS-level) and Layer 2 gains a **transparent-window mode** addon (`glass/glass-transparent.css`, loaded after `glass.css`): no in-page wallpaper, translucent content plane and chrome, dimming layer for legibility. Refraction stays wherever glass overlaps in-page content. This is the recommended setup on the user's machine (Vibrancy already installed).
+   - *Buttons: exaggerated effect + hover/click animations* → **superseded** the same day by *"the button animations look retarded, revert and make it as true to macOS Liquid Glass as possible — the Control Center style buttons (Wi-Fi, BT etc.)"*. Final treatment: capsule glass toggles, thin top specular ring, tinted frosted fill for primary / neutral frosted for secondary, hover brightens the fill ~7 %, press scales to 0.96 with a fast ease-out return; no sheen sweeps, lifts, glows or overshoot. `effects.exaggeration` kept as a low-range token (0.3 / 0.3 / 0.5 / 0).
 
 ## Open questions (to resolve during research)
 

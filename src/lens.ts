@@ -78,8 +78,10 @@ export function makeMap(cls: LensClass, edgePx: number, power = 2): { uri: strin
  * converted to a bbox fraction of the representative width (the map's amplitude compensation
  * keeps the y displacement equal in px).
  */
-export function filterSvg(id: string, cls: LensClass, mapUri: string, displacePx: number, blurPx: number): string {
-  const scale = displacePx / Math.max(1, cls.axes === 'y' ? cls.h : cls.w);
+export function filterSvg(id: string, cls: LensClass, mapUri: string, displacePx: number, blurPx: number, aberrationPx = 0): string {
+  const denom = Math.max(1, cls.axes === 'y' ? cls.h : cls.w);
+  const scale = displacePx / denom;
+  const ab = aberrationPx / denom;
   const bx = (blurPx / cls.w).toFixed(5), by = (blurPx / cls.h).toFixed(5);
   const sx = (0.6 / cls.w).toFixed(5), sy = (0.6 / cls.h).toFixed(5); // sub-pixel soften of the rim (anti-alias)
   return [
@@ -89,8 +91,21 @@ export function filterSvg(id: string, cls: LensClass, mapUri: string, displacePx
     `<feColorMatrix in='map' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1 0 0' result='rimA'/>`,
     // frosted body
     blurPx > 0 ? `<feGaussianBlur in='SourceGraphic' stdDeviation='${bx} ${by}' result='frost'/>` : `<feOffset in='SourceGraphic' dx='0' dy='0' result='frost'/>`,
-    // refracted rim: displace the sharp backdrop toward the centre, lift it a touch (light concentrates at the edge)
-    `<feDisplacementMap in='SourceGraphic' in2='map' scale='${scale.toFixed(5)}' xChannelSelector='R' yChannelSelector='G' result='lens'/>`,
+    // refracted rim: displace the sharp backdrop toward the centre, lift it a touch (light concentrates at the edge).
+    // With aberration > 0 the R/G/B channels are displaced by slightly different amounts and re-added
+    // (feComposite arithmetic k2=k3=1) → colour fringing at the rim, the way thick glass disperses light.
+    ...(ab > 0 ? [
+      `<feColorMatrix in='SourceGraphic' type='matrix' values='1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0' result='cR'/>`,
+      `<feColorMatrix in='SourceGraphic' type='matrix' values='0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0' result='cG'/>`,
+      `<feColorMatrix in='SourceGraphic' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0' result='cB'/>`,
+      `<feDisplacementMap in='cR' in2='map' scale='${(scale + ab).toFixed(5)}' xChannelSelector='R' yChannelSelector='G' result='dR'/>`,
+      `<feDisplacementMap in='cG' in2='map' scale='${scale.toFixed(5)}' xChannelSelector='R' yChannelSelector='G' result='dG'/>`,
+      `<feDisplacementMap in='cB' in2='map' scale='${Math.max(0, scale - ab).toFixed(5)}' xChannelSelector='R' yChannelSelector='G' result='dB'/>`,
+      `<feComposite in='dR' in2='dG' operator='arithmetic' k1='0' k2='1' k3='1' k4='0' result='dRG'/>`,
+      `<feComposite in='dRG' in2='dB' operator='arithmetic' k1='0' k2='1' k3='1' k4='0' result='lens'/>`,
+    ] : [
+      `<feDisplacementMap in='SourceGraphic' in2='map' scale='${scale.toFixed(5)}' xChannelSelector='R' yChannelSelector='G' result='lens'/>`,
+    ]),
     `<feGaussianBlur in='lens' stdDeviation='${sx} ${sy}' result='lensSoft'/>`,
     `<feComponentTransfer in='lensSoft' result='lensLit'><feFuncR type='linear' slope='1.07' intercept='0.01'/><feFuncG type='linear' slope='1.07' intercept='0.01'/><feFuncB type='linear' slope='1.07' intercept='0.012'/></feComponentTransfer>`,
     `<feComposite in='lensLit' in2='rimA' operator='in' result='rim'/>`,

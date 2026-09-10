@@ -1,0 +1,99 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+# Don't cancel a release run that's already in flight for this tag, but also don't let two
+# pushes of the same tag race each other.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build, validate, audit, package, release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # A release must pass every gate CI does -- the tag push is not guaranteed to be the same
+      # commit a prior CI run validated, so everything is re-run here from scratch.
+      - name: Build (palette -> themes/ + glass/)
+        run: npm run build
+
+      - name: Verify generated themes/ and glass/ are up to date
+        run: git diff --exit-code -- themes glass
+
+      - name: Validate theme JSON schema
+        run: npm run validate
+
+      - name: Audit key coverage
+        run: npm run audit:coverage
+
+      - name: Audit contrast
+        run: npm run audit:contrast
+
+      - name: Verify tag matches package.json version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} (version $TAG_VERSION) does not match package.json version $PKG_VERSION"
+            exit 1
+          fi
+          echo "Tag ${GITHUB_REF_NAME} matches package.json version $PKG_VERSION."
+
+      # vsce names the output "<name>-<version>.vsix" from package.json ("vs-glass"), i.e.
+      # vs-glass-<version>.vsix -- no --out needed.
+      - name: Package extension
+        run: npx @vscode/vsce package --no-dependencies
+
+      # Use .github/release-notes.md for the release body if the maintainer wrote one for this
+      # tag; otherwise fall back to a short generated note pointing at CHANGELOG.md. (A shell
+      # step, rather than `if: hashFiles(...)` on two separate action steps, so there's exactly
+      # one body_path input either way.)
+      - name: Prepare release notes
+        run: |
+          if [ -f ".github/release-notes.md" ]; then
+            echo "Using .github/release-notes.md as the release body."
+            cp .github/release-notes.md release-notes.generated.md
+          else
+            echo "No .github/release-notes.md for this tag; falling back to a CHANGELOG pointer."
+            {
+              echo "See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for the full list of changes in this release."
+              echo ""
+              echo "**Full diff**: https://github.com/${{ github.repository }}/compare/...${{ github.ref_name }}"
+            } > release-notes.generated.md
+          fi
+
+      # softprops/action-gh-release UPDATES an existing release matching this tag rather than
+      # failing if one already exists -- so this workflow tolerates the maintainer having
+      # already run `gh release create vX.Y.Z ...` by hand (as documented in CONTRIBUTING.md for
+      # v1.0.0): it will just attach/refresh the assets and body on the existing release instead
+      # of erroring out.
+      - name: Create/update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release-notes.generated.md
+          generate_release_notes: false
+          fail_on_unmatched_files: true
+          files: |
+            vs-glass-*.vsix
+            glass/glass.css
+            glass/glass-transparent.css
+            glass/glass-filters.svg

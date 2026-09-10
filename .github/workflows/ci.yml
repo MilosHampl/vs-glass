@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel a stale run for the same ref (e.g. a second push to the same PR) instead of letting
+# both finish.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build, validate, audit, package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (palette -> themes/ + glass/)
+        run: npm run build
+
+      # themes/*.json and glass/* are generated from src/palette.ts, src/colors/*.ts and
+      # src/glass/*.css by `npm run build`, then committed so the extension works without a
+      # build step for installers. This proves the committed output is what the current source
+      # actually produces -- it fails if someone hand-edited a generated file, or edited a
+      # source file and forgot to run `npm run build` and commit the result.
+      - name: Verify generated themes/ and glass/ are up to date
+        run: git diff --exit-code -- themes glass
+
+      - name: Validate theme JSON schema
+        run: npm run validate
+
+      # Each audit is its own step so a regression shows up by name in the checks list rather
+      # than as a single generic "audit" failure.
+      - name: Audit key coverage
+        run: npm run audit:coverage
+
+      - name: Audit contrast
+        run: npm run audit:contrast
+
+      - name: Package extension
+        run: npx @vscode/vsce package --no-dependencies --out dist/
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vsix
+          path: dist/*.vsix
+          if-no-files-found: error

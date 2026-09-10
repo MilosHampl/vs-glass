@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { palettes, describe, type Palette } from './palette';
-import { css as cssColor } from './color';
+import { css as cssColor, alpha } from './color';
 import { LENS_CLASSES, makeMap, filterSvg, filterDataUrl } from './lens';
 import chrome from './colors/chrome';
 import editor from './colors/editor';
@@ -92,6 +92,13 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     '--vsg-motion-slow': `${e.motion.slow}ms`,
     '--vsg-ease': e.motion.ease,
     '--vsg-vibrancy-blend': p.isDark ? 'plus-lighter' : 'multiply',
+    '--vsg-exaggeration': String(e.exaggeration),
+    // transparent-window mode (Vibrancy Continued): the OS blurs the desktop behind the window, so the
+    // in-page planes must stay translucent instead of painting a wallpaper
+    '--vsg-content-bg-window': cssColor(alpha(p.content.bg, p.opaqueMode ? 1 : (p.variant === 'clear' ? 0.42 : 0.6))),
+    '--vsg-chrome-window': cssColor(alpha(p.glass.chrome.solid, p.opaqueMode ? 1 : (p.variant === 'clear' ? 0.26 : 0.42))),
+    '--vsg-widget-window': cssColor(alpha(p.glass.widget.solid, p.opaqueMode ? 1 : 0.6)),
+    '--vsg-dim-window': String(p.isDark ? 0.22 : 0.1),
     '--vsg-wallpaper': p.wallpaper.blobs.length === 0 ? cssColor(p.wallpaper.base) :
       p.wallpaper.blobs.map(b => `radial-gradient(ellipse ${b.size} ${b.size} at ${b.x} ${b.y}, ${cssColor(b.color).replace(/^#(..)(..)(..)$/, (_, r, g2, bl) => `rgba(${parseInt(r, 16)}, ${parseInt(g2, 16)}, ${parseInt(bl, 16)}, ${b.alpha.toFixed(3)})`)}, transparent 70%)`).join(', ') + `, ${cssColor(p.wallpaper.base)}`,
   };
@@ -112,7 +119,7 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     const { uri } = makeMap(cls, e.lensEdge * cls.rim);
     const id = `vsg-lens-${p.id}-${cls.name}`;
     const blur = cls.name === 'widget' || cls.name === 'menu' ? e.blurWidget : cls.name === 'strip' ? Math.min(e.blur, 12) : e.blur;
-    const markup = filterSvg(id, cls, uri, e.lensScale * cls.rim, blur);
+    const markup = filterSvg(id, cls, uri, e.lensScale * cls.rim, blur, e.aberration * cls.rim);
     filtersSvg.push(markup);
     v[`--vsg-lens-${cls.name}`] = filterDataUrl(markup, id);
   }
@@ -154,7 +161,10 @@ function main() {
   const { css, svg } = buildGlassCss();
   fs.writeFileSync(path.join(ROOT, 'glass', 'glass.css'), css);
   fs.writeFileSync(path.join(ROOT, 'glass', 'glass-filters.svg'), svg);
-  console.log(`✓ glass/glass.css (${(css.length / 1024).toFixed(0)} KB) · glass/glass-filters.svg (${(svg.length / 1024).toFixed(0)} KB)`);
+  const transparent = `/*! VS Glass — transparent-window mode addon (generated; load AFTER glass.css). For use with Vibrancy\n *  Continued or any setup that makes the window itself see-through. MIT */\n` +
+    fs.readFileSync(path.join(ROOT, 'src', 'glass', 'glass-transparent.css'), 'utf8').replaceAll('@G', GUARD);
+  fs.writeFileSync(path.join(ROOT, 'glass', 'glass-transparent.css'), transparent);
+  console.log(`✓ glass/glass.css (${(css.length / 1024).toFixed(0)} KB) · glass/glass-transparent.css (${(transparent.length / 1024).toFixed(0)} KB) · glass/glass-filters.svg (${(svg.length / 1024).toFixed(0)} KB)`);
 }
 
 main();

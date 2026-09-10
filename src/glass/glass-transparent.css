@@ -1,0 +1,52 @@
+/*
+ * Transparent-window mode. Requires the window itself to be see-through (Vibrancy Continued on macOS:
+ * `vscode_vibrancy.type` = "under-window" / "sidebar" / "hud", theme "Custom theme (use imports)").
+ * The OS blurs the desktop behind the window; this file removes the in-page wallpaper and keeps every
+ * plane translucent so the desktop shows through the whole window. Refraction remains visible wherever
+ * glass overlaps in-page content (widgets over code, sticky scroll, cards over the editor seam).
+ */
+@G { background: transparent !important; }
+@G > .monaco-grid-view { background: transparent !important; }
+
+/* the content plane lets the desktop through a little; text stays crisp (no filter on the editor) */
+@G.floating-panels .part.editor > .content,
+@G .part.editor > .content { background: var(--vsg-content-bg-window) !important; }
+@G .part.editor .monaco-editor,
+@G .part.editor .monaco-editor .monaco-editor-background,
+@G .part.editor .monaco-editor .margin { --vscode-editor-background: var(--vsg-content-bg-window); }
+@G .part.editor > .content .editor-group-container > .title { background: var(--vsg-chrome-window) !important; }
+
+/* chrome: thinner glass, with a dimming layer so labels stay legible over a bright desktop */
+@G .part.sidebar,
+@G .part.auxiliarybar,
+@G .part.panel,
+@G .part.activitybar,
+@G .part.titlebar,
+@G .part.statusbar { background: var(--vsg-chrome-window) !important; }
+@G .part.sidebar::after,
+@G .part.auxiliarybar::after,
+@G .part.panel::after,
+@G .part.activitybar::after {
+  background:
+    radial-gradient(120% 60% at var(--vsg-hl-x) var(--vsg-hl-y), rgba(var(--vsg-spec-rgb), var(--vsg-hl-a)), transparent 60%),
+    rgba(0, 0, 0, var(--vsg-dim-window));
+}
+
+/* widgets: a touch more body than in wallpaper mode (the desktop behind can be anything) */
+@G .quick-input-widget,
+@G .monaco-hover,
+@G .monaco-editor .suggest-widget,
+@G .monaco-editor .suggest-details,
+@G .monaco-editor .parameter-hints-widget,
+@G .monaco-editor .find-widget,
+@G .notification-toast,
+@G .notifications-center,
+@G .context-view .monaco-menu-container,
+@G .monaco-select-box-dropdown-container,
+@G .debug-toolbar,
+@G .monaco-dialog-box { background: var(--vsg-widget-window) !important; }
+
+@media (prefers-reduced-transparency: reduce) {
+  @G { background: var(--vsg-ground) !important; }
+  @G .part.editor > .content { background: var(--vsg-content-bg) !important; }
+}

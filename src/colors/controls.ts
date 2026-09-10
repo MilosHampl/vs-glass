@@ -1,5 +1,5 @@
 import type { Palette } from '../palette';
-import { alpha, composite } from '../color';
+import { alpha, composite, ensureContrast} from '../color';
 
 /**
  * controls — floating overlays & form controls: lists/trees, buttons, inputs, dropdowns,
@@ -67,7 +67,7 @@ export default function controls(p: Palette): Record<string, string> {
     // ---------------------------------------------------------------------------------------
     // Button control
     // ---------------------------------------------------------------------------------------
-    'button.background': p.ui.accent,
+    'button.background': p.ui.accentFill,
     'button.foreground': p.ui.onAccent,
     'button.hoverBackground': p.ui.accentHover,
     'button.border': '#00000000',
@@ -132,7 +132,7 @@ export default function controls(p: Palette): Record<string, string> {
     'textBlockQuote.background': quoteBg,
     'textBlockQuote.border': p.ui.accent,
     'textCodeBlock.background': quoteBg,
-    'textPreformat.foreground': p.syntax.string,
+    'textPreformat.foreground': ensureContrast(p.syntax.string, composite(quoteBg, p.ground), 4.5),
     'textPreformat.background': quoteBg,
     'textSeparator.foreground': p.separator.strong,
     // textPreformat.border: DELIBERATELY UNSET below.
@@ -163,7 +163,7 @@ export default function controls(p: Palette): Record<string, string> {
     'welcomePage.tileHoverBackground': p.glass.widget.bg,
     'welcomePage.tileBorder': p.glass.raised.border,
     'welcomePage.progress.background': p.glass.raised.solid,
-    'welcomePage.progress.foreground': p.ui.accent,
+    'welcomePage.progress.foreground': p.ui.accentFill,
     'walkThrough.embeddedEditorBackground': p.glass.raised.bg,
     'walkthrough.stepTitle.foreground': p.label.primary,
 
@@ -195,12 +195,12 @@ export default function controls(p: Palette): Record<string, string> {
     // ---------------------------------------------------------------------------------------
     // Extensions
     // ---------------------------------------------------------------------------------------
-    'extensionButton.background': p.ui.accent,
+    'extensionButton.background': p.ui.accentFill,
     'extensionButton.foreground': p.ui.onAccent,
     'extensionButton.hoverBackground': p.ui.accentHover,
     'extensionButton.separator': alpha(p.ui.onAccent, 0.4),
     'extensionButton.border': p.separator.hairline, // decision: matches button.secondaryBorder treatment
-    'extensionButton.prominentBackground': p.ui.accent,
+    'extensionButton.prominentBackground': p.ui.accentFill,
     'extensionButton.prominentForeground': p.ui.onAccent,
     'extensionButton.prominentHoverBackground': p.ui.accentHover,
     'extensionBadge.remoteBackground': p.accent.indigo,
@@ -337,12 +337,12 @@ export default function controls(p: Palette): Record<string, string> {
     // ---------------------------------------------------------------------------------------
     'ports.iconRunningProcessForeground': p.accent.green,
 
-    'gauge.background': p.ui.accent,
-    'gauge.foreground': p.label.primary,
+    'gauge.background': p.ui.accentFill,
+    'gauge.foreground': p.ui.onAccent,
     'gauge.border': p.separator.hairline,
     'gauge.warningBackground': p.accent.yellow,
-    'gauge.warningForeground': p.label.inverse,
-    'gauge.errorBackground': p.accent.red,
+    'gauge.warningForeground': p.ui.onWarning,
+    'gauge.errorBackground': p.ui.errorFill,
     'gauge.errorForeground': p.ui.onAccent,
 
     'commentsView.resolvedIcon': p.accent.green,

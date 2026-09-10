@@ -1,4 +1,4 @@
-import { alpha, composite } from '../color';
+import { alpha, composite, ensureContrast } from '../color';
 import type { Palette } from '../palette';
 
 /**
@@ -143,7 +143,7 @@ export default function panels(p: Palette): Record<string, string> {
     'testing.peekHeaderBackground': alpha(a.red, 0.15),
     'testing.messagePeekBorder': a.red,
     'testing.messagePeekHeaderBackground': alpha(a.red, 0.15),
-    'testing.message.error.badgeForeground': t.red,
+    'testing.message.error.badgeForeground': ensureContrast(p.accentText.red, composite(alpha(p.accent.red, 0.16), p.glass.widget.solid), 4.5),
     // badgeBackground/Border aren't spelled out by name in the design rules; kept as a subtle red
     // pill consistent with the badgeForeground contrast target (composited against content.bg).
     'testing.message.error.badgeBackground': composite(alpha(a.red, 0.14), p.content.bg),
@@ -375,7 +375,7 @@ export default function panels(p: Palette): Record<string, string> {
     'agentsUpdateButton.downloadedBackground': alpha(a.green, 0.7),
     // Voice Mode speaking-state row highlight.
     'agentsVoice.speakingBackground': alpha(a.purple, 0.08),
-    'agentsVoice.speakingForeground': a.purple,
+    'agentsVoice.speakingForeground': ensureContrast(p.accentText.purple, composite(alpha(p.accent.purple, 0.16), p.ground), 4.5),
     // Editor-hosted feedback widget.
     'agentFeedbackEditorWidget.background': p.glass.widget.bg,
     'agentFeedbackEditorWidget.border': alpha(p.label.primary, 0.35),

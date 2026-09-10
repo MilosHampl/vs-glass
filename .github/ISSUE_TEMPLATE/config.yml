@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & discussion
+    url: https://github.com/MilosHampl/vs-glass/discussions
+    about: Ask a question or discuss an idea before opening an issue.
+  - name: Installation help
+    url: https://github.com/MilosHampl/vs-glass#install
+    about: Install instructions (Marketplace, VSIX, and the Layer 2 glass effects) are in the README's install section.

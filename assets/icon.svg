@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>VS Glass</title>
+  <defs>
+    <!-- soft blur for the background wallpaper blobs -->
+    <filter id="blurBlobsBg" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="72"/>
+    </filter>
+
+    <!-- frosted + refracted look for the blob light seen through the glass slab -->
+    <filter id="refractGlass" x="-40%" y="-40%" width="180%" height="180%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.010 0.014" numOctaves="2" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="34" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+      <feGaussianBlur in="displaced" stdDeviation="30"/>
+    </filter>
+
+    <!-- soft outer drop shadow for the slab -->
+    <filter id="blurShadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="34"/>
+    </filter>
+
+    <!-- tight blur for the corner specular glint -->
+    <filter id="blurGlint" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+
+    <!-- slab geometry, reused for fill / clip / strokes -->
+    <clipPath id="slabClip">
+      <rect x="140" y="140" width="744" height="744" rx="179" ry="179"/>
+    </clipPath>
+
+    <!-- bright top-left, fading toward bottom-right : approximates a conic specular ring -->
+    <radialGradient id="rimGradient" gradientUnits="userSpaceOnUse" cx="235" cy="235" r="880">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="14%" stop-color="#ffffff" stop-opacity="0.72"/>
+      <stop offset="34%" stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- soft inner shadow hugging the bottom edge of the slab -->
+    <linearGradient id="bottomShadowGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="62%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.32"/>
+    </linearGradient>
+
+    <!-- diagonal sheen across the slab -->
+    <linearGradient id="sheenGrad" gradientUnits="userSpaceOnUse" x1="220" y1="900" x2="700" y2="180">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="42%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="52%" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- glass V bars -->
+    <linearGradient id="barGrad" gradientUnits="userSpaceOnUse" x1="0" y1="300" x2="0" y2="660">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.52"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.22"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ground -->
+  <rect x="0" y="0" width="1024" height="1024" fill="#0a0e17"/>
+
+  <!-- wallpaper: blurred colour blobs behind / around the slab -->
+  <g filter="url(#blurBlobsBg)">
+    <ellipse cx="230" cy="240" rx="360" ry="320" fill="#6D7CFF" fill-opacity="0.34"/>
+    <ellipse cx="820" cy="130" rx="260" ry="210" fill="#00D2E0" fill-opacity="0.16"/>
+    <ellipse cx="800" cy="790" rx="380" ry="350" fill="#DB34F2" fill-opacity="0.30"/>
+    <ellipse cx="180" cy="860" rx="220" ry="190" fill="#00D2E0" fill-opacity="0.12"/>
+  </g>
+
+  <!-- darkening wash to keep the dark ground dominant -->
+  <rect x="0" y="0" width="1024" height="1024" fill="#0a0e17" fill-opacity="0.38"/>
+
+  <!-- outer shadow cast by the slab onto the backdrop -->
+  <rect x="140" y="168" width="744" height="744" rx="179" ry="179" fill="#000000" fill-opacity="0.55" filter="url(#blurShadow)"/>
+
+  <!-- refracted / frosted blob light seen through the slab -->
+  <g clip-path="url(#slabClip)">
+    <g filter="url(#refractGlass)">
+      <rect x="0" y="0" width="1024" height="1024" fill="#10162a"/>
+      <ellipse cx="230" cy="240" rx="360" ry="320" fill="#6D7CFF" fill-opacity="0.50"/>
+      <ellipse cx="820" cy="130" rx="260" ry="210" fill="#00D2E0" fill-opacity="0.28"/>
+      <ellipse cx="800" cy="790" rx="380" ry="350" fill="#DB34F2" fill-opacity="0.42"/>
+      <ellipse cx="180" cy="860" rx="220" ry="190" fill="#00D2E0" fill-opacity="0.22"/>
+    </g>
+  </g>
+
+  <!-- glass slab -->
+  <rect x="140" y="140" width="744" height="744" rx="179" ry="179" fill="#ffffff" fill-opacity="0.10"/>
+
+  <!-- inner shadow along the bottom edge -->
+  <g clip-path="url(#slabClip)">
+    <rect x="140" y="140" width="744" height="744" fill="url(#bottomShadowGrad)"/>
+  </g>
+
+  <!-- diagonal sheen -->
+  <g clip-path="url(#slabClip)">
+    <rect x="140" y="140" width="744" height="744" fill="url(#sheenGrad)"/>
+  </g>
+
+  <!-- abstract glass "V" made of two converging glass bars -->
+  <g clip-path="url(#slabClip)" stroke-linecap="round">
+    <line x1="366" y1="308" x2="512" y2="632" stroke="url(#barGrad)" stroke-width="118"/>
+    <line x1="658" y1="308" x2="512" y2="632" stroke="url(#barGrad)" stroke-width="118"/>
+    <line x1="366" y1="308" x2="512" y2="632" stroke="#ffffff" stroke-opacity="0.5" stroke-width="118" stroke-dasharray="1 900"/>
+    <line x1="658" y1="308" x2="512" y2="632" stroke="#ffffff" stroke-opacity="0.5" stroke-width="118" stroke-dasharray="1 900"/>
+  </g>
+
+  <!-- rim: subtle full perimeter for edge definition everywhere -->
+  <rect x="140" y="140" width="744" height="744" rx="179" ry="179" fill="none" stroke="#ffffff" stroke-opacity="0.20" stroke-width="4"/>
+
+  <!-- rim: bright specular ring, brightest top-left, fading around -->
+  <rect x="140" y="140" width="744" height="744" rx="179" ry="179" fill="none" stroke="url(#rimGradient)" stroke-width="9"/>
+
+  <!-- corner specular glint -->
+  <ellipse cx="255" cy="230" rx="95" ry="58" fill="#ffffff" fill-opacity="0.55" filter="url(#blurGlint)"/>
+</svg>

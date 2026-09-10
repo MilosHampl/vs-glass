@@ -1,0 +1,96 @@
+name: Bug report
+description: Something about a VS Glass theme, or the Layer 2 glass effects, is broken.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. For a visual theme, a screenshot is usually worth more than a paragraph of description -- please attach one if you can.
+
+  - type: input
+    id: vscode-version
+    attributes:
+      label: VS Code version
+      description: "Help > About, or `code --version`"
+      placeholder: "1.136.1"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: "macOS 26 Tahoe (arm64) / Windows 11 / Ubuntu 24.04 ..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: variant
+    attributes:
+      label: Theme variant
+      options:
+        - Glass Regular Dark
+        - Glass Regular Light
+        - Glass Clear
+        - Glass Opaque
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer2
+    attributes:
+      label: Layer 2 (glass.css effects) enabled?
+      description: Is the CSS effects layer injected into the workbench, and by which route?
+      options:
+        - "No"
+        - "Custom CSS and JS Loader"
+        - "Vibrancy Continued"
+        - "inject.sh"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: modern-ui
+    attributes:
+      label: Modern UI enabled?
+      description: "The `workbench.experimental.modernUI` / floating-panels setting."
+      options:
+        - "Yes"
+        - "No"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Drag and drop an image here.
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true

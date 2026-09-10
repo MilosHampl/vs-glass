@@ -18,8 +18,8 @@ export default function chrome(p: Palette): Record<string, string> {
   // Foreground legible on a saturated accent fill (yellow/red badges): try the dark "inverse"
   // label first (Apple picks dark text on yellow), fall back to the light onAccent grade.
   const legibleOn = (bg: Hex): Hex => (contrast(p.label.inverse, bg) >= 4.5 ? p.label.inverse : p.ui.onAccent);
-  const warningFg = legibleOn(p.accent.yellow);
-  const errorLikeFg = legibleOn(p.accent.red);
+  const warningFg = p.ui.onWarning; // yellow is always light → dark text (legibleOn kept for other fills)
+  const errorLikeFg = p.ui.onAccent; // paired with p.ui.errorFill (darkened until white passes AA)
 
   // Opaque "action button" backgrounds VS Code needs for the modern tab redesign — the spec is
   // literally "composite this translucent hover/selection tint over editor.background".
@@ -38,7 +38,7 @@ export default function chrome(p: Palette): Record<string, string> {
     'titleBar.activeBackground': p.ground,
     'titleBar.activeForeground': p.label.primary,
     'titleBar.inactiveBackground': p.ground,
-    'titleBar.inactiveForeground': p.label.tertiary,
+    'titleBar.inactiveForeground': p.label.secondary,
     'titleBar.border': '#00000000',
 
     // Command Center — a raised pill floating on the title bar.
@@ -49,7 +49,7 @@ export default function chrome(p: Palette): Record<string, string> {
     'commandCenter.activeBorder': p.glass.raised.border,
     'commandCenter.border': p.glass.raised.border,
     'commandCenter.inactiveBorder': p.separator.hairline,
-    'commandCenter.inactiveForeground': p.label.tertiary,
+    'commandCenter.inactiveForeground': p.label.secondary,
     // Same alpha the status bar uses for its debugging tint, so the two rows read as one state.
     'commandCenter.debuggingBackground': alpha(p.accent.orange, 0.35),
 
@@ -81,7 +81,7 @@ export default function chrome(p: Palette): Record<string, string> {
     'activityBar.dropBorder': p.ui.accent, // consistent with tab.dragAndDropBorder below
     'activityBarBadge.background': p.ui.badgeBg,
     'activityBarBadge.foreground': p.ui.badgeFg,
-    'activityErrorBadge.background': p.accent.red,
+    'activityErrorBadge.background': p.ui.errorFill,
     'activityErrorBadge.foreground': errorLikeFg,
     'activityWarningBadge.background': p.accent.yellow,
     'activityWarningBadge.foreground': warningFg,
@@ -129,7 +129,7 @@ export default function chrome(p: Palette): Record<string, string> {
     'panel.border': p.separator.hairline, // top edge, separates panel from editor
     'panel.dropBorder': p.ui.accent,
     'panelTitle.activeForeground': p.label.primary,
-    'panelTitle.inactiveForeground': p.label.tertiary,
+    'panelTitle.inactiveForeground': p.label.secondary,
     'panelTitle.activeBorder': p.ui.accent,
     'panelTitle.border': '#00000000',
     'panelTitleBadge.background': p.ui.badgeBg,
@@ -187,7 +187,7 @@ export default function chrome(p: Palette): Record<string, string> {
     'tab.hoverBorder': '#00000000',
     'tab.hoverForeground': p.label.primary,
     'tab.inactiveBackground': p.glass.raised.bg,
-    'tab.inactiveForeground': p.label.tertiary,
+    'tab.inactiveForeground': p.label.secondary,
     'tab.inactiveModifiedBorder': alpha(p.accent.orange, 0.6),
     'tab.lastPinnedBorder': p.separator.hairline,
     'tab.selectedBackground': p.glass.raised.bg,
@@ -196,13 +196,13 @@ export default function chrome(p: Palette): Record<string, string> {
     'tab.unfocusedActiveBackground': p.content.bg,
     'tab.unfocusedActiveBorder': '#00000000',
     'tab.unfocusedActiveBorderTop': '#00000000',
-    'tab.unfocusedActiveForeground': p.label.secondary, // one tier dimmer than the focused-group active tab
+    'tab.unfocusedActiveForeground': p.label.primary, // one tier dimmer than the focused-group active tab
     'tab.unfocusedActiveModifiedBorder': alpha(p.accent.orange, 0.6),
     'tab.unfocusedHoverBackground': p.ui.hover,
     'tab.unfocusedHoverBorder': '#00000000',
     'tab.unfocusedHoverForeground': p.label.secondary,
     'tab.unfocusedInactiveBackground': p.glass.raised.bg,
-    'tab.unfocusedInactiveForeground': p.label.quaternary, // one tier dimmer than the focused-group inactive tab
+    'tab.unfocusedInactiveForeground': p.label.secondary, // one tier dimmer than the focused-group inactive tab
     'tab.unfocusedInactiveModifiedBorder': alpha(p.accent.orange, 0.4),
 
     // Modern tab-strip redesign (undocumented) — list-style tabs (used e.g. in compact mode).
@@ -241,7 +241,7 @@ export default function chrome(p: Palette): Record<string, string> {
     'statusBarItem.hoverForeground': p.label.primary,
     'statusBarItem.focusBorder': p.ui.focus,
 
-    'statusBarItem.errorBackground': p.accent.red,
+    'statusBarItem.errorBackground': p.ui.errorFill,
     'statusBarItem.errorForeground': p.ui.onAccent,
     'statusBarItem.errorHoverBackground': p.ui.hover,
     'statusBarItem.errorHoverForeground': p.label.primary,
@@ -251,7 +251,7 @@ export default function chrome(p: Palette): Record<string, string> {
     'statusBarItem.warningHoverBackground': p.ui.hover,
     'statusBarItem.warningHoverForeground': p.label.primary,
 
-    'statusBarItem.offlineBackground': p.accent.red, // kept as accent.red, not desaturated
+    'statusBarItem.offlineBackground': p.ui.errorFill,
     'statusBarItem.offlineForeground': errorLikeFg, // same contrast-check treatment as warning
     'statusBarItem.offlineHoverBackground': p.ui.hover,
     'statusBarItem.offlineHoverForeground': p.label.primary,
@@ -261,7 +261,7 @@ export default function chrome(p: Palette): Record<string, string> {
     'statusBarItem.prominentHoverBackground': p.ui.hover,
     'statusBarItem.prominentHoverForeground': p.label.primary,
 
-    'statusBarItem.remoteBackground': p.ui.accent,
+    'statusBarItem.remoteBackground': p.ui.accentFill,
     'statusBarItem.remoteForeground': p.ui.onAccent,
     'statusBarItem.remoteHoverBackground': p.ui.hover,
     'statusBarItem.remoteHoverForeground': p.label.primary,
@@ -270,7 +270,7 @@ export default function chrome(p: Palette): Record<string, string> {
     // Breadcrumbs
     // ---------------------------------------------------------------------------------------
     'breadcrumb.background': '#00000000', // inherit editor/tabs-header background beneath it
-    'breadcrumb.foreground': p.label.tertiary,
+    'breadcrumb.foreground': p.label.secondary,
     'breadcrumb.focusForeground': p.label.primary,
     'breadcrumb.activeSelectionForeground': p.label.primary,
     'breadcrumbPicker.background': p.glass.widget.bg,

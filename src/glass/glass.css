@@ -396,9 +396,6 @@
 @G .monaco-text-button:hover { filter: brightness(1.08); }
 @G .monaco-button:active,
 @G .monaco-text-button:active { transform: scale(0.985); filter: brightness(0.96); }
-@G .part.activitybar .monaco-action-bar .action-item .action-label { transition: transform var(--vsg-motion-fast) var(--vsg-ease); }
-@G .part.activitybar .monaco-action-bar .action-item:hover .action-label { transform: scale(1.06); }
-@G .part.activitybar .monaco-action-bar .action-item:active .action-label { transform: scale(0.96); }
 @G .monaco-inputbox.synthetic-focus,
 @G .monaco-inputbox:focus-within {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 32%, transparent) !important;
@@ -426,4 +423,109 @@
 }
 @media (prefers-reduced-motion: reduce) {
   @G *, @G *::before, @G *::after { transition: none !important; animation: none !important; }
+}
+
+/* ---------- 10. Buttons: macOS Control Center glass — restrained ---------- */
+/* A Control Center toggle: capsule, frosted material, thin top specular, tinted fill when "on" (primary),
+   neutral frosted fill when "off" (secondary). Hover brightens the fill slightly; press scales down a touch
+   and eases back. No sheen sweeps, no lift, no glow. */
+@G .monaco-button.monaco-text-button,
+@G .monaco-button-dropdown > .monaco-button,
+@G .monaco-button-dropdown > .monaco-dropdown-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: none !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--vsg-accent) 72%, transparent) !important;
+  -webkit-backdrop-filter: var(--vsg-lens-menu) saturate(1.25);
+  backdrop-filter: var(--vsg-lens-menu) saturate(1.25);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.38),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 1px 2px rgba(var(--vsg-shadow-rgb), 0.25) !important;
+  transition:
+    transform var(--vsg-motion-fast) var(--vsg-ease),
+    background-color var(--vsg-motion-fast) var(--vsg-ease),
+    box-shadow var(--vsg-motion-fast) var(--vsg-ease),
+    filter var(--vsg-motion-fast) var(--vsg-ease);
+}
+@G .monaco-button.monaco-text-button.secondary,
+@G .monaco-button.monaco-text-button.secondary:hover {
+  background: var(--vsg-raised-glass) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.16),
+    0 1px 2px rgba(var(--vsg-shadow-rgb), 0.2) !important;
+}
+@G .monaco-button.monaco-text-button.secondary:hover { filter: brightness(1.08); }
+/* the rim: a hairline ring, brightest at the top, fading around the capsule */
+@G .monaco-button.monaco-text-button::before {
+  content: "";
+  position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  background: linear-gradient(to bottom, rgba(var(--vsg-spec-rgb), 0.5), rgba(var(--vsg-spec-rgb), 0.06) 45%, rgba(var(--vsg-spec-rgb), 0) 70%, rgba(var(--vsg-spec-rgb), 0.12));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+  pointer-events: none; z-index: 2;
+}
+/* soft top-light inside the material (static, like Control Center) */
+@G .monaco-button.monaco-text-button::after {
+  content: "";
+  position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(to bottom, rgba(var(--vsg-spec-rgb), 0.16), rgba(var(--vsg-spec-rgb), 0) 55%);
+  pointer-events: none; z-index: 1;
+}
+@G .monaco-button.monaco-text-button:hover { filter: brightness(1.07); }
+@G .monaco-button.monaco-text-button:active { transform: scale(0.96); filter: brightness(0.96); transition-duration: 60ms; }
+@G .monaco-button.monaco-text-button:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 40%, transparent), inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.4) !important;
+}
+/* icon buttons & toolbar actions: gentle press only */
+@G .monaco-action-bar .action-item .action-label.codicon,
+@G .monaco-toolbar .action-label,
+@G .part.editor .tabs-container .tab .tab-actions .action-label {
+  transition: transform var(--vsg-motion-fast) var(--vsg-ease), background-color var(--vsg-motion-fast) var(--vsg-ease);
+}
+@G .monaco-action-bar .action-item:active .action-label.codicon,
+@G .monaco-toolbar .action-item:active .action-label { transform: scale(0.94); transition-duration: 50ms; }
+
+/* ---------- 11. Activity bar & status bar items: small glass capsules ---------- */
+@G .part.activitybar .monaco-action-bar .action-item {
+  position: relative;
+  isolation: isolate;
+}
+@G .part.activitybar .monaco-action-bar .action-item.checked .action-label,
+@G .part.activitybar .monaco-action-bar .action-item:hover .action-label {
+  background: var(--vsg-raised-glass) !important;
+  border-radius: var(--vsg-radius-control) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    0 2px 8px rgba(var(--vsg-shadow-rgb), 0.35);
+  -webkit-backdrop-filter: var(--vsg-lens-menu) saturate(1.3);
+  backdrop-filter: var(--vsg-lens-menu) saturate(1.3);
+}
+@G .part.activitybar .monaco-action-bar .action-item.checked .active-item-indicator:before {
+  background: var(--vsg-accent);
+  box-shadow: 0 0 10px var(--vsg-accent);
+}
+@G .part.statusbar .statusbar-item > .statusbar-item-label,
+@G .part.statusbar .statusbar-item > a {
+  border-radius: calc(var(--vsg-radius-control) - 2px);
+  transition: background-color var(--vsg-motion-fast) var(--vsg-ease), box-shadow var(--vsg-motion-fast) var(--vsg-ease), transform var(--vsg-motion-fast) var(--vsg-ease);
+}
+@G .part.statusbar .statusbar-item:hover > .statusbar-item-label,
+@G .part.statusbar .statusbar-item:hover > a {
+  background: var(--vsg-raised-glass) !important;
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)), inset 0 -1px 0 rgba(0, 0, 0, 0.2), 0 2px 6px rgba(var(--vsg-shadow-rgb), 0.3);
+}
+@G .part.statusbar .statusbar-item:active > .statusbar-item-label,
+@G .part.statusbar .statusbar-item:active > a { transform: scale(0.97); transition-duration: 50ms; }
+@G .part.statusbar .statusbar-item.remote-kind > a,
+@G .part.statusbar .statusbar-item.error-kind > a,
+@G .part.statusbar .statusbar-item.warning-kind > a,
+@G .part.statusbar .statusbar-item.prominent-kind > a {
+  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.35), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  border-radius: var(--vsg-radius-control) !important;
 }

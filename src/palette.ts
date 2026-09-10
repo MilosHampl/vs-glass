@@ -106,6 +106,10 @@ export interface Palette {
 
   ui: {
     accent: Hex; accentHover: Hex; accentActive: Hex; accentMuted: Hex; onAccent: Hex;
+    /** accent/red/blue/green darkened until white text passes 4.5:1 — use for filled controls that carry text */
+    accentFill: Hex; errorFill: Hex; infoFill: Hex; successFill: Hex;
+    /** dark text for anything filled with the (always light) system yellow */
+    onWarning: Hex;
     focus: Hex; selectionBg: Hex; selectionBgInactive: Hex; hover: Hex; active: Hex; pressed: Hex;
     badgeBg: Hex; badgeFg: Hex; link: Hex; linkActive: Hex;
     inputBg: Hex; inputBorder: Hex; inputPlaceholder: Hex; dropBg: Hex;
@@ -144,6 +148,8 @@ export interface Palette {
     contrastBoost: number; // backdrop contrast()
     lensScale: number;     // rim displacement in CSS px (how far the backdrop is bent at the edge)
     lensEdge: number;      // rim width in CSS px over which the displacement ramps to zero
+    aberration: number;    // chromatic aberration at the rim, CSS px (0 = off)
+    exaggeration: number;  // 0..1 — how showy small controls (buttons) are allowed to be
     dim: number;           // Clear: dimming layer alpha behind text-bearing surfaces (0 = none)
     radius: { card: number; widget: number; control: number; inner: number; pill: number };
     shadowColor: Hex;      // opaque base for shadows
@@ -195,11 +201,13 @@ function labels(isDark: boolean, boost = 0) {
   // macOS label ramp (research §5): primary .85, secondary .55/.50, tertiary .26, quaternary .10
   const base = isDark ? oklch(0.985, 0.006, HUE) : oklch(0.16, 0.014, HUE);
   const inv = isDark ? oklch(0.16, 0.014, HUE) : oklch(0.985, 0.006, HUE);
+  // Light mode needs stronger tiers than dark to clear the same ratios (dark text loses contrast faster on
+  // light glass), so the two ramps differ slightly: dark .86/.58/.44/.16, light .88/.64/.54/.18.
   return {
-    primary: alpha(base, Math.min(1, 0.86 + boost)),
-    secondary: alpha(base, Math.min(1, 0.58 + boost * 0.8)),
-    tertiary: alpha(base, Math.min(1, 0.34 + boost * 0.6)),
-    quaternary: alpha(base, Math.min(1, 0.13 + boost * 0.3)),
+    primary: alpha(base, Math.min(1, (isDark ? 0.86 : 0.88) + boost)),
+    secondary: alpha(base, Math.min(1, (isDark ? 0.58 : 0.64) + boost * 0.8)),
+    tertiary: alpha(base, Math.min(1, (isDark ? 0.44 : 0.54) + boost * 0.6)),
+    quaternary: alpha(base, Math.min(1, (isDark ? 0.16 : 0.18) + boost * 0.3)),
     inverse: alpha(inv, 0.9),
     onAccent: '#ffffff',
   };
@@ -236,8 +244,10 @@ function build(k: Knobs): Palette {
 
   const accent = isDark ? APPLE.dark : APPLE.light;
   const accentText0 = isDark ? APPLE.darkContrast : APPLE.lightContrast;
-  // Guarantee AA for text roles against the editor plane while keeping Apple's hue.
-  const accentText = Object.fromEntries(SYSTEM_COLORS.map(c => [c, ensureContrast(accentText0[c], contentBg, 4.5)])) as Record<SystemColor, Hex>;
+  // Guarantee AA for text roles against the *hardest* background the text can sit on while keeping
+  // Apple's hue: for light text that is the lightest glass level (overlay), for dark text the darkest chrome.
+  const hardestBg = isDark ? gray(k.ladder.overlay, chroma) : gray(k.ladder.chrome, chroma);
+  const accentText = Object.fromEntries(SYSTEM_COLORS.map(c => [c, ensureContrast(ensureContrast(accentText0[c], contentBg, 4.5), hardestBg, 4.5)])) as Record<SystemColor, Hex>;
 
   const spec: Record<'chrome' | 'raised' | 'widget' | 'overlay', [number, number, number]> = isDark
     ? { chrome: [0.42, 0.14, 0.03], raised: [0.5, 0.16, 0.04], widget: [0.62, 0.2, 0.05], overlay: [0.72, 0.24, 0.06] }
@@ -260,12 +270,17 @@ function build(k: Knobs): Palette {
 
   const blue = accent.blue;
   const onDark = isDark;
-  const linkText = ensureContrast(accent.blue, contentBg, 4.5);
+  const linkText = ensureContrast(ensureContrast(accent.blue, contentBg, 4.5), hardestBg, 4.5);
+  // Fills that carry white text (buttons, badges, status items): darken the accent until white passes AA.
+  const fillFor = (c: Hex) => ensureContrast(c, '#ffffff', 4.5);
+  const accentFill = fillFor(blue), errorFill = fillFor(accent.red), infoFill = fillFor(accent.blue), successFill = fillFor(accent.green);
+  const onWarning = oklch(0.2, 0.02, HUE); // yellow is always light → always dark text on it
 
   const ui: Palette['ui'] = {
     accent: blue,
-    accentHover: isDark ? mix(blue, white, 0.12) : mix(blue, black, 0.1),
-    accentActive: isDark ? mix(blue, white, 0.22) : mix(blue, black, 0.2),
+    accentFill, errorFill, infoFill, successFill, onWarning,
+    accentHover: isDark ? mix(accentFill, white, 0.1) : mix(accentFill, black, 0.1),
+    accentActive: isDark ? mix(accentFill, white, 0.2) : mix(accentFill, black, 0.2),
     accentMuted: alpha(blue, 0.35),
     onAccent: '#ffffff',
     focus: alpha(blue, opaqueMode ? 0.95 : 0.7),
@@ -274,7 +289,7 @@ function build(k: Knobs): Palette {
     hover: alpha(onDark ? white : black, onDark ? 0.07 : 0.05),
     active: alpha(onDark ? white : black, onDark ? 0.12 : 0.08),
     pressed: alpha(onDark ? white : black, onDark ? 0.17 : 0.11),
-    badgeBg: blue,
+    badgeBg: accentFill,
     badgeFg: '#ffffff',
     link: linkText,
     linkActive: isDark ? mix(linkText, white, 0.2) : mix(linkText, black, 0.2),
@@ -319,12 +334,12 @@ function build(k: Knobs): Palette {
   };
 
   // Terminal — ANSI 16 mapped to system colours (normal = default grade, bright = contrast grade in dark; reversed in light)
-  const termBlack = isDark ? gray(0.27, 0.02) : gray(0.3, 0.02);
+  const termBlack = isDark ? gray(0.54, 0.02) : gray(0.3, 0.02); // dark: visible (≥3:1 on the panel) — ansiBlack is a palette slot, not the background
   const termBrightBlack = isDark ? gray(0.55, 0.02) : gray(0.5, 0.02);
-  const termWhite = isDark ? gray(0.9, 0.008) : gray(0.72, 0.01);
-  const termBrightWhite = isDark ? '#ffffff' : gray(0.86, 0.006);
+  const termWhite = isDark ? gray(0.9, 0.008) : gray(0.56, 0.01);
+  const termBrightWhite = isDark ? '#ffffff' : gray(0.6, 0.006); // light terminals: 'white' must still read on a light panel
   const termNormal = isDark ? accent : accentText;
-  const termBright = isDark ? accentText : Object.fromEntries(SYSTEM_COLORS.map(c => [c, ensureContrast(accent[c], contentBg, 3)])) as Record<SystemColor, Hex>;
+  const termBright = isDark ? accentText : Object.fromEntries(SYSTEM_COLORS.map(c => [c, ensureContrast(accent[c], hardestBg, 3.2)])) as Record<SystemColor, Hex>;
   const terminal: Palette['terminal'] = {
     ansi: ansiDark(termNormal, termBright, termBlack, termBrightBlack, termWhite, termBrightWhite),
     foreground: fg,
@@ -412,7 +427,7 @@ export const regularDark = build({
   ladder: { ground: 0.165, groundDeep: 0.11, content: 0.205, chrome: 0.255, raised: 0.295, widget: 0.335, overlay: 0.375 },
   alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.5, widgetGlass: 0.62, content: 0.94 },
   labelBoost: 0, wallpaperVividness: 1,
-  effects: { blur: 18, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 10, lensEdge: 26, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
+  effects: { blur: 18, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 10, lensEdge: 26, aberration: 0.7, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
 
 export const regularLight = build({
@@ -420,7 +435,7 @@ export const regularLight = build({
   ladder: { ground: 0.9, groundDeep: 0.8, content: 0.985, chrome: 0.955, raised: 0.97, widget: 0.98, overlay: 0.99 },
   alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.55, widgetGlass: 0.68, content: 0.96 },
   labelBoost: 0, wallpaperVividness: 1,
-  effects: { blur: 22, blurWidget: 26, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 9, lensEdge: 26, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
+  effects: { blur: 22, blurWidget: 26, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 9, lensEdge: 26, aberration: 0.5, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
 });
 
 export const clear = build({
@@ -428,7 +443,7 @@ export const clear = build({
   ladder: { ground: 0.15, groundDeep: 0.1, content: 0.19, chrome: 0.235, raised: 0.275, widget: 0.32, overlay: 0.36 },
   alphas: { chrome: 0.34, raised: 0.42, widget: 0.9, overlay: 0.94, chromeGlass: 0.26, widgetGlass: 0.42, content: 0.86 },
   labelBoost: 0.1, wallpaperVividness: 1.7,
-  effects: { blur: 8, blurWidget: 12, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 13, lensEdge: 30, dim: 0.35, radius, shadowColor: '#02030a', lightAngle: 225, motion },
+  effects: { blur: 8, blurWidget: 12, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 13, lensEdge: 30, aberration: 2.2, exaggeration: 0.5, dim: 0.35, radius, shadowColor: '#02030a', lightAngle: 225, motion },
 });
 
 export const opaqueTheme = build({
@@ -436,7 +451,7 @@ export const opaqueTheme = build({
   ladder: { ground: 0.15, groundDeep: 0.1, content: 0.19, chrome: 0.245, raised: 0.29, widget: 0.335, overlay: 0.38 },
   alphas: { chrome: 1, raised: 1, widget: 1, overlay: 1, chromeGlass: 1, widgetGlass: 1, content: 1 },
   labelBoost: 0.1, wallpaperVividness: 0,
-  effects: { blur: 0, blurWidget: 0, saturate: 1, brightness: 1, contrastBoost: 1, lensScale: 0, lensEdge: 30, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
+  effects: { blur: 0, blurWidget: 0, saturate: 1, brightness: 1, contrastBoost: 1, lensScale: 0, lensEdge: 30, aberration: 0, exaggeration: 0, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
 
 export const palettes: Palette[] = [regularDark, regularLight, clear, opaqueTheme];

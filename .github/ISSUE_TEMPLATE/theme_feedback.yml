@@ -1,0 +1,70 @@
+name: Theme feedback
+description: A colour, contrast, or Layer 2 glass effect could look better.
+title: "[Feedback]: "
+labels: ["design"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Design and colour feedback for one of the four variants. If something is actually broken or crashing, please use a Bug report instead.
+
+  - type: dropdown
+    id: variant
+    attributes:
+      label: Theme variant
+      options:
+        - Glass Regular Dark
+        - Glass Regular Light
+        - Glass Clear
+        - Glass Opaque
+        - All / not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Surface / area
+      options:
+        - Editor syntax
+        - Sidebar/Explorer
+        - Panel/Terminal
+        - Tabs/Title bar
+        - Widgets (palette, hover, suggest)
+        - Diff/Merge
+        - Contrast/legibility
+        - Glass effects (Layer 2)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: language
+    attributes:
+      label: Language (if this is about syntax highlighting)
+      placeholder: "TypeScript, Rust, YAML, ..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Drag and drop an image here.
+    validations:
+      required: false
+
+  - type: textarea
+    id: change
+    attributes:
+      label: What would you change?
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+      description: What's wrong with it today -- contrast, inconsistency with the material model (ground / content / chrome-raised-widget-overlay / label tiers), taste, something else?
+    validations:
+      required: true
