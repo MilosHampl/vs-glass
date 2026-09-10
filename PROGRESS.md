@@ -87,6 +87,10 @@ These override anything a research agent claimed to the contrary.
 - GitHub Pages enabled via API (`docs/` on `main`): https://miloshampl.github.io/vs-glass/ returns 200 with assets.
 - Social preview image (`assets/social-preview.png`) cannot be set through the API — the owner can upload it in Settings → Social preview.
 
+## Marketplace publishing — deliberately NOT done
+
+The `.vsix` is Marketplace-ready (zero `vsce` warnings, `publisher: MilosHampl`, icon, LICENSE, README, CHANGELOG, `repository`, keywords, categories). Publishing would additionally require: (1) an Azure DevOps organisation and a Personal Access Token with the *Marketplace → Manage* scope; (2) creating the publisher `MilosHampl` at https://marketplace.visualstudio.com/manage (display name, verified email); (3) `npx @vscode/vsce login MilosHampl` then `npx @vscode/vsce publish` (or `--packagePath dist/vs-glass-1.0.0.vsix`); (4) optionally `ovsx publish` for Open VSX (Cursor/VSCodium users) with its own token. Nothing in the repo blocks this; it was left out because publishing was explicitly reserved by the owner.
+
 ## CI gating — proven locally (2026-09-10)
 
 Ran the exact CI steps, then broke things on purpose: deleting `sideBar.background` from a generated theme → `audit-coverage` exit 1 ("1 unintentional gap"); setting `sideBar.foreground` to #2a2f3a → `audit-contrast` exit 1 (1.17:1); any hand edit of `themes/` or `glass/` → `git diff --exit-code -- themes glass` exit 1. `npm run build` restores everything and all gates pass (exit 0). `vsce package` produces 15 files / 90 KB with zero warnings.
