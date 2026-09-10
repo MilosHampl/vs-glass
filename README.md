@@ -139,6 +139,8 @@ and run its Apply command. This is expected, not a sign anything is broken. Pick
   }
   ```
 
+![Transparent-window mode. A CDP alpha capture composited over a neutral checkerboard, which stands in for whatever sits behind the window; on macOS the desktop is blurred by Vibrancy. Not a photo of the desktop.](screenshots/transparent-window-mode.png)
+
   `vscode_vibrancy.imports` takes plain file paths, not `file://` URLs — the opposite of Route A, and the
   most common mistake. Load `glass-transparent.css` **second**, after `glass.css`. Run **Reload Vibrancy**,
   then fully restart VS Code — Vibrancy patches the Electron main process, which is only read at launch.

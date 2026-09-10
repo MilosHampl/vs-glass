@@ -65,6 +65,21 @@ These override anything a research agent claimed to the contrary.
 12. **`requestAnimationFrame` is paused for occluded windows.** Chromium reports `document.visibilityState === 'hidden'` for a VS Code window covered by another window; rAF stops entirely while CDP screenshots keep working. `scripts/perf.mjs` now calls `Page.bringToFront` and refuses to measure a hidden window — the earlier "no frames sampled" palette result was this, not the quick input.
 11. DOM: `.part.sidebar` is `overflow:hidden; position:static` inside `.split-view-view` (`position:absolute; overflow:visible`) inside `.split-view-container` (`overflow:hidden`). Sidebar and editor are siblings, not overlapping — a sidebar `backdrop-filter` sees only the ground (grid view) behind it, not editor content. Overlays (quick input, hovers, suggest, notifications, menus, sticky scroll, find widget) genuinely overlap code and are where lensing is most visible.
 
+## Adversarial review rounds
+
+**Round 1** (`research/review-round-1.md`, opus, images only): scores lensing 1 · specular 3 · thickness 2 · vibrancy 2 · floating 2 · concentric 2 · adaptive tint 4 · liquid 1 (≈2.1/10). Verdict: "a competent translucent theme". Measured complaints and what changed for round 2:
+- *Effects layer barely alters the dark sidebar/editor (ΔL ≈ 1)* → wallpaper made vivid and structured (brighter blobs, sharper edges, two small bright cores) so the cards have hue and edges to refract; chrome specular ramp raised (hi .42→.72), thickness shadows deepened (outer 0 18px 44px @.55, inset bottom shade).
+- *Rim lit from the wrong direction, open on two sides* → the conic ring started at `from 225deg`, putting the bright stop bottom-left. Now `from 300deg at 22% 12%`: bright across the top edge, medium down the left, dark bottom/right.
+- *Activity-bar/sidebar seam shows as a hard rim* → each ring's seam edge is pushed outside its overflow box (`inset: 0 0 0 -3px` / `0 -3px 0 0`) and the two cards are clip-pathed so they read as one pane.
+- *Displacement too small to read as lensing* → rim displacement 10→13 px (Light 12, Clear 16) with rim width 34/34/40 px; rim brightness lift 1.07→1.12.
+- *Light: sidebar ≈ editor (ΔL 3.4), line numbers 4.1:1* → light chrome ladder .955→.935 (raised .95, widget .97, overlay .985); line numbers mixed 45 % toward the secondary tier.
+- *Diff insert/delete asymmetry (green +55 L vs red +10 L)* → inserted alphas lowered (.12/.07/.26), removed raised (.20/.13/.36).
+- *Clear: code ghosts through the palette* → Clear widget glass .42→.56, widget blur 12→18 px, dim .35→.42.
+- *Toast radius smaller than its buttons* → toast and its container clip at the widget radius (14 px); buttons stay 12 px capsules inside.
+- *Notification "halo"* → it is the focused row's accent selection tint (VS Code focuses the first toast row), not light emitted by the glass; kept.
+- *Two evidence files were broken (menu not open; rim zoom crop black)* → menu scene now uses Shift+F10; zoom crops computed from image size.
+- Pens research (`research/reference-pens.md`) adopted in the same round: conic ring on buttons, hover specular nudge on buttons, convex `capsule` lens class for icon-only pills, rings on activity/status pills, Clear aberration 2.2→1.4.
+
 ## CI gating — proven locally (2026-09-10)
 
 Ran the exact CI steps, then broke things on purpose: deleting `sideBar.background` from a generated theme → `audit-coverage` exit 1 ("1 unintentional gap"); setting `sideBar.foreground` to #2a2f3a → `audit-contrast` exit 1 (1.17:1); any hand edit of `themes/` or `glass/` → `git diff --exit-code -- themes glass` exit 1. `npm run build` restores everything and all gates pass (exit 0). `vsce package` produces 15 files / 90 KB with zero warnings.

@@ -100,7 +100,7 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     '--vsg-widget-window': cssColor(alpha(p.glass.widget.solid, p.opaqueMode ? 1 : 0.6)),
     '--vsg-dim-window': String(p.isDark ? 0.22 : 0.1),
     '--vsg-wallpaper': p.wallpaper.blobs.length === 0 ? cssColor(p.wallpaper.base) :
-      p.wallpaper.blobs.map(b => `radial-gradient(ellipse ${b.size} ${b.size} at ${b.x} ${b.y}, ${cssColor(b.color).replace(/^#(..)(..)(..)$/, (_, r, g2, bl) => `rgba(${parseInt(r, 16)}, ${parseInt(g2, 16)}, ${parseInt(bl, 16)}, ${b.alpha.toFixed(3)})`)}, transparent 70%)`).join(', ') + `, ${cssColor(p.wallpaper.base)}`,
+      p.wallpaper.blobs.map(b => `radial-gradient(ellipse ${b.size} ${b.size} at ${b.x} ${b.y}, ${cssColor(b.color).replace(/^#(..)(..)(..)$/, (_, r, g2, bl) => `rgba(${parseInt(r, 16)}, ${parseInt(g2, 16)}, ${parseInt(bl, 16)}, ${b.alpha.toFixed(3)})`)}, transparent 62%)`).join(', ') + `, ${cssColor(p.wallpaper.base)}`,
   };
   for (const level of ['chrome', 'raised', 'widget', 'overlay'] as const) {
     const el = g[level];
@@ -116,9 +116,10 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
   const filtersSvg: string[] = [];
   for (const cls of LENS_CLASSES) {
     if (e.lensScale <= 0) { v[`--vsg-lens-${cls.name}`] = 'none'; continue; }
-    const { uri } = makeMap(cls, e.lensEdge * cls.rim);
+    // convex capsules: the rim IS the whole shape (edge = radius), gentler ramp, no frost
+    const { uri } = cls.convex ? makeMap(cls, Math.min(cls.w, cls.h) / 2, 1.3) : makeMap(cls, e.lensEdge * cls.rim);
     const id = `vsg-lens-${p.id}-${cls.name}`;
-    const blur = cls.name === 'widget' || cls.name === 'menu' ? e.blurWidget : cls.name === 'strip' ? Math.min(e.blur, 12) : e.blur;
+    const blur = cls.convex ? 0 : cls.name === 'widget' || cls.name === 'menu' ? e.blurWidget : cls.name === 'strip' ? Math.min(e.blur, 12) : e.blur;
     const markup = filterSvg(id, cls, uri, e.lensScale * cls.rim, blur, e.aberration * cls.rim);
     filtersSvg.push(markup);
     v[`--vsg-lens-${cls.name}`] = filterDataUrl(markup, id);

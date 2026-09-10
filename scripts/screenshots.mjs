@@ -61,8 +61,12 @@ const shot = async (file, clipSel, pad = 24) => {
   console.log('  wrote', path.relative(process.cwd(), full));
 };
 const openFile = async (name) => {
-  await key('meta+p'); await sleep(350); await type(name); await sleep(600); await key('enter');
-  for (let i = 0; i < 24; i++) { await sleep(250); const n = await evalJs(`document.querySelectorAll('.monaco-editor .view-lines .view-line').length`); if (n > 3) break; }
+  // Quick Open ranks recently used files first ("glass.ts" would match GlassPane.tsx), so pick the exact label.
+  await key('meta+p'); await sleep(350); await type(name); await sleep(700);
+  const idx = await evalJs(`(() => { const rows = [...document.querySelectorAll('.quick-input-widget .monaco-list-row')]; return rows.findIndex(r => (r.querySelector('.label-name')?.textContent || '').trim() === ${JSON.stringify(name)}); })()`);
+  for (let i = 0; i < Math.max(0, idx); i++) { await key('down'); await sleep(60); }
+  await key('enter');
+  for (let i = 0; i < 24; i++) { await sleep(250); const ok = await evalJs(`(() => { const t = document.querySelector('.part.editor .tab.active .label-name'); return t && t.textContent.trim() === ${JSON.stringify(name)} && document.querySelectorAll('.monaco-editor .view-lines .view-line').length > 3; })()`); if (ok) break; }
   await sleep(500);
 };
 const runCommand = async (cmd) => { await key('meta+shift+p'); await sleep(350); await type(cmd); await sleep(700); await key('enter'); await sleep(900); };

@@ -250,8 +250,8 @@ function build(k: Knobs): Palette {
   const accentText = Object.fromEntries(SYSTEM_COLORS.map(c => [c, ensureContrast(ensureContrast(accentText0[c], contentBg, 4.5), hardestBg, 4.5)])) as Record<SystemColor, Hex>;
 
   const spec: Record<'chrome' | 'raised' | 'widget' | 'overlay', [number, number, number]> = isDark
-    ? { chrome: [0.42, 0.14, 0.03], raised: [0.5, 0.16, 0.04], widget: [0.62, 0.2, 0.05], overlay: [0.72, 0.24, 0.06] }
-    : { chrome: [0.95, 0.55, 0.2], raised: [0.97, 0.6, 0.25], widget: [1, 0.7, 0.3], overlay: [1, 0.75, 0.35] };
+    ? { chrome: [0.72, 0.24, 0.05], raised: [0.78, 0.26, 0.06], widget: [0.92, 0.34, 0.08], overlay: [0.98, 0.4, 0.1] }
+    : { chrome: [1, 0.7, 0.3], raised: [1, 0.72, 0.32], widget: [1, 0.8, 0.4], overlay: [1, 0.85, 0.45] };
   const borderA = isDark ? { chrome: 0.09, raised: 0.11, widget: 0.16, overlay: 0.2 } : { chrome: 0.09, raised: 0.1, widget: 0.12, overlay: 0.14 };
   if (opaqueMode) { for (const key of Object.keys(borderA) as (keyof typeof borderA)[]) borderA[key] *= 1.8; }
 
@@ -355,9 +355,9 @@ function build(k: Knobs): Palette {
   };
   const diagnostics: Palette['diagnostics'] = { error: accent.red, warning: isDark ? accent.yellow : accentText.yellow, info: accent.blue, hint: accent.mint };
   const diff: Palette['diff'] = {
-    inserted: alpha(accent.green, isDark ? 0.16 : 0.18), removed: alpha(accent.red, isDark ? 0.16 : 0.16),
-    insertedLine: alpha(accent.green, isDark ? 0.1 : 0.12), removedLine: alpha(accent.red, isDark ? 0.1 : 0.1),
-    insertedText: alpha(accent.green, 0.32), removedText: alpha(accent.red, 0.32),
+    inserted: alpha(accent.green, isDark ? 0.12 : 0.14), removed: alpha(accent.red, isDark ? 0.2 : 0.18),
+    insertedLine: alpha(accent.green, isDark ? 0.07 : 0.09), removedLine: alpha(accent.red, isDark ? 0.13 : 0.11),
+    insertedText: alpha(accent.green, 0.26), removedText: alpha(accent.red, 0.36),
     insertedGutter: alpha(accent.green, 0.7), removedGutter: alpha(accent.red, 0.7), modifiedGutter: alpha(accent.orange, 0.7),
     diagonalFill: alpha(sep, 0.08), unchangedRegion: alpha(sep, isDark ? 0.05 : 0.04), move: alpha(accent.indigo, 0.6),
   };
@@ -371,12 +371,14 @@ function build(k: Knobs): Palette {
   const cap = (a: number) => Math.min(0.92, a);
   const wallpaper: Palette['wallpaper'] = isDark
     ? { base: ground, blobs: [
-        { color: oklch(0.5, 0.15, 275), alpha: cap(0.62 * vivid), x: '10%', y: '6%', size: '62%' },    // indigo, top-left
-        { color: oklch(0.46, 0.14, 325), alpha: cap(0.5 * vivid), x: '90%', y: '94%', size: '58%' },   // magenta-violet, bottom-right
-        { color: oklch(0.5, 0.11, 200), alpha: cap(0.44 * vivid), x: '94%', y: '8%', size: '46%' },    // teal, top-right
-        { color: oklch(0.44, 0.13, 250), alpha: cap(0.42 * vivid), x: '18%', y: '96%', size: '52%' },  // blue, bottom-left
-        { color: oklch(0.5, 0.12, 350), alpha: cap(0.26 * vivid), x: '58%', y: '34%', size: '28%' },   // pink core, centre-right
-        { color: oklch(0.5, 0.1, 170), alpha: cap(0.22 * vivid), x: '38%', y: '70%', size: '26%' },    // mint core, centre-left
+        { color: oklch(0.56, 0.17, 275), alpha: cap(0.78 * vivid), x: '10%', y: '6%', size: '58%' },   // indigo, top-left
+        { color: oklch(0.52, 0.16, 325), alpha: cap(0.64 * vivid), x: '90%', y: '94%', size: '54%' },  // magenta-violet, bottom-right
+        { color: oklch(0.56, 0.13, 200), alpha: cap(0.58 * vivid), x: '94%', y: '8%', size: '42%' },   // teal, top-right
+        { color: oklch(0.5, 0.15, 250), alpha: cap(0.56 * vivid), x: '18%', y: '96%', size: '48%' },   // blue, bottom-left
+        { color: oklch(0.6, 0.15, 350), alpha: cap(0.4 * vivid), x: '58%', y: '34%', size: '22%' },    // pink core, centre-right
+        { color: oklch(0.6, 0.12, 170), alpha: cap(0.34 * vivid), x: '38%', y: '70%', size: '20%' },   // mint core, centre-left
+        { color: oklch(0.7, 0.1, 290), alpha: cap(0.3 * vivid), x: '28%', y: '22%', size: '10%' },     // bright violet core (structure for the lens)
+        { color: oklch(0.7, 0.09, 190), alpha: cap(0.26 * vivid), x: '74%', y: '62%', size: '9%' },    // bright teal core
       ] }
     : { base: ground, blobs: [
         { color: oklch(0.84, 0.09, 275), alpha: cap(0.8 * vivid), x: '10%', y: '6%', size: '62%' },
@@ -403,7 +405,7 @@ function build(k: Knobs): Palette {
     indentGuideActive: alpha(sep, isDark ? 0.2 : 0.2),
     whitespace: alpha(sep, 0.12),
     ruler: alpha(sep, 0.07),
-    lineNumber: composite(label.tertiary, contentBg),
+    lineNumber: composite(mix(label.tertiary, label.secondary, 0.45), contentBg),
     lineNumberActive: composite(label.secondary, contentBg),
     cursor: isDark ? oklch(0.95, 0.01, HUE) : oklch(0.25, 0.02, HUE),
     foldBg: alpha(accent.blue, 0.1),
@@ -427,23 +429,23 @@ export const regularDark = build({
   ladder: { ground: 0.165, groundDeep: 0.11, content: 0.205, chrome: 0.255, raised: 0.295, widget: 0.335, overlay: 0.375 },
   alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.5, widgetGlass: 0.62, content: 0.94 },
   labelBoost: 0, wallpaperVividness: 1,
-  effects: { blur: 18, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 10, lensEdge: 26, aberration: 0.7, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
+  effects: { blur: 18, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 13, lensEdge: 34, aberration: 0.9, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
 
 export const regularLight = build({
   id: 'glass-regular-light', name: 'Glass Regular Light', isDark: false, variant: 'regular',
-  ladder: { ground: 0.9, groundDeep: 0.8, content: 0.985, chrome: 0.955, raised: 0.97, widget: 0.98, overlay: 0.99 },
+  ladder: { ground: 0.9, groundDeep: 0.8, content: 0.985, chrome: 0.935, raised: 0.95, widget: 0.97, overlay: 0.985 },
   alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.55, widgetGlass: 0.68, content: 0.96 },
   labelBoost: 0, wallpaperVividness: 1,
-  effects: { blur: 22, blurWidget: 26, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 9, lensEdge: 26, aberration: 0.5, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
+  effects: { blur: 22, blurWidget: 26, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 12, lensEdge: 34, aberration: 0.7, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
 });
 
 export const clear = build({
   id: 'glass-clear', name: 'Glass Clear', isDark: true, variant: 'clear',
   ladder: { ground: 0.15, groundDeep: 0.1, content: 0.19, chrome: 0.235, raised: 0.275, widget: 0.32, overlay: 0.36 },
-  alphas: { chrome: 0.34, raised: 0.42, widget: 0.9, overlay: 0.94, chromeGlass: 0.26, widgetGlass: 0.42, content: 0.86 },
+  alphas: { chrome: 0.34, raised: 0.42, widget: 0.9, overlay: 0.94, chromeGlass: 0.26, widgetGlass: 0.56, content: 0.86 },
   labelBoost: 0.1, wallpaperVividness: 1.7,
-  effects: { blur: 8, blurWidget: 12, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 13, lensEdge: 30, aberration: 2.2, exaggeration: 0.5, dim: 0.35, radius, shadowColor: '#02030a', lightAngle: 225, motion },
+  effects: { blur: 8, blurWidget: 18, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 16, lensEdge: 40, aberration: 1.4, exaggeration: 0.5, dim: 0.42, radius, shadowColor: '#02030a', lightAngle: 225, motion },
 });
 
 export const opaqueTheme = build({

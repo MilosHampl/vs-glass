@@ -28,6 +28,8 @@ export interface LensClass {
   axes: 'xy' | 'x' | 'y';
   /** multiplier on the palette's rim width and displacement for this class (smaller surfaces → thinner rims) */
   rim: number;
+  /** convex "ball lens": the whole shape refracts with a gentle profile and no frosted body — icon-only controls */
+  convex?: boolean;
 }
 
 export const LENS_CLASSES: LensClass[] = [
@@ -37,6 +39,7 @@ export const LENS_CLASSES: LensClass[] = [
   { name: 'panel', w: 1100, h: 320, mw: 128, mh: 40, axes: 'xy', rim: 0.9 },   // bottom panel card
   { name: 'column', w: 48, h: 820, mw: 12, mh: 128, axes: 'x', rim: 0.5 },     // activity bar
   { name: 'strip', w: 1400, h: 36, mw: 128, mh: 12, axes: 'y', rim: 0.35 },    // title bar, status bar, tab strip, sticky scroll
+  { name: 'capsule', w: 32, h: 32, mw: 32, mh: 32, axes: 'xy', rim: 0.6, convex: true }, // icon-only pills (activity/status items) — never under text
 ];
 
 /** Displacement profile: 0 in the flat centre, rising to 1 at the edge over `edge` px (eased). */
@@ -63,7 +66,7 @@ export function makeMap(cls: LensClass, edgePx: number, power = 2): { uri: strin
       // rim weight (0 centre → 1 edge) — linear ramp so the clear rim fades softly into the frosted centre
       const rimX = cls.axes === 'y' ? 0 : Math.max(0, 1 - Math.min(dl, dr) / (edgePx * 1.15));
       const rimY = cls.axes === 'x' ? 0 : Math.max(0, 1 - Math.min(dt, db) / (edgePx * 1.15));
-      const rim = Math.min(1, Math.max(rimX, rimY));
+      const rim = cls.convex ? 1 : Math.min(1, Math.max(rimX, rimY));
       data[i] = Math.round(128 + px * ampX * 127);
       data[i + 1] = Math.round(128 + py * ampY * 127);
       data[i + 2] = Math.round(Math.pow(rim, 0.8) * 255);
@@ -107,7 +110,7 @@ export function filterSvg(id: string, cls: LensClass, mapUri: string, displacePx
       `<feDisplacementMap in='SourceGraphic' in2='map' scale='${scale.toFixed(5)}' xChannelSelector='R' yChannelSelector='G' result='lens'/>`,
     ]),
     `<feGaussianBlur in='lens' stdDeviation='${sx} ${sy}' result='lensSoft'/>`,
-    `<feComponentTransfer in='lensSoft' result='lensLit'><feFuncR type='linear' slope='1.07' intercept='0.01'/><feFuncG type='linear' slope='1.07' intercept='0.01'/><feFuncB type='linear' slope='1.07' intercept='0.012'/></feComponentTransfer>`,
+    `<feComponentTransfer in='lensSoft' result='lensLit'><feFuncR type='linear' slope='1.12' intercept='0.015'/><feFuncG type='linear' slope='1.12' intercept='0.015'/><feFuncB type='linear' slope='1.12' intercept='0.02'/></feComponentTransfer>`,
     `<feComposite in='lensLit' in2='rimA' operator='in' result='rim'/>`,
     `<feComposite in='rim' in2='frost' operator='over'/>`,
     `</filter>`,
