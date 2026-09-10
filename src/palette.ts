@@ -250,8 +250,8 @@ function build(k: Knobs): Palette {
   const accentText = Object.fromEntries(SYSTEM_COLORS.map(c => [c, ensureContrast(ensureContrast(accentText0[c], contentBg, 4.5), hardestBg, 4.5)])) as Record<SystemColor, Hex>;
 
   const spec: Record<'chrome' | 'raised' | 'widget' | 'overlay', [number, number, number]> = isDark
-    ? { chrome: [0.72, 0.24, 0.05], raised: [0.78, 0.26, 0.06], widget: [0.92, 0.34, 0.08], overlay: [0.98, 0.4, 0.1] }
-    : { chrome: [1, 0.7, 0.3], raised: [1, 0.72, 0.32], widget: [1, 0.8, 0.4], overlay: [1, 0.85, 0.45] };
+    ? { chrome: [0.7, 0.26, 0.1], raised: [0.74, 0.28, 0.11], widget: [0.85, 0.36, 0.14], overlay: [0.9, 0.4, 0.16] }
+    : { chrome: [1, 0.7, 0.35], raised: [1, 0.72, 0.36], widget: [1, 0.8, 0.42], overlay: [1, 0.85, 0.46] };
   const borderA = isDark ? { chrome: 0.09, raised: 0.11, widget: 0.16, overlay: 0.2 } : { chrome: 0.09, raised: 0.1, widget: 0.12, overlay: 0.14 };
   if (opaqueMode) { for (const key of Object.keys(borderA) as (keyof typeof borderA)[]) borderA[key] *= 1.8; }
 
@@ -405,7 +405,7 @@ function build(k: Knobs): Palette {
     indentGuideActive: alpha(sep, isDark ? 0.2 : 0.2),
     whitespace: alpha(sep, 0.12),
     ruler: alpha(sep, 0.07),
-    lineNumber: composite(mix(label.tertiary, label.secondary, 0.45), contentBg),
+    lineNumber: composite(mix(label.tertiary, label.secondary, 0.65), contentBg),
     lineNumberActive: composite(label.secondary, contentBg),
     cursor: isDark ? oklch(0.95, 0.01, HUE) : oklch(0.25, 0.02, HUE),
     foldBg: alpha(accent.blue, 0.1),
@@ -422,30 +422,30 @@ function build(k: Knobs): Palette {
 }
 
 const motion = { fast: 120, base: 240, slow: 320, ease: 'cubic-bezier(.2,.8,.2,1)' };
-const radius = { card: 14, widget: 12, control: 8, inner: 6, pill: 999 };
+const radius = { card: 18, widget: 16, control: 10, inner: 8, pill: 999 };
 
 export const regularDark = build({
   id: 'glass-regular-dark', name: 'Glass Regular Dark', isDark: true, variant: 'regular',
   ladder: { ground: 0.165, groundDeep: 0.11, content: 0.205, chrome: 0.255, raised: 0.295, widget: 0.335, overlay: 0.375 },
-  alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.5, widgetGlass: 0.62, content: 0.94 },
+  alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.5, widgetGlass: 0.7, content: 0.9 },
   labelBoost: 0, wallpaperVividness: 1,
-  effects: { blur: 18, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 13, lensEdge: 34, aberration: 0.9, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
+  effects: { blur: 18, blurWidget: 30, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 13, lensEdge: 34, aberration: 0.9, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
 
 export const regularLight = build({
   id: 'glass-regular-light', name: 'Glass Regular Light', isDark: false, variant: 'regular',
   ladder: { ground: 0.9, groundDeep: 0.8, content: 0.985, chrome: 0.935, raised: 0.95, widget: 0.97, overlay: 0.985 },
-  alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.55, widgetGlass: 0.68, content: 0.96 },
+  alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.55, widgetGlass: 0.74, content: 0.92 },
   labelBoost: 0, wallpaperVividness: 1,
-  effects: { blur: 22, blurWidget: 26, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 12, lensEdge: 34, aberration: 0.7, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
+  effects: { blur: 22, blurWidget: 32, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 12, lensEdge: 34, aberration: 0.7, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
 });
 
 export const clear = build({
   id: 'glass-clear', name: 'Glass Clear', isDark: true, variant: 'clear',
   ladder: { ground: 0.15, groundDeep: 0.1, content: 0.19, chrome: 0.235, raised: 0.275, widget: 0.32, overlay: 0.36 },
-  alphas: { chrome: 0.34, raised: 0.42, widget: 0.9, overlay: 0.94, chromeGlass: 0.26, widgetGlass: 0.56, content: 0.86 },
+  alphas: { chrome: 0.34, raised: 0.42, widget: 0.9, overlay: 0.94, chromeGlass: 0.26, widgetGlass: 0.62, content: 0.86 },
   labelBoost: 0.1, wallpaperVividness: 1.7,
-  effects: { blur: 8, blurWidget: 18, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 16, lensEdge: 40, aberration: 1.4, exaggeration: 0.5, dim: 0.42, radius, shadowColor: '#02030a', lightAngle: 225, motion },
+  effects: { blur: 8, blurWidget: 24, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 16, lensEdge: 40, aberration: 1.4, exaggeration: 0.5, dim: 0.42, radius, shadowColor: '#02030a', lightAngle: 225, motion },
 });
 
 export const opaqueTheme = build({

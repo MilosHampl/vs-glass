@@ -1,5 +1,5 @@
 import type { Palette } from '../palette';
-import { alpha, composite, contrast, type Hex } from '../color';
+import { alpha, composite, contrast, type Hex, mix} from '../color';
 
 /**
  * chrome — the workbench "frame": title bar, activity bar, side bar, panel, status bar,
@@ -226,7 +226,7 @@ export default function chrome(p: Palette): Record<string, string> {
     // ---------------------------------------------------------------------------------------
     // Status Bar
     // ---------------------------------------------------------------------------------------
-    'statusBar.foreground': p.label.secondary,
+    'statusBar.foreground': mix(p.label.secondary, p.label.primary, 0.45), // ≥ 4.5:1 on every variant's chrome
     'statusBar.border': '#00000000',
     'statusBar.debuggingBackground': alpha(p.accent.orange, 0.35),
     'statusBar.debuggingBorder': '#00000000',

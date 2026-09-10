@@ -92,19 +92,20 @@ async function evalJs(c, expression) {
       const dpr = await evalJs(c, 'window.devicePixelRatio');
       console.log(`wrote ${out} (css viewport ${metrics.cssVisualViewport.clientWidth}x${metrics.cssVisualViewport.clientHeight}, dpr ${dpr})`);
     } else if (cmd === 'shotel') {
-      // shotel <css selector> <out.png> [padCss=24] — full 2x screenshot cropped to the element's box (+pad)
+      // shotel <css selector> <out.png> [padCss=24] — exact CDP clip around the element (device pixels), no sips.
       const [sel, out, padStr] = rest; const pad = Number(padStr ?? 24);
-      const rect = await evalJs(c, `(() => { const e = document.querySelector(${JSON.stringify(sel)}); if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height, dpr: window.devicePixelRatio, vw: innerWidth, vh: innerHeight }; })()`);
-      if (!rect) throw new Error('element not found: ' + sel);
-      const r = await c.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
-      const full = out.replace(/\.png$/, '') + '.full.png';
-      fs.writeFileSync(full, Buffer.from(r.data, 'base64'));
-      const { execFileSync } = await import('node:child_process');
-      const d = rect.dpr; const x = Math.max(0, Math.floor((rect.x - pad) * d)), y = Math.max(0, Math.floor((rect.y - pad) * d));
-      const w = Math.min(Math.floor((rect.w + 2 * pad) * d), rect.vw * d - x), h = Math.min(Math.floor((rect.h + 2 * pad) * d), rect.vh * d - y);
-      execFileSync('sips', ['-c', String(h), String(w), '--cropOffset', String(y), String(x), full, '--out', out], { stdio: 'ignore' });
-      fs.unlinkSync(full);
-      console.log(`wrote ${out} (${w}x${h} device px around ${sel})`);
+      const r = await evalJs(c, `(() => { const e = document.querySelector(${JSON.stringify(sel)}); if (!e) return null; const b = e.getBoundingClientRect(); return { x: b.x, y: b.y, w: b.width, h: b.height, vw: innerWidth, vh: innerHeight, dpr: devicePixelRatio }; })()`);
+      if (!r) throw new Error('element not found: ' + sel);
+      const x = Math.max(0, r.x - pad), y = Math.max(0, r.y - pad);
+      const w = Math.min(r.w + 2 * pad, r.vw - x), h = Math.min(r.h + 2 * pad, r.vh - y);
+      const shot = await c.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false, clip: { x, y, width: w, height: h, scale: r.dpr } });
+      fs.writeFileSync(out, Buffer.from(shot.data, 'base64'));
+      console.log(`wrote ${out} (clip ${Math.round(w)}x${Math.round(h)} css px @${r.dpr}x around ${sel})`);
+    } else if (cmd === 'clip') {
+      // clip <x> <y> <w> <h> <out.png> — exact CDP clip in CSS px at device scale
+      const [xs, ys, ws, hs, out] = rest; const dpr = await evalJs(c, 'devicePixelRatio');
+      const shot = await c.send('Page.captureScreenshot', { format: 'png', clip: { x: Number(xs), y: Number(ys), width: Number(ws), height: Number(hs), scale: dpr } });
+      fs.writeFileSync(out, Buffer.from(shot.data, 'base64')); console.log(`wrote ${out}`);
     } else if (cmd === 'mouse') {
       // mouse move <x> <y> | mouse click <x> <y> [left|right]
       const [action, xs, ys, btn = 'left'] = rest; const x = Number(xs), y = Number(ys);

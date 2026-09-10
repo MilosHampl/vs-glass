@@ -24,7 +24,11 @@
   --vscode-cornerRadius-small: var(--vsg-radius-inner);
   --vscode-cornerRadius-medium: var(--vsg-radius-control);
   --vscode-cornerRadius-large: var(--vsg-radius-card);
-  --vscode-cornerRadius-xLarge: calc(var(--vsg-radius-card) + 4px);
+  --vscode-cornerRadius-xLarge: var(--vsg-radius-card);
+  /* floating layout gaps: a touch wider than VS Code's default so the panes visibly float */
+  --modern-ui-floating-card-margin: 10px;
+  --modern-ui-floating-card-inner-margin: 8px;
+  --modern-ui-floating-card-outer-margin: 10px;
   /* backdrop filter stacks */
   --vsg-filter-chrome: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
   --vsg-filter-widget: saturate(var(--vsg-saturate)) brightness(var(--vsg-brightness)) contrast(var(--vsg-contrast));
@@ -47,21 +51,19 @@
     0 4px 12px rgba(var(--vsg-shadow-rgb), 0.45);
   --vsg-ring-chrome: conic-gradient(from 300deg at 22% 12%,
     rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 0deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 60deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)) 140deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 50deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)) 130deg,
     rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 200deg,
-    rgba(var(--vsg-spec-rgb), 0) 250deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 300deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)) 340deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 260deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)) 320deg,
     rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 360deg);
   --vsg-ring-widget: conic-gradient(from 300deg at 22% 12%,
     rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 0deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 60deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 140deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 50deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 130deg,
     rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 200deg,
-    rgba(var(--vsg-spec-rgb), 0) 250deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 300deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 340deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 260deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 320deg,
     rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 360deg);
 }
 
@@ -162,8 +164,19 @@
 @G.floating-panels:not(.noactivitybar) .part.sidebar.left::before { inset: 0 0 0 -3px; }
 @G.floating-panels:not(.noactivitybar) .part.activitybar.right::before { inset: 0 0 0 -3px; }
 @G.floating-panels:not(.noactivitybar) .part.sidebar.right::before { inset: 0 -3px 0 0; }
-@G.floating-panels:not(.noactivitybar) .part.activitybar.left { box-shadow: var(--vsg-thickness-chrome); clip-path: inset(-60px 0 -60px -60px); }
+@G.floating-panels:not(.noactivitybar) .part.activitybar.left,
+@G.floating-panels:not(.noactivitybar) .part.sidebar.left {
+  /* one pane: no bevel on the seam edges, shared shadow, identical sheen origin */
+  box-shadow:
+    inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.45),
+    inset 0 -14px 24px -14px rgba(var(--vsg-shadow-rgb), 0.35),
+    0 18px 44px rgba(var(--vsg-shadow-rgb), 0.55),
+    0 2px 6px rgba(var(--vsg-shadow-rgb), 0.45);
+}
+@G.floating-panels:not(.noactivitybar) .part.activitybar.left { clip-path: inset(-60px 0 -60px -60px); }
 @G.floating-panels:not(.noactivitybar) .part.sidebar.left { clip-path: inset(-60px -60px -60px 0); }
+@G.floating-panels:not(.noactivitybar) .part.activitybar.left::after { background: rgba(0, 0, 0, var(--vsg-dim)); }
 /* sheen + Clear dimming (::after) — sits between the glass and its content */
 @G .part.sidebar::after,
 @G .part.auxiliarybar::after,
@@ -201,6 +214,20 @@
 @G .part.editor > .content .editor-group-container {
   background: transparent !important;
 }
+@G.floating-panels .part.editor > .content { position: relative; }
+@G.floating-panels .part.editor > .content::before {
+  content: "";
+  position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  background: conic-gradient(from 300deg at 22% 12%,
+    rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-mid) * 0.9)) 0deg,
+    rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-lo) * 1.2)) 140deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 260deg,
+    rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-mid) * 0.9)) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+  pointer-events: none; z-index: 50;
+}
+@G .monaco-editor .minimap { background-color: var(--vsg-content-bg-glass) !important; }
 
 /* ---------- 5. Floating widgets (overlap code → real refraction) ---------- */
 @G .quick-input-widget,
@@ -241,6 +268,13 @@
 @G .quick-input-widget .quick-input-header,
 @G .quick-input-widget .quick-input-list,
 @G .quick-input-widget .monaco-list,
+@G .quick-input-widget .monaco-list-rows,
+@G .monaco-editor .suggest-widget .monaco-list-rows,
+@G .notification-toast .notification-list-item,
+@G .notification-toast .monaco-list-row,
+@G .notifications-center .notification-list-item,
+@G .notifications-center .notifications-list-container,
+@G .monaco-editor .suggest-details .body,
 @G .notifications-list-container,
 @G .notification-toast .monaco-list,
 @G .notifications-center .notifications-center-header,
@@ -418,6 +452,11 @@
 @G .monaco-list.element-focused .monaco-list-row.focused,
 @G .monaco-list .monaco-list-row.selected {
   box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo));
+}
+@G .monaco-list:focus .monaco-list-row.focused,
+@G .monaco-list.element-focused .monaco-list-row.focused {
+  outline-color: transparent !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--vsg-accent) 55%, transparent), inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)), 0 0 10px color-mix(in srgb, var(--vsg-accent) 22%, transparent) !important;
 }
 
 /* ---------- 9. Accessibility ---------- */

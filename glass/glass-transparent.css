@@ -7,7 +7,7 @@
  * plane translucent so the desktop shows through the whole window. Refraction remains visible wherever
  * glass overlaps in-page content (widgets over code, sticky scroll, cards over the editor seam).
  */
-.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) { background: transparent !important; }
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) { background: transparent !important; border-radius: 14px; overflow: hidden; }
 .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) > .monaco-grid-view { background: transparent !important; }
 
 /* the content plane lets the desktop through a little; text stays crisp (no filter on the editor) */

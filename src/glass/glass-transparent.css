@@ -5,7 +5,7 @@
  * plane translucent so the desktop shows through the whole window. Refraction remains visible wherever
  * glass overlaps in-page content (widgets over code, sticky scroll, cards over the editor seam).
  */
-@G { background: transparent !important; }
+@G { background: transparent !important; border-radius: 14px; overflow: hidden; }
 @G > .monaco-grid-view { background: transparent !important; }
 
 /* the content plane lets the desktop through a little; text stays crisp (no filter on the editor) */

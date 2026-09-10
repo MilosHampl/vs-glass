@@ -75,7 +75,7 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     '--vsg-label-4': cssColor(p.label.quaternary),
     '--vsg-hairline': cssColor(p.separator.hairline),
     '--vsg-shadow-rgb': (() => { const h = e.shadowColor.replace('#', ''); return `${parseInt(h.slice(0, 2), 16)}, ${parseInt(h.slice(2, 4), 16)}, ${parseInt(h.slice(4, 6), 16)}`; })(),
-    '--vsg-spec-rgb': p.isDark ? '255, 255, 255' : '255, 255, 255',
+    '--vsg-spec-rgb': p.isDark ? '255, 238, 222' : '255, 250, 244', // warm environment light, never a sterile white
     '--vsg-blur': `${e.blur}px`,
     '--vsg-blur-widget': `${e.blurWidget}px`,
     '--vsg-saturate': String(e.saturate),

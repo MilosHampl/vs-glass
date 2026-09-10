@@ -51,13 +51,14 @@ const mouse = async (x, y, action = 'move', button = 'left') => {
 };
 const rect = async (sel) => evalJs(`(() => { const e = document.querySelector(${JSON.stringify(sel)}); if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height, cx: r.x + r.width / 2, cy: r.y + r.height / 2 }; })()`);
 const shot = async (file, clipSel, pad = 24) => {
-  const r = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
-  const full = path.join(outDir, file); fs.writeFileSync(full, Buffer.from(r.data, 'base64'));
+  const full = path.join(outDir, file);
+  let params = { format: 'png', captureBeyondViewport: false };
   if (clipSel) {
-    const b = await rect(clipSel); const dpr = await evalJs('window.devicePixelRatio'); const vw = await evalJs('innerWidth'), vh = await evalJs('innerHeight');
-    if (b) { const x = Math.max(0, Math.floor((b.x - pad) * dpr)), y = Math.max(0, Math.floor((b.y - pad) * dpr)); const w = Math.min(Math.floor((b.w + 2 * pad) * dpr), vw * dpr - x), h = Math.min(Math.floor((b.h + 2 * pad) * dpr), vh * dpr - y);
-      execFileSync('sips', ['-c', String(h), String(w), '--cropOffset', String(y), String(x), full, '--out', full], { stdio: 'ignore' }); }
+    const b = await rect(clipSel); const dpr = await evalJs('devicePixelRatio'); const vw = await evalJs('innerWidth'), vh = await evalJs('innerHeight');
+    if (b && b.w > 4) { const x = Math.max(0, b.x - pad), y = Math.max(0, b.y - pad); params.clip = { x, y, width: Math.min(b.w + 2 * pad, vw - x), height: Math.min(b.h + 2 * pad, vh - y), scale: dpr }; }
   }
+  const r = await send('Page.captureScreenshot', params);
+  fs.writeFileSync(full, Buffer.from(r.data, 'base64'));
   console.log('  wrote', path.relative(process.cwd(), full));
 };
 const openFile = async (name) => {
@@ -106,7 +107,7 @@ const SCENES = {
     const sw = await rect('.monaco-editor .suggest-widget'); if (!sw || sw.w < 10) throw new Error('suggest widget did not appear');
     await shot(`${tag}-suggest.png`, '.monaco-editor .suggest-widget', 60); await closeAll();
   },
-  menu: async (tag) => { const r = await rect('.monaco-editor .view-lines'); await mouse(r.cx, r.cy, 'click'); await sleep(200); await key('shift+f10'); await sleep(900); await shot(`${tag}-menu.png`, '.context-view .monaco-menu-container', 60); await closeAll(); },
+  menu: async (tag) => { await openFile('glass.ts'); const r = await rect('.monaco-editor .view-lines'); await mouse(r.cx, r.cy, 'click'); await sleep(200); await runCommand('Show Editor Context Menu'); await sleep(600); const m = await rect('.context-view .monaco-menu-container'); if (!m || m.w < 10) throw new Error('context menu did not open'); await shot(`${tag}-menu.png`, '.context-view .monaco-menu-container', 60); await closeAll(); },
   terminal: async (tag) => { await runCommand('View: Toggle Terminal'); await sleep(1800); await shot(`${tag}-terminal.png`); await runCommand('View: Toggle Terminal'); await sleep(600); },
   diff: async (tag) => { await openFile('diff-before.ts'); await runCommand('File: Compare Active File With...'); await sleep(500); await type('diff-after.ts'); await sleep(700); await key('enter'); await sleep(2000); await shot(`${tag}-diff.png`); await key('meta+w'); await sleep(500); },
   merge: async (tag) => { await openFile('merge-conflict.ts'); await sleep(800); await shot(`${tag}-merge.png`); },
