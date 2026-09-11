@@ -13,6 +13,8 @@
 #   5. If the VS Glass extension (1.1.0) applied its window hook                   → restores out/main.js from its
 #      .vs-glass-backup, deletes <user-data>/vs-glass/ and removes the [Glass …] blocks it added to
 #      workbench.colorCustomizations (this is exactly what the "VS Glass: Remove" command does)
+#   6. If the window-slab helper (1.2.0+, bin/vs-glass-helper) is still running                 → stops it (it normally exits
+#      with VS Code; it only ever owned windows of its own, nothing on disk)
 # Nothing else outside the repository was modified. Test copies of VS Code live in <repo>/scratch (safe to delete).
 set -euo pipefail
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
@@ -96,6 +98,9 @@ if isinstance(cc, dict):
     json.dump(s, open(p, 'w'), indent=2, ensure_ascii=False); open(p, 'a').write('\n'); print('   removed the [Glass …] colour blocks from settings.json')
 PY
 fi
+
+# 6. the window-slab helper: a detached process the 1.2.0 extension starts; it dies with VS Code, but make sure
+if pkill -x vs-glass-helper 2>/dev/null; then say "stopped the vs-glass-helper process"; fi
 
 echo
 say "Done. Fully quit VS Code (⌘Q) and start it again for the restored files to take effect."

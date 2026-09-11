@@ -62,3 +62,20 @@ jobs:
           name: vsix
           path: dist/*.vsix
           if-no-files-found: error
+
+  helper:
+    name: Window-slab helper (macOS build check)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # bin/vs-glass-helper is committed (the vsix is packaged on Linux, which cannot build it). This rebuilds it
+      # from native/vs-glass-helper.swift and fails when the committed binary's version is not package.json's.
+      - name: Build the helper and compare with bin/
+        run: scripts/build-helper.sh --check

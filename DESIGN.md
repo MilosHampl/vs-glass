@@ -719,6 +719,66 @@ without changing this trade-off.
 
 ---
 
+### 5.2 The window slab (1.2.0): the OS's glass under the window
+
+**The boundary.** Every optic in §4 works on pixels the page owns. A `backdrop-filter` samples the compositor surface
+*behind the element within the same window*; the desktop, other windows and video are composited by the window
+server after Chromium has produced its frame, so no CSS — and no Electron API (Electron 42 has no Liquid Glass
+binding at all) — can bend them. The only things that touch behind-window pixels are the window server's own
+backdrop effects: vibrancy (blur + tint, what 1.1.0 uses) and, on macOS 26, Liquid Glass.
+
+**Where the glass lives.** An `NSGlassEffectView` cannot be added to VS Code's own window: its main process is a
+hardened runtime with library validation, and a foreign `.node` is refused — measured against the shipped Electron 42
+binary: "mapping process and mapped file (non-platform) have different Team IDs" (only the Plugin helper carries
+`disable-library-validation`). So the slab is a window of its own, owned by `bin/vs-glass-helper`
+(`native/vs-glass-helper.swift`, ~300 lines, universal, ad-hoc signed): transparent, `ignoresMouseEvents`, no shadow,
+normal level, ordered with `order(.below, relativeTo:)` on the VS Code window's number — the window server honours
+that across processes; the helper's report shows the two at z and z+1 — and kept on its frame from
+`CGWindowListCreateDescriptionFromArray` (120 Hz while anything moves, 20 Hz at rest), with the full window list every
+250 ms and at once on app activation for z-order, new windows, minimise and Spaces. One helper per VS Code instance
+(a `flock` in `<user-data>/vs-glass`), parameters from `window-glass.json` which the extension rewrites live, exit when
+VS Code's pid dies or the file says off. It idles at about 1 % of a core.
+
+**What Apple's glass is made of** (read from a live `NSGlassEffectView` with a class dumper): a SwiftUI-hosted tree
+whose working part is one `CABackdropLayer` (`windowServerAware = 1`, `scale = 0.5`) carrying a single
+`glassBackground` `CAFilter` — inner refraction −60 over 20 pt, blur radius 10 (clear) or 4 (regular), a face colour
+matrix (white 0.8 / black 0.05, fill white α 0.05 for clear; 0.6 / 0.2, black α 0.35 for regular) — with a
+`CASDFLayer` named `@0` supplying the shape as a signed-distance field through `inputSourceSublayerName`. No
+aberration anywhere in the stock material.
+
+**The tuning.** The helper finds that backdrop layer and rewrites its filter — on a mutable copy, because
+CoreAnimation skips the commit when the array holds the same object — blur 0, face opacity 0, `scale` 1, inner
+refraction from `Lens` (soft −40 / 16 pt, default −60 / 20 pt, strong −100 / 28 pt). Then it appends
+`chromaticAberrationMap` filters, four per level, one per edge, each with an `inputOffset` that pulls red toward the
+centre and blue away along that edge's axis; their masks are live `CAShapeLayer` sublayers of the backdrop (again
+`inputSourceSublayerName`), a ring of the rounded rectangle split into edge strips, so they resize with the window
+without re-rendering an image. `Aberration` maps to offset and band width: off, 0.8 pt over 8 pt, 1.5 pt over 12 pt,
+2.5 pt over 16 pt in two bands.
+
+**Measured** (ScreenCaptureKit display captures of a random-column pattern behind a transparent stand-in window,
+with and without the glass; numbers in 2× pixels, the pattern's column contrast is 73):
+
+| configuration | body | rim band |
+|---|---|---|
+| stock clear glass (blur 10, scale 0.5) | contrast 73 → 4.5 | — |
+| blur 0, face 0, scale 1, refraction 0 | mean abs diff 0.00 | 0.00 |
+| + inner refraction −60 / 20 pt | 0.00 | bent over 0–40 px (= 20 pt), untouched beyond |
+| + inner refraction −140 / 40 pt | 0.00 | bent over 0–80 px |
+| + `chromaticAberration` 3 pt | red shifted −6 px, blue +6 px, green 0 | same |
+| slab under a transparent window (helper, A/B) | contrast 72.2 / 72.2 | 20 pt band contrast 71.5 → 54.1, mean unchanged |
+
+Also learned, and why the design is what it is: the map filters (`displacementMap`, `chromaticAberrationMap`) treat
+their mask as a threshold at 0.5 — an alpha ramp gave a hard step at half width, not a gradient — so smooth rim
+aberration is not available and the bands are hard-edged; `glassForeground`, the filter that does carry
+`inputAberrationAmount`, produces black or nothing wherever it is placed, so Apple's own aberration path is not
+usable from outside; and Apple's backdrop samples at half resolution, which alone drops the pattern's contrast from
+73 to 40 until `scale` is 1.
+
+**Limits.** Up to one frame of lag on a fast drag (the frame is polled, not shared); fullscreen windows are skipped
+(nothing behind them, no rim on screen); the filter keys are undocumented and may change — the helper then exits with
+status 3 and the window falls back to `none`. The compositor's per-frame cost is only paid while something behind the
+window moves, exactly as for Apple's own glass.
+
 ## 6. Performance
 
 **Method:** `scripts/perf.mjs` connects over CDP (`--remote-debugging-port`, default 9334) and runs
@@ -840,7 +900,7 @@ is what the fallback produces.
 
 | Optic | Real | Simulated / approximated |
 |---|---|---|
-| 1. Lensing | `feDisplacementMap` genuinely bends backdrop pixels | Static, low-res, shape-generic map per class, not per-frame Metal geometry; bends only in-page content — refracting what's actually behind the window (desktop, other windows, video) is impossible from CSS, not a gap to close (§9) |
+| 1. Lensing | `feDisplacementMap` genuinely bends backdrop pixels | Static, low-res, shape-generic map per class, not per-frame Metal geometry; bends only in-page content — refracting what's actually behind the window (desktop, other windows, video) is impossible from CSS, not a gap to close (§9) — except through the 1.2.0 window slab on macOS 26 (§5.2), where the window's own rim bends what is actually behind the window via the OS compositor |
 | 2. Specular highlight | Rendered conic-gradient hairline per elevation, plus the curvature light the filter computes from the map's normals | Fixed 225° light; no device-motion response (impossible — no accelerometer) |
 | 3. Thickness | The lens bending and dispersing what is behind each rim; a drawn rim hairline | No drop shadows anywhere in 1.2.0; no content-aware shadow opacity; no elevation cue where the lens cannot reach |
 | 4. Vibrancy | Real alpha compositing of label tiers | No per-instance light/dark flip; one fixed direction per theme |

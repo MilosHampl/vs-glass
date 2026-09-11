@@ -43,6 +43,10 @@ VSCODE_APP_PATH="$PRISTINE" bash "$REPO/scripts/inject.sh" uninstall
 [ "$(shasum -a 256 "$CSS" | cut -d' ' -f1)" = "$before" ] && echo "   ok workbench stylesheet byte-exact after uninstall" || { echo "   FAIL: stylesheet differs after uninstall"; exit 1; }
 say "5. Extension hook assets are in the package"
 grep -q "extension/out/extension.js" "$TMP/vsix-list.txt" && echo "   ok out/extension.js" || { echo "   FAIL: out/extension.js missing from the vsix"; exit 1; }
+grep -q "extension/bin/vs-glass-helper" "$TMP/vsix-list.txt" && echo "   ok bin/vs-glass-helper (window-slab helper)" || { echo "   FAIL: bin/vs-glass-helper missing from the vsix"; exit 1; }
+HELPER="$TMP/profile/ext/miloshampl.vs-glass-$VER/bin/vs-glass-helper"
+chmod +x "$HELPER" 2>/dev/null || true
+[ "$("$HELPER" --version 2>/dev/null)" = "$VER" ] && echo "   ok the installed helper runs and reports $VER" || { echo "   FAIL: the installed helper does not run or reports another version"; exit 1; }
 grep -q "extension/glass/webview-colors.json" "$TMP/vsix-list.txt" && echo "   ok glass/webview-colors.json" || { echo "   FAIL: glass/webview-colors.json missing from the vsix"; exit 1; }
 grep -q "extension/out/patch.js" "$TMP/vsix-list.txt" && echo "   ok out/patch.js" || { echo "   FAIL: out/patch.js missing from the vsix"; exit 1; }
 say "6. The window hook round-trips byte-exact against the pristine app's out/main.js"

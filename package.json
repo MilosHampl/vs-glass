@@ -112,6 +112,8 @@
         "vsGlass.windowMaterial": {
           "type": "string",
           "enum": [
+            "auto",
+            "liquid-glass",
             "none",
             "hud",
             "fullscreen-ui",
@@ -133,9 +135,9 @@
             "medium-light",
             "ultra-dark"
           ],
-          "default": "hud",
+          "default": "auto",
           "order": 2,
-          "markdownDescription": "What the OS puts behind the see-through window. `none` is the clearest possible: no material at all, so the desktop shows through unblurred and untinted — pair it with a low `#vsGlass.density#` for crystal glass, and raise the density if text gets hard to read over a busy wallpaper. Every other value is a macOS vibrancy material, which blurs and tints what is behind: `hud` and `fullscreen-ui` let the most through, `menu`, `popover` and `sidebar` are medium frosted, `under-window` is the heavy, near-opaque one other transparency extensions default to, `light` and `medium-light` are bright frosted (pair them with Glass Regular Light), `dark` and `ultra-dark` the classic vibrant-dark ones. Switches live."
+          "markdownDescription": "What the OS puts behind the see-through window. `auto` (default) is `liquid-glass` where the OS can do it and `hud` elsewhere. `liquid-glass` (macOS 26 or newer) makes the window itself a plane of the system's Liquid Glass: a small helper process keeps a real glass slab directly under the window, so whatever is live behind it — other windows, video, the desktop — is refracted at the rim and colour-split, like the rims inside; the body is a pixel-exact pass-through and the rim follows `#vsGlass.lens#` and `#vsGlass.aberration#`. `none` is the clearest flat option: no material at all, so the desktop shows through unblurred and untinted — pair it with a low `#vsGlass.density#` for crystal glass, and raise the density if text gets hard to read over a busy wallpaper. Every other value is a macOS vibrancy material, which blurs and tints what is behind: `hud` and `fullscreen-ui` let the most through, `menu`, `popover` and `sidebar` are medium frosted, `under-window` is the heavy, near-opaque one other transparency extensions default to, `light` and `medium-light` are bright frosted (pair them with Glass Regular Light), `dark` and `ultra-dark` the classic vibrant-dark ones. Switches live."
         },
         "vsGlass.density": {
           "type": "number",

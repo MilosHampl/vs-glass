@@ -34,6 +34,25 @@ does not checksum). The hook:
 So after one quit-and-reopen, Density, Tint, Material, Lens and Aberration change the window as you type in
 Settings. `VS Glass: Remove` restores `main.js` byte-exact from its backup and deletes the folder.
 
+### The window itself as glass (macOS 26)
+
+Everything above bends what is *inside* the window: a `backdrop-filter` can only sample its own page, never the
+windows or video behind it — the compositor draws those later. On macOS 26 the OS's own Liquid Glass can, so VS Glass
+ships a second, tiny piece: `bin/vs-glass-helper` (a 300 KB native process) keeps a real Liquid Glass window —
+transparent, click-through, shadowless — directly under every VS Code window, ordered just below it and tracked from
+the window list (120 Hz while the window moves, 20 Hz at rest, at once when an app is activated). Its CoreAnimation
+backdrop is tuned so the body is a pixel-exact pass-through and only the rim refracts and colour-splits: other
+windows, video and the desktop bend under the window's edge the way the workbench bends under the in-window rims.
+Nothing is screen-captured; the compositor does it. `Lens` and `Aberration` retune the slab as well.
+
+It is a separate process because VS Code's main process runs with library validation, so no extension can load
+native code into it. It exits with VS Code, and whenever Window Material is anything else; `VS Glass: Remove` stops
+it. Limits: macOS 26 or newer (elsewhere `auto` resolves to `hud`); the slab follows a fast drag with up to a frame
+of lag; fullscreen windows are skipped; the rim's aberration comes in hard-edged bands because the OS thresholds its
+masks. The tuning uses CoreAnimation's undocumented filter keys — the same ones AppKit sets — so if a future macOS
+drops them the helper exits and the window stays see-through with no material. DESIGN.md §5.2 has the anatomy and
+the measurements.
+
 ## Settings
 
 Everything is a normal VS Code setting (⌘, then search **VS Glass**). Every change applies live.
@@ -42,7 +61,7 @@ Everything is a normal VS Code setting (⌘, then search **VS Glass**). Every ch
 |---|---|
 | **Effects** | The glass effects and, on macOS, the see-through window. Off restores plain VS Code (the hook is removed on the next Apply). |
 | **Window Transparency** | `auto` (macOS: on), `on`, `off`. |
-| **Window Material** | `none` is the clearest: no material at all, so the desktop shows through unblurred and untinted. Everything else is a macOS material the OS blends with the desktop behind the window. Since the workbench paints almost nothing of its own, this sets how much desktop you see. `hud` (default) and `fullscreen-ui` let the most through; `menu`, `popover`, `sidebar` are medium frosted; `under-window` is the heavy, near-opaque one other transparency extensions default to; `light` / `medium-light` are bright frosted (pair with Glass Regular Light); `dark` / `ultra-dark` the classic vibrant-dark ones. 19 in all, switchable live. |
+| **Window Material** | `auto` (default) is `liquid-glass` where the OS can do it and `hud` elsewhere. `liquid-glass` (macOS 26 or newer) makes the window itself a plane of the system's Liquid Glass — see [The window itself as glass](#the-window-itself-as-glass-macos-26). `none` is the clearest flat option: no material at all, so the desktop shows through unblurred and untinted. Everything else is a macOS material the OS blends with the desktop behind the window. Since the workbench paints almost nothing of its own, this sets how much desktop you see. `hud` (default) and `fullscreen-ui` let the most through; `menu`, `popover`, `sidebar` are medium frosted; `under-window` is the heavy, near-opaque one other transparency extensions default to; `light` / `medium-light` are bright frosted (pair with Glass Regular Light); `dark` / `ultra-dark` the classic vibrant-dark ones. 19 in all, switchable live. |
 | **Density** (0 to 200) | How frosted the base planes are (window film, editor, side bar, panel, bars). 0 is absolutely clear: only rims, lensing and text. 100 is the tuned default (about 7 %). 200 is opaque. |
 | **Widget Density** (0 to 200) | The body of floating widgets (command palette, hovers, suggestions, notifications, dialogs, modal editors such as Settings). Separate from Density, with a readable floor, so modals stay legible while the base window goes clear. |
 | **Tint** | `none` (colourless, default) or a thin coloured film: `graphite`, `blue`, `indigo`, `violet`, `teal`, `mint`, `rose`, `amber`. |
@@ -201,7 +220,7 @@ Materials). Layer 1 = the color theme; Layer 2 = the injected CSS.
 
 | # | Optic | Status | Layer | Notes |
 |---|---|---|---|---|
-| 1 | Lensing / refraction | Reproduced | 2 | SVG `feDisplacementMap` in `backdrop-filter`: frosted body, clear rim, chromatic aberration; `lens`/`aberration` settings retune the strength. Reads wherever glass overlaps in-page content — every widget over code, pills, buttons, card rims over the editor seam — and, in wallpaper mode, the neutral smoke behind every card. Refracting what's actually behind the window (the desktop, another window, a playing video) is impossible from CSS; see the limitations note below. |
+| 1 | Lensing / refraction | Reproduced | 2 | SVG `feDisplacementMap` in `backdrop-filter`: frosted body, clear rim, chromatic aberration; `lens`/`aberration` settings retune the strength. Reads wherever glass overlaps in-page content — every widget over code, pills, buttons, card rims over the editor seam — and, in wallpaper mode, the neutral smoke behind every card. Refracting what's actually behind the window (the desktop, another window, a playing video) is impossible from CSS; see the limitations note below. With `liquid-glass` (macOS 26) the window's own rim refracts what is genuinely behind the window — other apps, video, the desktop — through the OS compositor. |
 | 2 | Specular edge highlight | Reproduced | 2 | A masked `conic-gradient` hairline from a fixed virtual light, plus the curvature light each lens filter computes from its own displacement map and composites onto the refracted rim. Static: Apple's moves with device motion. |
 | 3 | Material thickness | Approximated | 2 | A rim hairline and, above all, the optic: the rim bends and disperses what is behind it. No drop shadows anywhere (1.2.0). Not content-aware the way Apple's is. |
 | 4 | Vibrancy | Approximated | 1 + 2 | Four alpha label tiers plus `saturate()` and `mix-blend-mode: plus-lighter` on chrome text. No true per-pixel colour sampling of what's behind each glyph. |

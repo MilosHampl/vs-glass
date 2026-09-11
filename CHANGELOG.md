@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `vsGlass.windowMaterial: "liquid-glass"` (macOS 26 or newer) and the new default `auto` (Liquid Glass where the OS
+  can do it, `hud` elsewhere): the window itself becomes a plane of the system's Liquid Glass. A small helper process,
+  `bin/vs-glass-helper`, keeps a real glass window directly under every VS Code window, tuned so its body is a
+  pixel-exact pass-through and only the rim refracts and colour-splits — other windows, video and the desktop bend
+  under the window's edge, live, with nothing screen-captured. `Lens` and `Aberration` retune it; any other material,
+  `VS Glass: Remove` and quitting VS Code stop it. Measured on a stand-in window: body difference 0.00, the rim bent
+  over exactly the configured width, red/blue split by exactly the configured offset (DESIGN.md §5.2).
 - `vsGlass.windowMaterial: "none"` — no vibrancy view at all, so the transparent window shows the desktop unblurred
   and untinted. With a low density this is as see-through as a window can get; raise the density if text gets hard to
   read over a busy wallpaper.
