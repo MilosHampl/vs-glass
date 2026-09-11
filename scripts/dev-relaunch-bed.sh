@@ -11,6 +11,7 @@ case $PORT in
   9339) APP=/Users/miloshampl/Repos/personal/vs-glass/scratch/VSCode-fresh.app/Contents/Resources/app/bin/code; ARGS=(--user-data-dir /tmp/vsg-shots --extensions-dir /tmp/vsg-shots-ext) ;;  # screenshot bed: never a review window
   9340) APP=/Users/miloshampl/Repos/personal/vs-glass/scratch/VSCode-fresh.app/Contents/Resources/app/bin/code; ARGS=(--user-data-dir /tmp/vsg-review --extensions-dir /tmp/vsg-review-ext) ;;  # fresh review window
   9341) APP=/Users/miloshampl/Repos/personal/vs-glass/scratch/VSCode-fresh.app/Contents/Resources/app/bin/code; ARGS=(--user-data-dir /tmp/vsg-fb --extensions-dir /tmp/vsg-fb-ext) ;;  # feedback window
+  9342) APP=/Users/miloshampl/Repos/personal/vs-glass/scratch/VSCode-fresh.app/Contents/Resources/app/bin/code; ARGS=(--user-data-dir /tmp/vsg-fb2 --extensions-dir /tmp/vsg-fb2-ext) ;;  # feedback window 2
   *) echo "unknown port"; exit 1 ;;
 esac
 PID=$(ps -axo pid,command | grep -E "remote-debugging-port=$PORT" | grep -v grep | grep -v Helper | awk '{print $1}' | head -1)

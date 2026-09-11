@@ -200,7 +200,7 @@ function lensVars(p: Palette, lensMul = 1, aberrationMul = 1, idSuffix = ''): { 
       : makeMap(cls, e.lensEdge * lensMul * cls.rim);
     const id = `vsg-lens-${p.id}-${cls.name}${idSuffix}`;
     const blur = cls.blur ?? (cls.convex ? 0 : cls.name === 'widget' || cls.name === 'menu' ? e.blurWidget : cls.name === 'strip' ? Math.min(e.blur, 12) : e.blur);
-    const markup = filterSvg(id, cls, uri, e.lensScale * lensMul * (cls.disp ?? cls.rim), blur, e.aberration * aberrationMul * (cls.disp ?? cls.rim));
+    const markup = filterSvg(id, cls, uri, e.lensScale * lensMul * (cls.disp ?? cls.rim), blur, e.aberration * aberrationMul * (cls.abr ?? cls.disp ?? cls.rim));
     filtersSvg.push(markup);
     vars[`--vsg-lens-${cls.name}`] = filterDataUrl(markup, id);
   }

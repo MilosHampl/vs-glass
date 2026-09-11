@@ -40,6 +40,10 @@ export interface LensClass {
   disp?: number;
   /** false = the filter draws no light at all: no curvature specular, no edge lift, only warp + chromatic fringe */
   spec?: boolean;
+  /** extra bend where two edges meet: displacement × (1 + cornerBoost × cornerness), so the corners magnify hardest */
+  cornerBoost?: number;
+  /** chromatic-aberration multiplier, independent of `disp` (more dispersion without more displacement) */
+  abr?: number;
   /** override the frost blur (px) for this class; 0 = clear glass (never blur UI text under a window-edge strip) */
   blur?: number;
   /** corner radius (CSS px at the representative size) — the rim follows a rounded-rect SDF, so corners bend radially */
@@ -61,7 +65,7 @@ export const LENS_CLASSES: LensClass[] = [
   // through the middle, bending hard toward the rim, the section of a thick lens rather than a cone. Displacement is
   // 2× (slope 2.9·28/120 = 0.68, inside the folding limit) and the chromatic fringe scales with it, so the shape and
   // the depth come from the optic alone: the filter draws no light of its own (`spec: false`).
-  { name: 'slider', w: 110, h: 240, mw: 40, mh: 88, axes: 'xy', rim: 1, radius: 9, blur: 0, edgePx: 120, power: 0, disp: 2, spec: false },
+  { name: 'slider', w: 110, h: 240, mw: 40, mh: 88, axes: 'xy', rim: 1, radius: 18, blur: 0, edgePx: 140, power: 0, disp: 1.9, cornerBoost: 0.4, abr: 2.8, spec: false },
   // window-edge strips: the slab's top/bottom rim bends what sits just inside the window edge (title bar, status bar,
   // the last code lines). One-sided, clear (no frost), so UI text is bent a little but never blurred.
   { name: 'edge-top', w: 1400, h: 40, mw: 64, mh: 40, axes: 'y', rim: 0.6, sides: { top: true }, blur: 0 },
@@ -99,17 +103,22 @@ export function makeMap(cls: LensClass, edgePx: number, power = 0): { uri: strin
       let px: number, py: number;
       const rad = cls.radius ?? 0;
       const nearX = Math.min(dl, dr), nearY = Math.min(dt, db);
+      // "cornerness": 1 where both axes are at an edge (a corner), 0 along the middle of a side. A boost here makes the
+      // corners the strongest part of the lens, the way a real curved slab wraps light hardest where it turns twice.
+      const corner = cls.cornerBoost
+        ? 1 + cls.cornerBoost * Math.max(0, 1 - nearX / edgePx) * Math.max(0, 1 - nearY / edgePx)
+        : 1;
       if (rad > 0 && !cls.sides && nearX < rad && nearY < rad) {
         // inside a corner: distance and direction from the rounded-rect SDF (radial around the corner centre)
         const qx = rad - nearX, qy = rad - nearY;           // offset from the corner circle's centre
         const len = Math.hypot(qx, qy) || 1;
         const dist = rad - len;                             // distance to the curved edge (negative outside the arc)
         const pr = profile(Math.max(0, dist), edgePx, power);
-        px = pr * (qx / len) * (dl < dr ? 1 : -1);          // toward the corner centre (i.e. toward the surface centre)
-        py = pr * (qy / len) * (dt < db ? 1 : -1);
+        px = pr * corner * (qx / len) * (dl < dr ? 1 : -1); // toward the corner centre (i.e. toward the surface centre)
+        py = pr * corner * (qy / len) * (dt < db ? 1 : -1);
       } else {
-        px = profile(nearX, edgePx, power) * (dl < dr ? 1 : -1); // toward centre
-        py = profile(nearY, edgePx, power) * (dt < db ? 1 : -1);
+        px = profile(nearX, edgePx, power) * corner * (dl < dr ? 1 : -1); // toward centre
+        py = profile(nearY, edgePx, power) * corner * (dt < db ? 1 : -1);
       }
       const i = (y * mw + x) * 4;
       // rim weight (0 centre → 1 edge). Steep: the displaced copy fully replaces the frosted body wherever the

@@ -532,17 +532,23 @@
 }
 @G .monaco-editor .minimap-slider,
 @G .monaco-editor .minimap-slider-horizontal {
-  background: transparent !important;
-  border: none !important;
-  border-radius: var(--vsg-radius-control);
+  border: 1px solid transparent !important;
+  border-radius: var(--vsg-radius-widget);
   box-shadow: none !important;
+  background:
+    linear-gradient(rgba(var(--vsg-spec-rgb), 0.01), rgba(var(--vsg-spec-rgb), 0.01)) padding-box,
+    var(--vsg-edge-control) border-box !important;
   -webkit-backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
   backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
   transition: background-color var(--vsg-motion-fast) var(--vsg-ease);
 }
 /* no hover or drag colour: the slab is the same piece of glass at rest and in motion — only what it bends changes */
 @G .monaco-editor .minimap-slider:hover,
-@G .monaco-editor .minimap-slider.active { background: transparent !important; }
+@G .monaco-editor .minimap-slider.active {
+  background:
+    linear-gradient(rgba(var(--vsg-spec-rgb), 0.01), rgba(var(--vsg-spec-rgb), 0.01)) padding-box,
+    var(--vsg-edge-control) border-box !important;
+}
 /* VS Code's own hard shadow where the minimap meets the code has no place on a see-through plane */
 @G .monaco-editor .minimap-shadow-visible { box-shadow: none !important; }
 
@@ -724,6 +730,31 @@
     var(--vsg-edge-widget) border-box !important;
 }
 @G .monaco-button.monaco-text-button:hover { filter: none; }
+/* spacing and geometry: every button is the same capsule with the same breathing room, and the dropdown variant is
+   one capsule with a divider rather than two pills side by side */
+@G .monaco-button.monaco-text-button {
+  padding: 5px 16px !important;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+@G .monaco-dialog-box .dialog-buttons-row .dialog-buttons { gap: 8px; }
+@G .notification-toast .monaco-button,
+@G .notifications-center .monaco-button { margin-left: 8px; }
+@G .monaco-button-dropdown {
+  border-radius: var(--vsg-radius-pill) !important;
+  overflow: hidden;
+  gap: 0;
+}
+@G .monaco-button-dropdown > .monaco-button.monaco-text-button {
+  border-radius: 0 !important;
+  border-right: none !important;
+  background: linear-gradient(color-mix(in srgb, var(--vsg-accent) 52%, transparent), color-mix(in srgb, var(--vsg-accent) 52%, transparent)) padding-box,
+    var(--vsg-edge-widget) border-box !important;
+}
+@G .monaco-button-dropdown > .monaco-dropdown-button {
+  border-radius: 0 !important;
+  border-left: 1px solid rgba(var(--vsg-shadow-rgb), 0.18) !important;
+  padding: 5px 10px !important;
+}
 @G .monaco-button.monaco-text-button:active { transform: scale(0.97); }
 @G .monaco-button.monaco-text-button:focus-visible {
   outline: none !important;
