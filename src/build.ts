@@ -195,10 +195,12 @@ function lensVars(p: Palette, lensMul = 1, aberrationMul = 1, idSuffix = ''): { 
   for (const cls of LENS_CLASSES) {
     if (e.lensScale <= 0) { vars[`--vsg-lens-${cls.name}`] = 'none'; continue; }
     // convex capsules: the rim IS the whole shape (edge = radius), gentler ramp, no frost
-    const { uri } = cls.convex ? makeMap(cls, Math.min(cls.w, cls.h) / 2, 1.3) : makeMap(cls, e.lensEdge * lensMul * cls.rim);
+    const { uri } = cls.edgePx !== undefined ? makeMap(cls, cls.edgePx * lensMul, cls.power ?? 0)
+      : cls.convex ? makeMap(cls, Math.min(cls.w, cls.h) / 2, 1.3)
+      : makeMap(cls, e.lensEdge * lensMul * cls.rim);
     const id = `vsg-lens-${p.id}-${cls.name}${idSuffix}`;
     const blur = cls.blur ?? (cls.convex ? 0 : cls.name === 'widget' || cls.name === 'menu' ? e.blurWidget : cls.name === 'strip' ? Math.min(e.blur, 12) : e.blur);
-    const markup = filterSvg(id, cls, uri, e.lensScale * lensMul * cls.rim, blur, e.aberration * aberrationMul * cls.rim);
+    const markup = filterSvg(id, cls, uri, e.lensScale * lensMul * (cls.disp ?? cls.rim), blur, e.aberration * aberrationMul * (cls.disp ?? cls.rim));
     filtersSvg.push(markup);
     vars[`--vsg-lens-${cls.name}`] = filterDataUrl(markup, id);
   }

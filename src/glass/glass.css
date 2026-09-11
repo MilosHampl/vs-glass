@@ -71,6 +71,14 @@
   --vsg-thickness-widget: none;
   --vsg-ring-chrome: var(--vsg-edge-chrome);
   --vsg-ring-widget: var(--vsg-edge-widget);
+  /* controls carry the same edge at their own scale */
+  --vsg-edge-control: linear-gradient(147deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-hi)) 0%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)) 20%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)) 45%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)) 58%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)) 82%,
+    rgba(var(--vsg-spec-rgb), calc(var(--vsg-raised-spec-hi) * 0.7)) 100%);
 }
 
 /* ---------- 1b. Layer-1 paints that would cover the planes ----------
@@ -148,8 +156,11 @@
 @G .part.editor .tabs-container .tab.active,
 @G .part.panel .composite.title .action-item.checked .action-label,
 @G .part.panel .composite.title .action-item.checked {
-  background: rgba(var(--vsg-spec-rgb), 0.10) !important;
-  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.14);
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(rgba(var(--vsg-spec-rgb), 0.10), rgba(var(--vsg-spec-rgb), 0.10)) padding-box,
+    var(--vsg-edge-control) border-box !important;
+  box-shadow: none;
 }
 @G .part.panel .composite.title .action-item.checked .action-label { border-radius: var(--vsg-radius-control) !important; }
 /* form controls carry the control radius and a hairline, never a darker well */
@@ -157,8 +168,12 @@
 @G .monaco-select-box,
 @G .settings-editor .setting-item-control select,
 @G .monaco-custom-toggle {
+  border: 1px solid transparent !important;
   border-radius: var(--vsg-radius-control) !important;
-  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.10);
+  box-shadow: none;
+  background:
+    linear-gradient(rgba(var(--vsg-spec-rgb), 0.06), rgba(var(--vsg-spec-rgb), 0.06)) padding-box,
+    var(--vsg-edge-control) border-box !important;
 }
 @G .monaco-custom-toggle { border-radius: var(--vsg-radius-inner) !important; }
 /* diff decorations: a 1 px accent at the left edge carries the meaning; the fill stays a film */
@@ -329,7 +344,15 @@
    Monaco's own backgrounds go fully transparent so only the card paints the plane (no double compositing). */
 @G.floating-panels .part.editor > .content {
   background: linear-gradient(var(--vsg-tint-film-soft), var(--vsg-tint-film-soft)), var(--vsg-plane-content) !important;
-  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
+  box-shadow: none;
+}
+@G.floating-panels .part.editor > .content::before {
+  content: "";
+  position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  background: var(--vsg-edge-chrome);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+  pointer-events: none; z-index: 50;
 }
 @G .part.editor .monaco-editor,
 @G .part.editor .monaco-editor .monaco-editor-background,
@@ -503,21 +526,22 @@
    whole presence is the warp and the colour fringe it puts on the code lines under it. Anything painted on top of
    that read as odd — a framed rectangle sliding over the overview. */
 @G {
-  --vscode-minimapSlider-background: rgba(var(--vsg-spec-rgb), 0.05);
-  --vscode-minimapSlider-hoverBackground: rgba(var(--vsg-spec-rgb), 0.08);
-  --vscode-minimapSlider-activeBackground: rgba(var(--vsg-spec-rgb), 0.11);
+  --vscode-minimapSlider-background: transparent;
+  --vscode-minimapSlider-hoverBackground: rgba(var(--vsg-spec-rgb), 0.03);
+  --vscode-minimapSlider-activeBackground: rgba(var(--vsg-spec-rgb), 0.05);
 }
 @G .monaco-editor .minimap-slider,
 @G .monaco-editor .minimap-slider-horizontal {
-  background: rgba(var(--vsg-spec-rgb), 0.05) !important;
+  background: transparent !important;
+  border: none !important;
   border-radius: var(--vsg-radius-control);
   box-shadow: none !important;
-  -webkit-backdrop-filter: var(--vsg-lens-slider) saturate(1.25) brightness(1.04);
-  backdrop-filter: var(--vsg-lens-slider) saturate(1.25) brightness(1.04);
+  -webkit-backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
+  backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
   transition: background-color var(--vsg-motion-fast) var(--vsg-ease);
 }
-@G .monaco-editor .minimap-slider:hover { background: rgba(var(--vsg-spec-rgb), 0.08) !important; }
-@G .monaco-editor .minimap-slider.active { background: rgba(var(--vsg-spec-rgb), 0.11) !important; }
+@G .monaco-editor .minimap-slider:hover { background: rgba(var(--vsg-spec-rgb), 0.03) !important; }
+@G .monaco-editor .minimap-slider.active { background: rgba(var(--vsg-spec-rgb), 0.05) !important; }
 /* VS Code's own hard shadow where the minimap meets the code has no place on a see-through plane */
 @G .monaco-editor .minimap-shadow-visible { box-shadow: none !important; }
 
@@ -533,16 +557,17 @@
 }
 @G .monaco-scrollable-element > .shadow { display: none !important; }
 @G .monaco-scrollable-element > .scrollbar > .slider {
-  background: rgba(var(--vsg-spec-rgb), 0.08) !important;
+  background: rgba(var(--vsg-spec-rgb), 0.05) !important;
   border-radius: var(--vsg-radius-pill);
   box-shadow: none !important;
 }
-@G .monaco-scrollable-element > .scrollbar > .slider:hover { background: rgba(var(--vsg-spec-rgb), 0.12) !important; }
-@G .monaco-scrollable-element > .scrollbar > .slider.active { background: rgba(var(--vsg-spec-rgb), 0.16) !important; }
+@G .monaco-editor > .overflow-guard > .monaco-scrollable-element > .scrollbar > .slider { background: transparent !important; }
+@G .monaco-scrollable-element > .scrollbar > .slider:hover { background: rgba(var(--vsg-spec-rgb), 0.08) !important; }
+@G .monaco-scrollable-element > .scrollbar > .slider.active { background: rgba(var(--vsg-spec-rgb), 0.11) !important; }
 /* the lens only where the scrollbar really overlaps code (the editor's own scrollable element), never inside lists */
 @G .monaco-editor > .overflow-guard > .monaco-scrollable-element > .scrollbar > .slider {
-  -webkit-backdrop-filter: var(--vsg-lens-slider) saturate(1.2);
-  backdrop-filter: var(--vsg-lens-slider) saturate(1.2);
+  -webkit-backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
+  backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
 }
 
 /* ---------- 6. Concentric inner geometry ---------- */
@@ -764,6 +789,10 @@
 @G .part.statusbar .statusbar-item.error-kind > a,
 @G .part.statusbar .statusbar-item.warning-kind > a,
 @G .part.statusbar .statusbar-item.prominent-kind > a {
-  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.22);
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(rgba(var(--vsg-spec-rgb), 0.10), rgba(var(--vsg-spec-rgb), 0.10)) padding-box,
+    var(--vsg-edge-control) border-box !important;
+  box-shadow: none;
   border-radius: var(--vsg-radius-control) !important;
 }

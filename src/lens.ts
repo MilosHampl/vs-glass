@@ -32,6 +32,14 @@ export interface LensClass {
   convex?: boolean;
   /** which edges lens (default: all). One-sided classes are for window-edge strips that only bend inward. */
   sides?: { top?: boolean; bottom?: boolean; left?: boolean; right?: boolean };
+  /** explicit edge-zone width in CSS px (overrides the palette's lensEdge × rim) — a whole-surface dome needs one */
+  edgePx?: number;
+  /** profile exponent for the edge zone: 0 = circular bevel (edge-curved slab), >0 = a power ramp (1 ≈ smooth dome) */
+  power?: number;
+  /** displacement multiplier, independent of `rim`, so a class can bend far over a wide zone (magnifier) */
+  disp?: number;
+  /** false = the filter draws no light at all: no curvature specular, no edge lift, only warp + chromatic fringe */
+  spec?: boolean;
   /** override the frost blur (px) for this class; 0 = clear glass (never blur UI text under a window-edge strip) */
   blur?: number;
   /** corner radius (CSS px at the representative size) — the rim follows a rounded-rect SDF, so corners bend radially */
@@ -48,7 +56,11 @@ export const LENS_CLASSES: LensClass[] = [
   { name: 'capsule', w: 32, h: 32, mw: 32, mh: 32, axes: 'xy', rim: 0.6, convex: true }, // icon-only pills (activity/status items) — never under text
   // the minimap's viewport slider: a thick, clear (blur 0) slab of glass with a wide curved edge, dragged over the file
   // overview. It is the one place where glass slides over rendered content, so the bend must read as a lens, not a tint.
-  { name: 'slider', w: 110, h: 240, mw: 28, mh: 60, axes: 'xy', rim: 1, radius: 9, blur: 0 },
+  // the minimap's viewport slider and the editor scrollbar: a magnifying slab. The edge zone is half the nominal
+  // height, so the WHOLE surface is inside the curve (a dome, not a rimmed pane), the displacement is 1.7× to keep the
+  // bend visible over that distance (slope 2.9·23.8/120 = 0.58, inside the folding limit), and the filter draws no
+  // light of its own — the owner wants warp and chromatic fringe only.
+  { name: 'slider', w: 110, h: 240, mw: 36, mh: 78, axes: 'xy', rim: 1, radius: 9, blur: 0, edgePx: 120, power: 1, disp: 1.7, spec: false },
   // window-edge strips: the slab's top/bottom rim bends what sits just inside the window edge (title bar, status bar,
   // the last code lines). One-sided, clear (no frost), so UI text is bent a little but never blurred.
   { name: 'edge-top', w: 1400, h: 40, mw: 64, mh: 40, axes: 'y', rim: 0.6, sides: { top: true }, blur: 0 },
@@ -119,6 +131,7 @@ export function makeMap(cls: LensClass, edgePx: number, power = 0): { uri: strin
  * keeps the y displacement equal in px).
  */
 export function filterSvg(id: string, cls: LensClass, mapUri: string, displacePx: number, blurPx: number, aberrationPx = 0): string {
+  const lit = cls.spec !== false; // false → no curvature specular and no edge lift: warp + fringe only
   const denom = Math.max(1, cls.axes === 'y' ? cls.h : cls.w);
   const scale = displacePx / denom;
   const ab = aberrationPx / denom;
@@ -148,14 +161,16 @@ export function filterSvg(id: string, cls: LensClass, mapUri: string, displacePx
     ]),
     `<feGaussianBlur in='lens' stdDeviation='${sx} ${sy}' result='lensSoft'/>`,
     // light concentrates at the edge: a small lift only (a strong lift reads as a bright wash on a transparent page)
-    `<feComponentTransfer in='lensSoft' result='lensLit'><feFuncR type='linear' slope='1.05' intercept='0.006'/><feFuncG type='linear' slope='1.05' intercept='0.006'/><feFuncB type='linear' slope='1.05' intercept='0.009'/></feComponentTransfer>`,
+    ...(lit ? [`<feComponentTransfer in='lensSoft' result='lensLit'><feFuncR type='linear' slope='1.05' intercept='0.006'/><feFuncG type='linear' slope='1.05' intercept='0.006'/><feFuncB type='linear' slope='1.05' intercept='0.009'/></feComponentTransfer>`] : []),
     // curvature specular: the map's R/G channels are the bend direction (= the surface normal, projected); a light from
     // the top-left lights every part of the rim whose normal tilts toward it — brightest along the top and left arcs,
     // dark along the bottom and right — the way a real curved glass edge catches the room light
-    `<feColorMatrix in='map' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.6 1.6 0 0 -1.6' result='specA'/>`,
-    `<feComponentTransfer in='specA' result='specSoft'><feFuncA type='linear' slope='0.55' intercept='0'/></feComponentTransfer>`,
-    `<feComposite in='specSoft' in2='lensLit' operator='over' result='lensSpec'/>`,
-    `<feComposite in='lensSpec' in2='rimA' operator='in' result='rim'/>`,
+    ...(lit ? [
+      `<feColorMatrix in='map' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.6 1.6 0 0 -1.6' result='specA'/>`,
+      `<feComponentTransfer in='specA' result='specSoft'><feFuncA type='linear' slope='0.55' intercept='0'/></feComponentTransfer>`,
+      `<feComposite in='specSoft' in2='lensLit' operator='over' result='lensSpec'/>`,
+    ] : []),
+    `<feComposite in='${lit ? 'lensSpec' : 'lensSoft'}' in2='rimA' operator='in' result='rim'/>`,
     `<feComposite in='rim' in2='frost' operator='over'/>`,
     `</filter>`,
   ].join('');
