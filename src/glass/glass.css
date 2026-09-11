@@ -394,17 +394,9 @@
 /* no ring on the editor card: its left rim doubled the side bar's right edge into a machined groove at the seam; the
    inset top hairline (box-shadow above) is the editor's only edge light */
 @G .monaco-editor .minimap { background-color: transparent !important; }
-/* legibility shadow: text over a see-through plane gets a soft dark halo (Apple lifts labels off glass the same way);
-   cheap enough that scroll frame times are unchanged (scripts/perf.mjs) */
-@G .part.editor .monaco-editor .view-lines,
-@G .part.editor .monaco-editor .margin-view-overlays .line-numbers,
-@G .part.panel .xterm-rows,
-@G .part.editor .monaco-editor .sticky-widget .sticky-line-content,
-@G .part.editor .tabs-container .tab .label-name,
-@G .breadcrumbs-control .monaco-breadcrumb-item,
-@G .part.sidebar .monaco-list-row .label-name,
-@G .part.auxiliarybar .monaco-list-row .label-name,
-@G .part.statusbar .statusbar-item-label { text-shadow: 0 1px 3px rgba(var(--vsg-shadow-rgb), 0.6); }
+/* Text is flat: no legibility shadow anywhere. A soft halo under code, tabs and labels is the usual trick for text on
+   a see-through plane, and it is what "raised text" looks like — the owner wants none of it. Legibility over a bright
+   desktop is tuned with density and the window material instead. */
 
 /* modal editors (Settings, and anything VS Code opens in its modal editor part) float OVER other editors: they are
    widgets, not base planes — a frosted body and a rim, so nothing underneath bleeds into their text */
@@ -599,6 +591,40 @@
   -webkit-backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
   backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
 }
+
+/* ---------- 5d. Rows in the side bars: the highlight is inset, like the tabs ---------- */
+/* A list row spans the card edge to edge, so its hover/selection block used to run into the card's rounded corner.
+   The row box is left alone (VS Code positions rows absolutely and measures them); the highlight is a pseudo-element
+   inset 6 px from the card edge with a corner concentric to it (card 16 − 4 = 12). */
+@G .part.sidebar .monaco-list-row,
+@G .part.auxiliarybar .monaco-list-row {
+  background: transparent !important;
+  outline-offset: -3px;
+}
+@G .part.sidebar .monaco-list-row::after,
+@G .part.auxiliarybar .monaco-list-row::after {
+  content: "";
+  position: absolute;
+  inset: 0 6px;
+  border-radius: calc(var(--vsg-radius-card) - 4px);
+  pointer-events: none;
+  z-index: -1;
+}
+@G .part.sidebar .monaco-list-row:hover::after,
+@G .part.auxiliarybar .monaco-list-row:hover::after { background: rgba(var(--vsg-spec-rgb), 0.06); }
+@G .part.sidebar .monaco-list-row.selected::after,
+@G .part.auxiliarybar .monaco-list-row.selected::after { background: rgba(var(--vsg-spec-rgb), 0.10); }
+@G .part.sidebar .monaco-list:focus .monaco-list-row.focused::after,
+@G .part.sidebar .monaco-list.element-focused .monaco-list-row.focused::after,
+@G .part.auxiliarybar .monaco-list:focus .monaco-list-row.focused::after,
+@G .part.auxiliarybar .monaco-list.element-focused .monaco-list-row.focused::after {
+  background: color-mix(in srgb, var(--vsg-accent) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--vsg-accent) 45%, transparent);
+}
+@G .part.sidebar .monaco-list .monaco-list-row.focused,
+@G .part.auxiliarybar .monaco-list .monaco-list-row.focused { box-shadow: none !important; }
+/* breadcrumbs: a hovered crumb was a square block under the rounded tab pills */
+@G .breadcrumbs-control .monaco-breadcrumb-item { border-radius: var(--vsg-radius-inner); }
 
 /* ---------- 6. Concentric inner geometry ---------- */
 @G .monaco-list:not(.element-focused) .monaco-list-row,

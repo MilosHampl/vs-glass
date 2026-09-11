@@ -44,6 +44,12 @@ export interface LensClass {
   cornerBoost?: number;
   /** chromatic-aberration multiplier, independent of `disp` (more dispersion without more displacement) */
   abr?: number;
+  /** filter region padding in bounding-box fractions. A backdrop-filter samples only its filter region: displacement
+   *  that reaches past the element pulls transparent black, which paints as a dark fringe at the rim. Padding the
+   *  region gives the lens real pixels to bend from. */
+  pad?: number;
+  /** rim alpha 1 everywhere: the whole surface shows the displaced copy (no mask boundary between bent and unbent) */
+  fullRim?: boolean;
   /** override the frost blur (px) for this class; 0 = clear glass (never blur UI text under a window-edge strip) */
   blur?: number;
   /** corner radius (CSS px at the representative size) — the rim follows a rounded-rect SDF, so corners bend radially */
@@ -65,7 +71,7 @@ export const LENS_CLASSES: LensClass[] = [
   // through the middle, bending hard toward the rim, the section of a thick lens rather than a cone. Displacement is
   // 2× (slope 2.9·28/120 = 0.68, inside the folding limit) and the chromatic fringe scales with it, so the shape and
   // the depth come from the optic alone: the filter draws no light of its own (`spec: false`).
-  { name: 'slider', w: 110, h: 240, mw: 40, mh: 88, axes: 'xy', rim: 1, radius: 18, blur: 0, edgePx: 140, power: 0, disp: 2, cornerBoost: 0.15, abr: 2, spec: false },
+  { name: 'slider', w: 110, h: 240, mw: 40, mh: 88, axes: 'xy', rim: 1, radius: 18, blur: 0, edgePx: 140, power: 0, disp: 2, cornerBoost: 0.15, abr: 2, spec: false, pad: 0.4, fullRim: true },
   // window-edge strips: the slab's top/bottom rim bends what sits just inside the window edge (title bar, status bar,
   // the last code lines). One-sided, clear (no frost), so UI text is bent a little but never blurred.
   { name: 'edge-top', w: 1400, h: 40, mw: 64, mh: 40, axes: 'y', rim: 0.6, sides: { top: true }, blur: 0 },
@@ -125,7 +131,7 @@ export function makeMap(cls: LensClass, edgePx: number, power = 0): { uri: strin
       // displacement is more than a quarter of its maximum, and only fades in the innermost part of the rim, where
       // the displacement is already tiny. A gentle ramp here shows the undisplaced body under the displaced copy
       // (a double image) — review round 3, F3/F4.
-      const rim = cls.convex ? 1 : Math.min(1, Math.hypot(cls.axes === 'y' ? 0 : px, cls.axes === 'x' ? 0 : py) * 4);
+      const rim = cls.convex || cls.fullRim ? 1 : Math.min(1, Math.hypot(cls.axes === 'y' ? 0 : px, cls.axes === 'x' ? 0 : py) * 4);
       data[i] = Math.round(128 + px * ampX * 127);
       data[i + 1] = Math.round(128 + py * ampY * 127);
       data[i + 2] = Math.round(rim * 255);
@@ -147,8 +153,9 @@ export function filterSvg(id: string, cls: LensClass, mapUri: string, displacePx
   const ab = aberrationPx / denom;
   const bx = (blurPx / cls.w).toFixed(5), by = (blurPx / cls.h).toFixed(5);
   const sx = (0.6 / cls.w).toFixed(5), sy = (0.6 / cls.h).toFixed(5); // sub-pixel soften of the rim (anti-alias)
+  const pad = cls.pad ?? 0; // region padding: without it, displacement near the rim samples outside the region (black)
   return [
-    `<filter id='${id}' x='0' y='0' width='1' height='1' filterUnits='objectBoundingBox' primitiveUnits='objectBoundingBox' color-interpolation-filters='sRGB'>`,
+    `<filter id='${id}' x='${-pad}' y='${-pad}' width='${1 + 2 * pad}' height='${1 + 2 * pad}' filterUnits='objectBoundingBox' primitiveUnits='objectBoundingBox' color-interpolation-filters='sRGB'>`,
     `<feImage href='${mapUri}' x='0' y='0' width='1' height='1' preserveAspectRatio='none' result='map'/>`,
     // rim weight: blue channel → alpha
     `<feColorMatrix in='map' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1 0 0' result='rimA'/>`,
