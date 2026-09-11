@@ -453,7 +453,7 @@ export const regularDark = build({
   ladder: { ground: 0.165, groundDeep: 0.11, content: 0.205, chrome: 0.255, raised: 0.295, widget: 0.335, overlay: 0.375 },
   alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.42, widgetGlass: 0.62, content: 0.78, contentTheme: 0.72 },
   labelBoost: 0, wallpaperVividness: 1.6, window: { content: 0.07, chrome: 0.06, widget: 0.78, dim: 0.015 },
-  effects: { blur: 14, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 14, lensEdge: 56, aberration: 1.6, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
+  effects: { blur: 14, blurWidget: 22, saturate: 1.55, brightness: 1.02, contrastBoost: 1.02, lensScale: 14, lensEdge: 56, aberration: 2.1, exaggeration: 0.3, dim: 0, radius, shadowColor: '#03040a', lightAngle: 225, motion },
 });
 
 export const regularLight = build({
@@ -461,7 +461,7 @@ export const regularLight = build({
   ladder: { ground: 0.9, groundDeep: 0.8, content: 0.985, chrome: 0.935, raised: 0.95, widget: 0.97, overlay: 0.985 },
   alphas: { chrome: 0.62, raised: 0.7, widget: 0.94, overlay: 0.96, chromeGlass: 0.55, widgetGlass: 0.74, content: 0.92, contentTheme: 0.8 },
   labelBoost: 0, wallpaperVividness: 1, window: { content: 0.2, chrome: 0.16, widget: 0.78, dim: 0.015 },
-  effects: { blur: 16, blurWidget: 24, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 12, lensEdge: 50, aberration: 1.4, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
+  effects: { blur: 16, blurWidget: 24, saturate: 1.35, brightness: 1.06, contrastBoost: 1.0, lensScale: 12, lensEdge: 50, aberration: 1.9, exaggeration: 0.3, dim: 0, radius, shadowColor: '#2a2f45', lightAngle: 225, motion },
 });
 
 export const clear = build({
@@ -469,7 +469,7 @@ export const clear = build({
   ladder: { ground: 0.15, groundDeep: 0.1, content: 0.19, chrome: 0.235, raised: 0.275, widget: 0.32, overlay: 0.36 },
   alphas: { chrome: 0.34, raised: 0.42, widget: 0.9, overlay: 0.94, chromeGlass: 0.26, widgetGlass: 0.62, content: 0.86, contentTheme: 0.56 },
   labelBoost: 0.1, wallpaperVividness: 1.7, window: { content: 0.035, chrome: 0.03, widget: 0.62, dim: 0 },
-  effects: { blur: 6, blurWidget: 16, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 18, lensEdge: 74, aberration: 2.2, exaggeration: 0.5, dim: 0.42, radius, shadowColor: '#02030a', lightAngle: 225, motion },
+  effects: { blur: 6, blurWidget: 16, saturate: 1.9, brightness: 1.05, contrastBoost: 1.04, lensScale: 18, lensEdge: 74, aberration: 2.9, exaggeration: 0.5, dim: 0.42, radius, shadowColor: '#02030a', lightAngle: 225, motion },
 });
 
 export const opaqueTheme = build({

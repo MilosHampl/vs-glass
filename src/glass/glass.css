@@ -45,30 +45,14 @@
      bevel bands (those read as a bevelled window frame, not as glass), and nothing casts a drop shadow: a shadow under
      a pane of glass reads as a floating window frame, and the owner has now ruled out painted shadows entirely. The
      rim hairline — the liquid-glass border — is what a surface gets, plus whatever its lens bends. */
-  --vsg-thickness-chrome:
-    inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),
-    inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)),
-    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.12);
-  --vsg-thickness-widget:
-    inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)),
-    inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)),
-    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18);
-  --vsg-ring-chrome: conic-gradient(from 300deg at 22% 12%,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 0deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 50deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)) 130deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 200deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 260deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)) 320deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 360deg);
-  --vsg-ring-widget: conic-gradient(from 300deg at 22% 12%,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 0deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 50deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 130deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 200deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 260deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 320deg,
-    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 360deg);
+  /* Borders, not shape-faking. Every rim is ONE even hairline at a single alpha: no brighter top edge, no darker
+     bottom contact, no conic gradient sweeping around the radius. The shape of the glass is told by the optic —
+     the warp and the chromatic fringe at the rim (§4.1) — which is the owner's rule: "leave the borders but do not
+     overexaggerate the glass shape using like shine/gradients/shadows, use the aberration effects for that". */
+  --vsg-thickness-chrome: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
+  --vsg-thickness-widget: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid));
+  --vsg-ring-chrome: rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
+  --vsg-ring-widget: rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid));
 }
 
 /* ---------- 1b. Layer-1 paints that would cover the planes ----------
@@ -147,7 +131,7 @@
 @G .part.panel .composite.title .action-item.checked .action-label,
 @G .part.panel .composite.title .action-item.checked {
   background: rgba(var(--vsg-spec-rgb), 0.10) !important;
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.22);
+  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.14);
 }
 @G .part.panel .composite.title .action-item.checked .action-label { border-radius: var(--vsg-radius-control) !important; }
 /* form controls carry the control radius and a hairline, never a darker well */
@@ -156,7 +140,7 @@
 @G .settings-editor .setting-item-control select,
 @G .monaco-custom-toggle {
   border-radius: var(--vsg-radius-control) !important;
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.10);
+  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.10);
 }
 @G .monaco-custom-toggle { border-radius: var(--vsg-radius-inner) !important; }
 /* diff decorations: a 1 px accent at the left edge carries the meaning; the fill stays a film */
@@ -197,9 +181,7 @@
   border-radius: var(--vsg-radius-window);
   pointer-events: none;
   z-index: 100000;
-  box-shadow:
-    inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)),
-    inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi));
+  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
 }
 
 /* ---------- 3. Strips: title bar, status bar, tab strip ---------- */
@@ -218,7 +200,7 @@
   -webkit-backdrop-filter: var(--vsg-base-filter-strip);
   backdrop-filter: var(--vsg-base-filter-strip);
   border-top: none !important;
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
+  box-shadow: inset 0 1px 0 var(--vsg-hairline);
 }
 @G .part.editor > .content .editor-group-container > .title {
   background: var(--vsg-plane-chrome) !important;
@@ -252,7 +234,7 @@
 @G:not(.floating-panels) .part.auxiliarybar,
 @G:not(.floating-panels) .part.panel,
 @G:not(.floating-panels) .part.activitybar {
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
+  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
 }
 /* the sidebar's own inner surfaces must not paint over the glass */
 @G .part.sidebar > .content,
@@ -298,9 +280,7 @@
 @G.floating-panels:not(.noactivitybar) .part.activitybar.left,
 @G.floating-panels:not(.noactivitybar) .part.sidebar.left {
   /* one pane: no side hairline on the seam edges, shared shadow, identical sheen origin */
-  box-shadow:
-    inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),
-    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.12);
+  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
 }
 @G.floating-panels:not(.noactivitybar) .part.activitybar.left { clip-path: inset(-60px 0 -60px -60px); }
 @G.floating-panels:not(.noactivitybar) .part.sidebar.left { clip-path: inset(-60px -60px -60px 0); }
@@ -326,7 +306,7 @@
    Monaco's own backgrounds go fully transparent so only the card paints the plane (no double compositing). */
 @G.floating-panels .part.editor > .content {
   background: linear-gradient(var(--vsg-tint-film-soft), var(--vsg-tint-film-soft)), var(--vsg-plane-content) !important;
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
+  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
 }
 @G .part.editor .monaco-editor,
 @G .part.editor .monaco-editor .monaco-editor-background,
@@ -611,12 +591,12 @@
 }
 @G .monaco-list.element-focused .monaco-list-row.focused,
 @G .monaco-list .monaco-list-row.selected {
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo));
+  box-shadow: none;
 }
 @G .monaco-list:focus .monaco-list-row.focused,
 @G .monaco-list.element-focused .monaco-list-row.focused {
   outline-color: transparent !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--vsg-accent) 55%, transparent), inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--vsg-accent) 55%, transparent) !important;
 }
 
 /* ---------- 9. Accessibility ---------- */
@@ -655,10 +635,7 @@
   background: color-mix(in srgb, var(--vsg-accent) 52%, transparent) !important;
   -webkit-backdrop-filter: var(--vsg-lens-menu) saturate(1.2);
   backdrop-filter: var(--vsg-lens-menu) saturate(1.2);
-  box-shadow:
-    inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.22),
-    inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.45),
-    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18) !important;
+  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.26) !important;
   transition: transform 60ms var(--vsg-ease);
 }
 @G .monaco-button.monaco-text-button.secondary,
@@ -696,9 +673,7 @@
   /* a clear light film, not a grey body: the pill takes the colour behind it (owner: "inconsistent coloring") */
   background: rgba(var(--vsg-spec-rgb), 0.12) !important;
   border-radius: calc(var(--vsg-radius-card) - 4px) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid));
   /* convex capsule lens: the whole pill refracts (icon-only, no text underneath) */
   -webkit-backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
   backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
@@ -727,7 +702,7 @@
 @G .part.statusbar .statusbar-item:hover > .statusbar-item-label,
 @G .part.statusbar .statusbar-item:hover > a {
   background: rgba(var(--vsg-spec-rgb), 0.12) !important;
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid)), inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid));
   -webkit-backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
   backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
 }
@@ -737,6 +712,6 @@
 @G .part.statusbar .statusbar-item.error-kind > a,
 @G .part.statusbar .statusbar-item.warning-kind > a,
 @G .part.statusbar .statusbar-item.prominent-kind > a {
-  box-shadow: inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.22);
   border-radius: var(--vsg-radius-control) !important;
 }
