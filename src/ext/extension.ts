@@ -20,7 +20,7 @@ import { BACKUP_SUFFIX, LEGACY_CSS_START, anchorCount, applyHook, cleanupLegacyC
 
 const GUARD = '.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)';
 const VIBRANCY_MARKER = 'VSCODE-VIBRANCY-START';
-const MATERIALS = ['hud', 'fullscreen-ui', 'popover', 'menu', 'sidebar', 'selection', 'titlebar', 'header', 'sheet', 'window', 'tooltip', 'content', 'under-window', 'under-page', 'appearance-based', 'light', 'dark', 'medium-light', 'ultra-dark'];
+const MATERIALS = ['none', 'hud', 'fullscreen-ui', 'popover', 'menu', 'sidebar', 'selection', 'titlebar', 'header', 'sheet', 'window', 'tooltip', 'content', 'under-window', 'under-page', 'appearance-based', 'light', 'dark', 'medium-light', 'ultra-dark'];
 /** Written into the extension folder on every apply so the `vscode:uninstall` hook (uninstall.ts) knows what to undo. */
 const PATHS_FILE = '.vs-glass-paths.json';
 

@@ -177,7 +177,12 @@
   background: rgba(var(--vsg-spec-rgb), 0.10);
   border: 1px solid rgba(var(--vsg-spec-rgb), 0.16);
 }
-@G .part.editor .tabs-container .tab:not(.active):hover::after { background: rgba(var(--vsg-spec-rgb), 0.05); }
+/* hover is the same pill, one step fainter — same inset, same corner, same hairline, so nothing changes shape */
+@G .part.editor .tabs-container .tab:not(.active):hover::after {
+  background: rgba(var(--vsg-spec-rgb), 0.05);
+  border: 1px solid rgba(var(--vsg-spec-rgb), 0.09);
+}
+@G .part.editor .tabs-container .tab.active:hover::after { background: rgba(var(--vsg-spec-rgb), 0.13); }
 
 /* the active tab and the active panel tab are the same light film with the same rim (they pointed opposite ways) */
 @G .part.panel .composite.title .action-item.checked .action-label,

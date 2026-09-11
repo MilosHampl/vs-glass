@@ -112,6 +112,7 @@
         "vsGlass.windowMaterial": {
           "type": "string",
           "enum": [
+            "none",
             "hud",
             "fullscreen-ui",
             "popover",
@@ -134,7 +135,7 @@
           ],
           "default": "hud",
           "order": 2,
-          "markdownDescription": "The macOS material the OS blends with the desktop behind the see-through window (VS Glass paints almost nothing of its own, so this sets how much desktop you see). Switches live. `hud` and `fullscreen-ui` let the most desktop through; `menu`, `popover` and `sidebar` are medium frosted; `under-window` is the heavy, near-opaque one other transparency extensions default to. `light` and `medium-light` are bright frosted materials (pair them with Glass Regular Light); `dark` and `ultra-dark` are the classic vibrant-dark ones."
+          "markdownDescription": "What the OS puts behind the see-through window. `none` is the clearest possible: no material at all, so the desktop shows through unblurred and untinted — pair it with a low `#vsGlass.density#` for crystal glass, and raise the density if text gets hard to read over a busy wallpaper. Every other value is a macOS vibrancy material, which blurs and tints what is behind: `hud` and `fullscreen-ui` let the most through, `menu`, `popover` and `sidebar` are medium frosted, `under-window` is the heavy, near-opaque one other transparency extensions default to, `light` and `medium-light` are bright frosted (pair them with Glass Regular Light), `dark` and `ultra-dark` the classic vibrant-dark ones. Switches live."
         },
         "vsGlass.density": {
           "type": "number",

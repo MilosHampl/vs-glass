@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `vsGlass.windowMaterial: "none"` — no vibrancy view at all, so the transparent window shows the desktop unblurred
+  and untinted. With a low density this is as see-through as a window can get; raise the density if text gets hard to
+  read over a busy wallpaper.
+
+### Fixed
+
+- The file overview's lens pulled transparent black past its rim (a `backdrop-filter` samples only its filter region),
+  which read as a dark fringe and an artifact at the border. The lens classes gained a region padding, and the slider's
+  rim mask is off so the whole surface shows the displaced copy.
+- Text is flat everywhere: every legibility `text-shadow` is gone.
+- Editor tabs and side-bar rows paint their highlight as an inset pill with a corner concentric to the card, instead of
+  filling the container edge to edge; tab hover is the same pill one step fainter.
+
 ## [1.2.0] - 2026-09-11
 
 ### Added

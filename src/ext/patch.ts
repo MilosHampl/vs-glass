@@ -160,7 +160,10 @@ export function hookText(_version?: string): string {
             win.__vsGlass.setBackgroundColor(CLEAR);
             if (mac) {
               var material = st && /^[a-z-]+$/.test(String(st.material || '')) ? st.material : 'hud';
-              try { win.setVibrancy(material); } catch (err) { try { win.setVibrancy('hud'); } catch (err2) { /* ignore */ } }
+              // 'none' = no vibrancy view at all: the transparent window shows the desktop unblurred and untinted,
+              // which is as see-through as a window can be. Any other value is a macOS material.
+              if (material === 'none') { try { win.setVibrancy(null); } catch (err) { /* ignore */ } }
+              else { try { win.setVibrancy(material); } catch (err) { try { win.setVibrancy('hud'); } catch (err2) { /* ignore */ } } }
             }
           } else {
             if (mac) { try { win.setVibrancy(null); } catch (err) { /* ignore */ } }
