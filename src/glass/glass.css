@@ -67,6 +67,20 @@
     rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 58%,
     rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 82%,
     rgba(var(--vsg-spec-rgb), calc(var(--vsg-widget-spec-hi) * 0.75)) 100%);
+  /* ONE interactive ladder for everything the pointer can touch — editor tabs, panel tabs, list rows, activity and
+     status capsules, toolbar and icon buttons, breadcrumbs, menu bar. A state is a FILM plus a 1 px HAIRLINE at fixed
+     alphas on a pill inset inside the control box, with a corner concentric to its container. Nothing else changes
+     between states: no lens, no drawn light, no gradient rim, no motion but the press scale. Rest is bare glass.
+     The gradient rim (--vsg-edge-*) stays for things that are always drawn — cards, inputs, buttons — never for a
+     state, because a rim that appears on hover reads as a bevel switching on. */
+  --vsg-state-hover: rgba(var(--vsg-spec-rgb), 0.06);
+  --vsg-state-hover-rim: rgba(var(--vsg-spec-rgb), 0.09);
+  --vsg-state-on: rgba(var(--vsg-spec-rgb), 0.10);
+  --vsg-state-on-rim: rgba(var(--vsg-spec-rgb), 0.16);
+  --vsg-state-on-hover: rgba(var(--vsg-spec-rgb), 0.13);
+  /* the pill corner: concentric with the 16 px card it sits in, inset 4 px */
+  --vsg-state-radius: calc(var(--vsg-radius-card) - 4px);
+  --vsg-state-transition: background-color var(--vsg-motion-fast) var(--vsg-ease), border-color var(--vsg-motion-fast) var(--vsg-ease), transform var(--vsg-motion-fast) var(--vsg-ease);
   --vsg-thickness-chrome: none;
   --vsg-thickness-widget: none;
   --vsg-ring-chrome: var(--vsg-edge-chrome);
@@ -117,8 +131,22 @@
   --vscode-list-activeSelectionBackground: color-mix(in srgb, var(--vsg-accent) 22%, transparent);
   --vscode-list-focusBackground: color-mix(in srgb, var(--vsg-accent) 22%, transparent);
   --vscode-list-focusAndSelectionBackground: color-mix(in srgb, var(--vsg-accent) 26%, transparent);
-  --vscode-list-inactiveSelectionBackground: rgba(var(--vsg-spec-rgb), 0.10);
-  --vscode-list-hoverBackground: rgba(var(--vsg-spec-rgb), 0.07);
+  --vscode-list-inactiveSelectionBackground: var(--vsg-state-on);
+  --vscode-list-hoverBackground: var(--vsg-state-hover);
+  /* VS Code's own hover/active fills for toolbars, status items, menus and activity pills are switched off: every one
+     of them is painted below from the ladder, so a control cannot get two different highlights depending on which
+     part of the workbench it lives in. */
+  --vscode-toolbar-hoverBackground: transparent;
+  --vscode-toolbar-activeBackground: transparent;
+  --vscode-statusBarItem-hoverBackground: transparent;
+  --vscode-statusBarItem-activeBackground: transparent;
+  --vscode-statusBarItem-focusBorder: color-mix(in srgb, var(--vsg-accent) 55%, transparent);
+  --vscode-menubar-selectionBackground: transparent;
+  --vscode-titleBar-activeForeground: var(--vsg-label-2);
+  --vscode-activityBar-activeBackground: transparent;
+  --vscode-tab-hoverBackground: transparent;
+  --vscode-tab-unfocusedHoverBackground: transparent;
+  --vscode-panelTitle-activeBackground: transparent;
   --vscode-quickInputList-focusBackground: color-mix(in srgb, var(--vsg-accent) 22%, transparent);
   --vscode-editorSuggestWidget-selectedBackground: color-mix(in srgb, var(--vsg-accent) 22%, transparent);
   --vscode-focusBorder: color-mix(in srgb, var(--vsg-accent) 55%, transparent);
@@ -171,29 +199,56 @@
   pointer-events: none;
   z-index: -1;
 }
+/* the close-button strip inside a tab paints VS Code's own opaque tab colour (and a fade over it) so the button never
+   sits on text — over glass that is a solid slab sliding in on hover; the button gets its own pill below instead */
+@G .part.editor .tabs-container .tab .tab-actions,
+@G .part.editor .tabs-container .tab .tab-actions::before,
+@G .part.editor .tabs-container .tab > .monaco-action-bar {
+  background: transparent !important;
+  background-image: none !important;
+}
 @G .part.editor .tabs-container .tab:first-child::after { left: 3px; }
 @G .part.editor .tabs-container .tab:last-child::after { right: 3px; }
 @G .part.editor .tabs-container .tab.active::after {
-  background: rgba(var(--vsg-spec-rgb), 0.10);
-  border: 1px solid rgba(var(--vsg-spec-rgb), 0.16);
+  background: var(--vsg-state-on);
+  border: 1px solid var(--vsg-state-on-rim);
 }
 /* hover is the same pill, one step fainter — same inset, same corner, same hairline, so nothing changes shape */
 @G .part.editor .tabs-container .tab:not(.active):hover::after {
-  background: rgba(var(--vsg-spec-rgb), 0.05);
-  border: 1px solid rgba(var(--vsg-spec-rgb), 0.09);
+  background: var(--vsg-state-hover);
+  border: 1px solid var(--vsg-state-hover-rim);
 }
-@G .part.editor .tabs-container .tab.active:hover::after { background: rgba(var(--vsg-spec-rgb), 0.13); }
+@G .part.editor .tabs-container .tab.active:hover::after { background: var(--vsg-state-on-hover); }
 
-/* the active tab and the active panel tab are the same light film with the same rim (they pointed opposite ways) */
-@G .part.panel .composite.title .action-item.checked .action-label,
-@G .part.panel .composite.title .action-item.checked {
+/* Panel tabs (Problems / Output / Debug Console / Terminal) are the SAME pill as an editor tab: same corner, same
+   film, same hairline, same press. The pill is painted once, on the .action-item that wraps the label and its badge —
+   painting the item AND its label stacked two films and two rims, which is what made the active tab read as a bright
+   bevelled lozenge. */
+@G .part.panel .composite.title .monaco-action-bar .action-item {
+  position: relative;
+  border-radius: var(--vsg-state-radius) !important;
   border: 1px solid transparent !important;
-  background:
-    linear-gradient(rgba(var(--vsg-spec-rgb), 0.10), rgba(var(--vsg-spec-rgb), 0.10)) padding-box,
-    var(--vsg-edge-control) border-box !important;
-  box-shadow: none;
+  background: transparent !important;
+  box-shadow: none !important;
+  transition: var(--vsg-state-transition);
 }
-@G .part.panel .composite.title .action-item.checked .action-label { border-radius: var(--vsg-radius-control) !important; }
+@G .part.panel .composite.title .monaco-action-bar .action-item .action-label,
+@G .part.panel .composite.title .monaco-action-bar .action-item.checked .action-label {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: var(--vsg-state-radius) !important;
+}
+@G .part.panel .composite.title .monaco-action-bar .action-item:hover:not(.checked) {
+  background: var(--vsg-state-hover) !important;
+  border-color: var(--vsg-state-hover-rim) !important;
+}
+@G .part.panel .composite.title .monaco-action-bar .action-item.checked {
+  background: var(--vsg-state-on) !important;
+  border-color: var(--vsg-state-on-rim) !important;
+}
+@G .part.panel .composite.title .monaco-action-bar .action-item.checked:hover { background: var(--vsg-state-on-hover) !important; }
+@G .part.panel .composite.title .monaco-action-bar .action-item:active { transform: scale(0.97); transition-duration: 50ms; }
 /* form controls carry the control radius and a hairline, never a darker well */
 @G .monaco-inputbox,
 @G .monaco-select-box,
@@ -615,10 +670,12 @@
   pointer-events: none;
   z-index: -1;
 }
-@G .part.sidebar .monaco-list-row:hover::after,
-@G .part.auxiliarybar .monaco-list-row:hover::after { background: rgba(var(--vsg-spec-rgb), 0.06); }
+@G .part.sidebar .monaco-list-row:hover:not(.selected)::after,
+@G .part.auxiliarybar .monaco-list-row:hover:not(.selected)::after { background: var(--vsg-state-hover); }
 @G .part.sidebar .monaco-list-row.selected::after,
-@G .part.auxiliarybar .monaco-list-row.selected::after { background: rgba(var(--vsg-spec-rgb), 0.10); }
+@G .part.auxiliarybar .monaco-list-row.selected::after { background: var(--vsg-state-on); }
+@G .part.sidebar .monaco-list-row.selected:hover::after,
+@G .part.auxiliarybar .monaco-list-row.selected:hover::after { background: var(--vsg-state-on-hover); }
 @G .part.sidebar .monaco-list:focus .monaco-list-row.focused::after,
 @G .part.sidebar .monaco-list.element-focused .monaco-list-row.focused::after,
 @G .part.auxiliarybar .monaco-list:focus .monaco-list-row.focused::after,
@@ -774,10 +831,24 @@
   box-shadow: none !important;
   transition: transform 60ms var(--vsg-ease);
 }
-@G .monaco-button.monaco-text-button.secondary,
+/* the primary button brightens its accent film on hover and the secondary its light film — the same one-step-up the
+   pills make, so a button reacts like every other control instead of not at all (its background is set here with
+   !important, which used to swallow VS Code's own hover colour) */
+@G .monaco-button.monaco-text-button:hover,
+@G .monaco-button-dropdown > .monaco-button:hover,
+@G .monaco-button-dropdown > .monaco-dropdown-button:hover {
+  background:
+    linear-gradient(color-mix(in srgb, var(--vsg-accent) 64%, transparent), color-mix(in srgb, var(--vsg-accent) 64%, transparent)) padding-box,
+    var(--vsg-edge-widget) border-box !important;
+}
+@G .monaco-button.monaco-text-button.secondary {
+  background:
+    linear-gradient(var(--vsg-state-on), var(--vsg-state-on)) padding-box,
+    var(--vsg-edge-widget) border-box !important;
+}
 @G .monaco-button.monaco-text-button.secondary:hover {
   background:
-    linear-gradient(rgba(var(--vsg-spec-rgb), 0.10), rgba(var(--vsg-spec-rgb), 0.10)) padding-box,
+    linear-gradient(var(--vsg-state-on-hover), var(--vsg-state-on-hover)) padding-box,
     var(--vsg-edge-widget) border-box !important;
 }
 @G .monaco-button.monaco-text-button:hover { filter: none; }
@@ -819,6 +890,52 @@
 }
 @G .monaco-action-bar .action-item:active .action-label.codicon,
 @G .monaco-toolbar .action-item:active .action-label { transform: scale(0.94); }
+/* Icon buttons in every toolbar — editor title actions, pane headers, panel and side bar title actions, widget
+   toolbars, tab close buttons — hover as the same film and hairline as a tab, at the small corner. VS Code's own
+   toolbar/hover fills are off (§1b), so this is the only highlight an icon button can get, wherever it lives. */
+@G .monaco-toolbar .action-item > .action-label,
+@G .part.editor .title .actions-container .action-item > .action-label.codicon,
+@G .part.editor .tabs-container .tab .tab-actions .action-label,
+@G .part.sidebar .pane-header .actions-container .action-item > .action-label.codicon,
+@G .part.sidebar .composite.title .title-actions .action-item > .action-label.codicon,
+@G .part.auxiliarybar .composite.title .title-actions .action-item > .action-label.codicon,
+@G .part.panel .composite.title .title-actions .action-item > .action-label.codicon,
+@G .notification-toast .monaco-action-bar .action-item > .action-label.codicon {
+  position: relative;
+  border-radius: var(--vsg-radius-inner) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  transition: var(--vsg-state-transition);
+}
+@G .monaco-toolbar .action-item:hover > .action-label,
+@G .part.editor .title .actions-container .action-item:hover > .action-label.codicon,
+@G .part.editor .tabs-container .tab .tab-actions .action-label:hover,
+@G .part.sidebar .pane-header .actions-container .action-item:hover > .action-label.codicon,
+@G .part.sidebar .composite.title .title-actions .action-item:hover > .action-label.codicon,
+@G .part.auxiliarybar .composite.title .title-actions .action-item:hover > .action-label.codicon,
+@G .part.panel .composite.title .title-actions .action-item:hover > .action-label.codicon,
+@G .notification-toast .monaco-action-bar .action-item:hover > .action-label.codicon {
+  background: var(--vsg-state-hover) !important;
+  border-color: var(--vsg-state-hover-rim) !important;
+}
+/* a toggled toolbar button (e.g. a filter that is on) is the selected step, like a checked panel tab */
+@G .monaco-toolbar .action-item.checked > .action-label,
+@G .monaco-toolbar .action-item .action-label.checked {
+  background: var(--vsg-state-on) !important;
+  border-color: var(--vsg-state-on-rim) !important;
+}
+@G .monaco-toolbar .action-item.checked:hover > .action-label { background: var(--vsg-state-on-hover) !important; }
+/* menu bar titles and breadcrumb crumbs: same film, same corner */
+@G .part.titlebar .menubar .menubar-menu-button,
+@G .breadcrumbs-control .monaco-breadcrumb-item {
+  border-radius: var(--vsg-radius-inner) !important;
+  transition: var(--vsg-state-transition);
+}
+@G .part.titlebar .menubar .menubar-menu-button:hover,
+@G .breadcrumbs-control .monaco-breadcrumb-item:hover,
+@G .breadcrumbs-control .monaco-breadcrumb-item:focus { background: var(--vsg-state-hover) !important; }
+@G .part.titlebar .menubar .menubar-menu-button.open { background: var(--vsg-state-on) !important; }
 
 /* ---------- 11. Activity bar & status bar items: small glass capsules ---------- */
 @G .part.activitybar .monaco-action-bar .action-item {
@@ -830,28 +947,28 @@
 @G .part.activitybar .monaco-action-bar .action-item .action-label {
   border-radius: calc(var(--vsg-radius-card) - 4px) !important;
 }
-@G .part.activitybar .monaco-action-bar .action-item.checked .action-label,
-@G .part.activitybar .monaco-action-bar .action-item:hover .action-label {
+/* The pill is the ladder and nothing else. It used to carry the capsule lens and a gradient ring: over a see-through
+   window there is nothing in-page behind a 36 px icon to bend, so all the filter contributed was its own brightness
+   lift and specular — drawn light, which is exactly what the owner ruled out, and it made the hovered pill read as a
+   glossy bevelled blob next to the flat tabs. */
+@G .part.activitybar .monaco-action-bar .action-item .action-label {
   position: relative;
-  /* a clear light film, not a grey body: the pill takes the colour behind it (owner: "inconsistent coloring") */
-  background: rgba(var(--vsg-spec-rgb), 0.12) !important;
-  border-radius: calc(var(--vsg-radius-card) - 4px) !important;
-  box-shadow: none;
-  /* convex capsule lens: the whole pill refracts (icon-only, no text underneath) */
-  -webkit-backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
-  backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
+  background: transparent !important;
+  box-shadow: none !important;
+  transition: var(--vsg-state-transition);
 }
-/* rim ring on the pills (codicons draw their glyph in ::before, so the ring lives in ::after) */
+@G .part.activitybar .monaco-action-bar .action-item:hover:not(.checked) .action-label { background: var(--vsg-state-hover) !important; }
+@G .part.activitybar .monaco-action-bar .action-item.checked .action-label { background: var(--vsg-state-on) !important; }
+@G .part.activitybar .monaco-action-bar .action-item.checked:hover .action-label { background: var(--vsg-state-on-hover) !important; }
+/* the hairline: codicons draw their glyph in ::before, so the rim lives in ::after */
+@G .part.activitybar .monaco-action-bar .action-item:hover:not(.checked) .action-label::after,
 @G .part.activitybar .monaco-action-bar .action-item.checked .action-label::after,
-@G .part.activitybar .monaco-action-bar .action-item:hover .action-label::after,
 @G .part.statusbar .statusbar-item:hover > .statusbar-item-label::after,
 @G .part.statusbar .statusbar-item:hover > a::after {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
-  background: var(--vsg-ring-chrome);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
-  pointer-events: none;
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  border: 1px solid var(--vsg-state-hover-rim);
 }
+@G .part.activitybar .monaco-action-bar .action-item.checked .action-label::after { border-color: var(--vsg-state-on-rim); }
 @G .part.statusbar .statusbar-item > .statusbar-item-label,
 @G .part.statusbar .statusbar-item > a { position: relative; }
 @G .part.activitybar .monaco-action-bar .action-item.checked .active-item-indicator:before {
@@ -859,15 +976,13 @@
 }
 @G .part.statusbar .statusbar-item > .statusbar-item-label,
 @G .part.statusbar .statusbar-item > a {
-  border-radius: calc(var(--vsg-radius-control) - 2px);
-  transition: background-color var(--vsg-motion-fast) var(--vsg-ease), box-shadow var(--vsg-motion-fast) var(--vsg-ease), transform var(--vsg-motion-fast) var(--vsg-ease);
+  border-radius: var(--vsg-radius-inner);
+  transition: var(--vsg-state-transition);
 }
 @G .part.statusbar .statusbar-item:hover > .statusbar-item-label,
 @G .part.statusbar .statusbar-item:hover > a {
-  background: rgba(var(--vsg-spec-rgb), 0.12) !important;
+  background: var(--vsg-state-hover) !important;
   box-shadow: none;
-  -webkit-backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
-  backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
 }
 @G .part.statusbar .statusbar-item:active > .statusbar-item-label,
 @G .part.statusbar .statusbar-item:active > a { transform: scale(0.97); transition-duration: 50ms; }

@@ -20,8 +20,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and untinted. With a low density this is as see-through as a window can get; raise the density if text gets hard to
   read over a busy wallpaper.
 
+### Changed
+
+- One interactive ladder for every control the pointer can touch. Editor tabs, panel tabs, list rows, activity-bar and
+  status-bar capsules, toolbar and icon buttons, breadcrumbs, menu-bar titles and buttons now all use the same film and
+  1 px hairline at the same alphas (hover 6 %/9 %, selected 10 %/16 %, selected+hover 13 %), the same press scale, and
+  the same two corners (12 px for tabs and pills, 7 px for small icon capsules). Nothing else changes between states.
+
 ### Fixed
 
+- The active panel tab (Problems / Output / Debug Console) painted its film and its gradient rim twice — once on the
+  tab and once on its label — so it stacked to ~19 % with a doubled rim and read as a bright bevelled lozenge next to
+  the flat editor tabs. It is painted once now, on the element that wraps the label and its badge.
+- Activity-bar and status-bar pills carried a capsule lens on hover. Over a see-through window nothing in-page sits
+  behind a 36 px icon, so the filter only contributed its own brightness lift and specular — drawn light. Both are
+  gone, and with them the `capsule` lens class (12 KB of generated CSS).
+- Buttons had no hover step at all: their background is set with `!important`, which swallowed VS Code's own hover
+  colour. Primary and secondary buttons now brighten one step, like every other control.
+- The close-button strip inside an editor tab painted VS Code's opaque tab colour, which slid in as a solid slab over
+  the glass when a tab was hovered.
 - The file overview's lens pulled transparent black past its rim (a `backdrop-filter` samples only its filter region),
   which read as a dark fringe and an artifact at the border. The lens classes gained a region padding, and the slider's
   rim mask is off so the whole surface shows the displaced copy.

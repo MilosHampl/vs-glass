@@ -63,7 +63,9 @@ export const LENS_CLASSES: LensClass[] = [
   { name: 'panel', w: 1100, h: 320, mw: 160, mh: 48, axes: 'xy', rim: 0.9, radius: 16 },   // bottom panel card
   { name: 'column', w: 48, h: 820, mw: 12, mh: 128, axes: 'x', rim: 0.5 },     // activity bar
   { name: 'strip', w: 1400, h: 36, mw: 128, mh: 12, axes: 'y', rim: 0.35 },    // title bar, status bar, tab strip, sticky scroll
-  { name: 'capsule', w: 32, h: 32, mw: 32, mh: 32, axes: 'xy', rim: 0.6, convex: true }, // icon-only pills (activity/status items) — never under text
+  // (the 'capsule' class was dropped in 1.2.0: activity-bar and status-bar pills carry no filter at all. Over a
+  //  see-through window nothing in-page sits behind a 36 px icon, so the lens only added its own brightness lift and
+  //  specular — drawn light, which the owner ruled out, and it made a hovered pill a glossy blob beside the flat tabs.)
   // the minimap's viewport slider: a thick, clear (blur 0) slab of glass with a wide curved edge, dragged over the file
   // overview. It is the one place where glass slides over rendered content, so the bend must read as a lens, not a tint.
   // the minimap's viewport slider and the editor scrollbar: a magnifying dome. The edge zone is half the nominal
