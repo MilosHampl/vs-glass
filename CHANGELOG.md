@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.2.0] - 2026-09-11
+
 ### Added
 
 - `vsGlass.windowMaterial: "liquid-glass"` (macOS 26 or newer) and the new default `auto` (Liquid Glass where the OS
@@ -20,12 +24,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and untinted. With a low density this is as see-through as a window can get; raise the density if text gets hard to
   read over a busy wallpaper.
 
+- The file overview (minimap) got its own optic: the viewport slider is a bare plane of clear, edge-curved glass that
+  refracts the code lines under it as it slides — the one surface in VS Code where glass sits over rendered content, and
+  the one surface with no border and no shadow at all, because anything drawn on top of it read as a framed rectangle
+  sliding over the overview. A dedicated `slider` lens class (no frost, a 56 px curved edge on a 110 px width) and a
+  5 % film, nothing else. Scroll cost is unmeasurable (p50 8.2 ms / p95 9.0 ms against 8.3 / 9.1 with the effects off).
+  Pair it with `"editor.minimap.showSlider": "always"`.
+
 ### Changed
 
 - One interactive ladder for every control the pointer can touch. Editor tabs, panel tabs, list rows, activity-bar and
   status-bar capsules, toolbar and icon buttons, breadcrumbs, menu-bar titles and buttons now all use the same film and
   1 px hairline at the same alphas (hover 6 %/9 %, selected 10 %/16 %, selected+hover 13 %), the same press scale, and
   the same two corners (12 px for tabs and pills, 7 px for small icon capsules). Nothing else changes between states.
+
+- Every drop shadow is gone — under widgets, buttons, pills, sticky scroll, the minimap slider and the minimap's own
+  seam — along with the list-row focus glow and the activity-bar indicator glow. The rim hairline (the liquid-glass
+  border) and the light each lens computes from its own curvature are what define an edge now.
 
 ### Fixed
 
@@ -45,23 +60,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Text is flat everywhere: every legibility `text-shadow` is gone.
 - Editor tabs and side-bar rows paint their highlight as an inset pill with a corner concentric to the card, instead of
   filling the container edge to edge; tab hover is the same pill one step fainter.
-
-## [1.2.0] - 2026-09-11
-
-### Added
-
-- The file overview (minimap) got its own optic: the viewport slider is a bare plane of clear, edge-curved glass that
-  refracts the code lines under it as it slides — the one surface in VS Code where glass sits over rendered content, and
-  the one surface with no border and no shadow at all, because anything drawn on top of it read as a framed rectangle
-  sliding over the overview. A dedicated `slider` lens class (no frost, a 56 px curved edge on a 110 px width) and a
-  5 % film, nothing else. Scroll cost is unmeasurable (p50 8.2 ms / p95 9.0 ms against 8.3 / 9.1 with the effects off).
-  Pair it with `"editor.minimap.showSlider": "always"`.
-
-### Changed
-
-- Every drop shadow is gone — under widgets, buttons, pills, sticky scroll, the minimap slider and the minimap's own
-  seam — along with the list-row focus glow and the activity-bar indicator glow. The rim hairline (the liquid-glass
-  border) and the light each lens computes from its own curvature are what define an edge now.
 
 ## [1.1.2] - 2026-09-11
 

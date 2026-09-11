@@ -1,43 +1,48 @@
-# VS Glass 1.2.0
+VS Glass 1.2.0 — the window itself becomes glass.
 
-Glass optics for VS Code: a see-through window, refracting edges, specular rims and near-clear translucent planes — standalone, live-tunable. Unofficial; not affiliated with Apple.
+## The window slab (macOS 26)
 
-## What's new
+Everything in 1.1 bent what was *inside* the window: a `backdrop-filter` can only sample its own page, never the
+windows or video behind it. On macOS 26 the compositor can, so `Window Material` gains **`liquid-glass`** (and a new
+`auto` default that picks it where the OS supports it, `hud` elsewhere).
 
-**One extension does everything.** VS Glass makes the window itself see-through and applies the glass CSS with no other extension: it adds one marker-delimited, backed-up hook to VS Code's main-process bootstrap (`out/main.js`, the bootstrap file VS Code does not checksum). The hook sets a transparent window background plus a macOS vibrancy material, inserts the glass CSS into every window with Electron's `insertCSS`, and watches `<user-data>/vs-glass/` so **every setting applies live** — change Density, Tint, Material, Lens or Aberration in Settings and the window changes as you type. One quit-and-reopen after the first Apply; never again. `VS Glass: Remove` restores `main.js` byte-exact.
+A small native helper, `bin/vs-glass-helper`, keeps a real Liquid Glass window — transparent, click-through,
+shadowless — directly under every VS Code window, tuned so its **body is a pixel-exact pass-through** and only the
+**rim refracts and colour-splits**. Other windows, video and the desktop bend under the window's edge, live. Nothing
+is screen-captured; the window server composites it, and `Lens` and `Aberration` retune it like every other rim.
 
-**Clear glass, not frosted chrome.** The planes went from ~20 % to ~7 % (editor) and 6 % (side bars, panel, strips), the window film to 5 %; the OS material supplies the frost. Every painted gradient is gone — no sheens, no bevel bands, no inner shading, no drop shadows under base cards. Edges are a hairline of light where the curved rim catches the room. Lensing and chromatic aberration (real SVG displacement of what sits behind) stay on every inside element: palette, menus, hovers, suggest, notifications, dialogs, modal editors, buttons, pills. Base panes carry no filter over the see-through window (nothing in-page behind them; a filter there only re-samples stale pixels), and windows are created transparent rather than made transparent later, so closed panels no longer ghost through the editor.
+Measured against a pattern behind a transparent window: body difference 0.00, the rim bent over exactly the configured
+width, red and blue split by exactly the configured offset. It exits with VS Code, with any other material, and with
+**VS Glass: Remove**. DESIGN.md §5.2 has the anatomy, the numbers and the limits.
 
-**Settings** (⌘, → "VS Glass"): Effects · Window Transparency · Window Material (19 macOS materials, live) · Density 0–200 (0 = absolutely clear, 200 = opaque) · Widget Density · Tint (8 films) · Lens · Aberration · Wallpaper · Auto Apply. Commands: Apply, Remove, Status, Open Settings.
+## The file overview as a lens
 
-**Webviews match.** Theme-scoped `[Glass …]` colour blocks are added to `workbench.colorCustomizations` while the effects are on, so Claude Code, Markdown preview and other webviews — which paint from theme colours no CSS can reach — carry the same near-clear alphas. Removed with Remove.
+The minimap's viewport slider is a bare plane of clear, edge-curved glass that refracts the code lines under it as it
+slides — no border, no shadow, no shine, just the optic. Pair it with `"editor.minimap.showSlider": "always"`.
 
-## 1.2.0
+## One interactive ladder
 
-**The file overview is glass.** The minimap's viewport slider is a bare plane of clear, edge-curved glass: it refracts the code lines under it as it slides, with a chromatic fringe at the rim, and carries no border and no shadow — the one surface in VS Code where glass sits over rendered content. Pair it with `"editor.minimap.showSlider": "always"`.
+Editor tabs, panel tabs, list rows, activity-bar and status-bar capsules, toolbar and icon buttons, breadcrumbs, menu
+titles and buttons all use the same film and hairline at the same alphas, the same press, and the same two corners.
+A control now looks the same wherever it lives in the workbench.
 
-**No drop shadows anywhere** — under widgets, buttons, pills, sticky scroll or the minimap seam — and no focus glows. What defines an edge is the rim hairline (the liquid-glass border) and the light each lens computes from the curvature it bends with.
+## Also
 
-## 1.1.1
-
-One material for every control, from a design review over the regenerated screenshots: list selection, focus and quick-input rows are an accent film with a ring instead of a solid blue bar; inputs, dropdowns and checkboxes are light films with a hairline; badges are accent pills; the focus ring is a soft accent; scrollbar sliders are white films; diff decorations are thin films with a 2 px edge accent; minimap marks are toned down; the active editor tab and the active panel tab share one light film. The editor card lost the ring that doubled the side bar's edge at the seam; a wider text halo keeps code, tabs and labels legible over bright desktops; widgets carry a 78 % body; mint and amber tints fixed.
-
-## Assets
-`vs-glass-1.2.0.vsix` (theme + extension), and the plain CSS for people who inject by other means: `glass.css`, `glass-wallpaper.css`, `tints/*.css` (8), `density/*.css` (6), `lens/*.css` (2), `aberration/*.css` (3), `glass-filters.svg`.
+- `Window Material: none` — no material at all, the clearest the window can be.
+- Flat text everywhere (no `text-shadow`), gradient 1 px rims in the Apple manner, and no drop shadows anywhere.
+- Tabs and rows paint an inset pill concentric with their container.
 
 ## Install
 
-```sh
+Download `vs-glass-1.2.0.vsix` below, then:
+
+```
 code --install-extension vs-glass-1.2.0.vsix
 ```
-Pick **Glass Regular Dark** (⌘K ⌘T), answer **Apply** to the one-time prompt, quit and reopen once. Recommended companion setting: `"workbench.experimental.modernUI": true`.
 
-## Known limitations
-- The hook lives in a VS Code core file (every window-transparency extension has to do this). VS Code updates overwrite it; VS Glass notices and offers to re-apply.
-- macOS only for the see-through window (Electron vibrancy). Elsewhere the wallpaper addon paints a neutral smoke backdrop instead.
-- The OS material always blurs and tints the desktop; a perfectly clear, unblurred window is not reachable from a hook (VS Code creates its windows opaque, and only a vibrancy material makes them see-through afterwards). `hud` lets the most desktop through; the material list is live, so try them.
-- Refracting what is behind the window (desktop, another window, a video) is impossible from CSS: the renderer never receives those pixels. Lensing bends in-page content only — widgets over code, pills, card rims.
-- Context menus: native on macOS by default, and in an isolated shadow root with `window.menuStyle: "custom"`; they keep the theme's plain colours.
-- Not published to the Marketplace.
+Pick a Glass theme (**Glass Regular Dark**, **Regular Light**, **Clear** or **Opaque**), answer **Apply** to the
+one-time prompt, and quit and reopen VS Code once. After that every setting applies live. macOS gets the see-through
+window; other platforms get the glass CSS over a wallpaper backdrop.
 
-Full details: `README.md`, `DESIGN.md`, `glass/install.md`, `CHANGELOG.md`.
+Not on the Marketplace. The extension patches one file inside VS Code (`out/main.js`, backed up first) and
+**VS Glass: Remove** restores it byte-exact.
