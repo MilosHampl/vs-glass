@@ -49,10 +49,28 @@
      bottom contact, no conic gradient sweeping around the radius. The shape of the glass is told by the optic —
      the warp and the chromatic fringe at the rim (§4.1) — which is the owner's rule: "leave the borders but do not
      overexaggerate the glass shape using like shine/gradients/shadows, use the aberration effects for that". */
-  --vsg-thickness-chrome: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
-  --vsg-thickness-widget: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid));
-  --vsg-ring-chrome: rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
-  --vsg-ring-widget: rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid));
+  /* The border is the ONLY drawn light (owner: "try to mimic the gradient style border color of the apple liquid
+     glass — yes its fake glare I told you not to use, but I want it just on the 1px border"): a 1 px ring whose
+     alpha runs bright at the top-left corner, nearly out through the middle, bright again at the bottom-right, the
+     way light wraps around a glass edge. The body carries no inset light at all — the ring IS the thickness. */
+  --vsg-edge-chrome: linear-gradient(147deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 0%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)) 18%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 42%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)) 58%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)) 82%,
+    rgba(var(--vsg-spec-rgb), calc(var(--vsg-chrome-spec-hi) * 0.75)) 100%);
+  --vsg-edge-widget: linear-gradient(147deg,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-hi)) 0%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 18%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 42%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)) 58%,
+    rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)) 82%,
+    rgba(var(--vsg-spec-rgb), calc(var(--vsg-widget-spec-hi) * 0.75)) 100%);
+  --vsg-thickness-chrome: none;
+  --vsg-thickness-widget: none;
+  --vsg-ring-chrome: var(--vsg-edge-chrome);
+  --vsg-ring-widget: var(--vsg-edge-widget);
 }
 
 /* ---------- 1b. Layer-1 paints that would cover the planes ----------
@@ -181,7 +199,12 @@
   border-radius: var(--vsg-radius-window);
   pointer-events: none;
   z-index: 100000;
-  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
+  padding: 1px;
+  background: var(--vsg-edge-chrome);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
 }
 
 /* ---------- 3. Strips: title bar, status bar, tab strip ---------- */
@@ -234,7 +257,7 @@
 @G:not(.floating-panels) .part.auxiliarybar,
 @G:not(.floating-panels) .part.panel,
 @G:not(.floating-panels) .part.activitybar {
-  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo));
+  box-shadow: none;
 }
 /* the sidebar's own inner surfaces must not paint over the glass */
 @G .part.sidebar > .content,
@@ -279,8 +302,8 @@
 @G.floating-panels:not(.noactivitybar) .part.sidebar.right::before { inset: 0 -3px 0 0; }
 @G.floating-panels:not(.noactivitybar) .part.activitybar.left,
 @G.floating-panels:not(.noactivitybar) .part.sidebar.left {
-  /* one pane: no side hairline on the seam edges, shared shadow, identical sheen origin */
-  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid));
+  /* one pane: the ring (::before, pushed outside the seam edge below) is the only border */
+  box-shadow: none;
 }
 @G.floating-panels:not(.noactivitybar) .part.activitybar.left { clip-path: inset(-60px 0 -60px -60px); }
 @G.floating-panels:not(.noactivitybar) .part.sidebar.left { clip-path: inset(-60px -60px -60px 0); }
@@ -498,6 +521,30 @@
 /* VS Code's own hard shadow where the minimap meets the code has no place on a see-through plane */
 @G .monaco-editor .minimap-shadow-visible { box-shadow: none !important; }
 
+/* ---------- 5c. The page scroller: the same plane of glass as the file overview ---------- */
+/* VS Code's scrollbars slide over rendered content too, so they get the slider optic: a thin film, the clear
+   edge-curved lens (warp + chromatic fringe), and nothing else — no shadow, no glare, no border. The shadows VS Code
+   paints at the edges of every scrollable region go with them: a dark band bleeding over a see-through plane is the
+   opposite of glass. */
+@G {
+  --vscode-scrollbar-shadow: transparent;
+  --vscode-widget-shadow: transparent;
+  --vscode-editorStickyScroll-shadow: transparent;
+}
+@G .monaco-scrollable-element > .shadow { display: none !important; }
+@G .monaco-scrollable-element > .scrollbar > .slider {
+  background: rgba(var(--vsg-spec-rgb), 0.08) !important;
+  border-radius: var(--vsg-radius-pill);
+  box-shadow: none !important;
+}
+@G .monaco-scrollable-element > .scrollbar > .slider:hover { background: rgba(var(--vsg-spec-rgb), 0.12) !important; }
+@G .monaco-scrollable-element > .scrollbar > .slider.active { background: rgba(var(--vsg-spec-rgb), 0.16) !important; }
+/* the lens only where the scrollbar really overlaps code (the editor's own scrollable element), never inside lists */
+@G .monaco-editor > .overflow-guard > .monaco-scrollable-element > .scrollbar > .slider {
+  -webkit-backdrop-filter: var(--vsg-lens-slider) saturate(1.2);
+  backdrop-filter: var(--vsg-lens-slider) saturate(1.2);
+}
+
 /* ---------- 6. Concentric inner geometry ---------- */
 @G .monaco-list:not(.element-focused) .monaco-list-row,
 @G .monaco-list .monaco-list-row {
@@ -632,15 +679,20 @@
   overflow: hidden;
   border: none !important;
   border-radius: 999px !important;
-  background: color-mix(in srgb, var(--vsg-accent) 52%, transparent) !important;
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(color-mix(in srgb, var(--vsg-accent) 52%, transparent), color-mix(in srgb, var(--vsg-accent) 52%, transparent)) padding-box,
+    var(--vsg-edge-widget) border-box !important;
   -webkit-backdrop-filter: var(--vsg-lens-menu) saturate(1.2);
   backdrop-filter: var(--vsg-lens-menu) saturate(1.2);
-  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.26) !important;
+  box-shadow: none !important;
   transition: transform 60ms var(--vsg-ease);
 }
 @G .monaco-button.monaco-text-button.secondary,
 @G .monaco-button.monaco-text-button.secondary:hover {
-  background: linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)), rgba(var(--vsg-spec-rgb), 0.10) !important;
+  background:
+    linear-gradient(rgba(var(--vsg-spec-rgb), 0.10), rgba(var(--vsg-spec-rgb), 0.10)) padding-box,
+    var(--vsg-edge-widget) border-box !important;
 }
 @G .monaco-button.monaco-text-button:hover { filter: none; }
 @G .monaco-button.monaco-text-button:active { transform: scale(0.97); }
@@ -673,7 +725,7 @@
   /* a clear light film, not a grey body: the pill takes the colour behind it (owner: "inconsistent coloring") */
   background: rgba(var(--vsg-spec-rgb), 0.12) !important;
   border-radius: calc(var(--vsg-radius-card) - 4px) !important;
-  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid));
+  box-shadow: none;
   /* convex capsule lens: the whole pill refracts (icon-only, no text underneath) */
   -webkit-backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
   backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
@@ -702,7 +754,7 @@
 @G .part.statusbar .statusbar-item:hover > .statusbar-item-label,
 @G .part.statusbar .statusbar-item:hover > a {
   background: rgba(var(--vsg-spec-rgb), 0.12) !important;
-  box-shadow: inset 0 0 0 1px rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-mid));
+  box-shadow: none;
   -webkit-backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
   backdrop-filter: var(--vsg-lens-capsule) saturate(1.3);
 }
