@@ -152,8 +152,34 @@
   --vscode-tab-unfocusedActiveBackground: rgba(var(--vsg-spec-rgb), 0.07);
   --vscode-panelTitle-activeBorder: transparent;
 }
+/* Tabs sit INSIDE the editor card, so they are inset from its edge and their corner is concentric with it
+   (card 16 − 4 px inset = 12): a full-height tab with a tight 7 px corner reads as a slab wedged into a rounded
+   container. The inset also gives the strip air between the pills. */
+@G .part.editor .tabs-container .tab {
+  position: relative;
+  background: transparent !important;
+  border: none !important;
+  padding-left: 10px !important;
+}
+/* the pill is a pseudo-element inset inside the tab box, so the strip keeps VS Code's own height while the visible
+   surface is inset from the card edge with a corner concentric to it (card 16 − 4) */
+@G .part.editor .tabs-container .tab::after {
+  content: "";
+  position: absolute;
+  inset: 3px 1px;
+  border-radius: calc(var(--vsg-radius-card) - 4px);
+  pointer-events: none;
+  z-index: -1;
+}
+@G .part.editor .tabs-container .tab:first-child::after { left: 3px; }
+@G .part.editor .tabs-container .tab:last-child::after { right: 3px; }
+@G .part.editor .tabs-container .tab.active::after {
+  background: rgba(var(--vsg-spec-rgb), 0.10);
+  border: 1px solid rgba(var(--vsg-spec-rgb), 0.16);
+}
+@G .part.editor .tabs-container .tab:not(.active):hover::after { background: rgba(var(--vsg-spec-rgb), 0.05); }
+
 /* the active tab and the active panel tab are the same light film with the same rim (they pointed opposite ways) */
-@G .part.editor .tabs-container .tab.active,
 @G .part.panel .composite.title .action-item.checked .action-label,
 @G .part.panel .composite.title .action-item.checked {
   border: 1px solid transparent !important;
