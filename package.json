@@ -139,6 +139,22 @@
           "order": 2,
           "markdownDescription": "What the OS puts behind the see-through window. `auto` (default) is `liquid-glass` where the OS can do it and `hud` elsewhere. `liquid-glass` (macOS 26 or newer) makes the window itself a plane of the system's Liquid Glass: a small helper process keeps a real glass slab directly under the window, so whatever is live behind it — other windows, video, the desktop — is refracted at the rim and colour-split, like the rims inside; the body is a pixel-exact pass-through and the rim follows `#vsGlass.lens#` and `#vsGlass.aberration#`. `none` is the clearest flat option: no material at all, so the desktop shows through unblurred and untinted — pair it with a low `#vsGlass.density#` for crystal glass, and raise the density if text gets hard to read over a busy wallpaper. Every other value is a macOS vibrancy material, which blurs and tints what is behind: `hud` and `fullscreen-ui` let the most through, `menu`, `popover` and `sidebar` are medium frosted, `under-window` is the heavy, near-opaque one other transparency extensions default to, `light` and `medium-light` are bright frosted (pair them with Glass Regular Light), `dark` and `ultra-dark` the classic vibrant-dark ones. Switches live."
         },
+        "vsGlass.windowGlassStyle": {
+          "type": "string",
+          "enum": [
+            "apple-clear",
+            "apple-regular",
+            "clear-plane"
+          ],
+          "default": "apple-clear",
+          "order": 2,
+          "enumDescriptions": [
+            "Apple's Clear material as the system draws it: a light frost with the OS's own rim refraction — what the rest of macOS 26 looks like over the desktop.",
+            "Apple's Regular material: a heavier, darker frost, the standard glass of macOS 26 toolbars and sidebars.",
+            "A pixel-exact pass-through: nothing of the OS material in the body, only the rim bends and colour-splits what is behind the window's edge."
+          ],
+          "markdownDescription": "With `#vsGlass.windowMaterial#` on `liquid-glass` (macOS 26 or newer): what the body of the system glass under the window is made of. `apple-clear` (default) and `apple-regular` are the OS's own two materials, retuned only at the rim by `#vsGlass.lens#` and `#vsGlass.aberration#`. `clear-plane` removes Apple's blur and face tint entirely, so the window is a clear sheet whose edge alone refracts — note that on a window filling the whole screen the edge sits on the screen border and there is nothing beyond it to bend. Applies live."
+        },
         "vsGlass.density": {
           "type": "number",
           "default": 100,

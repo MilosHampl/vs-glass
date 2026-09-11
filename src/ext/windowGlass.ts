@@ -32,6 +32,7 @@ export interface WindowGlassParams {
   chroma: number;           // chromatic aberration at the rim, pt (0 = off)
   chromaBand: number;       // width of each aberration band, pt
   chromaLevels: number;     // number of bands, each further one proportionally weaker
+  body: string;             // apple-clear | apple-regular | clear-plane — what the slab's body is made of
 }
 
 /** The window slab needs the desktop app on macOS 26 (Darwin 25) or newer. */
@@ -49,10 +50,12 @@ export const resolveMaterial = (material: string) => material === 'auto' ? (wind
 const REFRACTION: Record<string, [amount: number, height: number]> = { soft: [-40, 16], default: [-60, 20], strong: [-100, 28] };
 const CHROMA: Record<string, [pt: number, band: number, levels: number]> = { off: [0, 12, 0], subtle: [0.8, 8, 1], default: [1.5, 12, 1], strong: [2.5, 16, 2] };
 
-export function windowGlassParams(enabled: boolean, lens: string, aberration: string): WindowGlassParams {
+export const WINDOW_GLASS_STYLES = ['apple-clear', 'apple-regular', 'clear-plane'];
+export function windowGlassParams(enabled: boolean, lens: string, aberration: string, style: string): WindowGlassParams {
   const [refraction, refractionHeight] = REFRACTION[lens] ?? REFRACTION.default;
   const [chroma, chromaBand, chromaLevels] = CHROMA[aberration] ?? CHROMA.default;
-  return { enabled, radius: WINDOW_RADIUS, margin: 40, refraction, refractionHeight, chroma, chromaBand, chromaLevels };
+  const body = WINDOW_GLASS_STYLES.includes(style) ? style : 'apple-clear';
+  return { enabled, radius: WINDOW_RADIUS, margin: 40, refraction, refractionHeight, chroma, chromaBand, chromaLevels, body };
 }
 
 export const paramsFile = (stateDir: string) => path.join(stateDir, 'window-glass.json');

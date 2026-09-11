@@ -11,8 +11,9 @@
 // when an application is activated, deactivated or the Space changes).
 //
 // How the optics are made: AppKit's NSGlassEffectView carries a CoreAnimation backdrop layer with a `glassBackground`
-// filter. The helper turns its blur and face tint off (the body becomes a pixel-exact pass-through), keeps the rim
-// refraction, samples at full resolution, and adds chromatic-aberration bands driven by live shape masks. These filter
+// filter. By default the helper keeps Apple's own Clear material (its blur and face) and only retunes the rim
+// refraction, samples at full resolution and adds chromatic-aberration bands driven by live shape masks; the
+// "clear-plane" body turns blur and face off so the body is a pixel-exact pass-through. These filter
 // keys are CoreAnimation's undocumented ones (the same AppKit sets); if a future macOS drops them the helper exits
 // with status 3 and the extension falls back to the plain see-through window.
 //
@@ -83,6 +84,9 @@ struct Params: Equatable {
   var chroma = 0.0                  // chromatic aberration at the rim, in points (0 = off)
   var chromaBand = 12.0             // width of each aberration band from the rim, in points
   var chromaLevels = 1              // number of bands (each further band gets a proportionally smaller offset)
+  /// What the body of the slab is: Apple's stock Clear material (blur 10, a light face), Apple's stock Regular
+  /// material (blur 4, a darker face) or a pixel-exact pass-through with only the rim bending ("clear-plane").
+  var body = "apple-clear"
 }
 func loadParams() -> Params? {
   guard let d = FileManager.default.contents(atPath: paramsPath), let o = try? JSONSerialization.jsonObject(with: d) as? [String: Any] else { return nil }
@@ -95,6 +99,7 @@ func loadParams() -> Params? {
   if let v = o["chroma"] as? Double { p.chroma = max(0, min(12, v)) }
   if let v = o["chromaBand"] as? Double { p.chromaBand = max(1, min(80, v)) }
   if let v = o["chromaLevels"] as? Double { p.chromaLevels = Int(max(0, min(4, v))) }
+  if let v = o["body"] as? String, ["apple-clear", "apple-regular", "clear-plane"].contains(v) { p.body = v }
   return p
 }
 guard var params = loadParams(), params.enabled else { quit("window glass is off (\(paramsPath) missing or disabled); nothing to do") }
@@ -120,6 +125,7 @@ final class Slab: NSObject {
   private var maskSize = CGSize.zero
   private var applied = Params()
   private var expectedFilters = 0
+  private var expectedBlur = 10.0
   private var observed: CALayer?
   private var applying = false
   var resets = 0
@@ -150,15 +156,19 @@ final class Slab: NSObject {
 
   /** Tune the glass: pass-through body, rim refraction, aberration bands. False when the filter is not where we expect. */
   @discardableResult func apply(_ p: Params) -> Bool {
-    glass.setValue(1, forKey: "style")            // NSGlassEffectView.Style.clear
+    glass.setValue(p.body == "apple-regular" ? 0 : 1, forKey: "style")   // NSGlassEffectView.Style: regular = 0, clear = 1
     glass.setValue(p.radius, forKey: "cornerRadius")
     if let root = win.contentView { glass.frame = root.bounds.insetBy(dx: p.margin, dy: p.margin) }
     win.contentView?.layoutSubtreeIfNeeded(); win.displayIfNeeded()
     guard let bd = backdrop(), let existing = bd.filters as? [NSObject],
           let bg0 = existing.first(where: { ($0.value(forKey: "type") as? String) == "glassBackground" }),
           let bg = bg0.mutableCopy() as? NSObject else { return false }
-    bg.setValue(0.0, forKey: "inputBlurRadius")
-    bg.setValue(0.0, forKey: "inputFaceOpacity")
+    // the body: Apple's own numbers for its two styles (read from a live NSGlassEffectView), or nothing at all
+    switch p.body {
+    case "clear-plane": expectedBlur = 0; bg.setValue(0.0, forKey: "inputBlurRadius"); bg.setValue(0.0, forKey: "inputFaceOpacity")
+    case "apple-regular": expectedBlur = 4; bg.setValue(4.0, forKey: "inputBlurRadius"); bg.setValue(1.0, forKey: "inputFaceOpacity")
+    default: expectedBlur = 10; bg.setValue(10.0, forKey: "inputBlurRadius"); bg.setValue(1.0, forKey: "inputFaceOpacity")
+    }
     bg.setValue(p.refraction, forKey: "inputInnerRefractionAmount")
     bg.setValue(p.refractionHeight, forKey: "inputInnerRefractionHeight")
     bg.setValue(0.0, forKey: "inputOuterRefractionAmount")
@@ -225,7 +235,7 @@ final class Slab: NSObject {
   /** Did the system rebuild the glass view's filters (appearance change, style reset)? */
   func drifted() -> Bool {
     guard let bd = backdrop(), let f = bd.filters as? [NSObject], f.count == expectedFilters, let first = f.first else { return true }
-    if (first.value(forKey: "inputBlurRadius") as? Double) != 0 { return true }
+    if (first.value(forKey: "inputBlurRadius") as? Double) != expectedBlur { return true }
     if !masks.isEmpty && masks.contains(where: { $0.superlayer == nil }) { return true }
     return false
   }
@@ -271,7 +281,7 @@ func reloadParams() {
   if p != params {
     params = p
     for s in slabs.values { s.apply(params) }
-    say("parameters updated: radius \(params.radius) refraction \(params.refraction)/\(params.refractionHeight) chroma \(params.chroma)×\(params.chromaLevels) band \(params.chromaBand)")
+    say("parameters updated: body \(params.body) radius \(params.radius) refraction \(params.refraction)/\(params.refractionHeight) chroma \(params.chroma)×\(params.chromaLevels) band \(params.chromaBand)")
   }
 }
 

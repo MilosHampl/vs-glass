@@ -30,6 +30,7 @@ interface Cfg {
   effects: boolean;
   windowTransparency: Tri;
   windowMaterial: string;
+  windowGlassStyle: string;
   density: number;
   widgetDensity: number;
   tint: string;
@@ -63,6 +64,7 @@ function readCfg(): Cfg {
     effects: c.get<boolean>('effects', true),
     windowTransparency: c.get<Tri>('windowTransparency', 'auto'),
     windowMaterial: MATERIALS.includes(material) ? material : 'auto',
+    windowGlassStyle: String(c.get<string>('windowGlassStyle', 'apple-clear')),
     density: num('density', 100, 0, 200),
     widgetDensity: num('widgetDensity', 100, 0, 200),
     tint: c.get<string>('tint', 'none'),
@@ -241,7 +243,7 @@ function writeState(ctx: vscode.ExtensionContext, cfg: Cfg): boolean {
   }
   changed = writeIfChanged(f.stateJson, stateText(ctx, cfg)) || changed;
   // the window slab's parameters; the helper watches this file and exits when it says off
-  changed = writeIfChanged(paramsFile(f.stateDir), JSON.stringify(windowGlassParams(wantsWindowGlass(cfg), cfg.lens, cfg.aberration), null, 2) + '\n') || changed;
+  changed = writeIfChanged(paramsFile(f.stateDir), JSON.stringify(windowGlassParams(wantsWindowGlass(cfg), cfg.lens, cfg.aberration, cfg.windowGlassStyle), null, 2) + '\n') || changed;
   if (changed) log(`wrote ${path.basename(f.stateDir)}/ (effects ${cfg.effects ? 'on' : 'off'}, transparency ${wantsTransparency(cfg) && cfg.effects ? 'on' : 'off'}, material ${material(cfg)}, density ${cfg.density}/${cfg.widgetDensity}, tint ${cfg.tint}, lens ${cfg.lens}, aberration ${cfg.aberration})`);
   return changed;
 }
