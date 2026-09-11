@@ -81,6 +81,9 @@ export function ensureHelper(extensionPath: string, stateDir: string, log: (m: s
   const bin = path.join(extensionPath, 'bin', HELPER);
   if (!fs.existsSync(bin)) { log(`window glass: ${bin} is missing from this install`); return; }
   try { fs.chmodSync(bin, 0o755); } catch { /* a read-only extension folder keeps the bit it was unpacked with */ }
+  // A vsix that came through a browser carries com.apple.quarantine; if the unpacked helper inherits it, macOS kills
+  // it on launch. Stripping it is a no-op when the attribute is not there, and best-effort either way.
+  try { cp.execFileSync('/usr/bin/xattr', ['-d', 'com.apple.quarantine', bin], { stdio: 'ignore' }); } catch { /* not quarantined */ }
   let logFd: number | undefined;
   try { logFd = fs.openSync(helperLogFile(stateDir), 'a'); } catch { logFd = undefined; }
   try {
