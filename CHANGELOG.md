@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.2.2] - 2026-09-11
+
 ### Changed
 
 - The window slab shows the system's Liquid Glass as the system draws it. 1.2.0 zeroed the material's blur and face
@@ -14,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   screen sits on the screen border with nothing beyond it to bend, so `liquid-glass` looked like a plain translucent
   window. New `vsGlass.windowGlassStyle`: `apple-clear` (default, Apple's Clear material), `apple-regular` (its
   heavier Regular material) or `clear-plane` (the 1.2.0 behaviour). Lens and Aberration still retune the rim.
+- The helper never leaves a slab above its window. A full-screen round trip showed the window server can place the
+  slab on top of the window it was ordered under (it does for the transitional frames, and for anything that joins a
+  native full-screen Space). Each full tick checks the z-order and hides a slab that came out on top until the window
+  moves or resizes. Native full screen therefore shows no slab; zoomed windows are unaffected.
 
 ## [1.2.1] - 2026-09-11
 

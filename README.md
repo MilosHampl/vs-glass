@@ -147,9 +147,9 @@ VS Glass is one extension and needs nothing else: no Vibrancy Continued, no Cust
 
    ```sh
    # macOS
-   "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" --install-extension vs-glass-1.2.1.vsix
+   "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" --install-extension vs-glass-1.2.2.vsix
    # Linux / Windows (or macOS with the shell command installed)
-   code --install-extension vs-glass-1.2.1.vsix
+   code --install-extension vs-glass-1.2.2.vsix
    ```
 
    The absolute path is not paranoia: on macOS `code` often is not on `PATH` at all (VS Code installs it from
