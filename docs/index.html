@@ -6,6 +6,7 @@
 <title>VS Glass — glass optics for VS Code</title>
 <meta name="description" content="A see-through VS Code: a real refracting lens at every rim, near-clear planes, and on macOS 26 the window itself made of the system's Liquid Glass.">
 <link rel="icon" href="assets/icon-512.png">
+<link rel="stylesheet" href="assets/demo.css">
 <meta property="og:title" content="VS Glass">
 <meta property="og:description" content="Glass optics for VS Code. A see-through window, a real refracting lens at every rim, and on macOS 26 the window itself made of the system's Liquid Glass.">
 <meta property="og:image" content="https://miloshampl.github.io/vs-glass/assets/social-preview.png">
@@ -82,6 +83,41 @@
   .chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 0; }
   .chip { border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; font-size: 13px; color: var(--fg-2); }
 
+
+  /* live demo */
+  .stage { position: relative; isolation: isolate; overflow: hidden; border: 1px solid var(--line);
+           border-radius: var(--radius); height: clamp(320px, 46vw, 460px); touch-action: none;
+           background: #05070c center/cover no-repeat; user-select: none; }
+  .stage .code { position: absolute; inset: 0; margin: 0; padding: 22px clamp(16px, 4vw, 40px);
+                 font-size: clamp(11px, 1.35vw, 14px); line-height: 1.75; color: #cfd6e6; white-space: pre;
+                 overflow: hidden; text-shadow: 0 1px 12px rgba(0,0,0,0.55); }
+  .stage .code .k { color: #ff8ac4; } .stage .code .s { color: #ffa056; } .stage .code .c { color: #7e8390; }
+  .stage .code .t { color: #a7aaff; } .stage .code .n { color: #86e1ff; }
+  .pane { position: absolute; left: 40px; top: 60px; width: 280px; height: 180px; cursor: grab;
+          border-radius: var(--radius-widget, 14px); border: 1px solid transparent;
+          background: linear-gradient(rgba(var(--spec-rgb), 0.07), rgba(var(--spec-rgb), 0.07)) padding-box,
+                      var(--edge) border-box;
+          -webkit-backdrop-filter: var(--lens-card) saturate(1.35);
+          backdrop-filter: var(--lens-card) saturate(1.35);
+          display: grid; place-items: center; color: var(--fg-2); font-size: 13px; letter-spacing: 0.02em; }
+  .pane:active { cursor: grabbing; }
+  .pane.pill { width: 190px; height: 46px; border-radius: 999px; }
+  .stage.hero .code { display: none; }
+  .pane.mag { width: 340px; height: 150px; border-radius: 18px;
+              background: linear-gradient(rgba(var(--spec-rgb), 0.02), rgba(var(--spec-rgb), 0.02)) padding-box,
+                          linear-gradient(rgba(var(--spec-rgb), 0.16), rgba(var(--spec-rgb), 0.16)) border-box;
+              -webkit-backdrop-filter: var(--lens-mag); backdrop-filter: var(--lens-mag); }
+  .pane .hint { opacity: 0.75; transition: opacity .4s; pointer-events: none; }
+  .pane.moved .hint { opacity: 0; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 16px 0 0; font-size: 14px; color: var(--fg-3); }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .seg button { appearance: none; border: 0; background: transparent; color: var(--fg-2); font: inherit;
+                padding: 6px 14px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: rgba(255,255,255,0.10); color: var(--fg); }
+  .controls label { display: inline-flex; align-items: center; gap: 8px; }
+  .controls input[type=range] { accent-color: var(--accent); width: 130px; }
+  .nofilter .pane { -webkit-backdrop-filter: blur(9px) saturate(1.3) !important; backdrop-filter: blur(9px) saturate(1.3) !important; }
+
   footer { margin-top: clamp(56px, 9vw, 104px); border-top: 1px solid var(--line); padding: 30px 0 60px; }
   .footrow { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; font-size: 14px; color: var(--fg-3); }
 </style>
@@ -106,19 +142,38 @@ pick a Glass theme · answer Apply · quit and reopen once</pre>
   </div>
 </header>
 
-<section id="showcase">
+
+<section id="demo">
   <div class="wrap">
-    <div class="head"><h2>Everywhere it lands</h2><p>Transparent-window mode, over a real desktop.</p></div>
-    <div class="grid">
-      <figure class="span-2"><a href="assets/shots/palette.jpg"><img src="assets/shots/palette.jpg" alt="Command palette" loading="lazy"></a><figcaption>Command palette — frosted body, refracting rim</figcaption></figure>
-      <figure><a href="assets/shots/suggest.jpg"><img src="assets/shots/suggest.jpg" alt="Suggestions" loading="lazy"></a><figcaption>Suggestions</figcaption></figure>
-      <figure><a href="assets/shots/menu.jpg"><img src="assets/shots/menu.jpg" alt="Context menu" loading="lazy"></a><figcaption>Menus</figcaption></figure>
-      <figure><a href="assets/shots/terminal.jpg"><img src="assets/shots/terminal.jpg" alt="Terminal" loading="lazy"></a><figcaption>Terminal</figcaption></figure>
-      <figure><a href="assets/shots/notifications.jpg"><img src="assets/shots/notifications.jpg" alt="Notifications" loading="lazy"></a><figcaption>Notifications</figcaption></figure>
-      <figure><a href="assets/shots/settings.jpg"><img src="assets/shots/settings.jpg" alt="Settings" loading="lazy"></a><figcaption>Settings — every control is one pill</figcaption></figure>
-      <figure><a href="assets/shots/sidebar.jpg"><img src="assets/shots/sidebar.jpg" alt="Side bar" loading="lazy"></a><figcaption>Side bar</figcaption></figure>
-      <figure><a href="assets/shots/hover.jpg"><img src="assets/shots/hover.jpg" alt="Hover" loading="lazy"></a><figcaption>Hovers</figcaption></figure>
+    <div class="head"><h2>Drag the glass</h2><p>Not a video. The same filter the extension ships, running in your browser.</p></div>
+    <div class="stage vsg-demo" id="stage" style="background-image: url(assets/shots/wall.jpg)">
+      <pre class="code" aria-hidden="true"><span class="c">// the lens is a generated displacement map, not a blur</span>
+<span class="k">export function</span> <span class="t">makeMap</span>(cls, edge, power) {
+  <span class="k">const</span> <span class="n">map</span> = <span class="k">new</span> <span class="t">Uint8ClampedArray</span>(w * h * <span class="n">4</span>);
+  <span class="k">for</span> (<span class="k">let</span> y = <span class="n">0</span>; y &lt; h; y++) {
+    <span class="k">for</span> (<span class="k">let</span> x = <span class="n">0</span>; x &lt; w; x++) {
+      <span class="k">const</span> d = <span class="t">profile</span>(<span class="t">distToEdge</span>(x, y), edge, power);
+      <span class="n">map</span>[i]     = <span class="n">128</span> + d * nx * <span class="n">127</span>;  <span class="c">// R: bend along x</span>
+      <span class="n">map</span>[i + <span class="n">1</span>] = <span class="n">128</span> + d * ny * <span class="n">127</span>;  <span class="c">// G: bend along y</span>
+      <span class="n">map</span>[i + <span class="n">2</span>] = rim ? <span class="n">255</span> : <span class="n">0</span>;        <span class="c">// B: the rim mask</span>
+    }
+  }
+  <span class="k">return</span> { uri: <span class="t">png</span>(<span class="n">map</span>), <span class="s">'objectBoundingBox'</span>: <span class="k">true</span> };
+}
+<span class="c">// red, green and blue are displaced by different amounts,</span>
+<span class="c">// so the rim disperses the way a real glass edge does.</span></pre>
+      <div class="pane mag" id="pane" tabindex="0" role="slider" aria-label="Drag the glass pane"><span class="hint">drag me</span></div>
     </div>
+    <div class="controls">
+      <span>Over</span>
+      <span class="seg" id="stageimg"><button data-v="wall" aria-pressed="true">A photo</button><button data-v="hero" aria-pressed="false">VS Code</button></span>
+      <span>Shape</span>
+      <span class="seg" id="shape"><button data-v="mag" aria-pressed="true">Magnifier</button><button data-v="card" aria-pressed="false">Card</button><button data-v="pill" aria-pressed="false">Pill</button></span>
+      <span>Lens</span>
+      <span class="seg" id="lens"><button data-v="soft" aria-pressed="false">Soft</button><button data-v="" aria-pressed="true">Default</button><button data-v="strong" aria-pressed="false">Strong</button><button data-v="chroma" aria-pressed="false">Max chroma</button></span>
+      <label>Film <input type="range" id="film" min="0" max="20" value="2"></label>
+    </div>
+    <p class="small" id="note" style="margin-top:12px">Drag it over the code, the photo, or a screenshot of VS Code itself. The bend, the colour split at the rim and the rim light are the extension's own filter, lifted out of <code>glass.css</code>.</p>
   </div>
 </section>
 
@@ -233,6 +288,78 @@ the full path matters: a `code` alias that wraps `open` swallows --install-exten
     <a href="https://github.com/MilosHampl/vs-glass">github.com/MilosHampl/vs-glass</a>
   </div>
 </footer>
+
+
+<script>
+(() => {
+  const stage = document.getElementById('stage'), pane = document.getElementById('pane');
+  if (!stage || !pane) return;
+
+  // Chromium runs SVG filters inside backdrop-filter; where that is missing, fall back to a blur and say so.
+  const svgFilterOK = CSS.supports('backdrop-filter', 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'></svg>#f")')
+    || CSS.supports('-webkit-backdrop-filter', 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'></svg>#f")');
+  if (!svgFilterOK) {
+    document.body.classList.add('nofilter');
+    document.getElementById('note').textContent =
+      'This browser does not run SVG filters inside backdrop-filter, so the pane falls back to a plain blur. In VS Code (Chromium) it is the real displacement — the screenshots below are that.';
+  }
+
+  // drag, pointer or keyboard
+  let dx = 0, dy = 0, dragging = false;
+  const clamp = () => {
+    const s = stage.getBoundingClientRect(), p = pane.getBoundingClientRect();
+    const maxX = s.width - p.width, maxY = s.height - p.height;
+    dx = Math.max(0, Math.min(maxX, dx)); dy = Math.max(0, Math.min(maxY, dy));
+    pane.style.left = dx + 'px'; pane.style.top = dy + 'px';
+  };
+  dx = 40; dy = 60; clamp();
+  pane.addEventListener('pointerdown', e => {
+    dragging = true; pane.setPointerCapture(e.pointerId); pane.classList.add('moved');
+    pane._ox = e.clientX - dx; pane._oy = e.clientY - dy;
+  });
+  pane.addEventListener('pointermove', e => { if (!dragging) return; dx = e.clientX - pane._ox; dy = e.clientY - pane._oy; clamp(); });
+  pane.addEventListener('pointerup', e => { dragging = false; pane.releasePointerCapture(e.pointerId); });
+  pane.addEventListener('keydown', e => {
+    const step = e.shiftKey ? 24 : 8;
+    const move = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+    if (!move) return;
+    e.preventDefault(); pane.classList.add('moved'); dx += move[0]; dy += move[1]; clamp();
+  });
+  window.addEventListener('resize', clamp);
+
+  // controls
+  let shape = 'mag', lens = '';
+  const applyLens = () => {
+    const base = shape === 'mag' ? '--lens-mag' : '--lens-card';   // card and pill share the widget lens
+    const name = lens && !(shape === 'mag' && lens === 'soft') ? base + '-' + lens : base;
+    const value = getComputedStyle(stage).getPropertyValue(name) || getComputedStyle(stage).getPropertyValue(base);
+    const sat = shape === 'mag' ? '' : ' saturate(1.35)';
+    pane.style.backdropFilter = pane.style.webkitBackdropFilter = value.trim() + sat;
+  };
+  const seg = (id, fn) => document.getElementById(id).addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    [...e.currentTarget.children].forEach(c => c.setAttribute('aria-pressed', String(c === b)));
+    fn(b.dataset.v);
+  });
+  seg('shape', v => {
+    shape = v;
+    pane.classList.toggle('mag', v === 'mag');
+    pane.classList.toggle('pill', v === 'pill');
+    clamp(); applyLens();
+  });
+  seg('stageimg', v => {
+    stage.classList.toggle('hero', v === 'hero');
+    stage.style.backgroundImage = `url(assets/shots/${v === 'hero' ? 'hero' : 'wall'}.jpg)`;
+  });
+  seg('lens', v => { lens = v; applyLens(); });
+  document.getElementById('film').addEventListener('input', e => {
+    const a = Number(e.target.value) / 100;
+    pane.style.background = `linear-gradient(rgba(var(--spec-rgb), ${a}), rgba(var(--spec-rgb), ${a})) padding-box, ` +
+      (shape === 'mag' ? 'linear-gradient(rgba(var(--spec-rgb), 0.16), rgba(var(--spec-rgb), 0.16))' : 'var(--edge)') + ' border-box';
+  });
+  applyLens();
+})();
+</script>
 
 </body>
 </html>
