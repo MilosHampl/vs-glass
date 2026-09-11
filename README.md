@@ -96,6 +96,10 @@ refracted rim, and a chromatic edge where the backdrop bends.
 - Near-clear base planes: the editor at about 7 % and the cards and strips at about 6 %, over a 5 % window
   film. The desktop, through the OS material, is the background of your code. Density scales all of it,
   from absolutely clear to opaque.
+- The file overview (minimap) carries a slab of clear, edge-curved glass: the viewport slider refracts the code
+  lines beneath it — the one place where glass slides over rendered content — with a bright hairline along its top
+  and left and a contact shade under it. Set `"editor.minimap.showSlider": "always"` to keep it on the overview
+  instead of only on hover.
 - A lensing rim on every inside element — command palette, menus, hovers, suggest, notifications, dialogs,
   modal editors, buttons, activity and status pills. The backdrop is genuinely displaced (SVG
   `feDisplacementMap` in `backdrop-filter`), with red-to-blue fringing at the edge. The refracted rim replaces
@@ -103,9 +107,9 @@ refracted rim, and a chromatic edge where the backdrop bends.
   panel, bars) carry no filter over the see-through window: nothing in-page sits behind them to bend, and a
   filter over a see-through region only re-samples stale pixels. In wallpaper mode, where the in-page smoke is a
   real backdrop, their rims refract too.
-- One hairline of light along the top and left of every pane, where a curved rim catches the room, and a
-  faint contact line at the bottom. Nothing else on the edges: no bevel bands, no inner shading, no drop
-  shadows under the base cards. Floating widgets alone cast one soft, wide shadow.
+- Edges are a rim hairline — the liquid-glass border — plus the light the lens computes for itself from the
+  curvature it is bending with, so that light sits exactly where the glass is working. No drop shadows anywhere, no
+  bevel bands, no sheens. The file overview's slider is the one surface with no border at all: a bare plane of glass.
 - Widgets keep a frosted body (about 72 %) so menus and modals stay readable whatever the base density.
 - Small controls (activity-bar and status-bar pills, secondary buttons, the active tab, sticky scroll) are
   clear films rather than grey bodies, so they take on the colour of whatever sits behind them.
@@ -119,7 +123,7 @@ VS Glass is one extension and needs nothing else: no Vibrancy Continued, no Cust
 1. Install the `.vsix` from the [latest release](https://github.com/MilosHampl/vs-glass/releases/latest):
 
    ```sh
-   code --install-extension vs-glass-1.1.1.vsix
+   code --install-extension vs-glass-1.2.0.vsix
    ```
 
    or in VS Code: Extensions view → `…` → **Install from VSIX…**.
@@ -179,6 +183,7 @@ Switching to a different theme (including Glass Opaque) is the persistent equiva
   "editor.smoothScrolling": true,
   "workbench.list.smoothScrolling": true,
   "editor.minimap.renderCharacters": false,
+  "editor.minimap.showSlider": "always",
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": "active"
 }
@@ -197,8 +202,8 @@ Materials). Layer 1 = the color theme; Layer 2 = the injected CSS.
 | # | Optic | Status | Layer | Notes |
 |---|---|---|---|---|
 | 1 | Lensing / refraction | Reproduced | 2 | SVG `feDisplacementMap` in `backdrop-filter`: frosted body, clear rim, chromatic aberration; `lens`/`aberration` settings retune the strength. Reads wherever glass overlaps in-page content — every widget over code, pills, buttons, card rims over the editor seam — and, in wallpaper mode, the neutral smoke behind every card. Refracting what's actually behind the window (the desktop, another window, a playing video) is impossible from CSS; see the limitations note below. |
-| 2 | Specular edge highlight | Reproduced | 2 | A hairline `conic-gradient` ring from a fixed virtual light, top-left brightest. Static — Apple's moves with device motion. |
-| 3 | Material thickness | Approximated | 2 | Deliberately minimal: the rim light, a faint contact line and, on floating widgets only, one soft shadow. No bevel bands or inner shading — they read as frames, not glass. Not content-aware the way Apple's is. |
+| 2 | Specular edge highlight | Reproduced | 2 | A masked `conic-gradient` hairline from a fixed virtual light, plus the curvature light each lens filter computes from its own displacement map and composites onto the refracted rim. Static: Apple's moves with device motion. |
+| 3 | Material thickness | Approximated | 2 | A rim hairline and, above all, the optic: the rim bends and disperses what is behind it. No drop shadows anywhere (1.2.0). Not content-aware the way Apple's is. |
 | 4 | Vibrancy | Approximated | 1 + 2 | Four alpha label tiers plus `saturate()` and `mix-blend-mode: plus-lighter` on chrome text. No true per-pixel colour sampling of what's behind each glyph. |
 | 5 | Floating layered panes | Reproduced | 1 + 2 | VS Code's modern floating layout; the cards are clear panes with a rim light. Degrades to flush seams without `workbench.experimental.modernUI`. |
 | 6 | Concentric geometry | Reproduced | 2 | Radius tokens overridden so inner radius = parent radius − padding. VS Code's own radii still drive most controls outside Layer 2's reach. |

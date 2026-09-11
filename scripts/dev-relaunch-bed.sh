@@ -8,6 +8,7 @@ case $PORT in
   9334) ARGS=(--user-data-dir /Users/miloshampl/Repos/personal/vs-glass/scratch/profile-clean/user --extensions-dir /Users/miloshampl/Repos/personal/vs-glass/scratch/profile-clean/ext) ;;
   9337) ARGS=(--user-data-dir /tmp/vsg-play2 --extensions-dir /tmp/vsg-play-ext) ;;
   9338) APP=/Users/miloshampl/Repos/personal/vs-glass/scratch/VSCode-fresh.app/Contents/Resources/app/bin/code; ARGS=(--user-data-dir /tmp/vsg-fresh --extensions-dir /tmp/vsg-fresh-ext) ;;
+  9339) APP=/Users/miloshampl/Repos/personal/vs-glass/scratch/VSCode-fresh.app/Contents/Resources/app/bin/code; ARGS=(--user-data-dir /tmp/vsg-shots --extensions-dir /tmp/vsg-shots-ext) ;;  # screenshot bed: never a review window
   *) echo "unknown port"; exit 1 ;;
 esac
 PID=$(ps -axo pid,command | grep -E "remote-debugging-port=$PORT" | grep -v grep | grep -v Helper | awk '{print $1}' | head -1)

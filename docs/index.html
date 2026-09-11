@@ -422,16 +422,16 @@
     <h1>VS Glass</h1>
     <p class="subtitle">Colourless, multilayer Glass optics for VS Code, built for a transparent window first — refractive edges, specular highlights, and layered glass planes; tint is optional.</p>
     <div class="ctas">
-      <a class="btn btn--primary" href="https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.1.1.vsix">
+      <a class="btn btn--primary" href="https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.2.0.vsix">
         ⬇ Download .vsix
       </a>
       <a class="btn btn--ghost" href="https://github.com/MilosHampl/vs-glass" target="_blank" rel="noopener">View on GitHub</a>
     </div>
 
     <div class="code-block glass">
-      <pre id="installCmd">curl -L -o vs-glass-1.1.1.vsix <span class="dim">\</span>
-  https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.1.1.vsix
-code --install-extension vs-glass-1.1.1.vsix</pre>
+      <pre id="installCmd">curl -L -o vs-glass-1.2.0.vsix <span class="dim">\</span>
+  https://github.com/MilosHampl/vs-glass/releases/latest/download/vs-glass-1.2.0.vsix
+code --install-extension vs-glass-1.2.0.vsix</pre>
       <button class="copy-btn" id="copyBtn" type="button" aria-label="Copy install commands">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
       </button>
@@ -558,13 +558,13 @@ code --install-extension vs-glass-1.1.1.vsix</pre>
       <article class="optic-card glass">
         <div class="optic-card__head"><h3>2. Specular edge highlight</h3><span class="badge badge--reproduced">Reproduced</span></div>
         <blockquote>"Light sources… shine on the material producing highlights that respond to geometry… defining its silhouette."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
-        <p><strong>How:</strong> a <code>conic-gradient</code> ring from a virtual top-left light, cut to a hairline with <code>mask-composite: exclude</code>, with alpha tuned per elevation (chrome → overlay).</p>
+        <p><strong>How:</strong> a masked <code>conic-gradient</code> hairline from a virtual top-left light — the liquid-glass border — plus the curvature light each lens filter computes from its own displacement map and composites onto the refracted rim, so it sits exactly where the glass bends.</p>
       </article>
 
       <article class="optic-card glass">
         <div class="optic-card__head"><h3>3. Material thickness</h3><span class="badge badge--approximated">Approximated</span></div>
         <blockquote>"It casts deeper, richer shadows… and a softer scattering of light."<cite>WWDC25 — Meet Liquid Glass</cite></blockquote>
-        <p><strong>How:</strong> deliberately minimal. A 1 px rim light along the top and left where the curved edge catches the room, a faint contact line at the bottom, and one soft shadow under floating widgets only. No bevel bands, no inner shading, no shadows under the base panes — they read as bevelled window frames, not glass. The thickness cue that is real is the lens bending the code under every rim.</p>
+        <p><strong>How:</strong> a rim hairline and, above all, the optic itself: the rim bends and disperses the content under every widget, button and pill. No drop shadows anywhere, no bevel bands, no sheens — and the file overview's slider drops even the border, so its whole presence is the warp.</p>
       </article>
 
       <article class="optic-card glass">
@@ -725,7 +725,7 @@ code --install-extension vs-glass-1.1.1.vsix</pre>
         <h3>1. The theme</h3>
         <ol>
           <li>Open the Extensions view in VS Code, search "VS Glass", click Install — once it's on the Marketplace.</li>
-          <li>Or download the <code>.vsix</code> from <a href="https://github.com/MilosHampl/vs-glass/releases/latest">Releases</a> and run <code>code --install-extension vs-glass-1.1.1.vsix</code>.</li>
+          <li>Or download the <code>.vsix</code> from <a href="https://github.com/MilosHampl/vs-glass/releases/latest">Releases</a> and run <code>code --install-extension vs-glass-1.2.0.vsix</code>.</li>
           <li>Or, in the Extensions view, use <strong>Install from VSIX…</strong> and pick the downloaded file.</li>
         </ol>
       </div>

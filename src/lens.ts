@@ -46,6 +46,9 @@ export const LENS_CLASSES: LensClass[] = [
   { name: 'column', w: 48, h: 820, mw: 12, mh: 128, axes: 'x', rim: 0.5 },     // activity bar
   { name: 'strip', w: 1400, h: 36, mw: 128, mh: 12, axes: 'y', rim: 0.35 },    // title bar, status bar, tab strip, sticky scroll
   { name: 'capsule', w: 32, h: 32, mw: 32, mh: 32, axes: 'xy', rim: 0.6, convex: true }, // icon-only pills (activity/status items) — never under text
+  // the minimap's viewport slider: a thick, clear (blur 0) slab of glass with a wide curved edge, dragged over the file
+  // overview. It is the one place where glass slides over rendered content, so the bend must read as a lens, not a tint.
+  { name: 'slider', w: 110, h: 240, mw: 28, mh: 60, axes: 'xy', rim: 1, radius: 9, blur: 0 },
   // window-edge strips: the slab's top/bottom rim bends what sits just inside the window edge (title bar, status bar,
   // the last code lines). One-sided, clear (no frost), so UI text is bent a little but never blurred.
   { name: 'edge-top', w: 1400, h: 40, mw: 64, mh: 40, axes: 'y', rim: 0.6, sides: { top: true }, blur: 0 },

@@ -2,7 +2,7 @@
   "name": "vs-glass",
   "displayName": "VS Glass",
   "description": "Glass optics for VS Code: a see-through window, refracting edges, specular rims and layered translucent planes, with density, tint, lens and aberration settings.",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "publisher": "MilosHampl",
   "author": {
     "name": "Milos Hampl"

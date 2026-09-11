@@ -42,9 +42,9 @@
   --vsg-base-filter-column: none;
   /* material thickness — light enters from the top-left, so the upper and left edges carry a bright hairline (the
      curved rim catching the room), the lower edge only a faint contact line, and the body has NO inner gradients or
-     bevel bands (those read as a bevelled window frame, not as glass). Base cards cast NO shadow — a shadow under a
-     pane of glass sitting on the same sheet reads as a floating window frame; only widgets that really float over
-     code get one soft, wide shadow. */
+     bevel bands (those read as a bevelled window frame, not as glass), and nothing casts a drop shadow: a shadow under
+     a pane of glass reads as a floating window frame, and the owner has now ruled out painted shadows entirely. The
+     rim hairline — the liquid-glass border — is what a surface gets, plus whatever its lens bends. */
   --vsg-thickness-chrome:
     inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),
     inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)),
@@ -52,8 +52,7 @@
   --vsg-thickness-widget:
     inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)),
     inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)),
-    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18),
-    0 16px 48px rgba(var(--vsg-shadow-rgb), 0.28);
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18);
   --vsg-ring-chrome: conic-gradient(from 300deg at 22% 12%,
     rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 0deg,
     rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-hi)) 50deg,
@@ -494,6 +493,31 @@
   background: transparent !important;
 }
 
+/* ---------- 5b. File overview (minimap): the viewport slider is a plane of glass ---------- */
+/* The slider is the only surface in VS Code where glass slides over *rendered content* — the minimap canvas sits
+   directly beneath it — so its backdrop-filter bends something real. It is therefore the one surface with no border
+   and no shadow at all: a bare plane of clear glass (the `slider` lens class: no frost, a wide curved edge) whose
+   whole presence is the warp and the colour fringe it puts on the code lines under it. Anything painted on top of
+   that read as odd — a framed rectangle sliding over the overview. */
+@G {
+  --vscode-minimapSlider-background: rgba(var(--vsg-spec-rgb), 0.05);
+  --vscode-minimapSlider-hoverBackground: rgba(var(--vsg-spec-rgb), 0.08);
+  --vscode-minimapSlider-activeBackground: rgba(var(--vsg-spec-rgb), 0.11);
+}
+@G .monaco-editor .minimap-slider,
+@G .monaco-editor .minimap-slider-horizontal {
+  background: rgba(var(--vsg-spec-rgb), 0.05) !important;
+  border-radius: var(--vsg-radius-control);
+  box-shadow: none !important;
+  -webkit-backdrop-filter: var(--vsg-lens-slider) saturate(1.25) brightness(1.04);
+  backdrop-filter: var(--vsg-lens-slider) saturate(1.25) brightness(1.04);
+  transition: background-color var(--vsg-motion-fast) var(--vsg-ease);
+}
+@G .monaco-editor .minimap-slider:hover { background: rgba(var(--vsg-spec-rgb), 0.08) !important; }
+@G .monaco-editor .minimap-slider.active { background: rgba(var(--vsg-spec-rgb), 0.11) !important; }
+/* VS Code's own hard shadow where the minimap meets the code has no place on a see-through plane */
+@G .monaco-editor .minimap-shadow-visible { box-shadow: none !important; }
+
 /* ---------- 6. Concentric inner geometry ---------- */
 @G .monaco-list:not(.element-focused) .monaco-list-row,
 @G .monaco-list .monaco-list-row {
@@ -592,7 +616,7 @@
 @G .monaco-list:focus .monaco-list-row.focused,
 @G .monaco-list.element-focused .monaco-list-row.focused {
   outline-color: transparent !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--vsg-accent) 55%, transparent), inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)), 0 0 10px color-mix(in srgb, var(--vsg-accent) 22%, transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--vsg-accent) 55%, transparent), inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)) !important;
 }
 
 /* ---------- 9. Accessibility ---------- */
@@ -634,8 +658,7 @@
   box-shadow:
     inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.22),
     inset 0 1px 0 rgba(var(--vsg-spec-rgb), 0.45),
-    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18),
-    0 2px 8px rgba(var(--vsg-shadow-rgb), 0.14) !important;
+    inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18) !important;
   transition: transform 60ms var(--vsg-ease);
 }
 @G .monaco-button.monaco-text-button.secondary,
@@ -695,7 +718,6 @@
 @G .part.statusbar .statusbar-item > a { position: relative; }
 @G .part.activitybar .monaco-action-bar .action-item.checked .active-item-indicator:before {
   background: var(--vsg-accent);
-  box-shadow: 0 0 10px var(--vsg-accent);
 }
 @G .part.statusbar .statusbar-item > .statusbar-item-label,
 @G .part.statusbar .statusbar-item > a {

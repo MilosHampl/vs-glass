@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-11
+
+### Added
+
+- The file overview (minimap) got its own optic: the viewport slider is a bare plane of clear, edge-curved glass that
+  refracts the code lines under it as it slides — the one surface in VS Code where glass sits over rendered content, and
+  the one surface with no border and no shadow at all, because anything drawn on top of it read as a framed rectangle
+  sliding over the overview. A dedicated `slider` lens class (no frost, a 56 px curved edge on a 110 px width) and a
+  5 % film, nothing else. Scroll cost is unmeasurable (p50 8.2 ms / p95 9.0 ms against 8.3 / 9.1 with the effects off).
+  Pair it with `"editor.minimap.showSlider": "always"`.
+
+### Changed
+
+- Every drop shadow is gone — under widgets, buttons, pills, sticky scroll, the minimap slider and the minimap's own
+  seam — along with the list-row focus glow and the activity-bar indicator glow. The rim hairline (the liquid-glass
+  border) and the light each lens computes from its own curvature are what define an edge now.
+
+## [1.1.2] - 2026-09-11
+
+### Added
+
+- The file overview (minimap) got its own optic: the viewport slider is a slab of clear, edge-curved glass that
+  refracts the code lines under it as it slides — the one surface in VS Code where glass sits over rendered content.
+  A dedicated `slider` lens class (clear, no frost, a 56 px curved edge on a 110 px width), a bright hairline along
+  the top and left, a contact shade at the bottom and a small drop shadow. Scroll cost is unmeasurable (p50 8.2 ms /
+  p95 9.0 ms against 8.3 / 9.1 with the effects off). Pair it with `"editor.minimap.showSlider": "always"`.
+- The hard dark band VS Code paints where the minimap meets the code is a soft contact shadow now.
+
 ## [1.1.1] - 2026-09-10
 
 ### Changed
@@ -149,7 +177,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   key coverage against the full VS Code key inventory), `npm run audit:contrast` (WCAG contrast).
 - Project documentation: README, DESIGN.md, and this CHANGELOG.
 
-[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/MilosHampl/vs-glass/compare/v1.1.2...v1.2.0
+[1.1.2]: https://github.com/MilosHampl/vs-glass/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/MilosHampl/vs-glass/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/MilosHampl/vs-glass/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/MilosHampl/vs-glass/releases/tag/v1.0.0

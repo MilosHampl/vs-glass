@@ -383,6 +383,7 @@ more-visible, more-distorted character.
 | `column` | 48×820 | x | 0.5 | activity bar |
 | `strip` | 1400×36 | y | 0.35 | title/status bar, tab strip, sticky scroll |
 | `capsule` | 32×32 | xy, convex | 0.6 | icon-only pills (activity/status items) — a "ball lens" profile, no frosted body |
+| `slider` | 110×240 | xy | 1.0 | the minimap's viewport slider — clear glass (blur 0), edge zone 56 px on a 110 px width, so the curve covers the full width and the ends stay flat |
 | `edge-top` | 1400×40 | y, top-only | 0.6 | unused since 1.1.0 (set to `none`): the window edge carries no lens |
 | `edge-bottom` | 1400×40 | y, bottom-only | 0.6 | unused since 1.1.0 (set to `none`) |
 
@@ -413,49 +414,60 @@ computation from actual glass geometry. **Gap:** no per-element fitting or resiz
 
 **Apple:** a virtual environment light tracing geometry, moving with interaction and device motion.
 
-**VS Glass:** a `::before` ring, `conic-gradient(from var(--vsg-light-angle) at 22% 12%, ...)`,
-masked to ~1px via `mask-composite: exclude` (`glass.css` §1/§4/§5). Alphas come from the palette's
-`specular {hi, mid, lo}` ramp, brighter at higher elevations (dark `chrome: [0.42, 0.14, 0.03]` →
-`overlay: [0.72, 0.24, 0.06]`), tracking "thicker glass has more pronounced effects" (§7.3).
-`--vsg-light-angle` is fixed at `225deg` for every variant.
+**VS Glass:** two lights, one drawn and one computed, and they stay. The drawn one is the rim border — a `::before`
+ring, `conic-gradient` from a virtual top-left source, masked to a hairline (`glass.css` §1/§4/§5), with alphas from the
+palette's `specular {hi, mid, lo}` ramp per elevation. That is the liquid-glass signature and the owner keeps it
+("the liquid glass style borders are ok"). The computed one lives inside every lens filter: an `feColorMatrix` reads
+the displacement map's R/G channels — the bend direction, i.e. the surface normal projected onto the screen — lights
+the rim where that normal tilts toward the light, and composites the result onto the refracted rim only (§4.1), so it
+sits exactly where the backdrop is being bent.
 
-That hairline is the *only* painted light on the glass. Earlier builds added a bevel band just inside it
-and a radial "sheen" across the body; the owner read both as Windows-XP/Vista chrome ("gradients and fake
-ass effects") and they are gone (1.1.0). Where there is nothing behind a pane for the lens to bend — a
-transparent window's OS-blurred desktop is not in-page content (§4.1, §5) — the edge is a plain hairline,
-which is what a real sheet of clear glass on a flat backdrop looks like.
+What has gone is everything underneath those two: the bevel band and the radial sheen (1.1.0), and every drop shadow
+(1.2.0) — "i dont really like the fake shine/shadows there, just let the aberrations and warping effects shine". One
+surface drops even the border: the minimap's viewport slider (§5b) slides over rendered content, so its whole presence
+is the warp and the colour fringe it puts on the code beneath it; a framed rectangle sliding over the file overview
+read as odd, a bare plane of glass does not.
 
-**Real vs. simulated:** the shape is a faithful static approximation. **Impossible, not
-unimplemented:** device-motion response — Electron has no accelerometer.
+**Real vs. simulated:** the ring is a static approximation; the curvature light is computed per pixel from the modelled
+surface. **Impossible, not unimplemented:** device-motion response — Electron has no accelerometer.
 
 ### 4.3 Material thickness
 
 **Apple:** thickness scales with current size; shadow opacity is content-aware.
 
-**VS Glass (1.1.0):** deliberately minimal. Two fixed `box-shadow` recipes:
+**VS Glass (1.2.0):** the rim hairline, and nothing else. `--vsg-thickness-chrome` and `--vsg-thickness-widget` are
+inset-only recipes — a light top edge, a fainter left edge, a faint contact line at the bottom:
 
 ```css
 --vsg-thickness-chrome:                                   /* side bars, panel, activity bar, cards */
-  inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),   /* top rim catches the light */
-  inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)),    /* left rim, fainter */
-  inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.12);                       /* contact line */
+  inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-mid)),
+  inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-chrome-spec-lo)),
+  inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.12);
 --vsg-thickness-widget:                                   /* palette, menus, hovers, notifications, dialogs */
   inset 0 1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-mid)),
   inset 1px 0 0 rgba(var(--vsg-spec-rgb), var(--vsg-widget-spec-lo)),
-  inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18),
-  0 16px 48px rgba(var(--vsg-shadow-rgb), 0.28);                          /* the one shadow: widgets float over code */
+  inset 0 -1px 0 rgba(var(--vsg-shadow-rgb), 0.18);
 ```
 
-Base cards cast **no** shadow: a shadow under a pane that sits on the same sheet of glass reads as a
-floating window frame (and the editor card's shadow fell onto the panel below it as a dark band — the
-owner's "these shadows still look like shit"). The earlier bevel band, inner shading gradients and layered
-contact shadows are gone for the same reason. Buttons and pills carry a hairline rim and, for buttons, one
-small `0 2px 8px` shadow; nothing else.
+No drop shadow appears anywhere in 1.2.0 — not under widgets, buttons, pills, sticky scroll, the minimap slider, nor
+the minimap's own seam. Elevation is carried by what the glass does to what is behind it: a widget over code bends and
+disperses that code at its rim (§4.1). A pane that bends nothing gets no elevation cue, and that is accepted.
 
-**Real vs. simulated:** fully simulated — `box-shadow` has no notion of what's behind an element, so
-content-aware shadow opacity has no CSS path (§9). The thickness cue that *is* real is the lens: the rim
+**Real vs. simulated:** the displacement, the chromatic fringe and the curvature light are computed per pixel by the
+filter; the rim hairline is drawn. **Gap:** no content-aware shadow opacity — there is no shadow at all now (§9).
 of every inside element bends the code beneath it (§4.1), which reads as material far better than any
 painted band did.
+
+**The minimap slider (1.1.2):** the one surface in VS Code where glass slides over *rendered content*. The viewport
+slider sits directly above the minimap canvas, so its `backdrop-filter` bends real pixels — the code lines of the file
+overview — instead of a flat film. It is therefore clear glass (`blur: 0`, no frost) with a wide curved edge: the
+`slider` class's 56 px edge on a 110 px nominal width means the bevel covers the full width (a magnifier's profile
+across, flat along the middle of its length), at a slope of 2.9·14/56 = 0.73, just inside the folding limit (§4.1).
+A bright hairline along the top and left, a contact shade at the bottom and a small drop shadow finish the slab so it
+reads as lying *on* the overview. Measured offline over a striped backdrop (`scratch/lenstest.mjs` pattern): mean
+|Δluma| 105 at the top edge, 119 at the bottom, 79 at the left, 34 through the middle band, and exactly 0 outside the
+element. Scroll cost is nil — editor scrolling measures p50 8.2 ms / p95 9.0 ms with it against p50 8.3 / p95 9.1 with
+the effects off — because the slab is small and clear (no frost to evaluate).
 
 **Where the lens may live (1.1.0):** only where there is in-page content behind the glass. Floating widgets
 over code, buttons and pills refract; the base panes — side bars, panel, activity bar, title and status bars —
@@ -829,8 +841,8 @@ is what the fallback produces.
 | Optic | Real | Simulated / approximated |
 |---|---|---|
 | 1. Lensing | `feDisplacementMap` genuinely bends backdrop pixels | Static, low-res, shape-generic map per class, not per-frame Metal geometry; bends only in-page content — refracting what's actually behind the window (desktop, other windows, video) is impossible from CSS, not a gap to close (§9) |
-| 2. Specular highlight | Rendered conic-gradient hairline, per-elevation ramp | Fixed 225° light; no device-motion response (impossible — no accelerometer); no painted sheen by design |
-| 3. Thickness | The lens bending code under every rim; a rim hairline and contact line | One fixed soft shadow on floating widgets only; no content-aware shadow opacity; no bevel/shading bands by design |
+| 2. Specular highlight | Rendered conic-gradient hairline per elevation, plus the curvature light the filter computes from the map's normals | Fixed 225° light; no device-motion response (impossible — no accelerometer) |
+| 3. Thickness | The lens bending and dispersing what is behind each rim; a drawn rim hairline | No drop shadows anywhere in 1.2.0; no content-aware shadow opacity; no elevation cue where the lens cannot reach |
 | 4. Vibrancy | Real alpha compositing of label tiers | No per-instance light/dark flip; one fixed direction per theme |
 | 5. Floating panes | Real floating-card geometry, shadows, gaps | No `GlassEffectContainer`-style shared sampling/merging |
 | 6. Concentric geometry | Real nested rounded corners | Hand-authored per-selector radii, not computed from padding |
