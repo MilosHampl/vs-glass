@@ -121,6 +121,7 @@ final class Slab: NSObject {
   let glass: NSView
   var bounds = CGRect.zero              // the target's window-list bounds
   var missingSince: Date? = nil
+  var refusedFor: CGRect? = nil         // bounds at which the window server put the slab ABOVE its window; stay hidden until they change
   private var masks: [CAShapeLayer] = []
   private var maskSize = CGSize.zero
   private var applied = Params()
@@ -135,6 +136,8 @@ final class Slab: NSObject {
     win = NSWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false)
     win.isOpaque = false; win.backgroundColor = .clear; win.hasShadow = false
     win.ignoresMouseEvents = true; win.level = .normal; win.hidesOnDeactivate = false
+    // no fullScreenAuxiliary: a window that joins a native full-screen Space is placed ABOVE the full-screen window,
+    // and a slab over the editor is the one thing this must never do
     win.collectionBehavior = [.transient, .ignoresCycle]
     win.isReleasedWhenClosed = false; win.animationBehavior = .none; win.isExcludedFromWindowsMenu = true
     let root = NSView(frame: NSRect(origin: .zero, size: frame.size)); root.wantsLayer = true
@@ -253,7 +256,9 @@ func fullList() -> (targets: [(CGWindowID, CGRect)], order: [CGWindowID]) {
     guard Int32(owner) == targetPid, let b = w[kCGWindowBounds as String] as? [String: CGFloat], (w[kCGWindowAlpha as String] as? Double ?? 1) > 0 else { continue }
     let r = CGRect(x: b["X"] ?? 0, y: b["Y"] ?? 0, width: b["Width"] ?? 0, height: b["Height"] ?? 0)
     if r.width < 200 || r.height < 120 { continue }                       // tooltips, drag images
-    if screens.contains(where: { $0.equalTo(r) }) { continue }            // full screen: no rim to glass, nothing behind
+    // a native full-screen window gets a slab too: with Apple's material as the body the frost over that Space's
+    // wallpaper is the point, even though the rim sits on the screen edge (only a clear-plane body has nothing to show)
+    if screens.contains(where: { $0.equalTo(r) }) && params.body == "clear-plane" { continue }
     targets.append((CGWindowID(n), r))
   }
   return (targets, order)
@@ -304,12 +309,19 @@ func tick() {
       say("slab \(slab.windowID) under window \(wid) (\(Int(r.width))×\(Int(r.height))), filters \(ok ? "tuned" : "NOT found — stock glass")")
     }
     slab.missingSince = nil
-    if slab.bounds != r { slab.win.setFrame(frame, display: false); slab.bounds = r; frameUpdates += 1; lastMotion = t; slab.layoutMasks() }
+    if slab.bounds != r { slab.win.setFrame(frame, display: false); slab.bounds = r; frameUpdates += 1; lastMotion = t; slab.layoutMasks(); slab.refusedFor = nil }
     if full {
       if let idx = order.firstIndex(of: wid) {
-        let below: CGWindowID = idx + 1 < order.count ? order[idx + 1] : 0
-        if below != slab.windowID { slab.win.order(.below, relativeTo: Int(wid)); reorders += 1 }
-      } else if !slab.win.isVisible { slab.win.order(.below, relativeTo: Int(wid)) }
+        if slab.refusedFor == r { /* the window server will not take a slab under this window at these bounds (native full screen); it stays hidden until the window moves or resizes */ }
+        else if let si = order.firstIndex(of: slab.windowID), si < idx {
+          // the slab came out ABOVE its window: hide it at once — glass over the editor is never acceptable
+          slab.win.orderOut(nil); slab.refusedFor = r
+          say("window \(wid) will not take a slab underneath at \(Int(r.width))×\(Int(r.height)) (native full screen?); the slab stays hidden until it moves or resizes")
+        } else {
+          let below: CGWindowID = idx + 1 < order.count ? order[idx + 1] : 0
+          if below != slab.windowID { slab.win.order(.below, relativeTo: Int(wid)); reorders += 1 }
+        }
+      } else if !slab.win.isVisible && slab.refusedFor == nil { slab.win.order(.below, relativeTo: Int(wid)) }
     }
   }
   if full {
