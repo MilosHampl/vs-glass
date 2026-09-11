@@ -306,7 +306,7 @@ async function apply(ctx: vscode.ExtensionContext, interactive: boolean): Promis
     log(`apply failed: ${e?.stack ?? e}`);
     const pick = await vscode.window.showErrorMessage(
       denied
-        ? `VS Glass could not write to VS Code's own startup file (${files(ctx).main}). Make the app folder writable for your user; nothing else was changed.`
+        ? `VS Glass could not write to VS Code's own startup file. Make the app writable for your user, then run "VS Glass: Apply" again:  sudo chown -R "$USER" "${path.resolve(files(ctx).root, '..', '..', '..')}"  — nothing else was changed.`
         : `VS Glass could not apply: ${e?.message ?? e}`,
       'Show log');
     if (pick === 'Show log') out.show();
@@ -351,12 +351,34 @@ function showStatus(ctx: vscode.ExtensionContext) {
   out.appendLine(lines.join('\n')); out.show(true);
 }
 
+/**
+ * Freshly installed, but the user has not picked a Glass theme — so nothing at all would happen and there would be
+ * nothing on screen to explain why. Say so once, with the theme picker one click away.
+ */
+async function themeNudge(ctx: vscode.ExtensionContext) {
+  if (ctx.globalState.get<boolean>('vsGlass.themeNudge')) return;
+  await ctx.globalState.update('vsGlass.themeNudge', true);
+  const pick = await vscode.window.showInformationMessage(
+    'VS Glass is installed. Pick one of its themes — Glass Regular Dark, Regular Light, Clear or Opaque — and it will offer to switch the optics on.',
+    'Choose a theme', 'Later');
+  if (pick === 'Choose a theme') await vscode.commands.executeCommand('workbench.action.selectTheme');
+}
+
 async function firstRun(ctx: vscode.ExtensionContext, st: Status) {
   // A VS Code update replaces out/main.js and takes the hook with it. The state folder survives, so "applied before,
   // hook gone now" means an update: ask again (once per VS Code version), whatever the first-run answer was.
   const updated = st.cssApplied && !st.hookApplied;
   const key = updated ? `vsGlass.reapply.${vscode.version}` : 'vsGlass.prompted';
   if (ctx.globalState.get<boolean>(key)) return;
+  // Another window patcher is already inside this VS Code. Patching on top means two hooks fighting over the same
+  // window, so ask them to take the other one out first instead of letting it happen and explaining afterwards.
+  if (st.vibrancyContinued) {
+    const conflict = await vscode.window.showWarningMessage(
+      'VS Glass: Vibrancy Continued is patched into this VS Code. Both patch the same startup file and fight over the window. Disable it first (Command Palette → "Vibrancy Continued: Disable"), then run "VS Glass: Apply".',
+      'Open the Command Palette', 'Apply anyway', 'Not now');
+    if (conflict === 'Open the Command Palette') { await vscode.commands.executeCommand('workbench.action.showCommands'); return; }
+    if (conflict !== 'Apply anyway') return;
+  }
   const pick = await vscode.window.showInformationMessage(
     updated
       ? `VS Glass: VS Code ${vscode.version} replaced its startup file, so the see-through window and glass effects are off. Apply VS Glass again? (Same reversible hook as before.)`
@@ -393,7 +415,9 @@ export async function activate(ctx: vscode.ExtensionContext) {
   const themeIsGlass = isGlassTheme();
   log(`activate ${version(ctx)} on ${vscode.version}: theme ${themeIsGlass ? 'Glass' : 'other'}, effects ${cfg.effects}, hook ${st.hookApplied ? (st.hookCurrent ? 'current' : 'old') : 'absent'}${st.hookLive ? ' live' : ''}${st.spliced ? ' spliced' : ''}, css ${st.cssApplied ? (st.cssStale ? 'stale' : 'current') : 'absent'}, legacy ${st.legacyCss}`);
   if (st.hookApplied) writePathsFile(ctx, false);
-  if (!cfg.effects || !themeIsGlass) return;
+  if (!cfg.effects) return;
+  // installed, effects on, but no Glass theme yet: one nudge, then stay quiet
+  if (!themeIsGlass) { if (!st.hookApplied && !st.cssApplied) void themeNudge(ctx); return; }
   if (!st.hookApplied) { void firstRun(ctx, st); return; } // consent before touching VS Code's file (again, after a VS Code update)
   if ((st.cssStale || !st.cssApplied || st.stateStale || !st.hookCurrent || st.legacyCss || st.themeColorsStale) && cfg.autoApply) scheduleApply(ctx); // settings or version changed since the last apply
   // the window slab: start its helper now and make sure one keeps running (another window's extension host may have

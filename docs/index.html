@@ -90,17 +90,17 @@
 
 <header>
   <div class="wrap">
-    <span class="badge"><img src="assets/icon-512.png" alt=""> VS Glass 1.2.0</span>
+    <span class="badge"><img src="assets/icon-512.png" alt=""> VS Glass 1.2.1</span>
     <h1>Your editor, made of glass.</h1>
     <p class="lede">A see-through VS Code with a real refracting lens at every rim — and, on macOS&nbsp;26, a window
       made of the system's own Liquid Glass, bending whatever is live behind it.</p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/MilosHampl/vs-glass/releases/latest">Download 1.2.0</a>
+      <a class="btn primary" href="https://github.com/MilosHampl/vs-glass/releases/latest">Download 1.2.1</a>
       <a class="btn" href="https://github.com/MilosHampl/vs-glass">GitHub</a>
       <a class="btn" href="https://github.com/MilosHampl/vs-glass/blob/main/CONTRIBUTING.md">Contribute</a>
       <a class="btn" href="https://github.com/MilosHampl/vs-glass/blob/main/DESIGN.md">How it works</a>
     </div>
-    <pre class="cmd"><b>code --install-extension vs-glass-1.2.0.vsix</b>
+    <pre class="cmd"><b>Extensions → … → Install from VSIX…</b>
 pick a Glass theme · answer Apply · quit and reopen once</pre>
     <div class="shot"><img src="assets/shots/hero.jpg" alt="VS Glass over a desktop wallpaper" width="1800" height="1167"></div>
   </div>
@@ -207,11 +207,15 @@ win.webContents.insertCSS(glassCss)
 <section id="get">
   <div class="wrap">
     <div class="head"><h2>Get it</h2><p>Not on the Marketplace — download the package.</p></div>
-    <pre class="cmd"><b>code --install-extension vs-glass-1.2.0.vsix</b></pre>
-    <p class="muted" style="margin-top:18px; max-width: 62ch;">Pick <strong>Glass Regular Dark</strong>, <strong>Regular
-      Light</strong>, <strong>Clear</strong> or <strong>Opaque</strong>, answer <strong>Apply</strong> to the one-time
-      prompt, then quit and reopen once. macOS gets the see-through window; everywhere else the same optics run over a
-      wallpaper backdrop.</p>
+    <p class="muted" style="max-width: 64ch; margin: 0 0 16px;">Download the <code>.vsix</code>, then in VS Code:
+      <strong>Extensions</strong> → the <code>…</code> menu → <strong>Install from VSIX…</strong>. Or from a terminal:</p>
+    <pre class="cmd"><b>"/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" \
+  --install-extension vs-glass-1.2.1.vsix</b>
+the full path matters: a `code` alias that wraps `open` swallows --install-extension</pre>
+    <p class="muted" style="margin-top:18px; max-width: 64ch;">Then pick <strong>Glass Regular Dark</strong>,
+      <strong>Regular Light</strong>, <strong>Clear</strong> or <strong>Opaque</strong>, answer <strong>Apply</strong>
+      to the one-time prompt, and quit with ⌘Q and reopen once. macOS gets the see-through window; everywhere else the
+      same optics run over a wallpaper backdrop.</p>
     <div class="cta">
       <a class="btn primary" href="https://github.com/MilosHampl/vs-glass/releases/latest">Releases</a>
       <a class="btn" href="https://github.com/MilosHampl/vs-glass/blob/main/CONTRIBUTING.md">Contribute</a>

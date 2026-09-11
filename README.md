@@ -139,18 +139,40 @@ refracted rim, and a chromatic edge where the backdrop bends.
 
 VS Glass is one extension and needs nothing else: no Vibrancy Continued, no Custom CSS loader.
 
-1. Install the `.vsix` from the [latest release](https://github.com/MilosHampl/vs-glass/releases/latest):
+1. Download `vs-glass-<version>.vsix` from the [latest release](https://github.com/MilosHampl/vs-glass/releases/latest),
+   then in VS Code: **Extensions** view → the `…` menu at the top of it → **Install from VSIX…** → pick the file.
+
+   From a terminal instead:
 
    ```sh
-   code --install-extension vs-glass-1.2.0.vsix
+   # macOS
+   "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" --install-extension vs-glass-1.2.1.vsix
+   # Linux / Windows (or macOS with the shell command installed)
+   code --install-extension vs-glass-1.2.1.vsix
    ```
 
-   or in VS Code: Extensions view → `…` → **Install from VSIX…**.
+   The absolute path is not paranoia: on macOS `code` often is not on `PATH` at all (VS Code installs it from
+   **Shell Command: Install 'code' command in PATH**), and a `code` that is a shell alias or function wrapping
+   `open -b com.microsoft.VSCode` silently swallows `--install-extension` — it opens a window and installs nothing.
+   Check with `type code`. However you install it, "VS Glass" then appears in the Extensions view.
 2. Pick a theme (⌘K ⌘T): **Glass Regular Dark** (the flagship), **Glass Clear** (thinner), or **Glass Opaque**
    (no effects, the Reduce Transparency equivalent). **Glass Regular Light** ships too but is not tuned for the
-   see-through window.
-3. VS Glass asks once whether to apply the glass effects. Say **Apply**, then quit and reopen VS Code once.
+   see-through window. If you have not picked one yet, VS Glass says so once and offers the theme picker.
+3. VS Glass asks once whether to apply the glass effects. Say **Apply**, then quit and reopen VS Code once
+   (⌘Q — reloading the window is not enough, the hook runs in the main process).
    From then on every VS Glass setting is live.
+
+**Nothing happened?**
+
+- *No "VS Glass" in the Extensions view* — the install did not run. See the `type code` note above, or use the
+  Install from VSIX menu.
+- *Installed, but no prompt* — the prompt only appears while one of the four Glass themes is active. Run
+  **VS Glass: Status** from the Command Palette; it reports the hook, the CSS and the window slab in one message.
+- *Applied, but the window is still opaque* — quit VS Code fully (⌘Q) rather than reloading the window, and check
+  that no other window patcher (Vibrancy Continued, Custom CSS and JS Loader) is still patched in: both write to the
+  same startup file and fight over the window. VS Glass refuses to patch on top of Vibrancy Continued and says so.
+- *"could not write to VS Code's own startup file"* — the app is not writable by your user. The error carries the
+  exact `chown` command; run it, then **VS Glass: Apply**.
 
 What "apply" writes, so there are no surprises:
 

@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.2.1] - 2026-09-11
+
+### Added
+
+- A first-run nudge: installed but no Glass theme picked yet now says so once, with the theme picker one click away.
+  Before this, installing the extension and never touching the theme looked exactly like a failed install.
+
+### Changed
+
+- The install instructions lead with **Extensions → … → Install from VSIX…** and give the absolute path for the CLI.
+  On macOS `code` is often not on `PATH`, and a `code` shell alias wrapping `open -b com.microsoft.VSCode` swallows
+  `--install-extension` silently: it opens a window and installs nothing. README gained a "Nothing happened?" section.
+- VS Glass now refuses to patch on top of Vibrancy Continued and says what to do, instead of patching anyway and
+  explaining afterwards that the two fight over the window.
+- The "could not write to VS Code's own startup file" error carries the exact `chown` command to fix it.
+
 ## [1.2.0] - 2026-09-11
 
 ### Added

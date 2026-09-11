@@ -1,48 +1,25 @@
-VS Glass 1.2.0 — the window itself becomes glass.
+VS Glass 1.2.1 — installing it is the whole point of this one.
 
-## The window slab (macOS 26)
+- **Install from VSIX is the documented path now.** On macOS `code` is often not on `PATH` at all, and a `code`
+  shell alias that wraps `open -b com.microsoft.VSCode` swallows `--install-extension` without a word: it opens a
+  window and installs nothing. The README leads with **Extensions → `…` → Install from VSIX…**, gives the absolute
+  CLI path, and has a short "Nothing happened?" section.
+- **A first-run nudge.** Installed but no Glass theme picked looked exactly like a failed install. VS Glass now says
+  so once and offers the theme picker.
+- **Conflicting patchers are caught before the patch.** If Vibrancy Continued is patched into your VS Code, VS Glass
+  refuses and tells you to disable it first, instead of patching on top and explaining afterwards.
+- **A permission failure now carries the exact `chown` command.**
 
-Everything in 1.1 bent what was *inside* the window: a `backdrop-filter` can only sample its own page, never the
-windows or video behind it. On macOS 26 the compositor can, so `Window Material` gains **`liquid-glass`** (and a new
-`auto` default that picks it where the OS supports it, `hud` elsewhere).
-
-A small native helper, `bin/vs-glass-helper`, keeps a real Liquid Glass window — transparent, click-through,
-shadowless — directly under every VS Code window, tuned so its **body is a pixel-exact pass-through** and only the
-**rim refracts and colour-splits**. Other windows, video and the desktop bend under the window's edge, live. Nothing
-is screen-captured; the window server composites it, and `Lens` and `Aberration` retune it like every other rim.
-
-Measured against a pattern behind a transparent window: body difference 0.00, the rim bent over exactly the configured
-width, red and blue split by exactly the configured offset. It exits with VS Code, with any other material, and with
-**VS Glass: Remove**. DESIGN.md §5.2 has the anatomy, the numbers and the limits.
-
-## The file overview as a lens
-
-The minimap's viewport slider is a bare plane of clear, edge-curved glass that refracts the code lines under it as it
-slides — no border, no shadow, no shine, just the optic. Pair it with `"editor.minimap.showSlider": "always"`.
-
-## One interactive ladder
-
-Editor tabs, panel tabs, list rows, activity-bar and status-bar capsules, toolbar and icon buttons, breadcrumbs, menu
-titles and buttons all use the same film and hairline at the same alphas, the same press, and the same two corners.
-A control now looks the same wherever it lives in the workbench.
-
-## Also
-
-- `Window Material: none` — no material at all, the clearest the window can be.
-- Flat text everywhere (no `text-shadow`), gradient 1 px rims in the Apple manner, and no drop shadows anywhere.
-- Tabs and rows paint an inset pill concentric with their container.
+Everything from 1.2.0 is here too: the macOS 26 window slab, the minimap lens, and one interactive ladder for every
+control. See [CHANGELOG.md](https://github.com/MilosHampl/vs-glass/blob/main/CHANGELOG.md).
 
 ## Install
 
-Download `vs-glass-1.2.0.vsix` below, then:
+Download `vs-glass-1.2.1.vsix` below, then in VS Code: **Extensions** → the `…` menu → **Install from VSIX…**.
+From a terminal on macOS, use the full path:
 
 ```
-code --install-extension vs-glass-1.2.0.vsix
+"/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" --install-extension vs-glass-1.2.1.vsix
 ```
 
-Pick a Glass theme (**Glass Regular Dark**, **Regular Light**, **Clear** or **Opaque**), answer **Apply** to the
-one-time prompt, and quit and reopen VS Code once. After that every setting applies live. macOS gets the see-through
-window; other platforms get the glass CSS over a wallpaper backdrop.
-
-Not on the Marketplace. The extension patches one file inside VS Code (`out/main.js`, backed up first) and
-**VS Glass: Remove** restores it byte-exact.
+Then pick a Glass theme, answer **Apply**, and quit with ⌘Q and reopen once.
