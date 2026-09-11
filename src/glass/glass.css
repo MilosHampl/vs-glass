@@ -527,8 +527,8 @@
    that read as odd — a framed rectangle sliding over the overview. */
 @G {
   --vscode-minimapSlider-background: transparent;
-  --vscode-minimapSlider-hoverBackground: rgba(var(--vsg-spec-rgb), 0.03);
-  --vscode-minimapSlider-activeBackground: rgba(var(--vsg-spec-rgb), 0.05);
+  --vscode-minimapSlider-hoverBackground: transparent;
+  --vscode-minimapSlider-activeBackground: transparent;
 }
 @G .monaco-editor .minimap-slider,
 @G .monaco-editor .minimap-slider-horizontal {
@@ -540,8 +540,9 @@
   backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
   transition: background-color var(--vsg-motion-fast) var(--vsg-ease);
 }
-@G .monaco-editor .minimap-slider:hover { background: rgba(var(--vsg-spec-rgb), 0.03) !important; }
-@G .monaco-editor .minimap-slider.active { background: rgba(var(--vsg-spec-rgb), 0.05) !important; }
+/* no hover or drag colour: the slab is the same piece of glass at rest and in motion — only what it bends changes */
+@G .monaco-editor .minimap-slider:hover,
+@G .monaco-editor .minimap-slider.active { background: transparent !important; }
 /* VS Code's own hard shadow where the minimap meets the code has no place on a see-through plane */
 @G .monaco-editor .minimap-shadow-visible { box-shadow: none !important; }
 
@@ -561,7 +562,10 @@
   border-radius: var(--vsg-radius-pill);
   box-shadow: none !important;
 }
-@G .monaco-editor > .overflow-guard > .monaco-scrollable-element > .scrollbar > .slider { background: transparent !important; }
+@G .monaco-editor > .overflow-guard > .monaco-scrollable-element > .scrollbar > .slider,
+@G .monaco-editor > .overflow-guard > .monaco-scrollable-element > .scrollbar > .slider:hover,
+@G .monaco-editor > .overflow-guard > .monaco-scrollable-element > .scrollbar > .slider.active { background: transparent !important; }
+/* list scrollbars sit inside frosted widgets, where a bare lens has nothing to show: they keep a whisper of film */
 @G .monaco-scrollable-element > .scrollbar > .slider:hover { background: rgba(var(--vsg-spec-rgb), 0.08) !important; }
 @G .monaco-scrollable-element > .scrollbar > .slider.active { background: rgba(var(--vsg-spec-rgb), 0.11) !important; }
 /* the lens only where the scrollbar really overlaps code (the editor's own scrollable element), never inside lists */

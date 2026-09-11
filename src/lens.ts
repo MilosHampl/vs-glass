@@ -56,11 +56,12 @@ export const LENS_CLASSES: LensClass[] = [
   { name: 'capsule', w: 32, h: 32, mw: 32, mh: 32, axes: 'xy', rim: 0.6, convex: true }, // icon-only pills (activity/status items) — never under text
   // the minimap's viewport slider: a thick, clear (blur 0) slab of glass with a wide curved edge, dragged over the file
   // overview. It is the one place where glass slides over rendered content, so the bend must read as a lens, not a tint.
-  // the minimap's viewport slider and the editor scrollbar: a magnifying slab. The edge zone is half the nominal
-  // height, so the WHOLE surface is inside the curve (a dome, not a rimmed pane), the displacement is 1.7× to keep the
-  // bend visible over that distance (slope 2.9·23.8/120 = 0.58, inside the folding limit), and the filter draws no
-  // light of its own — the owner wants warp and chromatic fringe only.
-  { name: 'slider', w: 110, h: 240, mw: 36, mh: 78, axes: 'xy', rim: 1, radius: 9, blur: 0, edgePx: 120, power: 1, disp: 1.7, spec: false },
+  // the minimap's viewport slider and the editor scrollbar: a magnifying dome. The edge zone is half the nominal
+  // height, so the WHOLE surface is inside the curve, and `power: 0` gives it the circular-arc profile — nearly flat
+  // through the middle, bending hard toward the rim, the section of a thick lens rather than a cone. Displacement is
+  // 2× (slope 2.9·28/120 = 0.68, inside the folding limit) and the chromatic fringe scales with it, so the shape and
+  // the depth come from the optic alone: the filter draws no light of its own (`spec: false`).
+  { name: 'slider', w: 110, h: 240, mw: 40, mh: 88, axes: 'xy', rim: 1, radius: 9, blur: 0, edgePx: 120, power: 0, disp: 2, spec: false },
   // window-edge strips: the slab's top/bottom rim bends what sits just inside the window edge (title bar, status bar,
   // the last code lines). One-sided, clear (no frost), so UI text is bent a little but never blurred.
   { name: 'edge-top', w: 1400, h: 40, mw: 64, mh: 40, axes: 'y', rim: 0.6, sides: { top: true }, blur: 0 },
