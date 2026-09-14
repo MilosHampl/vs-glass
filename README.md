@@ -36,6 +36,11 @@ Settings. `VS Glass: Remove` restores `main.js` byte-exact from its backup and d
 
 ### The window itself as glass (macOS 26)
 
+> **Opt-in since 1.2.3.** The slab can only show what is actually behind the window, and it needs the OS blur switched
+> off to be seen. Over a plain or smooth wallpaper that trades a guaranteed readable blur for an effect that does not
+> appear — which is why `auto` is `under-window` vibrancy and the slab is `vsGlass.windowMaterial: liquid-glass` by
+> name. It is at its best with a busy desktop, video or other windows behind a zoomed (not native full-screen) window.
+
 Everything above bends what is *inside* the window: a `backdrop-filter` can only sample its own page, never the
 windows or video behind it — the compositor draws those later. On macOS 26 the OS's own Liquid Glass can, so VS Glass
 ships a second, tiny piece: `bin/vs-glass-helper` (a 300 KB native process) keeps a real Liquid Glass window —
@@ -61,13 +66,13 @@ Everything is a normal VS Code setting (⌘, then search **VS Glass**). Every ch
 |---|---|
 | **Effects** | The glass effects and, on macOS, the see-through window. Off restores plain VS Code (the hook is removed on the next Apply). |
 | **Window Transparency** | `auto` (macOS: on), `on`, `off`. |
-| **Window Material** | `auto` (default) is `liquid-glass` where the OS can do it and `hud` elsewhere. `liquid-glass` (macOS 26 or newer) makes the window itself a plane of the system's Liquid Glass — see [The window itself as glass](#the-window-itself-as-glass-macos-26). `none` is the clearest flat option: no material at all, so the desktop shows through unblurred and untinted. Everything else is a macOS material the OS blends with the desktop behind the window. Since the workbench paints almost nothing of its own, this sets how much desktop you see. `hud` (default) and `fullscreen-ui` let the most through; `menu`, `popover`, `sidebar` are medium frosted; `under-window` is the heavy, near-opaque one other transparency extensions default to; `light` / `medium-light` are bright frosted (pair with Glass Regular Light); `dark` / `ultra-dark` the classic vibrant-dark ones. 19 in all, switchable live. |
-| **Window Glass Style** | With Window Material on `liquid-glass` (macOS 26): what the system glass under the window is made of. `apple-clear` (default) and `apple-regular` are the OS's own Clear and Regular materials, a light or a heavier frost with Apple's rim refraction, retuned only at the rim by Lens and Aberration. `clear-plane` strips Apple's blur and tint so the window is a clear sheet whose edge alone bends what is behind it. A material can only show what is behind it: over a plain dark wallpaper the three read as a translucent sheet differing only in brightness (measured over a flat backdrop: clear-plane passes it through, Apple Clear shifts it 10 %, Apple Regular halves it; over detailed content Apple Clear drops its contrast from 73 to 5), and on a window that fills the screen the refracting edge sits on the screen border. Un-zoom the window over other windows or a busy wallpaper, and lower Density, to see it. |
+| **Window Material** | `auto` (default) is the system's `under-window` vibrancy: macOS blurs the desktop behind the window, which is what keeps code readable over any wallpaper. `liquid-glass` (macOS 26 or newer) instead puts a Liquid Glass slab under the window and switches that blur **off** — it only looks like glass where there is real content behind the window to refract; over a plain wallpaper it reads as a clear window. See [The window itself as glass](#the-window-itself-as-glass-macos-26). `none` turns both off; the other values are macOS vibrancy materials. |
+| **Window Glass Style** | With Window Material on `liquid-glass` (macOS 26): what the slab is made of. `apple-clear` (default) and `apple-regular` are the OS's own Clear and Regular materials; `frosted` is Regular's face under a much deeper blur, for a slab that stays readable over anything; `clear-plane` is a pixel-exact pass-through where only the rim bends. Over a plain wallpaper they all look alike — there is nothing behind the window for a material to show. |
 | **Density** (0 to 200) | How frosted the base planes are (window film, editor, side bar, panel, bars). 0 is absolutely clear: only rims, lensing and text. 100 is the tuned default (about 7 %). 200 is opaque. |
 | **Widget Density** (0 to 200) | The body of floating widgets (command palette, hovers, suggestions, notifications, dialogs, modal editors such as Settings). Separate from Density, with a readable floor, so modals stay legible while the base window goes clear. |
 | **Tint** | `none` (colourless, default) or a thin coloured film: `graphite`, `blue`, `indigo`, `violet`, `teal`, `mint`, `rose`, `amber`. |
-| **Lens** | `soft`, `default`, `strong`: how far the rims bend what is behind them. |
-| **Aberration** | `off`, `subtle`, `default`, `strong`: red-to-blue fringing at the rims, like a curved glass edge. |
+| **Lens** | `soft`, `default`, `strong`, `extreme`: how far the rims bend what is behind them (`extreme` turns every rim into a magnifier; displacement and rim width scale together, so nothing folds). |
+| **Aberration** | `off`, `subtle`, `default`, `strong`, `extreme`: red-to-blue fringing at the rims, like a curved glass edge (`extreme` is a prism). |
 | **Wallpaper** | `auto` paints a neutral smoke backdrop only when the window is not see-through (an opaque window still gets rims with something to bend). |
 | **Auto Apply** | Re-apply on every settings change (default). Off means you run **VS Glass: Apply** yourself. |
 
@@ -75,9 +80,15 @@ Commands: **VS Glass: Apply**, **VS Glass: Remove** (restores VS Code's original
 everything else VS Glass wrote), **VS Glass: Status**, **VS Glass: Open Settings**.
 
 While the effects are on, VS Glass also keeps theme-scoped `[Glass …]` blocks in `workbench.colorCustomizations`.
-Webviews (Claude Code, Markdown preview, extension views) paint their own bodies from theme colours that no CSS
-can reach, so those colours carry the same near-clear alphas as the planes. The blocks affect only the Glass
-themes and are removed with the effects.
+Webviews (Claude Code, Markdown preview, extension views) paint their own bodies from theme colours, so those colours
+carry the same near-clear alphas as the planes. The blocks affect only the Glass themes and are removed with the effects.
+
+Webviews are separate documents, so the workbench stylesheet cannot reach into them. The window hook therefore adopts a
+second sheet, `glass/webview.css`, into every webview frame — as a constructed stylesheet, which a webview's Content
+Security Policy does not govern. It styles only surfaces it recognises: today that is the **Claude Code** chat, whose
+composer becomes the minimap slider's optic (clear, the conversation warped and colour-split as it passes beneath) over
+a film dense enough to type on, and whose messages are the same pill as a selected tab. Lens and Aberration apply to it
+too. The sheet is written once the hook in this window is current (quit and reopen after updating).
 
 The same knobs exist as plain CSS files for people who inject CSS by other means: `glass/glass.css` plus the
 addons in `glass/tints/`, `glass/density/`, `glass/lens/`, `glass/aberration/` and `glass/glass-wallpaper.css`,
@@ -174,12 +185,18 @@ VS Glass is one extension and needs nothing else: no Vibrancy Continued, no Cust
   same startup file and fight over the window. VS Glass refuses to patch on top of Vibrancy Continued and says so.
 - *"could not write to VS Code's own startup file"* — the app is not writable by your user. The error carries the
   exact `chown` command; run it, then **VS Glass: Apply**.
+- *"A JavaScript error occurred in the main process" at startup* — the hook block in `main.js` does not parse (the
+  extension now refuses to write one that does not, but an interrupted update could still leave one). From a shell,
+  in a checkout of this repository: `node scripts/fix-hook.mjs` rewrites the hook and verifies it parses;
+  `node scripts/fix-hook.mjs --restore` puts the untouched `main.js` back. Then quit and reopen VS Code.
+- *The Claude Code composer is not glass* — the webview sheet needs the current hook in the main process: quit and
+  reopen VS Code once after updating. **VS Glass: Status** reports the running hook version.
 
 What "apply" writes, so there are no surprises:
 
 - the hook block in `out/main.js` inside your VS Code installation (backed up first as `main.js.vs-glass-backup`);
-- `<user-data>/vs-glass/glass.css` and `state.json` (your user-data folder is the parent of `User/`, e.g.
-  `~/Library/Application Support/Code/`);
+- `<user-data>/vs-glass/glass.css`, `webview.css` and `state.json` (your user-data folder is the parent of `User/`,
+  e.g. `~/Library/Application Support/Code/`);
 - the `[Glass …]` blocks in `workbench.colorCustomizations` in your user settings.
 
 **VS Glass: Remove** reverses all three. VS Code updates overwrite `main.js`, so the see-through window

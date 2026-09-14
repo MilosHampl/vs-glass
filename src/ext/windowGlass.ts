@@ -32,7 +32,8 @@ export interface WindowGlassParams {
   chroma: number;           // chromatic aberration at the rim, pt (0 = off)
   chromaBand: number;       // width of each aberration band, pt
   chromaLevels: number;     // number of bands, each further one proportionally weaker
-  body: string;             // apple-clear | apple-regular | clear-plane — what the slab's body is made of
+  body: string;             // apple-clear | apple-regular | frosted | clear-plane — what the slab's body is made of
+  blur: number;             // body blur, pt at full resolution (Apple's own Clear/Regular read as 20/8 here)
 }
 
 /** The window slab needs the desktop app on macOS 26 (Darwin 25) or newer. */
@@ -43,19 +44,31 @@ export function windowGlassSupport(): { ok: boolean; why: string } {
   return { ok: true, why: '' };
 }
 
-/** `auto` is Liquid Glass where the OS can do it and the light vibrancy blur elsewhere. */
-export const resolveMaterial = (material: string) => material === 'auto' ? (windowGlassSupport().ok ? LIQUID_GLASS : 'hud') : material;
+/**
+ * `auto` is a real macOS vibrancy material — the window server blurs and tints whatever is behind the window, which is
+ * what makes a see-through editor readable over any desktop.
+ *
+ * It deliberately does NOT resolve to `liquid-glass`. The slab can only show what is actually behind the window: over a
+ * smooth or plain wallpaper there is nothing to refract, and because the slab needs the vibrancy view switched off to
+ * be visible at all (`stateFor` sends the hook `none`), choosing it trades a guaranteed readable blur for an effect
+ * that may not appear. Liquid Glass stays available, but only when asked for by name.
+ */
+export const resolveMaterial = (material: string) => material === 'auto' ? 'under-window' : material;
 
 // The same three lens strengths and four aberration strengths as the in-window rims, in the slab's units.
-const REFRACTION: Record<string, [amount: number, height: number]> = { soft: [-40, 16], default: [-60, 20], strong: [-100, 28] };
-const CHROMA: Record<string, [pt: number, band: number, levels: number]> = { off: [0, 12, 0], subtle: [0.8, 8, 1], default: [1.5, 12, 1], strong: [2.5, 16, 2] };
+const REFRACTION: Record<string, [amount: number, height: number]> = { soft: [-40, 16], default: [-60, 20], strong: [-100, 28], extreme: [-150, 40] };
+const CHROMA: Record<string, [pt: number, band: number, levels: number]> = { off: [0, 12, 0], subtle: [0.8, 8, 1], default: [1.5, 12, 1], strong: [2.5, 16, 2], extreme: [4, 20, 3] };
 
-export const WINDOW_GLASS_STYLES = ['apple-clear', 'apple-regular', 'clear-plane'];
+export const WINDOW_GLASS_STYLES = ['apple-clear', 'apple-regular', 'frosted', 'clear-plane'];
+/** Body blur per style, in points at full resolution. Apple samples its backdrop at half resolution, so its stock
+ *  Clear (10) and Regular (4) come out as 20 and 8 here; `frosted` is Regular's dark face under a much deeper blur, for
+ *  code that stays readable over anything. `clear-plane` blurs nothing. */
+export const BODY_BLUR: Record<string, number> = { 'apple-clear': 20, 'apple-regular': 8, frosted: 36, 'clear-plane': 0 };
 export function windowGlassParams(enabled: boolean, lens: string, aberration: string, style: string): WindowGlassParams {
   const [refraction, refractionHeight] = REFRACTION[lens] ?? REFRACTION.default;
   const [chroma, chromaBand, chromaLevels] = CHROMA[aberration] ?? CHROMA.default;
   const body = WINDOW_GLASS_STYLES.includes(style) ? style : 'apple-clear';
-  return { enabled, radius: WINDOW_RADIUS, margin: 40, refraction, refractionHeight, chroma, chromaBand, chromaLevels, body };
+  return { enabled, radius: WINDOW_RADIUS, margin: 40, refraction, refractionHeight, chroma, chromaBand, chromaLevels, body, blur: BODY_BLUR[body] };
 }
 
 export const paramsFile = (stateDir: string) => path.join(stateDir, 'window-glass.json');

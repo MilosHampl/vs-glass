@@ -506,11 +506,13 @@ export const DENSITY_PRESETS: { percent: number; description: string }[] = [
 export const LENS_PRESETS: { id: string; mul: number; description: string }[] = [
   { id: 'soft', mul: 0.7, description: 'a gentler bend at every rim' },
   { id: 'strong', mul: 1.4, description: 'a heavier bend at every rim' },
+  { id: 'extreme', mul: 2.0, description: 'the widest, deepest bend: every rim becomes a magnifier' },
 ];
 export const ABERRATION_PRESETS: { id: string; mul: number; description: string }[] = [
   { id: 'off', mul: 0, description: 'no colour fringing at the rim' },
   { id: 'subtle', mul: 0.5, description: 'half the default fringing' },
   { id: 'strong', mul: 2.5, description: 'heavy red-to-blue fringing, like thick crystal' },
+  { id: 'extreme', mul: 4, description: 'wide red-to-blue fringing at every rim, like a prism' },
 ];
 
 export interface Tint { id: string; name: string; color: Hex; alpha: number; description: string }

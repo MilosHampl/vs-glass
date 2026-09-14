@@ -211,10 +211,10 @@ pick a Glass theme · answer Apply · quit and reopen once</pre>
         <p>VS Code has no extension point for a transparent window or workbench CSS, so VS Glass adds one
           marker-delimited hook to <code>out/main.js</code> — the only bootstrap file VS Code does not checksum.
           <strong>VS Glass: Remove</strong> restores it byte-exact.</p>
-        <pre>// VS-GLASS-HOOK-V5 start
+        <pre>// VS-GLASS-HOOK-V7 start
 win = new BrowserWindow({ …, transparent: true })
 win.webContents.insertCSS(glassCss)
-// VS-GLASS-HOOK-V5 end</pre>
+// VS-GLASS-HOOK-V7 end</pre>
       </div>
 
       <div class="card">

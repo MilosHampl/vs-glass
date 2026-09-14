@@ -1,0 +1,69 @@
+/*! VS Glass — webview sheet (generated from src/glass/webview.css; the window hook adopts it inside every webview
+ *  frame as a constructed stylesheet). Webviews are separate documents: none of the workbench's tokens or filters exist
+ *  in them, so this sheet carries its own. It is purely visual — it never moves or resizes anything — and it styles only
+ *  surfaces it recognises by their class-name prefix (CSS-module hashes change; the prefixes do not).
+ *  MIT · https://github.com/MilosHampl/vs-glass */
+
+/* ---------- tokens (dark first; light re-sets them) ---------- */
+:root {
+  --vsgw-spec-rgb: 255, 255, 255;
+  --vsgw-plane-rgb: 14, 18, 26;
+  --vsgw-accent: var(--vscode-focusBorder, #5ea3ff);
+  --vsgw-radius: 12px;
+  --vsgw-density: 0.65;
+  --vsgw-lens-composer: @LENS_COMPOSER_DARK;
+  --vsgw-lens-slider: @LENS_SLIDER_DARK;
+  /* the same interactive ladder as the workbench: a film and a hairline at fixed alphas */
+  --vsgw-state-film: rgba(var(--vsgw-spec-rgb), 0.06);
+  --vsgw-state-rim: rgba(var(--vsgw-spec-rgb), 0.10);
+}
+body.vscode-light {
+  --vsgw-spec-rgb: 20, 24, 32;
+  --vsgw-plane-rgb: 248, 250, 253;
+  --vsgw-lens-composer: @LENS_COMPOSER_LIGHT;
+  --vsgw-lens-slider: @LENS_SLIDER_LIGHT;
+}
+
+/* ---------- Claude Code: the composer is a plane of glass over the conversation ---------- */
+/* Claude Code already floats its composer over the tail of the message list (position: absolute inside the chat
+   container), so the messages scroll behind it. The composer gets the minimap-slider optic at its own proportions —
+   clear, the whole surface inside the curve, warp + chromatic fringe carrying the shape, no drawn light — over a
+   plane film dense enough that the text typed on it stays readable. The innermost input container is the box
+   (the outer one is Claude Code's positioning wrapper). */
+[class*="inputContainer_"]:has([class*="messageInput_"]):not(:has([class*="inputContainer_"])) {
+  isolation: isolate;
+  background: rgba(var(--vsgw-plane-rgb), calc(0.22 + 0.30 * var(--vsgw-density))) !important;
+  border: 1px solid rgba(var(--vsgw-spec-rgb), 0.18) !important;
+  border-radius: var(--vsgw-radius) !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: var(--vsgw-lens-composer) saturate(1.1);
+  backdrop-filter: var(--vsgw-lens-composer) saturate(1.1);
+  transition: border-color 120ms ease;
+}
+/* focus is the rim taking the accent — no glow ring, no shadow */
+[class*="inputContainer_"]:has([class*="messageInput_"]):not(:has([class*="inputContainer_"])):focus-within {
+  border-color: color-mix(in srgb, var(--vsgw-accent) 70%, transparent) !important;
+  box-shadow: none !important;
+}
+/* the opaque plate under the text box and the fills inside the composer go clear, so the glass is one plane */
+[class*="inputContainerBackground_"] { background: transparent !important; }
+[class*="inputContainer_"] [class*="messageInput_"],
+[class*="inputContainer_"] [class*="mentionMirror_"],
+[class*="inputContainer_"] [class*="messageInputContainer_"],
+[class*="inputContainer_"] [class*="attachedFilesContainer_"] { background: transparent !important; }
+[class*="inputContainer_"] [class*="inputFooter_"] { border-top-color: rgba(var(--vsgw-spec-rgb), 0.10) !important; }
+/* the fade Claude Code paints over the tail of the list would hide exactly what the glass is there to bend */
+[class*="messageGradient_"] { display: none !important; }
+
+/* ---------- Claude Code: your own messages are the same pill as a selected tab ---------- */
+[class*="userMessage_"] {
+  background: var(--vsgw-state-film) !important;
+  border: 1px solid var(--vsgw-state-rim) !important;
+  border-radius: 10px !important;
+}
+
+/* ---------- any webview: scrollbar thumbs are the same plane of glass as the editor's ---------- */
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--vsgw-spec-rgb), 0.10) !important;
+  border-radius: 8px;
+}

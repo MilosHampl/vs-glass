@@ -87,6 +87,10 @@ struct Params: Equatable {
   /// What the body of the slab is: Apple's stock Clear material (blur 10, a light face), Apple's stock Regular
   /// material (blur 4, a darker face) or a pixel-exact pass-through with only the rim bending ("clear-plane").
   var body = "apple-clear"
+  /// Body blur radius in points at full resolution (nil = the style's own). Apple samples its backdrop at half
+  /// resolution, so its Clear (10) and Regular (4) read as 20 and 8 here; "frosted" is deeper still.
+  var blur: Double? = nil
+  var bodyBlur: Double { blur ?? (body == "clear-plane" ? 0 : body == "apple-regular" ? 8 : body == "frosted" ? 36 : 20) }
 }
 func loadParams() -> Params? {
   guard let d = FileManager.default.contents(atPath: paramsPath), let o = try? JSONSerialization.jsonObject(with: d) as? [String: Any] else { return nil }
@@ -99,7 +103,8 @@ func loadParams() -> Params? {
   if let v = o["chroma"] as? Double { p.chroma = max(0, min(12, v)) }
   if let v = o["chromaBand"] as? Double { p.chromaBand = max(1, min(80, v)) }
   if let v = o["chromaLevels"] as? Double { p.chromaLevels = Int(max(0, min(4, v))) }
-  if let v = o["body"] as? String, ["apple-clear", "apple-regular", "clear-plane"].contains(v) { p.body = v }
+  if let v = o["body"] as? String, ["apple-clear", "apple-regular", "frosted", "clear-plane"].contains(v) { p.body = v }
+  if let v = o["blur"] as? Double { p.blur = max(0, min(120, v)) }
   return p
 }
 guard var params = loadParams(), params.enabled else { quit("window glass is off (\(paramsPath) missing or disabled); nothing to do") }
@@ -159,7 +164,7 @@ final class Slab: NSObject {
 
   /** Tune the glass: pass-through body, rim refraction, aberration bands. False when the filter is not where we expect. */
   @discardableResult func apply(_ p: Params) -> Bool {
-    glass.setValue(p.body == "apple-regular" ? 0 : 1, forKey: "style")   // NSGlassEffectView.Style: regular = 0, clear = 1
+    glass.setValue(p.body == "apple-regular" || p.body == "frosted" ? 0 : 1, forKey: "style")   // NSGlassEffectView.Style: regular = 0, clear = 1
     glass.setValue(p.radius, forKey: "cornerRadius")
     if let root = win.contentView { glass.frame = root.bounds.insetBy(dx: p.margin, dy: p.margin) }
     win.contentView?.layoutSubtreeIfNeeded(); win.displayIfNeeded()
@@ -167,11 +172,10 @@ final class Slab: NSObject {
           let bg0 = existing.first(where: { ($0.value(forKey: "type") as? String) == "glassBackground" }),
           let bg = bg0.mutableCopy() as? NSObject else { return false }
     // the body: Apple's own numbers for its two styles (read from a live NSGlassEffectView), or nothing at all
-    switch p.body {
-    case "clear-plane": expectedBlur = 0; bg.setValue(0.0, forKey: "inputBlurRadius"); bg.setValue(0.0, forKey: "inputFaceOpacity")
-    case "apple-regular": expectedBlur = 4; bg.setValue(4.0, forKey: "inputBlurRadius"); bg.setValue(1.0, forKey: "inputFaceOpacity")
-    default: expectedBlur = 10; bg.setValue(10.0, forKey: "inputBlurRadius"); bg.setValue(1.0, forKey: "inputFaceOpacity")
-    }
+    // the body: blur in full-resolution points (see Params.bodyBlur), the face only where there is a material
+    expectedBlur = p.bodyBlur
+    bg.setValue(p.bodyBlur, forKey: "inputBlurRadius")
+    bg.setValue(p.body == "clear-plane" ? 0.0 : 1.0, forKey: "inputFaceOpacity")
     bg.setValue(p.refraction, forKey: "inputInnerRefractionAmount")
     bg.setValue(p.refractionHeight, forKey: "inputInnerRefractionHeight")
     bg.setValue(0.0, forKey: "inputOuterRefractionAmount")
@@ -286,7 +290,7 @@ func reloadParams() {
   if p != params {
     params = p
     for s in slabs.values { s.apply(params) }
-    say("parameters updated: body \(params.body) radius \(params.radius) refraction \(params.refraction)/\(params.refractionHeight) chroma \(params.chroma)×\(params.chromaLevels) band \(params.chromaBand)")
+    say("parameters updated: body \(params.body) blur \(params.bodyBlur) radius \(params.radius) refraction \(params.refraction)/\(params.refractionHeight) chroma \(params.chroma)×\(params.chromaLevels) band \(params.chromaBand)")
   }
 }
 
@@ -349,6 +353,6 @@ while true {
   tick()
   if verbose && Date().timeIntervalSince(lastReport) > 5 {
     lastReport = Date()
-    for (wid, s) in slabs { say("report: window \(wid) z=\(order.firstIndex(of: wid).map(String.init) ?? "-") slab \(s.windowID) z=\(order.firstIndex(of: s.windowID).map(String.init) ?? "-") visible=\(s.win.isVisible) reorders=\(reorders) frameUpdates=\(frameUpdates) filterResets=\(s.resets)") }
+    for (wid, s) in slabs { say("report: window \(wid) z=\(order.firstIndex(of: wid).map(String.init) ?? "-") slab \(s.windowID) z=\(order.firstIndex(of: s.windowID).map(String.init) ?? "-") onActiveSpace=\(s.win.isOnActiveSpace) visible=\(s.win.isVisible) reorders=\(reorders) frameUpdates=\(frameUpdates) filterResets=\(s.resets)") }
   }
 }

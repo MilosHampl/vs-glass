@@ -262,6 +262,20 @@
     var(--vsg-edge-control) border-box !important;
 }
 @G .monaco-custom-toggle { border-radius: var(--vsg-radius-inner) !important; }
+/* the built-in chat's composer (Copilot Chat) is an input like any other: film, gradient rim, control corner. Its own
+   spinning "working" border stays — that is status, not decoration. */
+@G .interactive-session .chat-input-container {
+  border: 1px solid transparent !important;
+  border-radius: var(--vsg-radius-control) !important;
+  box-shadow: none !important;
+  background:
+    linear-gradient(rgba(var(--vsg-spec-rgb), 0.06), rgba(var(--vsg-spec-rgb), 0.06)) padding-box,
+    var(--vsg-edge-control) border-box !important;
+}
+@G .interactive-session .chat-input-container.focused { border-color: color-mix(in srgb, var(--vsg-accent) 70%, transparent) !important; }
+@G .interactive-session .chat-input-container .chat-editor-container,
+@G .interactive-session .chat-input-container .interactive-input-editor .monaco-editor,
+@G .interactive-session .chat-input-container .interactive-input-editor .monaco-editor .monaco-editor-background { background: transparent !important; }
 /* diff decorations: a 1 px accent at the left edge carries the meaning; the fill stays a film */
 @G .monaco-diff-editor .line-insert,
 @G .monaco-diff-editor .char-insert { box-shadow: inset 2px 0 0 rgba(48, 209, 88, 0.55); }
@@ -489,7 +503,10 @@
 @G .monaco-select-box-dropdown-container,
 @G .debug-toolbar,
 @G .monaco-dialog-box,
-@G .breadcrumbs-picker .monaco-list {
+@G .breadcrumbs-picker .monaco-list,
+@G .monaco-editor .debug-hover-widget,
+@G .simple-find-part,
+@G .monaco-editor .monaco-editor-overlaymessage .message {
   isolation: isolate;
   background: var(--vsg-plane-widget) !important;
   border: 1px solid transparent !important;
@@ -499,10 +516,22 @@
   backdrop-filter: var(--vsg-lens-widget) var(--vsg-filter-widget);
 }
 @G .context-view .monaco-menu-container,
-@G .monaco-select-box-dropdown-container {
+@G .monaco-select-box-dropdown-container,
+@G .simple-find-part,
+@G .monaco-editor .monaco-editor-overlaymessage .message {
   -webkit-backdrop-filter: var(--vsg-lens-menu) var(--vsg-filter-widget);
   backdrop-filter: var(--vsg-lens-menu) var(--vsg-filter-widget);
 }
+/* the debugger's variable hover floats over code like any editor hover; the terminal's find bar and the editor's
+   overlay message ("Cannot edit in read-only editor") are small planes at the control corner */
+@G .simple-find-part,
+@G .monaco-editor .monaco-editor-overlaymessage .message { border-radius: var(--vsg-radius-control) !important; }
+@G .simple-find-part .monaco-inputbox,
+@G .monaco-editor .debug-hover-widget .debug-hover-tree,
+@G .monaco-editor .debug-hover-widget .monaco-list,
+@G .monaco-editor .debug-hover-widget .complex-value { background: transparent !important; }
+@G .monaco-editor .debug-hover-widget .complex-value .title,
+@G .monaco-editor .debug-hover-widget .complex-value .tip { border-color: var(--vsg-hairline) !important; }
 @G .notification-toast { position: relative; }
 @G .notifications-toasts .notification-toast-container { border-radius: var(--vsg-radius-widget) !important; overflow: visible; }
 @G .notifications-toasts .notification-toast { box-shadow: var(--vsg-thickness-widget) !important; }
@@ -551,7 +580,9 @@
 @G .context-view .monaco-menu-container::before,
 @G .monaco-select-box-dropdown-container::before,
 @G .debug-toolbar::before,
-@G .monaco-dialog-box::before {
+@G .monaco-dialog-box::before,
+@G .monaco-editor .debug-hover-widget::before,
+@G .simple-find-part::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -573,7 +604,9 @@
 @G .notification-toast::after,
 @G .notifications-center::after,
 @G .context-view .monaco-menu-container::after,
-@G .monaco-dialog-box::after {
+@G .monaco-dialog-box::after,
+@G .monaco-editor .debug-hover-widget::after,
+@G .simple-find-part::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -588,6 +621,8 @@
 /* sticky scroll: glass strip over the code that scrolls beneath it */
 @G .monaco-editor .sticky-widget {
   background: rgba(var(--vsg-plane-widget-rgb), 0.5) !important;
+  /* no lens here: this strip spans the whole editor width and is re-composited on every scroll frame, so a
+     displacement filter on it costs frames exactly while the user scrolls code. The film alone is the sticky header. */
   -webkit-backdrop-filter: var(--vsg-base-filter-strip);
   backdrop-filter: var(--vsg-base-filter-strip);
   box-shadow: inset 0 -1px 0 rgba(var(--vsg-spec-rgb), var(--vsg-raised-spec-lo)) !important;
@@ -646,11 +681,18 @@
 /* list scrollbars sit inside frosted widgets, where a bare lens has nothing to show: they keep a whisper of film */
 @G .monaco-scrollable-element > .scrollbar > .slider:hover { background: rgba(var(--vsg-spec-rgb), 0.08) !important; }
 @G .monaco-scrollable-element > .scrollbar > .slider.active { background: rgba(var(--vsg-spec-rgb), 0.11) !important; }
-/* the lens only where the scrollbar really overlaps code (the editor's own scrollable element), never inside lists */
-@G .monaco-editor > .overflow-guard > .monaco-scrollable-element > .scrollbar > .slider {
+/* the lens where the thumb really slides over content: the editor's own scrollable element, and the trees and lists of
+   the side bars and the panel (rows scroll under those thumbs too). Not inside frosted widgets, where it has nothing. */
+@G .monaco-editor > .overflow-guard > .monaco-scrollable-element > .scrollbar > .slider,
+@G .part.sidebar .monaco-scrollable-element > .scrollbar > .slider,
+@G .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider,
+@G .part.panel .monaco-scrollable-element > .scrollbar > .slider {
   -webkit-backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
   backdrop-filter: var(--vsg-lens-slider) saturate(1.1);
 }
+@G .part.sidebar .monaco-scrollable-element > .scrollbar > .slider,
+@G .part.auxiliarybar .monaco-scrollable-element > .scrollbar > .slider,
+@G .part.panel .monaco-scrollable-element > .scrollbar > .slider { background: rgba(var(--vsg-spec-rgb), 0.04) !important; }
 
 /* ---------- 5d. Rows in the side bars: the highlight is inset, like the tabs ---------- */
 /* A list row spans the card edge to edge, so its hover/selection block used to run into the card's rounded corner.
@@ -775,9 +817,10 @@
 }
 @G .monaco-button:active,
 @G .monaco-text-button:active { transform: scale(0.97); }
+/* focus everywhere is the rim taking the accent: one hairline, no glow ring around the control */
 @G .monaco-inputbox.synthetic-focus,
 @G .monaco-inputbox:focus-within {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 32%, transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--vsg-accent) 70%, transparent) !important;
 }
 @G .monaco-list.element-focused .monaco-list-row.focused,
 @G .monaco-list .monaco-list-row.selected {
@@ -795,7 +838,8 @@
   @G .part.editor > .content .editor-group-container > .title,
   @G .quick-input-widget, @G .monaco-hover, @G .monaco-editor .suggest-widget, @G .monaco-editor .suggest-details, @G .monaco-editor .parameter-hints-widget,
   @G .monaco-editor .find-widget, @G .monaco-editor .rename-box, @G .action-widget, @G .notification-toast, @G .notifications-center,
-  @G .context-view .monaco-menu-container, @G .monaco-select-box-dropdown-container, @G .debug-toolbar, @G .monaco-dialog-box, @G .monaco-editor .sticky-widget {
+  @G .context-view .monaco-menu-container, @G .monaco-select-box-dropdown-container, @G .debug-toolbar, @G .monaco-dialog-box, @G .monaco-editor .sticky-widget,
+  @G .monaco-editor .debug-hover-widget, @G .simple-find-part, @G .monaco-editor .monaco-editor-overlaymessage .message {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background: var(--vsg-widget-solid) !important;
@@ -810,24 +854,24 @@
   @G *, @G *::before, @G *::after { transition: none !important; animation: none !important; }
 }
 
-/* ---------- 10. Buttons: clear glass pills, no shine animation ---------- */
-/* Modelled on a clear glass pill: a hairline rim, a bright top light where the curved body catches the room, a soft
-   drop shadow, and the backdrop bent at the rim — no inner bands (they read as an Aqua/XP button). Nothing moves on
-   hover (the owner rejected sheen sweeps, drifting highlights, lifts and glows twice); the only response is the press. */
+/* ---------- 10. Buttons: the same glass as every other control ---------- */
+/* A button is a film with the gradient rim (it is always drawn, so it may carry the rim the way inputs do), at the
+   control corner every input, select and dropdown uses — not a 999 px pill, which was the one shape in the workbench
+   that did not follow the concentric radii. It carries NO lens: a button sits on a see-through pane with nothing
+   in-page behind it, so a filter there could only add its own brightness lift (drawn light, ruled out), and the
+   Extensions view paints one Install button per row — dozens of backdrop filters for no optic at all. Nothing moves
+   on hover (the owner rejected sheen sweeps, drifting highlights, lifts and glows twice); the only response is the press. */
 @G .monaco-button.monaco-text-button,
 @G .monaco-button-dropdown > .monaco-button,
 @G .monaco-button-dropdown > .monaco-dropdown-button {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  border: none !important;
-  border-radius: 999px !important;
   border: 1px solid transparent !important;
+  border-radius: var(--vsg-radius-control) !important;
   background:
     linear-gradient(color-mix(in srgb, var(--vsg-accent) 52%, transparent), color-mix(in srgb, var(--vsg-accent) 52%, transparent)) padding-box,
     var(--vsg-edge-widget) border-box !important;
-  -webkit-backdrop-filter: var(--vsg-lens-menu) saturate(1.2);
-  backdrop-filter: var(--vsg-lens-menu) saturate(1.2);
   box-shadow: none !important;
   transition: transform 60ms var(--vsg-ease);
 }
@@ -862,7 +906,7 @@
 @G .notification-toast .monaco-button,
 @G .notifications-center .monaco-button { margin-left: 8px; }
 @G .monaco-button-dropdown {
-  border-radius: var(--vsg-radius-pill) !important;
+  border-radius: var(--vsg-radius-control) !important;
   overflow: hidden;
   gap: 0;
 }
@@ -880,7 +924,7 @@
 @G .monaco-button.monaco-text-button:active { transform: scale(0.97); }
 @G .monaco-button.monaco-text-button:focus-visible {
   outline: none !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vsg-accent) 40%, transparent), inset 0 0 0 1px rgba(var(--vsg-spec-rgb), 0.22) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--vsg-accent) 70%, transparent) !important;
 }
 /* icon buttons & toolbar actions: press only */
 @G .monaco-action-bar .action-item .action-label.codicon,

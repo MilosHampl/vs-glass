@@ -302,6 +302,26 @@ function main() {
   fs.writeFileSync(path.join(ROOT, 'glass', 'webview-colors.json'), JSON.stringify(webview, null, 2) + '\n');
   for (const l of LENS_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'lens', `glass-lens-${l.id}.css`), lensPresetCss('lens', l.id, l.mul, l.description));
   for (const a of ABERRATION_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'aberration', `glass-aberration-${a.id}.css`), lensPresetCss('aberration', a.id, a.mul, a.description));
+  // The webview sheet (glass/webview.css + glass/webview/*): webviews are separate documents without the workbench's
+  // tokens, so the sheet carries its own filters — the composer and slider classes only, from the Clear palette for dark
+  // webviews and Regular Light for light ones. The window hook loads it into every webview frame.
+  fs.mkdirSync(path.join(ROOT, 'glass', 'webview'), { recursive: true });
+  const wvTemplate = fs.readFileSync(path.join(ROOT, 'src', 'glass', 'webview.css'), 'utf8');
+  const wvDark = palettes.find(p => p.id === 'glass-clear') ?? palettes[0];
+  const wvLight = palettes.find(p => p.id === 'glass-regular-light') ?? palettes[0];
+  const wvVars = (lensMul: number, aberrationMul: number, suffix: string): Record<string, string> => {
+    const d = lensVars(wvDark, lensMul, aberrationMul, suffix).vars, l = lensVars(wvLight, lensMul, aberrationMul, suffix).vars;
+    return { LENS_COMPOSER_DARK: d['--vsg-lens-composer'], LENS_SLIDER_DARK: d['--vsg-lens-slider'], LENS_COMPOSER_LIGHT: l['--vsg-lens-composer'], LENS_SLIDER_LIGHT: l['--vsg-lens-slider'] };
+  };
+  const fill = (tpl: string, v: Record<string, string>) => Object.entries(v).reduce((t, [k, val]) => t.replaceAll(`@${k}`, val), tpl);
+  fs.writeFileSync(path.join(ROOT, 'glass', 'webview.css'), fill(wvTemplate, wvVars(1, 1, '-wv')));
+  const wvPreset = (kind: 'lens' | 'aberration', id: string, mul: number) => {
+    const v = wvVars(kind === 'lens' ? mul : 1, kind === 'aberration' ? mul : 1, `-wv-${kind}-${id}`);
+    return `/*! VS Glass — webview ${kind} preset "${id}" (generated; load AFTER webview.css). MIT */\n:root {\n  --vsgw-lens-composer: ${v.LENS_COMPOSER_DARK};\n  --vsgw-lens-slider: ${v.LENS_SLIDER_DARK};\n}\nbody.vscode-light {\n  --vsgw-lens-composer: ${v.LENS_COMPOSER_LIGHT};\n  --vsgw-lens-slider: ${v.LENS_SLIDER_LIGHT};\n}\n`;
+  };
+  for (const l of LENS_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'webview', `lens-${l.id}.css`), wvPreset('lens', l.id, l.mul));
+  for (const a of ABERRATION_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'webview', `aberration-${a.id}.css`), wvPreset('aberration', a.id, a.mul));
+  console.log(`✓ glass/webview.css (${(fs.statSync(path.join(ROOT, 'glass', 'webview.css')).size / 1024).toFixed(0)} KB) · glass/webview/ (${LENS_PRESETS.length + ABERRATION_PRESETS.length})`);
   console.log(`✓ glass/glass.css (${(css.length / 1024).toFixed(0)} KB) · glass/glass-wallpaper.css (${(wallpaper.length / 1024).toFixed(0)} KB) · glass/tints/ (${TINTS.length}) · glass/density/ (${DENSITY_PRESETS.length}) · glass/lens/ (${LENS_PRESETS.length}) · glass/aberration/ (${ABERRATION_PRESETS.length}) · glass/glass-filters.svg (${(svg.length / 1024).toFixed(0)} KB)`);
 }
 

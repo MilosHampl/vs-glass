@@ -779,6 +779,33 @@ usable from outside; and Apple's backdrop samples at half resolution, which alon
 status 3 and the window falls back to `none`. The compositor's per-frame cost is only paid while something behind the
 window moves, exactly as for Apple's own glass.
 
+**Where it ended up (1.2.3).** Not the default. On the owner's machine — zoomed windows over a smooth wallpaper —
+every body style read as "a translucent window with no effects", because to be visible at all the slab needs the
+hook to send the vibrancy material `none`: macOS then applies no blur, the window is a clear hole onto the desktop,
+and the slab has nothing to refract in its place. The result was unreadable code, not glass. `auto` therefore resolves
+to `under-window` vibrancy, and the slab is chosen by name, with its setting description stating the trade-off. It
+remains the right tool over a busy desktop, video or other windows.
+
+### 5.3 Webviews (1.2.3): a second sheet, adopted from the main process
+
+A webview (the Claude Code chat, Markdown preview, extension views) is a separate document in a
+`vscode-webview://` frame: the workbench stylesheet cannot reach into it, and its Content Security Policy forbids
+injected `<style>` elements. Two facts make it reachable anyway. Electron's main process can run script in any frame
+of a window (`webFrameMain.executeJavaScript`), and CSP governs stylesheets by origin, not the CSSOM — a
+`CSSStyleSheet` built with `replaceSync` and pushed onto `document.adoptedStyleSheets` is not subject to it. So the
+hook (V7) keeps `<user-data>/vs-glass/webview.css` next to `glass.css` and, for every frame whose URL is a webview
+host (or a blank child of one — VS Code writes webview HTML with `document.open()`), runs a small script that adopts
+the sheet once the document holds a surface the sheet knows, watches the document's own children to re-adopt after a
+rewrite, and returns at once when nothing changed. The sheet is purely visual and selects by class-name prefix
+(`[class*="inputContainer_"]`), because CSS-module hashes change between Claude Code builds and the prefixes do not.
+
+Two lessons cost a day. A hook that does not parse takes the main process down with it, and VS Code cannot then
+start to let the extension repair it — `writeHook` now compiles the block before writing, and `scripts/fix-hook.mjs`
+is the way back in from a shell. And the hook must never write into the folder it watches: V6 recorded the frames it
+found into `hook.json` on a 3-second sweep, the watcher took each write as "the extension rewrote the CSS", and every
+window re-inserted the 560 KB workbench sheet every three seconds. The watcher now reacts to the three files the
+extension writes for it and nothing else.
+
 ## 6. Performance
 
 **Method:** `scripts/perf.mjs` connects over CDP (`--remote-debugging-port`, default 9334) and runs

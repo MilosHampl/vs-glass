@@ -9,6 +9,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.2.3] - 2026-09-14
+
+### Changed
+
+- **`vsGlass.windowMaterial: auto` is real vibrancy again (`under-window`), not the Liquid Glass slab.** Choosing
+  `liquid-glass` makes the hook switch the OS blur off so the slab can show through — and over a plain or smooth
+  wallpaper the slab has nothing to refract, so the window read as a clear hole onto the desktop with unreadable code,
+  and every Window Glass Style looked the same. The slab stays available by name; its setting description now says
+  what it trades away. If you had `auto`, nothing to do; if you set `liquid-glass` yourself and want the blur back,
+  pick `auto` or `under-window`.
+- Buttons are the same glass as every other control: a film with the gradient rim at the control corner, instead of
+  a 999 px pill with its own lens (the one shape that broke the concentric radii, and one backdrop filter per Install
+  button in the Extensions view). Focus everywhere is the rim taking the accent: one hairline, no glow ring.
+- The sticky-scroll header carries no lens: it spans the editor and re-composites on every scroll frame.
+
+### Added
+
+- **Webviews.** The window hook (now V7) adopts `glass/webview.css` into every `vscode-webview://` frame as a
+  constructed stylesheet (CSSOM, so a webview's Content Security Policy does not apply). The Claude Code chat composer
+  becomes the minimap slider's optic at composer proportions, clear, with warp and chromatic fringe carrying the shape,
+  over a plane film dense enough to type on; its opaque plate, focus glow and drop shadow go; your own messages are the
+  same pill as a selected tab. The sheet styles only surfaces it recognises by class-name prefix.
+- `extreme` for **Lens** and **Aberration**: every rim becomes a magnifier; fringing like a prism. Displacement and rim
+  width still scale together, so nothing folds.
+- `frosted` **Window Glass Style**: Apple's Regular face under a much deeper blur, for a slab that stays readable over
+  anything. The slab's body blur now matches Apple's effective radii (the backdrop is sampled at full resolution).
+- The lens plane on more surfaces that float over live content: the debugger's variable hover, the terminal's find
+  bar, the editor's overlay message, scrollbar thumbs in the side bars and the panel. The built-in Copilot Chat
+  composer is styled as an input.
+- `scripts/fix-hook.mjs`: rewrites (or `--restore`s) the hook in VS Code's `out/main.js` from a shell, parsing the
+  result before it is left in place: the way back in when VS Code cannot start.
+
+### Fixed
+
+- **The extension can no longer write a hook that does not parse.** A malformed hook stops VS Code's main process
+  ("A JavaScript error occurred in the main process"), and VS Code then cannot run the extension to undo it. This
+  happened once during 1.2.3 development. `writeHook` now compiles the block first and refuses otherwise.
+- The hook's folder watcher reacts only to the three files the extension writes for it. It used to re-insert the whole
+  workbench stylesheet whenever anything in the folder changed, including its own `hook.json` and the slab helper's
+  log; with the first webview sweep that was every three seconds, in every window.
+- The webview sheet is withheld until `hook.json` confirms a V7 hook in this window, and state-file permissions are
+  repaired on apply.
+
 ## [1.2.2] - 2026-09-11
 
 ### Changed

@@ -16,7 +16,7 @@ import * as vscode from 'vscode';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
-import { BACKUP_SUFFIX, LEGACY_CSS_START, anchorCount, applyHook, cleanupLegacyCss, ensureBackup, hasHook, hasSplice, hookText, hookVersionOf, isEsmApp, restoreMain, writeAtomic } from './patch';
+import { BACKUP_SUFFIX, LEGACY_CSS_START, anchorCount, applyHook, cleanupLegacyCss, ensureBackup, hasHook, hasSplice, hookParses, hookText, hookVersionOf, isEsmApp, restoreMain, writeAtomic } from './patch';
 import { ensureHelper, helperLogFile, helperPid, LIQUID_GLASS, paramsFile, resolveMaterial, stopHelper, windowGlassParams, windowGlassSupport } from './windowGlass';
 
 const GUARD = '.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)';
@@ -42,7 +42,8 @@ interface Cfg {
 
 interface Files {
   root: string; main: string; legacyCss: string; legacyProduct: string;
-  stateDir: string | null; glassCss: string | null; stateJson: string | null; hookJson: string | null;
+  stateDir: string | null; glassCss: string | null;
+  webviewCss: string | null; stateJson: string | null; hookJson: string | null;
 }
 
 interface State { transparent: boolean; material: string; background: string; version: string }
@@ -93,6 +94,7 @@ function files(ctx: vscode.ExtensionContext): Files {
     legacyProduct: path.join(root, 'product.json'),
     stateDir,
     glassCss: stateDir ? path.join(stateDir, 'glass.css') : null,
+    webviewCss: stateDir ? path.join(stateDir, 'webview.css') : null,
     stateJson: stateDir ? path.join(stateDir, 'state.json') : null,
     hookJson: stateDir ? path.join(stateDir, 'hook.json') : null,
   };
@@ -129,6 +131,28 @@ function compose(ctx: vscode.ExtensionContext, cfg: Cfg): string {
   return parts.join('\n');
 }
 
+/** The version of the hook running in THIS VS Code's main process (hook.json is written by the hook at startup), or 0. */
+function liveHookVersion(f: Files): number {
+  try { const j = JSON.parse(fs.readFileSync(f.hookJson as string, 'utf8')); return j.pid === process.ppid ? Number(j.version) || 0 : 0; } catch { return 0; }
+}
+/** Webview styling needs hook V7 or newer: the V6 sweep re-applied the sheet every few seconds, which glitched and lagged the chat. */
+const WEBVIEW_HOOK_MIN = 7;
+
+/** The sheet the hook adopts inside webview frames (the Claude Code chat and friends): its own filters, the same presets. */
+function composeWebview(ctx: vscode.ExtensionContext, cfg: Cfg): string {
+  const f = files(ctx);
+  const live = liveHookVersion(f);
+  // Unknown counts as too old: hook.json is written by the running hook at startup, so "not reported" means either
+  // an older hook (V5 wrote it once and never again) or a main process that has not loaded the current one yet.
+  if (live < WEBVIEW_HOOK_MIN) return `/* VS Glass ${version(ctx)} — webview sheet withheld: this window ${live ? `runs hook V${live}, which re-applies the sheet on a timer` : 'has not reported a current hook'}; quit and reopen VS Code to load the current hook, then this file is written in full. */\n`;
+  const read = (p: string) => fs.readFileSync(path.join(ctx.extensionPath, 'glass', p), 'utf8');
+  const parts = [`/* VS Glass ${version(ctx)} — webview sheet, composed by the VS Glass extension from your settings. */`, read('webview.css')];
+  if (cfg.lens && cfg.lens !== 'default') parts.push(read(`webview/lens-${cfg.lens}.css`));
+  if (cfg.aberration && cfg.aberration !== 'default') parts.push(read(`webview/aberration-${cfg.aberration}.css`));
+  parts.push(`:root { --vsgw-density: ${(cfg.widgetDensity / 100).toFixed(3)}; }\n`);
+  return parts.join('\n');
+}
+
 function stateFor(ctx: vscode.ExtensionContext, cfg: Cfg): State {
   const kind = vscode.window.activeColorTheme.kind;
   const light = kind === vscode.ColorThemeKind.Light || kind === vscode.ColorThemeKind.HighContrastLight;
@@ -137,6 +161,14 @@ function stateFor(ctx: vscode.ExtensionContext, cfg: Cfg): State {
   return { transparent: cfg.effects && wantsTransparency(cfg), material: m === LIQUID_GLASS ? 'none' : m, background: light ? '#f3f3f3' : '#1f1f1f', version: version(ctx) };
 }
 const stateText = (ctx: vscode.ExtensionContext, cfg: Cfg) => JSON.stringify(stateFor(ctx, cfg), null, 2) + '\n';
+
+/** Our state files must stay writable by us AND by the hook (hook.json): put back 0644 on anything that lost it. */
+function repairStateDir(dir: string): void {
+  for (const name of ['hook.json', 'glass.css', 'webview.css', 'state.json', 'window-glass.json']) {
+    const file = path.join(dir, name);
+    try { fs.accessSync(file, fs.constants.W_OK); } catch { try { if (fs.existsSync(file)) { fs.chmodSync(file, 0o644); log(`restored write permission on ${name}`); } } catch { /* not ours to fix */ } }
+  }
+}
 
 /** Write a file only when its content changes, atomically, so the hook's watcher sees whole files. */
 function writeIfChanged(file: string, content: string): boolean {
@@ -151,7 +183,7 @@ function writeIfChanged(file: string, content: string): boolean {
 interface Status {
   desktop: boolean; esm: boolean; writable: boolean;
   hookApplied: boolean; hookCurrent: boolean; hookLive: boolean; spliced: boolean; anchors: number; vibrancyContinued: boolean;
-  cssApplied: boolean; cssStale: boolean; stateStale: boolean; legacyCss: boolean; themeColorsStale: boolean;
+  cssApplied: boolean; cssStale: boolean; webviewStale: boolean; stateStale: boolean; legacyCss: boolean; themeColorsStale: boolean;
   backups: string[]; files: Files;
 }
 
@@ -164,8 +196,9 @@ function status(ctx: vscode.ExtensionContext, cfg: Cfg): Status {
   const main = desktop ? fs.readFileSync(f.main, 'utf8') : '';
   let hookLive = false;
   try { hookLive = !!f.hookJson && JSON.parse(fs.readFileSync(f.hookJson, 'utf8')).pid === process.ppid; } catch { hookLive = false; }
-  let css: string | null = null, state: string | null = null;
+  let css: string | null = null, state: string | null = null, webview: string | null = null;
   try { css = f.glassCss ? fs.readFileSync(f.glassCss, 'utf8') : null; } catch { css = null; }
+  try { webview = f.webviewCss ? fs.readFileSync(f.webviewCss, 'utf8') : null; } catch { webview = null; }
   try { state = f.stateJson ? fs.readFileSync(f.stateJson, 'utf8') : null; } catch { state = null; }
   let legacyCss = fs.existsSync(f.legacyCss + BACKUP_SUFFIX) || fs.existsSync(f.legacyProduct + BACKUP_SUFFIX);
   try { legacyCss = legacyCss || fs.readFileSync(f.legacyCss, 'utf8').includes(LEGACY_CSS_START); } catch { /* ignore */ }
@@ -176,6 +209,9 @@ function status(ctx: vscode.ExtensionContext, cfg: Cfg): Status {
     hookApplied: hasHook(main), hookCurrent: main.includes(hookText()) && (hasSplice(main) || anchors !== 1), hookLive, // current = the exact shipped hook text is in place
     spliced: hasSplice(main), anchors, vibrancyContinued: main.includes(VIBRANCY_MARKER),
     cssApplied: css !== null, cssStale: css !== null && css !== compose(ctx, cfg),
+    // the webview sheet is withheld while an older hook runs and written in full once the current one is live: after
+    // the restart that loads it, this is what makes the activation apply rewrite the sheet
+    webviewStale: cfg.effects && webview !== composeWebview(ctx, cfg),
     stateStale: state !== stateText(ctx, cfg),
     themeColorsStale: themeColorsPlan(ctx, cfg.effects).changed,
     legacyCss, backups, files: f,
@@ -225,6 +261,12 @@ function writeHook(ctx: vscode.ExtensionContext, remove: boolean): { changed: bo
   }
   const next = applyHook(cur, hookText(version(ctx)));
   if (next.text === cur) return { changed: false, spliced: next.spliced, anchors: next.anchors };
+  // Never leave a hook in main.js that does not compile: it would stop VS Code's main process from starting at all,
+  // and VS Code could not then run this extension to undo it. Refusing costs the glass; writing it costs the editor.
+  if (!hookParses(next.text)) {
+    log('REFUSED to write the window hook: the generated hook does not parse. out/main.js is untouched; please report this.');
+    throw new Error('VS Glass: the generated window hook does not parse — out/main.js was left untouched.');
+  }
   ensureBackup(f.main, cur); // a pristine copy, refreshed whenever main.js is unpatched (e.g. after a VS Code update)
   writeAtomic(f.main, next.text);
   log(`wrote the window hook in out/main.js${next.spliced ? ' (creation-time transparency spliced in)' : ` — window-options anchor found ${next.anchors} times, expected 1: windows become see-through only after creation on this VS Code build (${vscode.version})`}`);
@@ -235,11 +277,13 @@ function writeHook(ctx: vscode.ExtensionContext, remove: boolean): { changed: bo
 function writeState(ctx: vscode.ExtensionContext, cfg: Cfg): boolean {
   const f = files(ctx);
   if (!f.glassCss || !f.stateJson || !f.stateDir) throw new Error(`could not locate the user-data folder from ${ctx.globalStorageUri.fsPath}`);
+  repairStateDir(f.stateDir);
   let changed = false;
   if (cfg.effects) {
     changed = writeIfChanged(f.glassCss, compose(ctx, cfg)) || changed;
-  } else if (fs.existsSync(f.glassCss)) {
-    fs.unlinkSync(f.glassCss); changed = true;
+    if (f.webviewCss) changed = writeIfChanged(f.webviewCss, composeWebview(ctx, cfg)) || changed;
+  } else {
+    for (const file of [f.glassCss, f.webviewCss]) if (file && fs.existsSync(file)) { fs.unlinkSync(file); changed = true; }
   }
   changed = writeIfChanged(f.stateJson, stateText(ctx, cfg)) || changed;
   // the window slab's parameters; the helper watches this file and exits when it says off
@@ -421,7 +465,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
   // installed, effects on, but no Glass theme yet: one nudge, then stay quiet
   if (!themeIsGlass) { if (!st.hookApplied && !st.cssApplied) void themeNudge(ctx); return; }
   if (!st.hookApplied) { void firstRun(ctx, st); return; } // consent before touching VS Code's file (again, after a VS Code update)
-  if ((st.cssStale || !st.cssApplied || st.stateStale || !st.hookCurrent || st.legacyCss || st.themeColorsStale) && cfg.autoApply) scheduleApply(ctx); // settings or version changed since the last apply
+  if ((st.cssStale || st.webviewStale || !st.cssApplied || st.stateStale || !st.hookCurrent || st.legacyCss || st.themeColorsStale) && cfg.autoApply) scheduleApply(ctx); // settings or version changed since the last apply
   // the window slab: start its helper now and make sure one keeps running (another window's extension host may have
   // owned it and closed)
   if (wantsWindowGlass(cfg)) ensureHelper(ctx.extensionPath, st.files.stateDir as string, log, reportUnsupported);

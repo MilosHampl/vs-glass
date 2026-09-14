@@ -74,6 +74,9 @@ export const LENS_CLASSES: LensClass[] = [
   // 2× (slope 2.9·28/120 = 0.68, inside the folding limit) and the chromatic fringe scales with it, so the shape and
   // the depth come from the optic alone: the filter draws no light of its own (`spec: false`).
   { name: 'slider', w: 110, h: 240, mw: 40, mh: 88, axes: 'xy', rim: 1, radius: 18, blur: 0, edgePx: 140, power: 0, disp: 2, cornerBoost: 0.15, abr: 2, spec: false, pad: 0.4, fullRim: true },
+  // a chat composer (the Claude Code input, any webview's message box): a landscape magnifier the messages scroll
+  // under — the slider optic at composer proportions: clear, the whole surface inside the curve, warp + fringe only
+  { name: 'composer', w: 600, h: 120, mw: 150, mh: 30, axes: 'xy', rim: 1, radius: 12, blur: 0, edgePx: 70, power: 0, disp: 2, cornerBoost: 0.15, abr: 2, spec: false, pad: 0.35, fullRim: true },
   // window-edge strips: the slab's top/bottom rim bends what sits just inside the window edge (title bar, status bar,
   // the last code lines). One-sided, clear (no frost), so UI text is bent a little but never blurred.
   { name: 'edge-top', w: 1400, h: 40, mw: 64, mh: 40, axes: 'y', rim: 0.6, sides: { top: true }, blur: 0 },
