@@ -10,7 +10,7 @@
 # Part A4 for why this is the lowest-blast-radius injection route of the ones evaluated.
 #
 # Usage:
-#   scripts/inject.sh install [--wallpaper] [--tint NAME] [--density PERCENT] [--lens soft|strong] [--aberration off|subtle|strong]
+#   scripts/inject.sh install [--wallpaper] [--tint NAME] [--density PERCENT] [--lens soft|strong|extreme | --aberration off|subtle|strong|extreme]
 #   scripts/inject.sh uninstall
 #   scripts/inject.sh status
 #   scripts/inject.sh --help
@@ -63,7 +63,7 @@ ${C_BOLD}scripts/inject.sh${C_RESET} — VS Glass Layer 2 direct-patch installer
 
 USAGE
   scripts/inject.sh install [--wallpaper] [--tint NAME] [--density PERCENT]
-                            [--lens soft|strong] [--aberration off|subtle|strong]
+                            [--lens soft|strong|extreme | --aberration off|subtle|strong|extreme]
       Patch VS Code's workbench.desktop.main.css with glass.css and fix the
       product.json checksum so VS Code doesn't flag the install as corrupt.
       glass.css alone assumes a see-through window (Vibrancy Continued).
@@ -71,13 +71,15 @@ USAGE
                       for a window that is NOT transparent.
         --tint NAME   also append glass/tints/glass-tint-NAME.css (graphite,
                       blue, indigo, violet, teal, mint, rose, amber).
-        --density P   also append glass/density/glass-density-P.css: how much
-                      film the planes carry, 0 (absolutely clear) 25 50 75
-                      150 200 (opaque-ish); 100 is the default and needs no file.
+        --density P   also append glass/density/glass-density-P.css: how dense
+                      the work planes are, 0 (absolutely clear) 25 50 75 150
+                      200 (opaque); 100 is the default and needs no file.
         --lens L      also append glass/lens/glass-lens-L.css: rim bend strength
-                      (soft, strong; the default needs no file).
+                      (soft, strong, extreme; the default needs no file).
         --aberration A  also append glass/aberration/glass-aberration-A.css:
-                      colour fringing at the rim (off, subtle, strong).
+                      colour fringing at the rim (off, subtle, strong, extreme).
+                      Not together with --lens: one preset file replaces the
+                      other (the extension combines the two settings).
 
   scripts/inject.sh uninstall
       Restore the pristine workbench.desktop.main.css and product.json from
@@ -474,9 +476,9 @@ cmd_install() {
   while [ $# -gt 0 ]; do
     case "$1" in
       --wallpaper) wallpaper=1 ;;
-      --lens) shift; lens="${1:-}"; [ -n "$lens" ] || { err "--lens needs soft or strong"; usage; exit 1; } ;;
+      --lens) shift; lens="${1:-}"; [ -n "$lens" ] || { err "--lens needs soft, strong or extreme"; usage; exit 1; } ;;
       --lens=*) lens="${1#--lens=}" ;;
-      --aberration) shift; aberration="${1:-}"; [ -n "$aberration" ] || { err "--aberration needs off, subtle or strong"; usage; exit 1; } ;;
+      --aberration) shift; aberration="${1:-}"; [ -n "$aberration" ] || { err "--aberration needs off, subtle, strong or extreme"; usage; exit 1; } ;;
       --aberration=*) aberration="${1#--aberration=}" ;;
       --density) shift; density="${1:-}"; [ -n "$density" ] || { err "--density needs a percent (0 25 50 75 150 200)"; usage; exit 1; } ;;
       --density=*) density="${1#--density=}" ;;
@@ -499,10 +501,15 @@ cmd_install() {
     [ -f "$GLASS_DENSITY_DIR/glass-density-$density.css" ] || { err "Unknown density '$density' — available: $(ls "$GLASS_DENSITY_DIR" | sed -E 's/glass-density-(.*)\.css/\1/' | tr '\n' ' ')(100 is the default, no file needed)"; exit 1; }
   fi
   if [ -n "$lens" ]; then
-    [ -f "$GLASS_LENS_DIR/glass-lens-$lens.css" ] || { err "Unknown lens preset '$lens' — available: soft strong"; exit 1; }
+    [ -f "$GLASS_LENS_DIR/glass-lens-$lens.css" ] || { err "Unknown lens preset '$lens' — available: $(ls "$GLASS_LENS_DIR" | sed -E 's/glass-lens-(.*)\.css/\1/' | tr '\n' ' ')"; exit 1; }
   fi
   if [ -n "$aberration" ]; then
-    [ -f "$GLASS_ABERRATION_DIR/glass-aberration-$aberration.css" ] || { err "Unknown aberration preset '$aberration' — available: off subtle strong"; exit 1; }
+    [ -f "$GLASS_ABERRATION_DIR/glass-aberration-$aberration.css" ] || { err "Unknown aberration preset '$aberration' — available: $(ls "$GLASS_ABERRATION_DIR" | sed -E 's/glass-aberration-(.*)\.css/\1/' | tr '\n' ' ')"; exit 1; }
+  fi
+  # Each preset file re-emits every lens filter with its own multiplier only, so with both loaded the last one wins and
+  # the other is silently lost. The extension composes the pair into one set of filters; the CSS route cannot.
+  if [ -n "$lens" ] && [ -n "$aberration" ]; then
+    err "--lens and --aberration cannot be combined on the manual CSS route (the second preset replaces the first). Pick one, or use the extension, which combines them."; exit 1
   fi
 
   locate_app

@@ -95,17 +95,20 @@
   .stage .code .t { color: #a7aaff; } .stage .code .n { color: #86e1ff; }
   .pane { position: absolute; left: 40px; top: 60px; width: 280px; height: 180px; cursor: grab;
           border-radius: var(--radius-widget, 14px); border: 1px solid transparent;
-          background: linear-gradient(rgba(var(--spec-rgb), 0.07), rgba(var(--spec-rgb), 0.07)) padding-box,
-                      var(--edge) border-box;
-          -webkit-backdrop-filter: var(--lens-card) saturate(1.35);
-          backdrop-filter: var(--lens-card) saturate(1.35);
+          background: rgba(var(--spec-rgb), 0.07);
+          -webkit-backdrop-filter: saturate(1.35) var(--lens-card);
+          backdrop-filter: saturate(1.35) var(--lens-card);
           display: grid; place-items: center; color: var(--fg-2); font-size: 13px; letter-spacing: 0.02em; }
+  /* the rim is a masked 1 px ring, as in the extension: a gradient under a translucent film shows through all of it */
+  .pane::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
+                  background: var(--ring, var(--edge));
+                  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+                  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; }
   .pane:active { cursor: grabbing; }
   .pane.pill { width: 190px; height: 46px; border-radius: 999px; }
   .stage.hero .code { display: none; }
-  .pane.mag { width: 340px; height: 150px; border-radius: 18px;
-              background: linear-gradient(rgba(var(--spec-rgb), 0.02), rgba(var(--spec-rgb), 0.02)) padding-box,
-                          linear-gradient(rgba(var(--spec-rgb), 0.16), rgba(var(--spec-rgb), 0.16)) border-box;
+  .pane.mag { width: 340px; height: 150px; border-radius: 18px; background: rgba(var(--spec-rgb), 0.02);
+              --ring: rgba(var(--spec-rgb), 0.16);
               -webkit-backdrop-filter: var(--lens-mag); backdrop-filter: var(--lens-mag); }
   .pane .hint { opacity: 0.75; transition: opacity .4s; pointer-events: none; }
   .pane.moved .hint { opacity: 0; }
@@ -126,12 +129,12 @@
 
 <header>
   <div class="wrap">
-    <span class="badge"><img src="assets/icon-512.png" alt=""> VS Glass 1.2.2</span>
+    <span class="badge"><img src="assets/icon-512.png" alt=""> VS Glass 1.3.0</span>
     <h1>Your editor, made of glass.</h1>
     <p class="lede">A see-through VS Code with a real refracting lens at every rim — and, on macOS&nbsp;26, a window
       made of the system's own Liquid Glass, bending whatever is live behind it.</p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/MilosHampl/vs-glass/releases/latest">Download 1.2.2</a>
+      <a class="btn primary" href="https://github.com/MilosHampl/vs-glass/releases/latest">Download 1.3.0</a>
       <a class="btn" href="https://github.com/MilosHampl/vs-glass">GitHub</a>
       <a class="btn" href="https://github.com/MilosHampl/vs-glass/blob/main/CONTRIBUTING.md">Contribute</a>
       <a class="btn" href="https://github.com/MilosHampl/vs-glass/blob/main/DESIGN.md">How it works</a>
@@ -147,19 +150,18 @@ pick a Glass theme · answer Apply · quit and reopen once</pre>
   <div class="wrap">
     <div class="head"><h2>Drag the glass</h2><p>Not a video. The same filter the extension ships, running in your browser.</p></div>
     <div class="stage vsg-demo" id="stage" style="background-image: url(assets/shots/wall.jpg)">
-      <pre class="code" aria-hidden="true"><span class="c">// the lens is a generated displacement map, not a blur</span>
-<span class="k">export function</span> <span class="t">makeMap</span>(cls, edge, power) {
-  <span class="k">const</span> <span class="n">map</span> = <span class="k">new</span> <span class="t">Uint8ClampedArray</span>(w * h * <span class="n">4</span>);
-  <span class="k">for</span> (<span class="k">let</span> y = <span class="n">0</span>; y &lt; h; y++) {
-    <span class="k">for</span> (<span class="k">let</span> x = <span class="n">0</span>; x &lt; w; x++) {
-      <span class="k">const</span> d = <span class="t">profile</span>(<span class="t">distToEdge</span>(x, y), edge, power);
-      <span class="n">map</span>[i]     = <span class="n">128</span> + d * nx * <span class="n">127</span>;  <span class="c">// R: bend along x</span>
-      <span class="n">map</span>[i + <span class="n">1</span>] = <span class="n">128</span> + d * ny * <span class="n">127</span>;  <span class="c">// G: bend along y</span>
-      <span class="n">map</span>[i + <span class="n">2</span>] = rim ? <span class="n">255</span> : <span class="n">0</span>;        <span class="c">// B: the rim mask</span>
-    }
-  }
-  <span class="k">return</span> { uri: <span class="t">png</span>(<span class="n">map</span>), <span class="s">'objectBoundingBox'</span>: <span class="k">true</span> };
+      <pre class="code" aria-hidden="true"><span class="c">// the lens is a displacement map drawn in CSS pixels, not a blur</span>
+<span class="k">function</span> <span class="t">axisMap</span>(axis, cls, edge) {
+  <span class="c">// one ramp from the near edge, the same ramp mirrored to the far one;</span>
+  <span class="c">// Chromium lays the SVG out at the element's real size, so a rim is</span>
+  <span class="c">// the same 30 px on a tooltip and on a palette</span>
+  <span class="k">return</span> <span class="s">`&lt;linearGradient id='a' gradientUnits='userSpaceOnUse' x2='${edge}'&gt;</span>
+<span class="s">           ${stops(</span><span class="t">profile</span><span class="s">)}&lt;/linearGradient&gt;</span>
+<span class="s">          &lt;rect width='100%' fill='url(#a)'/&gt;</span>
+<span class="s">          &lt;rect width='100%' fill='url(#b)' style='transform:scaleX(-1)'/&gt;`</span>;
 }
+<span class="c">// under the frost and the bent rim, a base of the widget colour hides</span>
+<span class="c">// the sharp original a see-through window would otherwise show twice;</span>
 <span class="c">// red, green and blue are displaced by different amounts,</span>
 <span class="c">// so the rim disperses the way a real glass edge does.</span></pre>
       <div class="pane mag" id="pane" tabindex="0" role="slider" aria-label="Drag the glass pane"><span class="hint">drag me</span></div>
@@ -173,7 +175,7 @@ pick a Glass theme · answer Apply · quit and reopen once</pre>
       <span class="seg" id="lens"><button data-v="soft" aria-pressed="false">Soft</button><button data-v="" aria-pressed="true">Default</button><button data-v="strong" aria-pressed="false">Strong</button><button data-v="chroma" aria-pressed="false">Max chroma</button></span>
       <label>Film <input type="range" id="film" min="0" max="20" value="2"></label>
     </div>
-    <p class="small" id="note" style="margin-top:12px">Drag it over the code, the photo, or a screenshot of VS Code itself. The bend, the colour split at the rim and the rim light are the extension's own filter, lifted out of <code>glass.css</code>.</p>
+    <p class="small" id="note" style="margin-top:12px">Drag it over the code, the photo, or a screenshot of VS Code itself. The bend and the colour split at the rim are the extension's own filter, lifted out of <code>glass.css</code>.</p>
   </div>
 </section>
 
@@ -184,25 +186,26 @@ pick a Glass theme · answer Apply · quit and reopen once</pre>
 
       <div class="card">
         <h3>A generated lens, not a blur</h3>
-        <p>Each surface class gets its own displacement map, baked at build time from a curved-edge profile and fed to
-          an SVG <code>feDisplacementMap</code> inside <code>backdrop-filter</code>. Red, green and blue are displaced
-          by different amounts, so the rim disperses like real glass.</p>
+        <p>Each surface class gets a displacement map drawn as an SVG image in CSS pixels and fed to an SVG
+          <code>feDisplacementMap</code> inside <code>backdrop-filter</code>, so a rim is the same width and bends the
+          same distance on a tooltip and on a palette. Red, green and blue are displaced by different amounts, so the rim
+          disperses like real glass.</p>
         <div class="mapfig">
-          <img src="assets/lens-map.png" alt="A displacement map: red and green encode the bend, blue the rim">
-          <span>A real map from <code>glass.css</code>. R/G carry the bend vector, B the rim mask.</span>
+          <img src="assets/lens-map.svg" alt="A displacement map: red and green encode the bend toward the centre">
+          <span>The widget class's real map from <code>glass.css</code>: R carries the bend along x, G along y.</span>
         </div>
       </div>
 
       <div class="card">
         <h3>The window itself is glass</h3>
-        <p>A <code>backdrop-filter</code> can never see past its own page. On macOS 26 a helper process keeps a real
-          Liquid Glass plane under the window — Apple's own Clear or Regular material, with the rim retuned by the
-          same Lens and Aberration settings — so other windows, video and the desktop bend under the edge, live.
-          A clear-plane style strips the material to a pass-through body with only the rim bending.</p>
+        <p>A <code>backdrop-filter</code> can never see past its own page. On macOS 26, with Window Material set to
+          <code>liquid-glass</code>, a helper process keeps a real Liquid Glass plane under the window — Apple's own
+          Clear or Regular material, with the rim refraction retuned by the Lens setting — so other windows, video and
+          the desktop frost and bend behind the frame and the gaps between the panes, live.</p>
         <table class="num">
-          <tr><th>Body, measured against no glass</th><td>0.00 difference</td></tr>
-          <tr><th>Rim bend</th><td>exactly the configured width</td></tr>
-          <tr><th>Colour split</th><td>exactly the configured offset</td></tr>
+          <tr><th>Material</th><td>Apple's Clear or Regular, or a clear plane</td></tr>
+          <tr><th>Rim</th><td>refraction retuned by Lens</td></tr>
+          <tr><th>Colour split</th><td>in-window rims only: chained to the slab, macOS drew no glass at all</td></tr>
         </table>
       </div>
 
@@ -211,10 +214,10 @@ pick a Glass theme · answer Apply · quit and reopen once</pre>
         <p>VS Code has no extension point for a transparent window or workbench CSS, so VS Glass adds one
           marker-delimited hook to <code>out/main.js</code> — the only bootstrap file VS Code does not checksum.
           <strong>VS Glass: Remove</strong> restores it byte-exact.</p>
-        <pre>// VS-GLASS-HOOK-V7 start
+        <pre>// VS-GLASS-HOOK-V8 start
 win = new BrowserWindow({ …, transparent: true })
 win.webContents.insertCSS(glassCss)
-// VS-GLASS-HOOK-V7 end</pre>
+// VS-GLASS-HOOK-V8 end</pre>
       </div>
 
       <div class="card">
@@ -223,7 +226,7 @@ win.webContents.insertCSS(glassCss)
           quit-and-reopen, nothing needs a reload.</p>
         <div class="chips">
           <span class="chip">Density 0–200</span><span class="chip">Widget density</span><span class="chip">8 tints</span>
-          <span class="chip">Lens soft · default · strong</span><span class="chip">Aberration ×4</span>
+          <span class="chip">Lens ×4</span><span class="chip">Aberration ×5</span>
           <span class="chip">Window material</span><span class="chip">Wallpaper mode</span>
         </div>
       </div>
@@ -266,7 +269,7 @@ win.webContents.insertCSS(glassCss)
     <p class="muted" style="max-width: 64ch; margin: 0 0 16px;">Download the <code>.vsix</code>, then in VS Code:
       <strong>Extensions</strong> → the <code>…</code> menu → <strong>Install from VSIX…</strong>. Or from a terminal:</p>
     <pre class="cmd"><b>"/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" \
-  --install-extension vs-glass-1.2.2.vsix</b>
+  --install-extension vs-glass-1.3.0.vsix</b>
 the full path matters: a `code` alias that wraps `open` swallows --install-extension</pre>
     <p class="muted" style="margin-top:18px; max-width: 64ch;">Then pick <strong>Glass Regular Dark</strong>,
       <strong>Regular Light</strong>, <strong>Clear</strong> or <strong>Opaque</strong>, answer <strong>Apply</strong>

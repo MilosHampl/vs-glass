@@ -54,31 +54,33 @@ below cover exactly where each addon goes for each route.
 Two more generated addon families, both real: they re-emit the same SVG lens filters `glass.css` already
 uses, just with a multiplier applied.
 
-- `glass/lens/glass-lens-soft.css` and `-strong.css` scale rim bend strength ×0.7 (soft, a gentler bend)
-  or ×1.4 (strong, a heavier bend). Displacement and rim width scale together, so the slope, and the
-  folding limit it stays under (`DESIGN.md` §4.1), are unchanged either way.
-- `glass/aberration/glass-aberration-off.css`, `-subtle.css` (×0.5, half the default fringing) and
-  `-strong.css` (×2.5, heavy red-to-blue fringing, like thick crystal) scale the chromatic-aberration
-  offset.
+- `glass/lens/glass-lens-soft.css`, `-strong.css` and `-extreme.css` scale rim bend strength ×0.7 (a gentler
+  bend), ×1.4 (heavier) or ×2 (every rim a magnifier). Displacement and rim width scale together, so the slope,
+  and the folding limit it stays under (`DESIGN.md` §4.1), are unchanged either way.
+- `glass/aberration/glass-aberration-off.css`, `-subtle.css` (×0.5, half the default fringing), `-strong.css`
+  (×2.5, heavy red-to-blue fringing, like thick crystal) and `-extreme.css` (×4, a prism) scale the
+  chromatic-aberration offset.
 
-Load either (or both) after `glass.css`, in any order relative to the other addons above, as long as they
-all come after `glass.css` itself. See §2/§3/§4 below for exactly where to add the path for each route.
+Load **one** of them after `glass.css`, in any order relative to the other addons above, as long as it comes after
+`glass.css` itself. Not both: each file re-emits every lens filter with its own multiplier only, so the second one
+replaces the first (the extension builds the filters for the pair, and `scripts/inject.sh` refuses the combination). See §2/§3/§4 below for exactly where to add the path for each route.
 
 ### Density
 
-`glass/density/glass-density-<percent>.css` turns density itself into a knob for the **base** planes —
-the window film, editor content, and chrome cards and strips (plus the dim behind chrome text) — all one
-base value multiplied by a single CSS variable, `--vsg-density` (default `1`). Six presets exist:
+`glass/density/glass-density-<percent>.css` turns density itself into a knob for the **work** planes —
+the editor card and the side-bar, panel and activity-bar cards (plus the dim behind chrome text) — all one
+base value multiplied by a single CSS variable, `--vsg-density` (default `1`). The frame (title bar, status bar,
+the gaps between the cards) is a fixed near-clear film and does not follow it. Six presets exist:
 
 | File | `--vsg-density` | Look |
 |---|---|---|
-| `glass-density-0.css` | `0` | fully clear — a plane of glass with only its rims, lensing and text |
-| `glass-density-25.css` | `0.25` | a breath of smoke |
+| `glass-density-0.css` | `0` | absolutely clear work planes: only their rims and the text |
+| `glass-density-25.css` | `0.25` | a breath of smoke on the work planes |
 | `glass-density-50.css` | `0.5` | half the default film |
 | `glass-density-75.css` | `0.75` | a little thinner than the default |
-| *(no file — this is the default)* | `1` | the tuned default — now itself almost clear, a faint smoky film |
+| *(no file — this is the default)* | `1` | the tuned default: a smoked sheet (Regular Dark: editor 30 %, side panes 26 %) |
 | `glass-density-150.css` | `1.5` | denser, for bright desktops |
-| `glass-density-200.css` | `2` | opaque-ish, the most legible |
+| `glass-density-200.css` | `2` | opaque, the most legible |
 
 **Floating widgets are exempt on purpose.** The command palette, hovers, suggest, notifications, dialogs
 and dropdown lists keep a fixed, readable body of their own and don't scale with `--vsg-density` at all —
@@ -159,7 +161,7 @@ bright desktop, add a `glass/density/glass-density-<percent>.css` preset (§1) a
 Add a tint, density, lens and/or aberration addon path after `glass.css` in `imports` if you want them,
 e.g. `/ABSOLUTE/PATH/vs-glass/glass/tints/glass-tint-indigo.css`,
 `/ABSOLUTE/PATH/vs-glass/glass/density/glass-density-150.css`,
-`/ABSOLUTE/PATH/vs-glass/glass/lens/glass-lens-strong.css`, and/or
+`/ABSOLUTE/PATH/vs-glass/glass/lens/glass-lens-strong.css`, or (instead of a lens preset)
 `/ABSOLUTE/PATH/vs-glass/glass/aberration/glass-aberration-subtle.css`.
 
 Notes on each setting:

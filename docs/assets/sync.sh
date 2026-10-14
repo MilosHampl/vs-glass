@@ -55,14 +55,30 @@ for f in assets/icon-512.png assets/social-preview.png; do
   [ -f "$ROOT/$f" ] && { cp "$ROOT/$f" "$DEST/$(basename "$f")"; printf '  %-28s %4s KB\n' "$(basename "$f")" "$(( $(stat -f%z "$DEST/$(basename "$f")") / 1024 ))"; }
 done
 
-echo "lens figure (a real displacement map, straight out of glass/glass.css):"
-python3 - "$ROOT/glass/glass.css" "$DEST/lens-map.png" <<'PY'
-import base64, re, sys, urllib.parse
-css = urllib.parse.unquote(open(sys.argv[1]).read())
-m = re.search(r"--vsg-lens-widget:.*?feImage href='data:image/png;base64,([A-Za-z0-9+/=]+)'", css, re.S)
-if not m: print("  no map found"); raise SystemExit
-open(sys.argv[2], 'wb').write(base64.b64decode(m.group(1)))
-print(f"  lens-map.png                {len(m.group(1))//1024} KB (the widget class's map: R/G = displacement, B = rim)")
+echo "lens figure (the widget class's real displacement map, straight out of glass/glass.css):"
+python3 - "$ROOT/glass/glass.css" "$DEST/lens-map.svg" <<'PY'
+# The map is two SVG images (one per axis) inside the filter; this figure combines them exactly as the filter does
+# (R = 0.5 + 0.5·(near − far) along x, G the same along y) on a 280×180 surface, so the page shows the real thing.
+import re, sys
+css = open(sys.argv[1]).read()
+body = css[css.index('/* Glass Regular Dark */'):]
+m = re.search(r"--vsg-lens-widget: url\(\"(.*?)\"\);", body)
+if not m: print("  no widget lens found"); raise SystemExit
+imgs = re.findall(r"href='(data:image/svg\+xml;base64,[A-Za-z0-9+/=]+)'", m.group(1))
+if len(imgs) != 2: print(f"  expected 2 map images, found {len(imgs)}"); raise SystemExit
+svg = f"""<svg xmlns='http://www.w3.org/2000/svg' width='280' height='180' viewBox='0 0 280 180'>
+<filter id='m' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'>
+<feImage href='{imgs[0]}' preserveAspectRatio='none' result='ix'/>
+<feImage href='{imgs[1]}' preserveAspectRatio='none' result='iy'/>
+<feColorMatrix in='ix' type='matrix' values='.5 -.5 0 0 .5  0 0 0 0 0  0 0 0 0 .5  0 0 0 0 1' result='mx'/>
+<feColorMatrix in='iy' type='matrix' values='0 0 0 0 0  .5 -.5 0 0 .5  0 0 0 0 0  0 0 0 0 1' result='my'/>
+<feComposite in='mx' in2='my' operator='arithmetic' k1='0' k2='1' k3='1' k4='0'/>
+</filter>
+<rect width='280' height='180' rx='14' filter='url(#m)'/>
+</svg>
+"""
+open(sys.argv[2], 'w').write(svg)
+print(f"  lens-map.svg                {len(svg)//1024} KB (the widget class's map: R/G = bend along x/y)")
 PY
 echo
 echo "docs/assets is now $(du -sh "$DEST" | cut -f1)"

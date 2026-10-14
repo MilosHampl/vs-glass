@@ -75,21 +75,27 @@ export const paramsFile = (stateDir: string) => path.join(stateDir, 'window-glas
 export const helperLogFile = (stateDir: string) => path.join(stateDir, 'window-glass.log');
 const pidFile = (stateDir: string) => path.join(stateDir, 'window-glass.pid');
 
-/** The pid of the helper serving this VS Code, when one is alive. */
+/** The pid of the helper serving this VS Code, when one is alive. A pid file can outlive its helper (a crash, a kill),
+ *  and pids are reused, so a live pid only counts when that process really is our helper. */
 export function helperPid(stateDir: string): number | null {
   try {
     const pid = Number(fs.readFileSync(pidFile(stateDir), 'utf8').trim());
     if (!pid) return null;
     process.kill(pid, 0); // throws when the process is gone
-    return pid;
+    const comm = cp.execFileSync('/bin/ps', ['-p', String(pid), '-o', 'comm='], { encoding: 'utf8', timeout: 2000 }).trim();
+    return path.basename(comm) === HELPER ? pid : null;
   } catch { return null; }
 }
 
 let child: cp.ChildProcess | undefined;
 let lastStart = 0;
+/** The helper said this macOS cannot make the slab (exit 3): stop respawning it until the user asks again. */
+let unsupported = false;
+export const retryWindowGlass = () => { unsupported = false; };
 
 /** Start the helper unless one already serves this VS Code (its own lock decides; a second start exits at once). */
 export function ensureHelper(extensionPath: string, stateDir: string, log: (m: string) => void, onUnsupported: (why: string) => void): void {
+  if (unsupported) return;
   if (child && child.exitCode === null && child.signalCode === null) return;   // the one we started is alive (a signalled child has exitCode null too)
   if (helperPid(stateDir)) return;                // another window's extension host started one
   if (Date.now() - lastStart < 2000) return;
@@ -110,7 +116,7 @@ export function ensureHelper(extensionPath: string, stateDir: string, log: (m: s
     proc.on('exit', (code, signal) => {
       if (child === proc) child = undefined;
       log(`window glass: ${HELPER} ${proc.pid} exited with ${code ?? signal}`);
-      if (code === 3) onUnsupported(lastLine(helperLogFile(stateDir)));
+      if (code === 3) { unsupported = true; onUnsupported(lastLine(helperLogFile(stateDir))); }
     });
     proc.on('error', e => log(`window glass: could not start ${HELPER}: ${e.message}`));
   } catch (e: any) {

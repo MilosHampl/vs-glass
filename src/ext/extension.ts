@@ -17,7 +17,8 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
 import { BACKUP_SUFFIX, LEGACY_CSS_START, anchorCount, applyHook, cleanupLegacyCss, ensureBackup, hasHook, hasSplice, hookParses, hookText, hookVersionOf, isEsmApp, restoreMain, writeAtomic } from './patch';
-import { ensureHelper, helperLogFile, helperPid, LIQUID_GLASS, paramsFile, resolveMaterial, stopHelper, windowGlassParams, windowGlassSupport } from './windowGlass';
+import { ensureHelper, helperLogFile, helperPid, LIQUID_GLASS, paramsFile, resolveMaterial, retryWindowGlass, stopHelper, windowGlassParams, windowGlassSupport } from './windowGlass';
+import { lensVars, WALLPAPER_CLASSES, WORKBENCH_CLASSES, type LensParams } from './lens';
 
 const GUARD = '.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)';
 const VIBRANCY_MARKER = 'VSCODE-VIBRANCY-START';
@@ -57,22 +58,32 @@ const log = (m: string) => {
   if (logFile) { try { fs.appendFileSync(logFile, `${new Date().toISOString()} ${m}\n`); } catch { /* logging must never break the extension */ } }
 };
 
+/** The extension's package.json (set in activate): the settings' enums and defaults come from there, so a value
+ *  hand-edited into settings.json that VS Code only warns about can never reach a file name or a filter. */
+let manifest: any = {};
+function setting<T extends string>(c: vscode.WorkspaceConfiguration, key: string, fallback: T): T {
+  const schema = manifest?.contributes?.configuration?.properties?.[`vsGlass.${key}`] ?? {};
+  const allowed: string[] | undefined = schema.enum;
+  const dflt = (schema.default ?? fallback) as T;
+  const v = String(c.get<string>(key, dflt));
+  return (allowed ? (allowed.includes(v) ? v : dflt) : v) as T;
+}
 function readCfg(): Cfg {
   const c = vscode.workspace.getConfiguration('vsGlass');
-  const num = (k: string, d: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, Number(c.get<number>(k, d)) || 0));
-  const material = String(c.get<string>('windowMaterial', 'hud'));
+  const num = (k: string, d: number, lo: number, hi: number) => { const v = Number(c.get<number>(k, d)); return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
+  const material = String(c.get<string>('windowMaterial', 'auto'));
   return {
-    effects: c.get<boolean>('effects', true),
-    windowTransparency: c.get<Tri>('windowTransparency', 'auto'),
+    effects: c.get<boolean>('effects', true) !== false,
+    windowTransparency: setting<Tri>(c, 'windowTransparency', 'auto'),
     windowMaterial: MATERIALS.includes(material) ? material : 'auto',
-    windowGlassStyle: String(c.get<string>('windowGlassStyle', 'apple-clear')),
+    windowGlassStyle: setting(c, 'windowGlassStyle', 'apple-clear'),
     density: num('density', 100, 0, 200),
     widgetDensity: num('widgetDensity', 100, 0, 200),
-    tint: c.get<string>('tint', 'none'),
-    lens: c.get<string>('lens', 'default'),
-    aberration: c.get<string>('aberration', 'default'),
-    wallpaper: c.get<Tri>('wallpaper', 'auto'),
-    autoApply: c.get<boolean>('autoApply', true),
+    tint: setting(c, 'tint', 'none'),
+    lens: setting(c, 'lens', 'default'),
+    aberration: setting(c, 'aberration', 'default'),
+    wallpaper: setting<Tri>(c, 'wallpaper', 'auto'),
+    autoApply: c.get<boolean>('autoApply', true) !== false,
   };
 }
 
@@ -119,14 +130,40 @@ const version = (ctx: vscode.ExtensionContext) => String(ctx.extension.packageJS
 /** VS Code's checksum format: standard base64 of the raw SHA-256 digest, '=' padding stripped. */
 const checksum = (buf: Buffer) => crypto.createHash('sha256').update(buf).digest('base64').replace(/=+$/, '');
 
+interface LensFile {
+  workbench: LensParams[];
+  webview: { dark: LensParams; light: LensParams };
+  presets: { lens: Record<string, number>; aberration: Record<string, number> };
+}
+/** glass/lens-params.json (written by the build): the palette values the lens filters are made from. */
+let lensFile: LensFile | null = null;
+function lensParamsFile(ctx: vscode.ExtensionContext): LensFile {
+  return lensFile ??= JSON.parse(fs.readFileSync(path.join(ctx.extensionPath, 'glass', 'lens-params.json'), 'utf8')) as LensFile;
+}
+/** The lens and aberration settings as multipliers (1 = the palette's own filters, which glass.css already carries). */
+function lensMuls(ctx: vscode.ExtensionContext, cfg: Cfg): { lens: number; aberration: number } {
+  const pre = lensParamsFile(ctx).presets;
+  return { lens: pre.lens[cfg.lens] ?? 1, aberration: pre.aberration[cfg.aberration] ?? 1 };
+}
+
 /** The CSS the hook inserts into every window, composed from the shipped glass files and the user's settings. */
 function compose(ctx: vscode.ExtensionContext, cfg: Cfg): string {
   const read = (p: string) => fs.readFileSync(path.join(ctx.extensionPath, 'glass', p), 'utf8');
   const parts = [`/* VS Glass ${version(ctx)} — composed by the VS Glass extension from your settings; rewritten on every change. */`, read('glass.css')];
   if (wantsWallpaper(cfg)) parts.push(read('glass-wallpaper.css'));
-  if (cfg.tint && cfg.tint !== 'none') parts.push(read(`tints/glass-tint-${cfg.tint}.css`));
-  if (cfg.lens && cfg.lens !== 'default') parts.push(read(`lens/glass-lens-${cfg.lens}.css`));
-  if (cfg.aberration && cfg.aberration !== 'default') parts.push(read(`aberration/glass-aberration-${cfg.aberration}.css`));
+  if (cfg.tint !== 'none') parts.push(read(`tints/glass-tint-${cfg.tint}.css`));
+  // Lens strength and aberration are built here as ONE set of filters for the pair: the preset files each re-emit
+  // every filter with only their own multiplier, so loading a lens preset and an aberration preset together kept
+  // only whichever came last.
+  // The widget density also sets the base inside the widget filters (what hides the content under the glass).
+  const m = lensMuls(ctx, cfg), d = cfg.widgetDensity / 100;
+  if (m.lens !== 1 || m.aberration !== 1 || d !== 1) {
+    const blocks = lensParamsFile(ctx).workbench.map(p => {
+      const { vars } = lensVars(p, m.lens, m.aberration, '-set', wantsWallpaper(cfg) ? [...WORKBENCH_CLASSES, ...WALLPAPER_CLASSES] : WORKBENCH_CLASSES, d);
+      return `${GUARD}.${p.themeClass} {\n${Object.entries(vars).map(([k, v]) => `  ${k}: ${v};`).join('\n')}\n}`;
+    });
+    parts.push(`/* VS Glass settings (vsGlass.lens ${cfg.lens}, vsGlass.aberration ${cfg.aberration}, vsGlass.widgetDensity ${cfg.widgetDensity}) */\n${blocks.join('\n')}\n`);
+  }
   parts.push(`/* VS Glass settings (vsGlass.density, vsGlass.widgetDensity) */\n${GUARD} {\n  --vsg-density: ${(cfg.density / 100).toFixed(3)};\n  --vsg-widget-density: ${(cfg.widgetDensity / 100).toFixed(3)};\n}\n`);
   return parts.join('\n');
 }
@@ -147,8 +184,12 @@ function composeWebview(ctx: vscode.ExtensionContext, cfg: Cfg): string {
   if (live < WEBVIEW_HOOK_MIN) return `/* VS Glass ${version(ctx)} — webview sheet withheld: this window ${live ? `runs hook V${live}, which re-applies the sheet on a timer` : 'has not reported a current hook'}; quit and reopen VS Code to load the current hook, then this file is written in full. */\n`;
   const read = (p: string) => fs.readFileSync(path.join(ctx.extensionPath, 'glass', p), 'utf8');
   const parts = [`/* VS Glass ${version(ctx)} — webview sheet, composed by the VS Glass extension from your settings. */`, read('webview.css')];
-  if (cfg.lens && cfg.lens !== 'default') parts.push(read(`webview/lens-${cfg.lens}.css`));
-  if (cfg.aberration && cfg.aberration !== 'default') parts.push(read(`webview/aberration-${cfg.aberration}.css`));
+  const m = lensMuls(ctx, cfg), d = cfg.widgetDensity / 100;
+  if (m.lens !== 1 || m.aberration !== 1 || d !== 1) {
+    const wv = lensParamsFile(ctx).webview;
+    const filter = (p: LensParams) => lensVars(p, m.lens, m.aberration, '-set', ['composer'], d).vars['--vsg-lens-composer'];
+    parts.push(`:root { --vsgw-lens-composer: ${filter(wv.dark)}; }\nbody.vscode-light { --vsgw-lens-composer: ${filter(wv.light)}; }\n`);
+  }
   parts.push(`:root { --vsgw-density: ${(cfg.widgetDensity / 100).toFixed(3)}; }\n`);
   return parts.join('\n');
 }
@@ -187,6 +228,15 @@ interface Status {
   backups: string[]; files: Files;
 }
 
+/** Whether a 1.1.0 preview's CSS patch is still in the workbench stylesheet. Reading that multi-megabyte file on every
+ *  settings and theme event was the slowest part of a status check; the answer only changes when we clean it up. */
+let legacyKnown: boolean | null = null;
+function legacyCssPatched(f: Files): boolean {
+  if (fs.existsSync(f.legacyCss + BACKUP_SUFFIX) || fs.existsSync(f.legacyProduct + BACKUP_SUFFIX)) return true;
+  if (legacyKnown === null) { try { legacyKnown = fs.readFileSync(f.legacyCss, 'utf8').includes(LEGACY_CSS_START); } catch { legacyKnown = false; } }
+  return legacyKnown;
+}
+
 function status(ctx: vscode.ExtensionContext, cfg: Cfg): Status {
   const f = files(ctx);
   const desktop = vscode.env.appHost === 'desktop' && fs.existsSync(f.main);
@@ -200,8 +250,7 @@ function status(ctx: vscode.ExtensionContext, cfg: Cfg): Status {
   try { css = f.glassCss ? fs.readFileSync(f.glassCss, 'utf8') : null; } catch { css = null; }
   try { webview = f.webviewCss ? fs.readFileSync(f.webviewCss, 'utf8') : null; } catch { webview = null; }
   try { state = f.stateJson ? fs.readFileSync(f.stateJson, 'utf8') : null; } catch { state = null; }
-  let legacyCss = fs.existsSync(f.legacyCss + BACKUP_SUFFIX) || fs.existsSync(f.legacyProduct + BACKUP_SUFFIX);
-  try { legacyCss = legacyCss || fs.readFileSync(f.legacyCss, 'utf8').includes(LEGACY_CSS_START); } catch { /* ignore */ }
+  const legacyCss = legacyCssPatched(f);
   const backups = [f.main, f.legacyCss, f.legacyProduct].filter(p => fs.existsSync(p + BACKUP_SUFFIX)).map(p => path.basename(p) + BACKUP_SUFFIX);
   const anchors = desktop ? anchorCount(main) : 0;
   return {
@@ -283,7 +332,7 @@ function writeState(ctx: vscode.ExtensionContext, cfg: Cfg): boolean {
     changed = writeIfChanged(f.glassCss, compose(ctx, cfg)) || changed;
     if (f.webviewCss) changed = writeIfChanged(f.webviewCss, composeWebview(ctx, cfg)) || changed;
   } else {
-    for (const file of [f.glassCss, f.webviewCss]) if (file && fs.existsSync(file)) { fs.unlinkSync(file); changed = true; }
+    for (const file of [f.glassCss, f.webviewCss]) if (file && fs.existsSync(file)) { fs.rmSync(file, { force: true }); changed = true; }
   }
   changed = writeIfChanged(f.stateJson, stateText(ctx, cfg)) || changed;
   // the window slab's parameters; the helper watches this file and exits when it says off
@@ -326,10 +375,11 @@ async function apply(ctx: vscode.ExtensionContext, interactive: boolean): Promis
   try {
     // Order matters: the file inside VS Code first (it is the step that can fail on a read-only install), then our own
     // files, then the settings — so a failure never leaves half of the setup behind.
-    const legacy = cleanupLegacyCss(st.files.root, checksum);
-    if (legacy) log('restored the workbench stylesheet and product.json patched by a 1.1.0 preview');
+    const legacy = st.legacyCss && cleanupLegacyCss(st.files.root, checksum);
+    if (legacy) { legacyKnown = false; log('restored the workbench stylesheet and product.json patched by a 1.1.0 preview'); }
     const hook = writeHook(ctx, !cfg.effects);
     const filesChanged = writeState(ctx, cfg);
+    if (interactive) { retryWindowGlass(); unsupportedShown = false; }
     if (wantsWindowGlass(cfg)) ensureHelper(ctx.extensionPath, st.files.stateDir as string, log, reportUnsupported);
     else stopHelper(st.files.stateDir as string);
     const coloursChanged = await writeThemeColors(ctx, cfg.effects);
@@ -367,7 +417,7 @@ async function remove(ctx: vscode.ExtensionContext): Promise<void> {
     const restored: string[] = [];
     const how = fs.existsSync(f.main) ? restoreMain(f.main) : 'clean';
     if (how !== 'clean') restored.push(`main.js ${how}`);
-    if (cleanupLegacyCss(f.root, checksum)) restored.push('workbench.desktop.main.css + product.json restored');
+    if (cleanupLegacyCss(f.root, checksum)) { legacyKnown = false; restored.push('workbench.desktop.main.css + product.json restored'); }
     if (f.stateDir && fs.existsSync(f.stateDir)) { fs.rmSync(f.stateDir, { recursive: true, force: true }); restored.push('vs-glass/ settings folder deleted'); }
     if (await writeThemeColors(ctx, false)) restored.push('[Glass …] colour customizations removed from settings');
     writePathsFile(ctx, true);
@@ -434,30 +484,39 @@ async function firstRun(ctx: vscode.ExtensionContext, st: Status) {
   if (pick === 'Apply') { await ctx.globalState.update(key, true); await apply(ctx, true); }
 }
 
+/** Event handlers never throw into VS Code: a failure is logged and the next event tries again. */
+function guard(what: string, fn: () => void) {
+  try { fn(); } catch (e: any) { log(`${what}: ${e?.stack ?? e}`); }
+}
+
 export async function activate(ctx: vscode.ExtensionContext) {
+  manifest = ctx.extension.packageJSON;
   out = vscode.window.createOutputChannel('VS Glass');
   ctx.subscriptions.push(out);
   try { fs.mkdirSync(ctx.logUri.fsPath, { recursive: true }); logFile = path.join(ctx.logUri.fsPath, 'vs-glass.log'); } catch { logFile = ''; }
   ctx.subscriptions.push(
     vscode.commands.registerCommand('vsGlass.apply', () => apply(ctx, true)),
     vscode.commands.registerCommand('vsGlass.remove', () => remove(ctx)),
-    vscode.commands.registerCommand('vsGlass.status', () => showStatus(ctx)),
+    vscode.commands.registerCommand('vsGlass.status', () => guard('status', () => showStatus(ctx))),
     vscode.commands.registerCommand('vsGlass.openSettings', () => vscode.commands.executeCommand('workbench.action.openSettings', '@ext:MilosHampl.vs-glass')),
     vscode.workspace.onDidChangeConfiguration(e => {
       if (!e.affectsConfiguration('vsGlass')) return;
-      const cfg = readCfg();
-      if (cfg.autoApply && status(ctx, cfg).hookApplied) scheduleApply(ctx); // live: the hook picks the new files up
+      guard('settings change', () => {
+        const cfg = readCfg();
+        if (cfg.autoApply && status(ctx, cfg).hookApplied) scheduleApply(ctx); // live: the hook picks the new files up
+      });
     }),
-    vscode.window.onDidChangeActiveColorTheme(() => {
+    vscode.window.onDidChangeActiveColorTheme(() => guard('theme change', () => {
       const cfg = readCfg();
       const st = status(ctx, cfg);
       if (st.hookApplied) { if (cfg.autoApply) scheduleApply(ctx); return; } // the opaque fallback colour follows the theme kind
       if (cfg.effects && st.desktop && isGlassTheme()) void firstRun(ctx, st); // a fresh install: the user just picked a Glass theme
-    }),
+    })),
   );
   if (vscode.env.appHost !== 'desktop') return;
   const cfg = readCfg();
-  const st = status(ctx, cfg);
+  let st: Status;
+  try { st = status(ctx, cfg); } catch (e: any) { log(`activate: could not read the install state: ${e?.stack ?? e}`); return; }
   const themeIsGlass = isGlassTheme();
   log(`activate ${version(ctx)} on ${vscode.version}: theme ${themeIsGlass ? 'Glass' : 'other'}, effects ${cfg.effects}, hook ${st.hookApplied ? (st.hookCurrent ? 'current' : 'old') : 'absent'}${st.hookLive ? ' live' : ''}${st.spliced ? ' spliced' : ''}, css ${st.cssApplied ? (st.cssStale ? 'stale' : 'current') : 'absent'}, legacy ${st.legacyCss}`);
   if (st.hookApplied) writePathsFile(ctx, false);

@@ -2,7 +2,7 @@
   "name": "vs-glass",
   "displayName": "VS Glass",
   "description": "Glass optics for VS Code: a see-through window, refracting edges, specular rims and layered translucent planes, with density, tint, lens and aberration settings.",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "publisher": "MilosHampl",
   "author": {
     "name": "Milos Hampl"
@@ -163,7 +163,7 @@
           "minimum": 0,
           "maximum": 200,
           "order": 3,
-          "markdownDescription": "How much the base planes (window film, editor, side bars, panel, strips) are frosted, in percent: 0 is absolutely clear glass (only rims, lensing and text), 100 is the tuned default, 200 is opaque. Floating widgets are separate (see `#vsGlass.widgetDensity#`). Applies live."
+          "markdownDescription": "How dense the work planes are — the editor card, the side bars, the panel and the activity bar — in percent: 0 is absolutely clear glass (only rims and text), 100 is the tuned default, 200 is opaque. The frame around them (title bar, status bar and the gaps between the planes) stays near-clear at every value. Floating widgets are separate (see `#vsGlass.widgetDensity#`). Applies live."
         },
         "vsGlass.widgetDensity": {
           "type": "number",

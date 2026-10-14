@@ -9,6 +9,76 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.3.0] - 2026-10-14
+
+The first release since 1.2.2: it also carries everything listed under 1.2.3, which was never tagged.
+
+### Changed
+
+- **Dense work planes in a clear frame.** The editor card, the side bars, the panel and the activity bar now carry a
+  real body (Regular Dark 30 % / 26 %, Clear 20 % / 17 % at density 100), and `vsGlass.density` moves only them. The
+  frame — title bar, status bar and the gaps between the panes — is a fixed near-clear film at every density. If you
+  had lowered Density to make the old planes clearer, raise it again: 10 % now means 10 % of a much denser plane.
+- **Every lens is drawn in CSS pixels.** The displacement maps are SVG images laid out at the element's real size,
+  and the bend and blur are in px, so a rim is the same width and bends the same distance on a 25 px tooltip and on a
+  900 px palette. The old maps were bitmaps stretched over the element: the rim was a fraction of its size, and since
+  Chromium scales a bounding-box displacement by the element's *width* on both axes, wide and short surfaces were bent
+  vertically several times harder than intended. Short bars (find, rename, the terminal's find, the overlay message,
+  the debug toolbar) and tooltips get their own narrow rims, so a label never sits on a bent copy of what is under it.
+- **Floating widgets hide what is behind them.** Over a see-through window Chromium draws a backdrop filter's result
+  on top of the original backdrop, so the sharp text under every widget showed through its frost (and under every
+  bent rim, a second time). The widget filters now lay a base of the widget colour under the frost and the bend:
+  the original is hidden, the frost and the bend stay vivid. `vsGlass.widgetDensity` moves the film on top and, gently,
+  the base. Vibrancy (saturation) is applied to what is behind a widget, at a third of the chrome's strength, instead
+  of to its body.
+- **The Claude Code composer** is a frosted body with a refracting, colour-fringed rim over the same kind of base,
+  instead of a clear magnifier across its whole surface.
+- **The window slab carries no chromatic aberration.** Chained to the system glass, the aberration stage made macOS
+  draw no glass at all; the slab is Apple's material with the rim refraction retuned by Lens.
+- Scrollbar thumbs are a film, not a lens: on a semi-transparent plane a lens laid a second copy of the plane under
+  each thumb, a dark bar.
+- The sheet the hook inserts into every window is 206 KB (275 KB in 1.2.3), the webview sheet 15 KB (42 KB): filters
+  are encoded minimally, unused lens classes are gone, and the wallpaper-only lens ships in the wallpaper addon.
+
+### Fixed
+
+- **Lens and Aberration combine.** Each preset file re-emitted every filter with only its own multiplier, so setting
+  both kept whichever loaded last: with Lens `soft` and Aberration `subtle`, the lens setting did nothing. The extension
+  now builds one set of filters for the pair. (The manual CSS route, `scripts/inject.sh`, refuses the combination.)
+- **The Liquid Glass slab showed nothing** with any Aberration other than `off`: the window behind it came through
+  pixel-sharp (measured with the helper under a stand-in window). See above.
+- **The composer's double, colour-split image**: the wrong axis scaling, and a map that overflowed at the corners
+  (`128 + 1.15 × 127` wrapped to 18 in a byte array), which flipped the bend near every corner of the slider and the
+  composer. The minimap slider's dome no longer tears down its middle either (its two halves met with the bend 30 %
+  strong in opposite directions).
+- **Extension icons in the activity bar (Claude Code and others) were invisible until hovered.** They are a mask over
+  the label's background colour, which the glass made transparent; their pill now lives on the item's indicator layer.
+  Inactive icons are brighter over a bright desktop.
+- The minimap slider was a dark slab on a dense plane; the minimap is now a backdrop root, so the slider bends only
+  the overview.
+- Inputs, buttons, toggles and the chat input were a bright diagonal wash: the gradient rim was a `border-box`
+  background under a translucent film, which shows through the whole control. The rim is a masked 1 px ring.
+- The hover pointer was a dark wedge stuck to the glass; it is gone. The dropdown list painted a 90 % slab inside its
+  own glass.
+- **`code <path>` from a terminal made the window look un-hooked.** The short-lived second instance ran the hook and
+  overwrote `hook.json` with its own pid, so the real window withheld the webview sheet and asked to quit and reopen
+  on every apply. Only a process that owns a window writes it now (hook V8).
+- The webview script polled every webview that was not the chat four times a second, forever, and the sweep re-sent
+  the 42 KB sheet to every frame every five seconds; with two windows, `hook.json` was rewritten on every sweep. Writing
+  `state.json` or `webview.css` re-inserted the whole workbench sheet and re-set the vibrancy in every window. All of it
+  happens only when something changed now, and the hook re-watches its folder when it is deleted and recreated.
+- **VS Glass: Remove (or uninstalling) after a VS Code update could put the old build's `main.js` back** from a stale
+  backup. A `main.js` without the hook is left alone and the stale backup deleted; stripping (the exact inverse of
+  applying) is preferred, the backup is only the way back for a damaged hook block.
+- A hand-edited setting value outside its list (`"vsGlass.tint": "red"`) made activation throw; values are checked
+  against the manifest, and event handlers never throw.
+- The window-slab helper re-applied its filters every 250 ms forever when they could not be tuned, the extension
+  respawned it every 30 s after it reported the macOS unsupported, and a stale pid file could make the extension signal
+  an unrelated process. The helper also removes its pid file when stopped.
+- Two stray, empty test files were in the package.
+
+After updating, quit and reopen VS Code once: the hook in the main process is new (V8).
+
 ## [1.2.3] - 2026-09-14
 
 ### Changed
@@ -287,7 +357,11 @@ _Nothing yet._
   key coverage against the full VS Code key inventory), `npm run audit:contrast` (WCAG contrast).
 - Project documentation: README, DESIGN.md, and this CHANGELOG.
 
-[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/MilosHampl/vs-glass/compare/v1.2.2...v1.3.0
+[1.2.3]: https://github.com/MilosHampl/vs-glass/compare/v1.2.2...bfc7c7e
+[1.2.2]: https://github.com/MilosHampl/vs-glass/compare/v1.2.1...v1.2.2
+[1.2.1]: https://github.com/MilosHampl/vs-glass/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/MilosHampl/vs-glass/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/MilosHampl/vs-glass/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/MilosHampl/vs-glass/compare/v1.1.0...v1.1.1

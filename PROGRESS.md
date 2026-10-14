@@ -299,3 +299,43 @@ An opus subagent reviewed the regenerated screenshot set against the directives 
 - Finishing pass: buttons unified with the controls (film + gradient rim at the control corner, no lens — one backdrop filter per Install button was also a cost); focus everywhere is a 1 px accent hairline; lens plane added to the debug hover, terminal find bar, editor overlay message, side-bar/panel scrollbar thumbs; Copilot Chat composer styled as an input; sticky-scroll lens removed (full-width, per scroll frame). Dead-path audit: every class token in the built `glass.css` (150) exists in VS Code 1.137's workbench css/js — none dead. `frosted` body, `extreme` lens/aberration, `Params.blur` in the helper (Apple's effective radii at scale 1). Private SkyLight diagnostics removed from the helper before commit.
 - Not done: a live visual check of the composer glass (the Claude extension would not activate in the bed; the hook reports the frames it finds so his `hook.json` answers it after a restart); a 1.2.3 tag (owner: "dont publish").
 
+
+## 1.3.0 — the broken glass, measured and fixed (2026-10-14)
+
+Owner: "in some places it still looks odd/straight up broken, some glass/aberration effects are broken/misaligned —
+audit, decide what to fix and do it, publish"; mid-session: "the claim that the window itself is glass — verify, I
+don't think it's working", "make only the work planes more opaque, the frame and spaces in between almost see-through",
+"left button mostly invisible, only on hover shows up", and **"do not break running vs code, could seriously fuck up
+my work right now"** — every check ran in a scratch bed (`scratch/VSCode-fresh.app`, profile `/tmp/vsg-audit` — a
+profile path under the session scratchpad breaks the 104-char IPC socket limit) over CDP; their install was only read.
+Raising the bed window or flashing test windows on their displays disrupted them: don't. CDP captures work on an
+occluded window (the bed runs with `--disable-backgrounding-occluded-windows`).
+
+Measured, then fixed:
+- Blink's feDisplacementMap scales BOTH axes by the bbox width (`primitiveUnits=objectBoundingBox`): 400×100 → 20 px
+  vertical where 5 was meant. The bitmap maps also overflowed (Uint8Array, cornerBoost) and dome classes flipped at the
+  centre. → `src/ext/lens.ts`: maps are SVG images in CSS px (feImage lays out an SVG without viewBox at the element's
+  size; mirrored ramps via `transform: scaleX(-1); transform-box: fill-box` + `mix-blend-mode: lighten`),
+  `userSpaceOnUse` primitives. Verified with luminance-ramp pages in headless Chrome 155 and live in the bed.
+- Over a see-through window a backdrop filter's output sits on top of the original → sharp ghost under frost and
+  rims. → `feFlood` base inside widget/menu/bar/tip/composer filters (`baseAt` follows widgetDensity). The same
+  effect doubled the semi-transparent work plane under clear lenses: thumbs lost the lens; the minimap became a
+  Backdrop Root (`filter: opacity(1)` — Chromium 148/155 honour it).
+- Lens + aberration presets overrode each other (each re-emits every filter): extension composes at runtime from
+  `glass/lens-params.json`; `inject.sh` refuses the pair.
+- Window slab drew nothing: the `chromaticAberrationMap` chain disables `glassBackground` (stand-in A/B with the real
+  helper: aberration 0.8 → pixel-sharp pass-through, 0 → Apple's glass). Chain off by default
+  (`VS_GLASS_SLAB_CHROMA=1` for testing). Not re-verified on a real VS Code window after the fix (no more screen tests).
+- `code <path>` second instance overwrote `hook.json` (its own pid) → webview sheet withheld + quit prompt on every
+  apply. Hook V8 writes it only from a window-owning process; plus the V7 review findings (poll forever, 42 KB/5 s per
+  frame, hook.json flapping, sheet re-insert on unrelated writes, stale-backup restore, enum validation, helper loops).
+- Activity-bar extension icons (`.uri-icon`, mask over background-color) were erased by `background: transparent`.
+- Gradient rims as `border-box` backgrounds under translucent films washed whole controls → masked rings.
+- Widget saturate ran on the base (blue slabs) → vibrancy before the lens, ×0.35 strength.
+- Planes: work planes Regular 0.30/0.26, Clear 0.20/0.17, density drives them only; frame film fixed (0.03 / 0.015);
+  theme keys and webview bodies of those materials clear (no doubling).
+- Sheet 275 → 206 KB (minimal data-URI escaping, unused classes dropped, `pane` moved into the wallpaper addon).
+  Build no longer stamps the date into glass.css (CI diff failed on any later day).
+
+Owner's own settings at the time: Glass Clear, density 10, widgetDensity 65, lens soft, aberration subtle, tint indigo,
+under-window. With the denser planes, density 10 now means 10 % of a much denser plane — they will likely want ~100.

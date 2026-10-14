@@ -7,7 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { palettes, describe, TINTS, DENSITY_PRESETS, LENS_PRESETS, ABERRATION_PRESETS, type Palette } from './palette';
 import { css as cssColor, alpha, parseHex } from './color';
-import { LENS_CLASSES, makeMap, filterSvg, filterDataUrl } from './lens';
+import { lensVars as lensVarsFor, WORKBENCH_CLASSES, WALLPAPER_CLASSES, type LensParams } from './ext/lens';
 import chrome from './colors/chrome';
 import editor from './colors/editor';
 import controls from './colors/controls';
@@ -133,8 +133,11 @@ function glassVars(p: Palette): { css: string; filtersSvg: string[] } {
     '--vsg-plane-dim': 'calc(var(--vsg-plane-dim-a) * min(1, var(--vsg-density)))',
     // the window slab's own smoky film (dark: a little shadow colour; light: a little white), also × density
     '--vsg-window-film-rgb': p.isDark ? rgbOf(p.groundDeep) : '255, 255, 255',
-    '--vsg-window-film-a': String(p.opaqueMode ? 1 : p.isDark ? (p.variant === 'clear' ? 0.02 : 0.05) : 0.1),
-    '--vsg-window-film': `rgba(var(--vsg-window-film-rgb), calc(${densityRamp('var(--vsg-window-film-a)', 'var(--vsg-density)')}))`,
+    // the frame — what shows under the title bar, the status bar and between the cards — is a fixed whisper: the density
+    // knob thickens the work planes, and the frame stays see-through around them (owner: "make only the work planes more
+    // opaque, the frame and spaces in between almost see-through")
+    '--vsg-window-film-a': String(p.planes.frame),
+    '--vsg-window-film': 'rgba(var(--vsg-window-film-rgb), var(--vsg-window-film-a))',
     // tint film: colourless by default; glass/tints/*.css set these
     '--vsg-tint-rgb': '0, 0, 0',
     '--vsg-tint-a': '0',
@@ -169,8 +172,10 @@ function materialOverrides(p: Palette): Record<string, string> {
   const norm = (h: string) => h.toLowerCase();
   const map = new Map<string, string>();
   const put = (hex: string, val: string) => map.set(norm(hex), val);
-  put(p.content.bg, 'var(--vsg-plane-content)'); put(p.content.bgTheme, 'var(--vsg-plane-content)'); put(p.content.bgGlass, 'var(--vsg-plane-content)');
-  put(p.glass.chrome.bg, 'var(--vsg-plane-chrome)'); put(p.glass.chrome.solid, 'var(--vsg-plane-chrome)');
+  // the content and chrome materials are painted ONCE, by the cards themselves (glass.css §4); a theme key of the same
+  // material inside a card (the welcome page, a notebook, an agents view) would lay a second plane over the first
+  put(p.content.bg, 'transparent'); put(p.content.bgTheme, 'transparent'); put(p.content.bgGlass, 'transparent');
+  put(p.glass.chrome.bg, 'transparent'); put(p.glass.chrome.solid, 'transparent');
   put(p.glass.raised.bg, 'var(--vsg-film-raised)'); put(p.glass.raised.solid, 'var(--vsg-film-raised)');
   put(p.glass.widget.bg, 'var(--vsg-plane-widget)'); put(p.glass.widget.solid, 'var(--vsg-plane-widget)');
   put(p.glass.overlay.bg, 'var(--vsg-plane-widget)'); put(p.glass.overlay.solid, 'var(--vsg-plane-widget)');
@@ -186,31 +191,24 @@ function materialOverrides(p: Palette): Record<string, string> {
   return out;
 }
 
-/** Lens filter variables (one data-URI filter per aspect class). lensMul scales displacement and rim width together
- *  (same slope), aberrationMul scales the chromatic offset. Presets re-emit only these variables. */
-function lensVars(p: Palette, lensMul = 1, aberrationMul = 1, idSuffix = ''): { vars: Record<string, string>; filtersSvg: string[] } {
-  const e = p.effects;
-  const vars: Record<string, string> = {};
-  const filtersSvg: string[] = [];
-  for (const cls of LENS_CLASSES) {
-    if (e.lensScale <= 0) { vars[`--vsg-lens-${cls.name}`] = 'none'; continue; }
-    // convex capsules: the rim IS the whole shape (edge = radius), gentler ramp, no frost
-    const { uri } = cls.edgePx !== undefined ? makeMap(cls, cls.edgePx * lensMul, cls.power ?? 0)
-      : cls.convex ? makeMap(cls, Math.min(cls.w, cls.h) / 2, 1.3)
-      : makeMap(cls, e.lensEdge * lensMul * cls.rim);
-    const id = `vsg-lens-${p.id}-${cls.name}${idSuffix}`;
-    const blur = cls.blur ?? (cls.convex ? 0 : cls.name === 'widget' || cls.name === 'menu' ? e.blurWidget : cls.name === 'strip' ? Math.min(e.blur, 12) : e.blur);
-    const markup = filterSvg(id, cls, uri, e.lensScale * lensMul * (cls.disp ?? cls.rim), blur, e.aberration * aberrationMul * (cls.abr ?? cls.disp ?? cls.rim));
-    filtersSvg.push(markup);
-    vars[`--vsg-lens-${cls.name}`] = filterDataUrl(markup, id);
-  }
-  return { vars, filtersSvg };
+/** What a lens is built from, per palette (also written to glass/lens-params.json, from which the extension composes
+ *  the lens and aberration settings into one set of filters at runtime). */
+const lensParams = (p: Palette): LensParams => ({
+  id: p.id, themeClass: themeClass(p), lensScale: p.effects.lensScale, aberration: p.effects.aberration,
+  blur: p.effects.blur, blurWidget: p.effects.blurWidget, baseRgb: rgbOf(p.planes.widget),
+});
+
+/** Lens filter variables for the classes the workbench sheet uses. lensMul scales displacement and rim width together
+ *  (same slope), aberrationMul scales the chromatic spread. Presets re-emit only these variables. */
+function lensVars(p: Palette, lensMul = 1, aberrationMul = 1, idSuffix = '', classes = WORKBENCH_CLASSES): { vars: Record<string, string>; filtersSvg: string[] } {
+  const { vars, filters } = lensVarsFor(lensParams(p), lensMul, aberrationMul, idSuffix, classes);
+  return { vars, filtersSvg: filters };
 }
 
 /** An addon file that re-emits the lens variables for every palette with a preset multiplier applied. */
 function lensPresetCss(kind: 'lens' | 'aberration', id: string, mul: number, description: string): string {
   const blocks = palettes.map(p => {
-    const { vars } = lensVars(p, kind === 'lens' ? mul : 1, kind === 'aberration' ? mul : 1, `-${kind}-${id}`);
+    const { vars } = lensVars(p, kind === 'lens' ? mul : 1, kind === 'aberration' ? mul : 1, `-${kind}-${id}`, [...WORKBENCH_CLASSES, ...WALLPAPER_CLASSES]);
     const body = Object.entries(vars).map(([k, val]) => `  ${k}: ${val};`).join('\n');
     // guard + theme class: beats the palette block in glass.css
     return `/* ${p.name} */\n${GUARD}.${themeClass(p)} {\n${body}\n}`;
@@ -232,7 +230,9 @@ function buildGlassCss(): { css: string; svg: string } {
       : `.monaco-workbench.${themeClass(p)}`;
     blocks.push(`/* ${p.name} */\n${selector} {\n${css}\n}`);
   }
-  const header = `/*! VS Glass — Layer 2 effects (generated by src/build.ts from src/palette.ts; do not edit)\n *  ${new Date().toISOString().slice(0, 10)} · https://github.com/MilosHampl/vs-glass · MIT */\n`;
+  // no build date in here: CI regenerates these files and fails on any difference, so a date made every CI run on a
+  // later day than the commit fail
+  const header = `/*! VS Glass — Layer 2 effects (generated by src/build.ts from src/palette.ts; do not edit)\n *  https://github.com/MilosHampl/vs-glass · MIT */\n`;
   const css = `${header}\n/* ===== Generated palette tokens ===== */\n${blocks.join('\n\n')}\n\n/* ===== Effects ===== */\n${template}`;
   const svg = `<?xml version="1.0" encoding="UTF-8"?>\n<!-- VS Glass lens filters (generated; the same filters are embedded in glass.css as data URIs) -->\n<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">\n<defs>\n${allFilters.join('\n')}\n</defs>\n</svg>\n`;
   return { css, svg };
@@ -253,8 +253,13 @@ function main() {
   fs.writeFileSync(path.join(ROOT, 'glass', 'glass.css'), css);
   fs.writeFileSync(path.join(ROOT, 'glass', 'glass-filters.svg'), svg);
   // addons: wallpaper mode (opaque window) and tints (coloured film) — both load after glass.css
+  // the base panes' lens (wallpaper mode only) ships here rather than in glass.css, which every window loads
+  const paneBlocks = palettes.map(p => {
+    const { vars } = lensVars(p, 1, 1, '', WALLPAPER_CLASSES);
+    return `${GUARD}.${themeClass(p)} {\n${Object.entries(vars).map(([k, v]) => `  ${k}: ${v};`).join('\n')}\n}`;
+  }).join('\n');
   const wallpaper = `/*! VS Glass — wallpaper-mode addon (generated; load AFTER glass.css). For a window that is not see-through:\n *  paints a neutral smoke backdrop and thickens the planes. MIT */\n` +
-    fs.readFileSync(path.join(ROOT, 'src', 'glass', 'glass-wallpaper.css'), 'utf8').replaceAll('@G', GUARD);
+    fs.readFileSync(path.join(ROOT, 'src', 'glass', 'glass-wallpaper.css'), 'utf8').replaceAll('@G', GUARD) + `\n/* the base panes' lens */\n${paneBlocks}\n`;
   fs.writeFileSync(path.join(ROOT, 'glass', 'glass-wallpaper.css'), wallpaper);
   fs.mkdirSync(path.join(ROOT, 'glass', 'tints'), { recursive: true });
   const tintTemplate = fs.readFileSync(path.join(ROOT, 'src', 'glass', 'glass-tint.css'), 'utf8');
@@ -283,16 +288,17 @@ function main() {
   for (const p of palettes) {
     if (p.opaqueMode) continue;
     const none = '#00000000';
+    // every webview sits on a card (the editor card, a side bar, the panel), and the card already paints the plane
     webview[p.name] = {
-      'editor.background': p.planes.content,
+      'editor.background': none,
       'editorPane.background': none,
-      'sideBar.background': p.planes.chrome,
-      'panel.background': p.planes.chrome,
-      'activityBar.background': p.planes.chrome,
-      'statusBar.background': p.planes.chrome,
-      'statusBar.noFolderBackground': p.planes.chrome,
-      'titleBar.activeBackground': p.planes.chrome,
-      'titleBar.inactiveBackground': p.planes.chrome,
+      'sideBar.background': none,
+      'panel.background': none,
+      'activityBar.background': none,
+      'statusBar.background': none,
+      'statusBar.noFolderBackground': none,
+      'titleBar.activeBackground': none,
+      'titleBar.inactiveBackground': none,
       'editorGroupHeader.tabsBackground': none,
       'sideBarSectionHeader.background': none,
       'sideBarTitle.background': none,
@@ -300,6 +306,17 @@ function main() {
     };
   }
   fs.writeFileSync(path.join(ROOT, 'glass', 'webview-colors.json'), JSON.stringify(webview, null, 2) + '\n');
+  // the palette values the extension needs to compose lens × aberration at runtime (workbench: every lensed palette;
+  // webview: the dark and light palettes the webview sheet is built from)
+  const lensJson = {
+    workbench: palettes.filter(p => p.effects.lensScale > 0).map(lensParams),
+    webview: { dark: lensParams(palettes.find(p => p.id === 'glass-clear') ?? palettes[0]), light: lensParams(palettes.find(p => p.id === 'glass-regular-light') ?? palettes[0]) },
+    presets: {
+      lens: Object.fromEntries([['default', 1], ...LENS_PRESETS.map(l => [l.id, l.mul])]),
+      aberration: Object.fromEntries([['default', 1], ...ABERRATION_PRESETS.map(a => [a.id, a.mul])]),
+    },
+  };
+  fs.writeFileSync(path.join(ROOT, 'glass', 'lens-params.json'), JSON.stringify(lensJson, null, 2) + '\n');
   for (const l of LENS_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'lens', `glass-lens-${l.id}.css`), lensPresetCss('lens', l.id, l.mul, l.description));
   for (const a of ABERRATION_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'aberration', `glass-aberration-${a.id}.css`), lensPresetCss('aberration', a.id, a.mul, a.description));
   // The webview sheet (glass/webview.css + glass/webview/*): webviews are separate documents without the workbench's
@@ -310,14 +327,15 @@ function main() {
   const wvDark = palettes.find(p => p.id === 'glass-clear') ?? palettes[0];
   const wvLight = palettes.find(p => p.id === 'glass-regular-light') ?? palettes[0];
   const wvVars = (lensMul: number, aberrationMul: number, suffix: string): Record<string, string> => {
-    const d = lensVars(wvDark, lensMul, aberrationMul, suffix).vars, l = lensVars(wvLight, lensMul, aberrationMul, suffix).vars;
-    return { LENS_COMPOSER_DARK: d['--vsg-lens-composer'], LENS_SLIDER_DARK: d['--vsg-lens-slider'], LENS_COMPOSER_LIGHT: l['--vsg-lens-composer'], LENS_SLIDER_LIGHT: l['--vsg-lens-slider'] };
+    const d = lensVarsFor(lensParams(wvDark), lensMul, aberrationMul, suffix, ['composer']).vars;
+    const l = lensVarsFor(lensParams(wvLight), lensMul, aberrationMul, suffix, ['composer']).vars;
+    return { LENS_COMPOSER_DARK: d['--vsg-lens-composer'], LENS_COMPOSER_LIGHT: l['--vsg-lens-composer'] };
   };
   const fill = (tpl: string, v: Record<string, string>) => Object.entries(v).reduce((t, [k, val]) => t.replaceAll(`@${k}`, val), tpl);
   fs.writeFileSync(path.join(ROOT, 'glass', 'webview.css'), fill(wvTemplate, wvVars(1, 1, '-wv')));
   const wvPreset = (kind: 'lens' | 'aberration', id: string, mul: number) => {
     const v = wvVars(kind === 'lens' ? mul : 1, kind === 'aberration' ? mul : 1, `-wv-${kind}-${id}`);
-    return `/*! VS Glass — webview ${kind} preset "${id}" (generated; load AFTER webview.css). MIT */\n:root {\n  --vsgw-lens-composer: ${v.LENS_COMPOSER_DARK};\n  --vsgw-lens-slider: ${v.LENS_SLIDER_DARK};\n}\nbody.vscode-light {\n  --vsgw-lens-composer: ${v.LENS_COMPOSER_LIGHT};\n  --vsgw-lens-slider: ${v.LENS_SLIDER_LIGHT};\n}\n`;
+    return `/*! VS Glass — webview ${kind} preset "${id}" (generated; load AFTER webview.css). MIT */\n:root {\n  --vsgw-lens-composer: ${v.LENS_COMPOSER_DARK};\n}\nbody.vscode-light {\n  --vsgw-lens-composer: ${v.LENS_COMPOSER_LIGHT};\n}\n`;
   };
   for (const l of LENS_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'webview', `lens-${l.id}.css`), wvPreset('lens', l.id, l.mul));
   for (const a of ABERRATION_PRESETS) fs.writeFileSync(path.join(ROOT, 'glass', 'webview', `aberration-${a.id}.css`), wvPreset('aberration', a.id, a.mul));
