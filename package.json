@@ -152,10 +152,10 @@
           "enumDescriptions": [
             "Apple's Clear material as the system draws it: a light frost with the OS's own rim refraction — what the rest of macOS 26 looks like over the desktop.",
             "Apple's Regular material: a heavier, darker frost, the standard glass of macOS 26 toolbars and sidebars.",
-            "A deep frost under Apple's Regular face: whatever is behind the window dissolves into soft colour, so code stays readable over anything, while the rim still bends and colour-splits the edge.",
-            "A pixel-exact pass-through: nothing of the OS material in the body, only the rim bends and colour-splits what is behind the window's edge."
+            "A deep frost under Apple's Regular face: whatever is behind the window dissolves into soft colour, so code stays readable over anything, while the rim still bends the edge.",
+            "A pixel-exact pass-through: nothing of the OS material in the body, only the rim bends what is behind the window's edge."
           ],
-          "markdownDescription": "With `#vsGlass.windowMaterial#` on `liquid-glass` (macOS 26 or newer): what the body of the system glass under the window is made of. `apple-clear` (default) and `apple-regular` are the OS's own two materials, retuned only at the rim by `#vsGlass.lens#` and `#vsGlass.aberration#`. `clear-plane` removes Apple's blur and face tint entirely, so the window is a clear sheet whose edge alone refracts. A material can only show what is behind it: over a plain dark wallpaper all three read as a translucent sheet that differs only in brightness, and on a window that fills the screen the refracting edge sits on the screen border with nothing beyond it. Un-zoom the window over other windows or a detailed wallpaper and lower `#vsGlass.density#` to see the material work. Applies live."
+          "markdownDescription": "With `#vsGlass.windowMaterial#` on `liquid-glass` (macOS 26 or newer): what the body of the system glass under the window is made of. `apple-clear` (default) and `apple-regular` are the OS's own two materials, retuned only at the rim by `#vsGlass.lens#` (the slab carries no chromatic aberration: chained to the system glass, macOS drew no glass at all — `#vsGlass.aberration#` applies to the in-window rims). `clear-plane` removes Apple's blur and face tint entirely, so the window is a clear sheet whose edge alone refracts. A material can only show what is behind it: over a plain dark wallpaper all three read as a translucent sheet that differs only in brightness, and on a window that fills the screen the refracting edge sits on the screen border with nothing beyond it. The slab shows through the frame and the gaps between the panes; un-zoom the window over other windows or a detailed wallpaper, and lower `#vsGlass.density#` to see it through the panes as well. Applies live."
         },
         "vsGlass.density": {
           "type": "number",
@@ -213,7 +213,7 @@
           ],
           "default": "default",
           "order": 7,
-          "markdownDescription": "Chromatic aberration at the rims: red-to-blue fringing like a curved glass edge. `extreme` is a prism. Applies live."
+          "markdownDescription": "Chromatic aberration at the in-window rims: red-to-blue fringing like a curved glass edge. `extreme` is a prism. (The Liquid Glass window slab carries none.) Applies live."
         },
         "vsGlass.wallpaper": {
           "type": "string",

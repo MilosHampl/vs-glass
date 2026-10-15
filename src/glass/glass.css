@@ -968,6 +968,10 @@
 @G .monaco-button.monaco-text-button:active { transform: scale(0.97); }
 @G .monaco-button.monaco-text-button:focus-visible { outline: none !important; box-shadow: none !important; }
 @G .monaco-button.monaco-text-button:focus-visible::after { background: color-mix(in srgb, var(--vsg-accent) 80%, transparent) !important; }
+/* a split button's halves have no ring of their own (the container carries it): focus on either half lights that ring */
+@G .monaco-button-dropdown > .monaco-button:focus-visible,
+@G .monaco-button-dropdown > .monaco-dropdown-button:focus-visible { outline: none !important; box-shadow: none !important; }
+@G .monaco-button-dropdown:has(> :focus-visible)::after { background: color-mix(in srgb, var(--vsg-accent) 80%, transparent) !important; }
 /* icon buttons & toolbar actions: press only */
 @G .monaco-action-bar .action-item .action-label.codicon,
 @G .monaco-toolbar .action-label,

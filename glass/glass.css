@@ -1482,6 +1482,10 @@
 .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-button.monaco-text-button:active { transform: scale(0.97); }
 .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-button.monaco-text-button:focus-visible { outline: none !important; box-shadow: none !important; }
 .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-button.monaco-text-button:focus-visible::after { background: color-mix(in srgb, var(--vsg-accent) 80%, transparent) !important; }
+/* a split button's halves have no ring of their own (the container carries it): focus on either half lights that ring */
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-button-dropdown > .monaco-button:focus-visible,
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-button-dropdown > .monaco-dropdown-button:focus-visible { outline: none !important; box-shadow: none !important; }
+.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-button-dropdown:has(> :focus-visible)::after { background: color-mix(in srgb, var(--vsg-accent) 80%, transparent) !important; }
 /* icon buttons & toolbar actions: press only */
 .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-action-bar .action-item .action-label.codicon,
 .monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off) .monaco-toolbar .action-label,
