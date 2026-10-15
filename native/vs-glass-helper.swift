@@ -64,6 +64,8 @@ let caFilterClass: NSObject.Type = {
 let filterTypes: [String] = (caFilterClass.perform(NSSelectorFromString("filterTypes"))?.takeUnretainedValue() as? [String]) ?? []
 if !filterTypes.contains("glassBackground") { say("unsupported: CoreAnimation has no glassBackground filter"); exit(3) }
 let chromaAvailable = filterTypes.contains("chromaticAberrationMap")
+/// see Slab.apply: off, because the aberration stage disables the glass it is chained to (kept for a future macOS)
+let slabChroma = ProcessInfo.processInfo.environment["VS_GLASS_SLAB_CHROMA"] == "1"
 func makeFilter(_ type: String) -> NSObject? { caFilterClass.perform(NSSelectorFromString("filterWithType:"), with: type)?.takeUnretainedValue() as? NSObject }
 let backdropClass: AnyClass? = NSClassFromString("CABackdropLayer")
 
@@ -73,6 +75,12 @@ if lockFd < 0 || flock(lockFd, LOCK_EX | LOCK_NB) != 0 { say("another vs-glass-h
 let pidPath = stateDir + "/window-glass.pid"
 try? "\(getpid())\n".write(toFile: pidPath, atomically: true, encoding: .utf8)
 func quit(_ why: String) -> Never { say(why); try? FileManager.default.removeItem(atPath: pidPath); exit(0) }
+// The extension stops the helper with SIGTERM: leave no pid file behind, or a later process that happens to get the
+// same pid would be taken for a running helper (and could be signalled by the next stop).
+signal(SIGTERM, SIG_IGN)
+let termSource = DispatchSource.makeSignalSource(signal: SIGTERM, queue: .main)
+termSource.setEventHandler { quit("stopped by the extension (SIGTERM); bye") }
+termSource.resume()
 
 // ---- parameters (written by the extension) --------------------------------------------------------------------------
 struct Params: Equatable {
@@ -135,6 +143,12 @@ final class Slab: NSObject {
   private var observed: CALayer?
   private var applying = false
   var resets = 0
+  /// the filters were found and tuned; until then `drifted` is meaningless (a slab whose glass has no backdrop layer
+  /// yet would otherwise be re-applied on every tick, forever)
+  var tuned = false
+  /// failed tunings so far, and when to try again (backing off; after a few the slab keeps the stock glass)
+  var retries = 0
+  var nextRetry = Date.distantPast
 
   init(target: CGWindowID, frame: NSRect, p: Params) {
     self.target = target
@@ -170,7 +184,7 @@ final class Slab: NSObject {
     win.contentView?.layoutSubtreeIfNeeded(); win.displayIfNeeded()
     guard let bd = backdrop(), let existing = bd.filters as? [NSObject],
           let bg0 = existing.first(where: { ($0.value(forKey: "type") as? String) == "glassBackground" }),
-          let bg = bg0.mutableCopy() as? NSObject else { return false }
+          let bg = bg0.mutableCopy() as? NSObject else { tuned = false; return false }
     // the body: Apple's own numbers for its two styles (read from a live NSGlassEffectView), or nothing at all
     // the body: blur in full-resolution points (see Params.bodyBlur), the face only where there is a material
     expectedBlur = p.bodyBlur
@@ -184,7 +198,12 @@ final class Slab: NSObject {
     var chain: [NSObject] = [bg]
     for m in masks { m.removeFromSuperlayer() }
     masks = []
-    if chromaAvailable && p.chroma > 0 && p.chromaLevels > 0 {
+    // No chromatic aberration on the slab. A `chromaticAberrationMap` stage behind the glass filter (driven by live
+    // shape masks) makes macOS 26 render the WHOLE backdrop as a clear pass-through: no blur, no face, no refraction —
+    // measured with this helper under a stand-in window (2026-10-14): aberration on → the window behind showed through
+    // pixel-sharp; aberration off → Apple's glass. Every aberration setting but `off` therefore turned the slab into
+    // nothing. The colour fringe stays in the in-window lenses; the slab is Apple's material with a retuned rim.
+    if slabChroma && chromaAvailable && p.chroma > 0 && p.chromaLevels > 0 {
       for level in 0..<p.chromaLevels {
         let d = p.chroma * (1 - Double(level) / Double(p.chromaLevels))
         // red is pulled towards the centre, blue away from it, on every edge; corners get both axes
@@ -202,6 +221,7 @@ final class Slab: NSObject {
     applying = true; bd.filters = chain; applying = false
     expectedFilters = chain.count
     applied = p
+    tuned = true; retries = 0
     layoutMasks(force: true)
     // the system rebuilds this filter chain now and then (activation, appearance); put ours back in the same turn
     if observed !== bd { observed?.removeObserver(self, forKeyPath: "filters"); bd.addObserver(self, forKeyPath: "filters", options: [], context: nil); observed = bd }
@@ -241,6 +261,7 @@ final class Slab: NSObject {
 
   /** Did the system rebuild the glass view's filters (appearance change, style reset)? */
   func drifted() -> Bool {
+    guard tuned else { return false }
     guard let bd = backdrop(), let f = bd.filters as? [NSObject], f.count == expectedFilters, let first = f.first else { return true }
     if (first.value(forKey: "inputBlurRadius") as? Double) != expectedBlur { return true }
     if !masks.isEmpty && masks.contains(where: { $0.superlayer == nil }) { return true }
@@ -338,6 +359,11 @@ func tick() {
   if t.timeIntervalSince(lastDrift) > 0.25 {
     lastDrift = t
     for s in slabs.values where s.drifted() { s.apply(params); s.resets += 1; if verbose { say("re-applied the filters for window \(s.target) (the system had reset them)") } }
+    // a slab whose filters were not found: try again with a growing pause, and give up after a few (stock glass)
+    for s in slabs.values where !s.tuned && s.retries < 6 && t >= s.nextRetry {
+      if s.apply(params) { say("slab \(s.windowID): filters tuned on retry \(s.retries + 1)") }
+      else { s.retries += 1; s.nextRetry = t.addingTimeInterval(Double(1 << s.retries)); if s.retries == 6 { say("slab \(s.windowID): filters still not found after 6 tries — keeping the stock glass") } }
+    }
   }
 }
 
@@ -345,7 +371,7 @@ func tick() {
 for name in [NSWorkspace.didActivateApplicationNotification, NSWorkspace.didDeactivateApplicationNotification, NSWorkspace.activeSpaceDidChangeNotification] {
   NSWorkspace.shared.notificationCenter.addObserver(forName: name, object: nil, queue: .main) { _ in lastFull = .distantPast; lastMotion = Date() }
 }
-say("vs-glass-helper \(VERSION) serving VS Code pid \(targetPid) (chroma filter \(chromaAvailable ? "available" : "unavailable")); params \(paramsPath)")
+say("vs-glass-helper \(VERSION) serving VS Code pid \(targetPid) (slab aberration \(slabChroma && chromaAvailable ? "on" : "off")); params \(paramsPath)")
 var lastReport = Date()
 while true {
   let active = Date().timeIntervalSince(lastMotion) < 0.75

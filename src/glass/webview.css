@@ -12,7 +12,6 @@
   --vsgw-radius: 12px;
   --vsgw-density: 0.65;
   --vsgw-lens-composer: @LENS_COMPOSER_DARK;
-  --vsgw-lens-slider: @LENS_SLIDER_DARK;
   /* the same interactive ladder as the workbench: a film and a hairline at fixed alphas */
   --vsgw-state-film: rgba(var(--vsgw-spec-rgb), 0.06);
   --vsgw-state-rim: rgba(var(--vsgw-spec-rgb), 0.10);
@@ -21,7 +20,6 @@ body.vscode-light {
   --vsgw-spec-rgb: 20, 24, 32;
   --vsgw-plane-rgb: 248, 250, 253;
   --vsgw-lens-composer: @LENS_COMPOSER_LIGHT;
-  --vsgw-lens-slider: @LENS_SLIDER_LIGHT;
 }
 
 /* ---------- Claude Code: the composer is a plane of glass over the conversation ---------- */
@@ -32,7 +30,7 @@ body.vscode-light {
    (the outer one is Claude Code's positioning wrapper). */
 [class*="inputContainer_"]:has([class*="messageInput_"]):not(:has([class*="inputContainer_"])) {
   isolation: isolate;
-  background: rgba(var(--vsgw-plane-rgb), calc(0.22 + 0.30 * var(--vsgw-density))) !important;
+  background: rgba(var(--vsgw-plane-rgb), calc(0.08 + 0.16 * var(--vsgw-density))) !important;
   border: 1px solid rgba(var(--vsgw-spec-rgb), 0.18) !important;
   border-radius: var(--vsgw-radius) !important;
   box-shadow: none !important;

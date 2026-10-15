@@ -1,0 +1,66 @@
+{
+  "workbench": [
+    {
+      "id": "glass-regular-dark",
+      "themeClass": "MilosHampl-vs-glass-themes-glass-regular-dark-color-theme-json",
+      "lensScale": 14,
+      "aberration": 2.1,
+      "blur": 14,
+      "blurWidget": 22,
+      "baseRgb": "49, 55, 65"
+    },
+    {
+      "id": "glass-regular-light",
+      "themeClass": "MilosHampl-vs-glass-themes-glass-regular-light-color-theme-json",
+      "lensScale": 12,
+      "aberration": 1.9,
+      "blur": 16,
+      "blurWidget": 24,
+      "baseRgb": "241, 245, 254"
+    },
+    {
+      "id": "glass-clear",
+      "themeClass": "MilosHampl-vs-glass-themes-glass-clear-color-theme-json",
+      "lensScale": 18,
+      "aberration": 2.9,
+      "blur": 6,
+      "blurWidget": 16,
+      "baseRgb": "45, 51, 61"
+    }
+  ],
+  "webview": {
+    "dark": {
+      "id": "glass-clear",
+      "themeClass": "MilosHampl-vs-glass-themes-glass-clear-color-theme-json",
+      "lensScale": 18,
+      "aberration": 2.9,
+      "blur": 6,
+      "blurWidget": 16,
+      "baseRgb": "45, 51, 61"
+    },
+    "light": {
+      "id": "glass-regular-light",
+      "themeClass": "MilosHampl-vs-glass-themes-glass-regular-light-color-theme-json",
+      "lensScale": 12,
+      "aberration": 1.9,
+      "blur": 16,
+      "blurWidget": 24,
+      "baseRgb": "241, 245, 254"
+    }
+  },
+  "presets": {
+    "lens": {
+      "default": 1,
+      "soft": 0.7,
+      "strong": 1.4,
+      "extreme": 2
+    },
+    "aberration": {
+      "default": 1,
+      "off": 0,
+      "subtle": 0.5,
+      "strong": 2.5,
+      "extreme": 4
+    }
+  }
+}

@@ -14,7 +14,7 @@ import * as path from 'node:path';
 
 export const WIN_START = '/* VS-GLASS-WINDOW-START */';
 export const WIN_END = '/* VS-GLASS-WINDOW-END */';
-export const HOOK_VERSION = 'VS-GLASS-HOOK-V7';
+export const HOOK_VERSION = 'VS-GLASS-HOOK-V8';
 export const BACKUP_SUFFIX = '.vs-glass-backup';
 /** VS Code 1.136 builds its window options as `{backgroundColor:…, …, experimentalDarkMode:!0}`; this is the tail of that object. */
 export const OPTIONS_ANCHOR = ',experimentalDarkMode:!0}';
@@ -85,24 +85,32 @@ export function writeAtomic(file: string, content: string) {
 
 /**
  * Keep a pristine backup next to the file. (Re)taken whenever the file carries no VS Glass markers — so a VS Code update
- * that replaced main.js refreshes it — and never overwritten with a patched file. Returns false when no usable backup exists.
+ * that replaced main.js refreshes it — and never overwritten with a patched file. The copy is written from `text`, the
+ * content that was checked: copying the file itself could pick up a hook another window's extension host wrote in
+ * between. Returns false when no usable backup exists.
  */
 export function ensureBackup(file: string, text: string): boolean {
   const b = file + BACKUP_SUFFIX;
-  if (!hasHook(text) && !hasSplice(text)) { fs.copyFileSync(file, b); return true; }
+  if (!hasHook(text) && !hasSplice(text)) { writeAtomic(b, text); return true; }
   return fs.existsSync(b);
 }
 
-/** Restore main.js: from the pristine backup when there is one (then drop the backup), otherwise by stripping. */
+/**
+ * Restore main.js. Stripping is the byte-exact inverse of applying, so it is the first choice; the backup is the way
+ * back only when the hook block is damaged and cannot be stripped cleanly. Nothing of ours in main.js means there is
+ * nothing to restore — and a backup left next to it then predates a VS Code update: copying it back would put the OLD
+ * build's main process into the new VS Code, so it is deleted instead. The backup is dropped in every case.
+ */
 export function restoreMain(main: string): 'restored' | 'stripped' | 'clean' {
   const b = main + BACKUP_SUFFIX;
-  if (fs.existsSync(b)) {
-    const pristine = fs.readFileSync(b, 'utf8');
-    if (!hasHook(pristine) && !hasSplice(pristine)) { fs.copyFileSync(b, main); fs.unlinkSync(b); return 'restored'; }
-    fs.unlinkSync(b); // a poisoned backup (patched content) is worthless; fall through to stripping
-  }
   const cur = fs.readFileSync(main, 'utf8');
+  const backup = fs.existsSync(b) ? fs.readFileSync(b, 'utf8') : null;
+  const drop = () => { if (backup !== null) { try { fs.unlinkSync(b); } catch { /* already gone */ } } };
+  if (!hasHook(cur) && !hasSplice(cur)) { drop(); return 'clean'; }
   const next = stripHook(cur);
+  if (!hasHook(next) && !hasSplice(next)) { writeAtomic(main, next); drop(); return next === backup ? 'restored' : 'stripped'; }
+  if (backup !== null && !hasHook(backup) && !hasSplice(backup)) { writeAtomic(main, backup); drop(); return 'restored'; }
+  drop();
   if (next !== cur) { writeAtomic(main, next); return 'stripped'; }
   return 'clean';
 }
@@ -136,8 +144,10 @@ export function cleanupLegacyCss(appRoot: string, checksum: (buf: Buffer) => str
  *     `transparent: true` + a clear background — when state.json asks for transparency;
  *   - on each workbench window's `dom-ready` it applies the vibrancy material and inserts the glass CSS;
  *   - in every webview frame (`vscode-webview://…`, e.g. the Claude Code chat) it adopts `webview.css` as a constructed
- *     stylesheet (CSSOM, so the webview's CSP does not apply) and marks the chat composer for the sheet's layout;
- *   - it watches the folder and re-applies live whenever the extension rewrites the files.
+ *     stylesheet (CSSOM, so the webview's CSP does not apply);
+ *   - it watches the folder and re-applies live whenever the extension rewrites the files — only what changed: the
+ *     560 KB-class workbench sheet is re-inserted only when glass.css itself changed, the material only when it did.
+ * Everything here must be cheap when nothing changed: the frame sweep runs every few seconds for the life of VS Code.
  */
 export function hookText(_version?: string): string {
   return `${WIN_START}
@@ -162,22 +172,30 @@ export function hookText(_version?: string): string {
       var isWorkbench = function (win) {
         try { var u = String(win.webContents.getURL() || ''); return u.indexOf('workbench.html') >= 0; } catch (err) { return false; }
       };
-      var applyWindow = function (win) {
+      var stateOf = function (win) {
+        if (!win.__vsGlass) {
+          win.__vsGlass = { setBackgroundColor: win.setBackgroundColor.bind(win), transparent: null, look: null, queue: Promise.resolve(), key: null, css: null };
+          win.setBackgroundColor = function (c) { win.__vsGlass.setBackgroundColor(win.__vsGlass.transparent ? CLEAR : c); };
+        }
+        return win.__vsGlass;
+      };
+      // force: a fresh document or a finished load (VS Code may have reset the background); otherwise only a change in
+      // state.json touches the window — re-applying the same vibrancy material rebuilds the OS view and flickers
+      var applyWindow = function (win, force) {
         try {
           if (!win || win.isDestroyed() || !isWorkbench(win)) return;
           var st = readState();
+          var s = stateOf(win);
           var transparent = !!(st && st.transparent);
-          if (!win.__vsGlass) {
-            win.__vsGlass = { setBackgroundColor: win.setBackgroundColor.bind(win), transparent: null, queue: Promise.resolve(), key: null };
-            win.setBackgroundColor = function (c) { win.__vsGlass.setBackgroundColor(win.__vsGlass.transparent ? CLEAR : c); };
-          }
-          var changed = win.__vsGlass.transparent !== transparent;
-          win.__vsGlass.transparent = transparent;
+          var material = st && /^[a-z-]+$/.test(String(st.material || '')) ? st.material : 'hud';
+          var look = (transparent ? 'clear:' + material : 'opaque:' + ((st && st.background) || '#1f1f1f'));
+          if (!force && s.look === look) return;
+          var changed = s.transparent !== transparent;
+          s.transparent = transparent; s.look = look;
           var mac = process.platform === 'darwin' && typeof win.setVibrancy === 'function';
           if (transparent) {
-            win.__vsGlass.setBackgroundColor(CLEAR);
+            s.setBackgroundColor(CLEAR);
             if (mac) {
-              var material = st && /^[a-z-]+$/.test(String(st.material || '')) ? st.material : 'hud';
               // 'none' = no vibrancy view at all: the transparent window shows the desktop unblurred and untinted,
               // which is as see-through as a window can be. Any other value is a macOS material.
               if (material === 'none') { try { win.setVibrancy(null); } catch (err) { /* ignore */ } }
@@ -185,54 +203,54 @@ export function hookText(_version?: string): string {
             }
           } else {
             if (mac) { try { win.setVibrancy(null); } catch (err) { /* ignore */ } }
-            win.__vsGlass.setBackgroundColor((st && st.background) || '#1f1f1f');
+            s.setBackgroundColor((st && st.background) || '#1f1f1f');
           }
           if (changed && mac && !win.isMaximized() && !win.isFullScreen()) {
             try { var b = win.getBounds(); win.setBounds({ width: b.width + 1 }); win.setBounds({ width: b.width }); } catch (err) { /* recomposite nudge */ }
           }
         } catch (err) { /* never break VS Code */ }
       };
+      // the sheet goes in once per document and again only when glass.css changed (it is the whole workbench sheet:
+      // re-inserting it restyles every element of the window)
       var applyCss = function (win, freshDocument) {
         try {
           if (!win || win.isDestroyed() || !isWorkbench(win)) return;
-          var s = win.__vsGlass || (win.__vsGlass = { setBackgroundColor: win.setBackgroundColor.bind(win), transparent: null, queue: Promise.resolve(), key: null });
-          if (freshDocument) s.key = null;
+          var s = stateOf(win);
+          if (freshDocument) { s.key = null; s.css = null; }
           s.queue = s.queue.then(function () {
             var wc = win.webContents;
             if (!wc || wc.isDestroyed()) return;
             var css = read(cssFile);
+            if (s.key && s.css === css) return;
             var prev = s.key;
             var insert = function () {
-              if (!css) { s.key = null; return; }
-              return wc.insertCSS(css, { cssOrigin: 'author' }).then(function (k) { s.key = k; }, function () { s.key = null; });
+              if (!css) { s.key = null; s.css = null; return; }
+              return wc.insertCSS(css, { cssOrigin: 'author' }).then(function (k) { s.key = k; s.css = css; }, function () { s.key = null; s.css = null; });
             };
             if (prev) return wc.removeInsertedCSS(prev).then(insert, insert);
             return insert();
           }).catch(function () { /* ignore */ });
         } catch (err) { /* ignore */ }
       };
-      // Webviews (the Claude Code chat, previews) are separate documents in vscode-webview:// frames: the hook runs a
-      // small script in each that adopts webview.css as a constructed stylesheet — CSSOM, which a page's CSP does not
-      // govern — only once the document holds a surface the sheet knows, re-adopts it when the host rewrites the
-      // document (VS Code writes webview HTML with document.open) and publishes the chat composer's height.
-      // The script the hook runs inside webview frames. It must be a no-op when nothing changed: the frame sweep below
-      // re-runs it every few seconds, and a webview that streams text (the Claude Code chat) mutates constantly.
-      //   - same CSS already adopted → return at once (no replaceSync, no style recalculation);
-      //   - adopt only once the document holds a surface the sheet knows (so previews and other webviews stay untouched);
-      //   - VS Code writes webview HTML with document.open(), which swaps the root element: watch the document's OWN
-      //     children (not the subtree) and re-adopt, polling briefly while the app renders into the new document;
+      // The script the hook runs inside webview frames (the Claude Code chat, previews): it adopts webview.css as a
+      // constructed stylesheet — CSSOM, which a page's CSP does not govern — once the document holds a surface the
+      // sheet knows, so other webviews stay untouched. It must cost nothing when nothing changed: the sweep below
+      // re-runs it, and a chat that streams text mutates constantly.
+      //   - same document and same CSS → at most one cheap check for a surface that appeared since, then return;
+      //   - a new document (VS Code writes webview HTML with document.open(), which swaps the root element) or new CSS →
+      //     adopt, polling briefly (10 s) while the app renders into it;
       //   - no layout measuring, no ResizeObserver: the sheet is purely visual.
       var wvScript = function (css) {
         return '(function(){try{var d=document,w=window;var css=' + JSON.stringify(css || '') + ';' +
           'var g=w.__vsGlassWV||(w.__vsGlassWV={});' +
-          'if(g.adopted&&g.css===css){return;}' +
-          'g.css=css;' +
-          'if(!g.sheet){try{g.sheet=new CSSStyleSheet();}catch(e){return;}}' +
           'var known=function(){return !!d.querySelector(\\'[class*="chatContainer_"],[class*="inputContainer_"]\\');};' +
-          'var adopt=function(){try{if(!known()){return false;}if(g.applied!==g.css){g.sheet.replaceSync(g.css);g.applied=g.css;}if(d.adoptedStyleSheets.indexOf(g.sheet)<0){d.adoptedStyleSheets=d.adoptedStyleSheets.concat([g.sheet]);}g.adopted=true;return true;}catch(e){return false;}};' +
+          'var adopt=function(){try{if(!known()){return false;}if(!g.sheet){g.sheet=new CSSStyleSheet();}if(g.applied!==g.css){g.sheet.replaceSync(g.css);g.applied=g.css;}if(d.adoptedStyleSheets.indexOf(g.sheet)<0){d.adoptedStyleSheets=d.adoptedStyleSheets.concat([g.sheet]);}g.adopted=true;return true;}catch(e){return false;}};' +
           'var poll=function(){if(g.pollT){return;}var n=0;g.pollT=setInterval(function(){if(adopt()||++n>40){clearInterval(g.pollT);g.pollT=0;}},250);};' +
-          'g.adopted=false;if(!adopt()){poll();}' +
-          'if(!g.obs){g.obs=new MutationObserver(function(){g.adopted=false;if(!adopt()){poll();}});g.obs.observe(d,{childList:true});}' +
+          'var fresh=g.doc!==d.documentElement;' +
+          'if(!fresh&&g.css===css){if(!g.adopted){adopt();}return;}' +
+          'g.doc=d.documentElement;g.css=css;g.adopted=false;' +
+          'if(!adopt()){poll();}' +
+          'if(!g.obs){g.obs=new MutationObserver(function(){if(g.doc!==d.documentElement){g.doc=d.documentElement;g.adopted=false;if(!adopt()){poll();}}});g.obs.observe(d,{childList:true});}' +
           '}catch(e){}})();';
       };
       var isWebviewFrame = function (f) {
@@ -246,68 +264,104 @@ export function hookText(_version?: string): string {
           return false;
         } catch (err) { return false; }
       };
-      var injectFrame = function (f) {
+      // webview.css is read once and cached until the watcher sees it change; each frame gets the script once per
+      // version of the sheet (frame load events re-inject on their own: a new document needs it again)
+      var wvCss = null, wvRev = 0, injected = {};
+      var wvText = function () { if (wvCss === null) { wvCss = read(wvFile); wvRev++; } return wvCss; };
+      var frameKey = function (f) { try { return f.processId + ':' + f.routingId; } catch (err) { return ''; } };
+      var injectFrame = function (f, always) {
         try {
           if (!isWebviewFrame(f)) return;
-          var p = f.executeJavaScript(wvScript(read(wvFile)), true);
-          if (p && p.catch) p.catch(function () { /* the frame went away */ });
+          var css = wvText(), key = frameKey(f);
+          if (!always && key && injected[key] === wvRev) return;
+          if (key) injected[key] = wvRev;
+          var p = f.executeJavaScript(wvScript(css), true);
+          if (p && p.catch) p.catch(function () { if (key) delete injected[key]; });
         } catch (err) { /* ignore */ }
       };
-      var wvSeen = [];
-      var applyWebviews = function (win) {
-        try {
-          if (!win || win.isDestroyed() || !isWorkbench(win)) return;
-          var main = win.webContents.mainFrame;
-          var frames = (main && main.framesInSubtree) ? main.framesInSubtree : [];
-          var hit = [];
-          frames.forEach(function (f) { if (isWebviewFrame(f)) { hit.push(String(f.url || '').slice(0, 120)); injectFrame(f); } });
-          var changed = hit.length !== wvSeen.length || hit.some(function (u, i) { return u !== wvSeen[i]; });
-          wvSeen = hit;
-          if (changed) writeHookJson();
-        } catch (err) { /* ignore */ }
-      };
-      var applyAll = function () { BrowserWindow.getAllWindows().forEach(function (win) { applyWindow(win); applyCss(win, false); applyWebviews(win); }); };
-      var attach = function (win) {
-        try {
-          var wc = win.webContents;
-          wc.on('dom-ready', function () { applyWindow(win); applyCss(win, true); });
-          wc.on('did-finish-load', function () { applyWindow(win); });
-          wc.on('frame-created', function (_e, details) {
-            try { var f = details && details.frame; if (f && f.on) f.on('dom-ready', function () { injectFrame(f); }); } catch (err) { /* ignore */ }
-          });
-          wc.on('did-attach-webview', function (_e, guest) {
-            try {
-              guest.on('dom-ready', function () {
-                try { var css = read(wvFile); if (css) guest.insertCSS(css, { cssOrigin: 'author' }); } catch (err) { /* ignore */ }
-              });
-            } catch (err) { /* ignore */ }
-          });
-          wc.on('did-frame-finish-load', function (_e, isMainFrame, pid, rid) {
-            try { if (isMainFrame) return; var f = electron.webFrameMain.fromId(pid, rid); setTimeout(function () { injectFrame(f); }, 50); } catch (err) { /* ignore */ }
-          });
-        } catch (err) { /* ignore */ }
-      };
-      app.on('browser-window-created', function (_e, win) { attach(win); });
-      BrowserWindow.getAllWindows().forEach(function (win) { attach(win); applyWindow(win); applyCss(win, false); applyWebviews(win); });
-      try { fs.mkdirSync(dir, { recursive: true }); } catch (err) { /* ignore */ }
       var started = new Date().toISOString();
+      var wvSeen = [];
+      // hook.json says "this VS Code runs the hook" (the extension compares its pid with its own parent's). Only a process
+      // that owns a window may write it: \`code <path>\` from a terminal starts a second VS Code that loads this file,
+      // runs the hook, finds the running instance and exits — and its hook.json, written at startup, made the real
+      // window's extension take the hook for not running (webview sheet withheld, a quit prompt on every apply).
+      var owner = false;
+      var claim = function () { if (!owner && BrowserWindow.getAllWindows().length) { owner = true; writeHookJson(); } };
       var writeHookJson = function () {
         var file = path.join(dir, 'hook.json');
-        var body = JSON.stringify({ pid: process.pid, version: 7, sync: true, started: started, webviews: wvSeen.length, webviewUrls: wvSeen });
+        var body = JSON.stringify({ pid: process.pid, version: 8, sync: true, started: started, webviews: wvSeen.length, webviewUrls: wvSeen });
         try { fs.writeFileSync(file, body); }
         catch (err) { try { fs.chmodSync(file, 420); fs.writeFileSync(file, body); } catch (err2) { /* a read-only folder: the extension reports the hook as not running */ } }
       };
-      writeHookJson();
-      var timer = null, watcher = null;
+      // one pass over the frames of every window: inject where needed, forget frames that are gone, and report the set
+      // of webviews in hook.json only when it changed
+      var applyWebviews = function () {
+        try {
+          var hit = [], live = {};
+          BrowserWindow.getAllWindows().forEach(function (win) {
+            try {
+              if (!win || win.isDestroyed() || !isWorkbench(win)) return;
+              var main = win.webContents.mainFrame;
+              var frames = (main && main.framesInSubtree) ? main.framesInSubtree : [];
+              frames.forEach(function (f) {
+                if (!isWebviewFrame(f)) return;
+                hit.push(String(f.url || '').slice(0, 120));
+                var key = frameKey(f);
+                if (key) live[key] = injected[key];
+                injectFrame(f, false);
+                if (key) live[key] = injected[key];
+              });
+            } catch (err) { /* ignore */ }
+          });
+          injected = live;
+          hit.sort();
+          var changed = hit.length !== wvSeen.length || hit.some(function (u, i) { return u !== wvSeen[i]; });
+          wvSeen = hit;
+          if (changed && owner) writeHookJson();
+        } catch (err) { /* ignore */ }
+      };
+      var applyAll = function (names) {
+        if (!names || names['webview.css']) wvCss = null;
+        BrowserWindow.getAllWindows().forEach(function (win) {
+          if (!names || names['state.json']) applyWindow(win, false);
+          if (!names || names['glass.css']) applyCss(win, false);
+        });
+        applyWebviews();
+      };
+      var attach = function (win) {
+        try {
+          var wc = win.webContents;
+          wc.on('dom-ready', function () { applyWindow(win, true); applyCss(win, true); });
+          wc.on('did-finish-load', function () { applyWindow(win, true); });
+          wc.on('frame-created', function (_e, details) {
+            try { var f = details && details.frame; if (f && f.on) f.on('dom-ready', function () { injectFrame(f, true); }); } catch (err) { /* ignore */ }
+          });
+          wc.on('did-frame-finish-load', function (_e, isMainFrame, pid, rid) {
+            try { if (isMainFrame) return; var f = electron.webFrameMain.fromId(pid, rid); setTimeout(function () { injectFrame(f, true); }, 50); } catch (err) { /* ignore */ }
+          });
+        } catch (err) { /* ignore */ }
+      };
+      try { fs.mkdirSync(dir, { recursive: true }); } catch (err) { /* ignore */ }
+      app.on('browser-window-created', function (_e, win) { attach(win); claim(); });
+      BrowserWindow.getAllWindows().forEach(function (win) { attach(win); applyWindow(win, true); applyCss(win, false); });
+      claim();
+      applyWebviews();
+      var timer = null, watcher = null, watchedIno = 0, pending = {}, everything = false;
       var watch = function () {
         try {
           // Only the three files the extension writes for us matter. The folder also holds hook.json (written by THIS
           // hook), and the slab helper's log, pid and lock: reacting to those re-inserted the whole workbench
           // stylesheet on every write — with the V6 frame sweep that was every three seconds, in every window.
           var relevant = { 'glass.css': 1, 'state.json': 1, 'webview.css': 1 };
+          watchedIno = fs.statSync(dir).ino;
           watcher = fs.watch(dir, { persistent: false }, function (_ev, name) {
-            if (name && !relevant[String(name)]) return;
-            clearTimeout(timer); timer = setTimeout(applyAll, 120);
+            try {
+              var n = name ? String(name) : '';
+              if (n && !relevant[n]) return;
+              if (n) pending[n] = 1; else everything = true; // no file name: re-apply everything
+              clearTimeout(timer);
+              timer = setTimeout(function () { var names = everything ? null : pending; pending = {}; everything = false; applyAll(names); }, 120);
+            } catch (err) { /* never throw into the main process */ }
           });
           watcher.on('error', function () { try { watcher.close(); } catch (err) { /* ignore */ } watcher = null; setTimeout(rewatch, 2000); });
         } catch (err) { watcher = null; setTimeout(rewatch, 2000); }
@@ -315,8 +369,16 @@ export function hookText(_version?: string): string {
       var rewatch = function () { try { if (!fs.existsSync(dir)) { setTimeout(rewatch, 2000); return; } } catch (err) { /* ignore */ } if (!watcher) watch(); };
       watch();
       // A webview can open long after its window did, and frame events are not guaranteed to reach us for every one of
-      // them, so sweep the frame tree on a slow timer as well. Injecting twice is free: the injected script is idempotent.
-      var sweep = setInterval(function () { try { BrowserWindow.getAllWindows().forEach(applyWebviews); } catch (err) { /* ignore */ } }, 5000);
+      // them, so sweep the frame tree on a slow timer as well (already injected frames cost a lookup). The sweep also
+      // notices a state folder that was deleted and recreated ("VS Glass: Remove", then Apply): fs.watch on macOS can go
+      // quiet on a deleted directory without an error, so it is re-watched and everything re-applied.
+      var sweep = setInterval(function () {
+        try {
+          var ino = 0; try { ino = fs.statSync(dir).ino; } catch (err) { ino = 0; }
+          if (ino && ino !== watchedIno) { try { if (watcher) watcher.close(); } catch (err) { /* ignore */ } watcher = null; watch(); if (owner) writeHookJson(); applyAll(null); return; }
+          applyWebviews();
+        } catch (err) { /* ignore */ }
+      }, 5000);
       if (sweep.unref) sweep.unref();
     } catch (err) { /* never break VS Code startup */ }
   };
