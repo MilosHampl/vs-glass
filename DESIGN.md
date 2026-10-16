@@ -827,6 +827,15 @@ when its inode changes (Remove, then Apply). And `hook.json` is written only by 
 running instance — its `hook.json` made the real window's extension take the hook for not running, withhold the
 webview sheet and ask to quit and reopen on every apply.
 
+**Focus (1.3.1, hook V9).** macOS draws a vibrancy view in its flat inactive fill the instant its window loses focus.
+Windows are now created with `visualEffectState: 'active'` (a creation-time option; nothing sets it later), so the
+material never switches by itself. On `blur` the hook toggles `.vs-glass-inactive` on the workbench and glass.css fades
+an opaque ground in behind all content (`.monaco-workbench::after`, `z-index: -1` inside the now isolated workbench,
+an opacity transition — compositor-only); 1.6 s later, with the veil opaque, it calls `setVibrancy(null)`. On `focus`
+it restores the material under the still-opaque veil, which then fades out. An unfocused window therefore has no
+vibrancy view at all, which costs the window server less than the OS's own inactive state; only the focused window
+blurs, as before.
+
 **The composer (1.3.0)** is a frosted plate with a narrow refracting rim over the base described in §4.1 — the
 conversation softens behind what you type and bends at the edge as it scrolls under — instead of the slider's clear
 magnifier across its whole surface, which (bent by the bounding box's width on both axes) folded every line under it

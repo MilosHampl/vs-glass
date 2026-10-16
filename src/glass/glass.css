@@ -80,6 +80,8 @@
   --vsg-state-on: rgba(var(--vsg-spec-rgb), 0.10);
   --vsg-state-on-rim: rgba(var(--vsg-spec-rgb), 0.16);
   --vsg-state-on-hover: rgba(var(--vsg-spec-rgb), 0.13);
+  /* the focus fade (the hook removes the vibrancy view a little after this, so keep it under its 1.6 s) */
+  --vsg-focus-fade: 1.4s;
   /* the pill corner: concentric with the 16 px card it sits in, inset 4 px */
   --vsg-state-radius: calc(var(--vsg-radius-card) - 4px);
   --vsg-state-transition: background-color var(--vsg-motion-fast) var(--vsg-ease), border-color var(--vsg-motion-fast) var(--vsg-ease), transform var(--vsg-motion-fast) var(--vsg-ease);
@@ -347,7 +349,24 @@
   background: linear-gradient(var(--vsg-tint-film), var(--vsg-tint-film)), var(--vsg-window-film) !important;
   border-radius: var(--vsg-radius-window);
   overflow: hidden;
+  isolation: isolate; /* the focus veil (::after) sits between the window film and everything in the workbench */
 }
+/* Focus. An unfocused window fades to an opaque ground behind all of its content instead of snapping to the OS's
+   inactive fill: the hook keeps the vibrancy view active, toggles .vs-glass-inactive on blur and focus, and removes
+   the vibrancy view once the veil is opaque (an unfocused window then blurs nothing — no cost per extra window).
+   Behind the content: the panes, the code and the widgets are untouched; only what shows through them changes. */
+@G::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--vsg-radius-window);
+  background: var(--vsg-ground);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity var(--vsg-focus-fade) ease-in-out;
+}
+@G.vs-glass-inactive::after { opacity: 1; }
 @G > .monaco-grid-view { background: transparent !important; }
 /* the slab's edge: one hairline ring following the window corners, brightest along the top where the light enters.
    (A lens here bent the title-bar and status-bar text and read as a glitch, so the window edge refracts nothing;
@@ -910,7 +929,7 @@
   @G .part.editor .monaco-editor { --vscode-editor-background: var(--vsg-content-bg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  @G *, @G *::before, @G *::after { transition: none !important; animation: none !important; }
+  @G *, @G *::before, @G *::after, @G::after { transition: none !important; animation: none !important; }
 }
 
 /* ---------- 10. Buttons: the same glass as every other control ---------- */
