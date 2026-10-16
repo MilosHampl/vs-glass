@@ -1,11 +1,9 @@
-VS Glass 1.3.1 — a window that loses focus fades, and Claude Code's tool output is back.
+VS Glass 1.3.2 — the focus fade now follows live setting changes, not only focus.
 
-- **Focus fades instead of snapping.** macOS flips a window's vibrancy to its flat inactive fill the instant the window
-  loses focus. VS Glass now keeps the material active and fades an opaque ground in behind the window's content over
-  1.4 s (and out again on focus); once the fade is done that window's live blur is switched off, so a stack of
-  unfocused windows costs the window server less than before, not more.
-- **Claude Code's tool calls are readable again.** Their IN and OUT rows are clipped with a fade drawn in the
-  background colour, which the glass makes clear — so the rows vanished. Fixed in the webview sheet; applies live.
+- Switching an unfocused window to the `none` material or Liquid Glass drops its opaque veil at once; choosing a
+  vibrancy material in an unfocused window fades it and switches its live blur off, as losing focus does; a window
+  whose blur was parked gets its material back whenever one is chosen again.
+- A window opened with Window Transparency off no longer snaps to the flat inactive fill once glass is switched on live.
 
-After updating, quit and reopen VS Code once (hook V9 runs in the main process). See
-[CHANGELOG.md](https://github.com/MilosHampl/vs-glass/blob/main/CHANGELOG.md).
+After updating, quit and reopen VS Code once (hook V10 runs in the main process). The 1.3.1 notes — the focus fade and
+Claude Code's tool rows — still apply. See [CHANGELOG.md](https://github.com/MilosHampl/vs-glass/blob/main/CHANGELOG.md).

@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.3.2] - 2026-10-16
+
+### Fixed
+
+- **The focus fade followed only focus changes, not live setting changes** (hook V10). Switching an unfocused window's
+  material to `none` or Liquid Glass left its opaque veil up until the window was focused; choosing a vibrancy material
+  in an unfocused window kept it blurring instead of fading and parking; and a window whose vibrancy was parked when the
+  material went to `none` stayed unblurred once a material came back. Every live change of look now settles the veil
+  and the parked vibrancy too.
+- **Windows opened with Window Transparency off snapped to the inactive fill** once glass was switched on live: they now
+  get the same creation-time `visualEffectState: 'active'` (without a vibrancy view it does nothing).
+
 ## [1.3.1] - 2026-10-16
 
 ### Changed
@@ -374,7 +386,8 @@ After updating, quit and reopen VS Code once: the hook in the main process is ne
   key coverage against the full VS Code key inventory), `npm run audit:contrast` (WCAG contrast).
 - Project documentation: README, DESIGN.md, and this CHANGELOG.
 
-[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.3.2...HEAD
+[1.3.2]: https://github.com/MilosHampl/vs-glass/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/MilosHampl/vs-glass/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/MilosHampl/vs-glass/compare/v1.2.2...v1.3.0
 [1.2.3]: https://github.com/MilosHampl/vs-glass/compare/v1.2.2...bfc7c7e
