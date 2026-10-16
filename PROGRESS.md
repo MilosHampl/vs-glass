@@ -354,3 +354,11 @@ regained)", "the in/out claude thingies are not visible", "could be a hit on per
   **Not seen on a real window** (no screen tests) — first thing to check after the owner restarts.
 - Claude Code's `toolBodyRowContent_` fade mask is drawn in `--app-primary-background`, which the glass makes clear →
   mask alpha 0 → IN/OUT rows invisible. webview.css redraws the fade in opaque black (offline: brightest pixel 37 → 235).
+
+## 1.3.2 — Copilot's review of 1.3.1 (2026-10-16)
+
+Owner: "merge it yourself, release" — 1.3.1 was merged and tagged before Copilot's review landed; its three findings were
+real and are fixed here (hook V10): `applyAll` now runs `focusFade` after any applied change of look (veil and parking
+follow live material/transparency changes), `focusFade` clears `parked` when no vibrancy is wanted (a parked window kept
+skipping the material once one came back), and opaque windows also get `visualEffectState: 'active'`. Mock-window run
+covers all three plus the 1.3.1 cases.
