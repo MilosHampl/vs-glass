@@ -339,3 +339,18 @@ Measured, then fixed:
 
 Owner's own settings at the time: Glass Clear, density 10, widgetDensity 65, lens soft, aberration subtle, tint indigo,
 under-window. With the denser planes, density 10 now means 10 % of a much denser plane — they will likely want ~100.
+
+## 1.3.1 — focus fades, Claude Code tool rows (2026-10-16)
+
+Owner: "when the window loses focus, it goes immediately to opaque — can we animate this? (1–2 s, the same when focus is
+regained)", "the in/out claude thingies are not visible", "could be a hit on performance with multiple windows open".
+- The snap is macOS's NSVisualEffectView switching to its inactive fill. `visualEffectState: 'active'` (creation-time,
+  spliced through `__vsGlassWindowOptions`) stops it; the hook (V9) toggles `.vs-glass-inactive` on the workbench and
+  the sheet fades an opaque ground (`.monaco-workbench::after`, z −1, isolated) in/out over 1.4 s.
+- Performance: 1.6 s after blur, with the veil opaque, the hook parks the window's vibrancy (`setVibrancy(null)`);
+  focus restores it under the veil before the fade-out. Only the focused window has a live blur — cheaper than the
+  OS's own inactive state. Verified with a mocked BrowserWindow (blur → class, then vibrancy null after 1.6 s; quick
+  blur/focus doesn't park; focus restores the material) and the veil selector/transition in headless Chrome.
+  **Not seen on a real window** (no screen tests) — first thing to check after the owner restarts.
+- Claude Code's `toolBodyRowContent_` fade mask is drawn in `--app-primary-background`, which the glass makes clear →
+  mask alpha 0 → IN/OUT rows invisible. webview.css redraws the fade in opaque black (offline: brightest pixel 37 → 235).

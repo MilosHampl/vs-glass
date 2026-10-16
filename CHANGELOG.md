@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.3.1] - 2026-10-16
+
+### Changed
+
+- **Losing focus fades instead of snapping.** macOS switches a window's vibrancy to its flat inactive fill the instant
+  the window loses focus — glass to opaque in one frame. Windows are now created with their vibrancy kept active, and
+  the page fades an opaque ground in behind all of its content over 1.4 s (and out again on focus). Once the fade is
+  done the hook removes that window's vibrancy view, so an unfocused window asks the window server for no live blur at
+  all — with several windows open this costs less than the OS's own inactive state, not more. Hook V9: quit and reopen
+  VS Code once.
+
+### Fixed
+
+- **The IN and OUT of Claude Code tool calls were invisible.** Claude Code clips a long tool row with a fade drawn as a
+  mask in its background colour; a mask uses only that colour's alpha, and over the glass the background is clear, so
+  the whole row vanished. The webview sheet draws the same fade with an opaque mask colour (applies live).
+
 ## [1.3.0] - 2026-10-14
 
 The first release since 1.2.2: it also carries everything listed under 1.2.3, which was never tagged.
@@ -357,7 +374,8 @@ After updating, quit and reopen VS Code once: the hook in the main process is ne
   key coverage against the full VS Code key inventory), `npm run audit:contrast` (WCAG contrast).
 - Project documentation: README, DESIGN.md, and this CHANGELOG.
 
-[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/MilosHampl/vs-glass/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/MilosHampl/vs-glass/compare/v1.2.2...v1.3.0
 [1.2.3]: https://github.com/MilosHampl/vs-glass/compare/v1.2.2...bfc7c7e
 [1.2.2]: https://github.com/MilosHampl/vs-glass/compare/v1.2.1...v1.2.2

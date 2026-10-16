@@ -30,6 +30,8 @@ does not checksum). The hook:
 - inserts the glass CSS into each window with Electron's `insertCSS` — VS Code's own stylesheets are never edited;
 - watches `<user-data>/vs-glass/glass.css` and `state.json`, which the extension rewrites whenever a VS Glass
   setting changes, and re-applies them live.
+- fades a window that loses focus to an opaque ground over 1.4 s, instead of letting macOS snap its vibrancy to the flat
+  inactive fill, and then switches that window's live blur off (an unfocused window costs the window server nothing).
 
 So after one quit-and-reopen, Density, Tint, Material, Lens and Aberration change the window as you type in
 Settings. `VS Glass: Remove` restores `main.js` byte-exact from its backup and deletes the folder.

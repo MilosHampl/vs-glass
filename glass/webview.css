@@ -53,6 +53,14 @@ body.vscode-light {
 /* the fade Claude Code paints over the tail of the list would hide exactly what the glass is there to bend */
 [class*="messageGradient_"] { display: none !important; }
 
+/* Claude Code clips a long tool row (the IN and OUT of a tool call) with a fade drawn as a MASK in its own background
+   colour. A mask uses only the alpha of that colour, and over the glass the background is clear, so the whole row
+   vanished. The same fade, with an opaque mask colour. */
+[class*="toolBodyRowContent_"]:not([class*="disableClipping"]) {
+  -webkit-mask-image: linear-gradient(to bottom, #000 50px, transparent 60px) !important;
+  mask-image: linear-gradient(to bottom, #000 50px, transparent 60px) !important;
+}
+
 /* ---------- Claude Code: your own messages are the same pill as a selected tab ---------- */
 [class*="userMessage_"] {
   background: var(--vsgw-state-film) !important;
