@@ -23,6 +23,8 @@ const ai = args.indexOf('--app');
 const app = ai >= 0 ? args[ai + 1] : '/Applications/Visual Studio Code.app';
 const main = path.join(app, 'Contents', 'Resources', 'app', 'out', 'main.js');
 const backup = main + patch.BACKUP_SUFFIX;
+const impl = patch.implOf(main); // VS Code 1.141+: the window options (and the splice) live here
+const hasImpl = fs.existsSync(impl);
 
 if (!fs.existsSync(main)) { console.error(`no main.js at ${main}`); process.exit(1); }
 
@@ -42,18 +44,22 @@ console.log(`main.js: ${patch.hookVersionOf(cur) ?? 'no hook'}${fs.existsSync(ba
 
 if (restore) {
   if (!fs.existsSync(backup)) { console.error('no pristine backup to restore'); process.exit(1); }
+  if (hasImpl) { console.log(`${patch.IMPL_FILE}: ${patch.restoreMain(impl)}`); }
   patch.writeAtomic(main, fs.readFileSync(backup, 'utf8'));
   console.log('restored the pristine main.js — VS Code starts with no VS Glass hook');
   process.exit(0);
 }
 
-const { text, spliced, anchors } = patch.applyHook(patch.stripHook(cur), patch.hookText());
+const curImpl = hasImpl ? fs.readFileSync(impl, 'utf8') : null;
+const plan = patch.planPatch(cur, curImpl, patch.hookText());
+const { main: text, spliced, anchors } = plan;
 let verdict;
 try { verdict = checkHook(text); }
 catch (e) {
   console.error('the new hook does NOT parse — nothing written:\n' + String(e.stderr || e).slice(0, 800));
   process.exit(2);
 }
+if (plan.impl !== null && plan.impl !== curImpl) { patch.ensureBackup(impl, curImpl); patch.writeAtomic(impl, plan.impl); }
 patch.writeAtomic(main, text);
-console.log(`wrote ${patch.hookVersionOf(text)} (${verdict}, creation-time transparency ${spliced ? 'spliced' : `NOT spliced — anchor ×${anchors}`})`);
+console.log(`wrote ${patch.hookVersionOf(text)} (${verdict}, creation-time transparency ${spliced ? `spliced into ${plan.spliceIn}` : `NOT spliced — anchor ×${anchors}`})`);
 console.log('quit VS Code completely (Cmd+Q) and reopen it.');

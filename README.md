@@ -24,7 +24,9 @@ marker-delimited hook to VS Code's main-process bootstrap (`out/main.js`, the on
 does not checksum). The hook:
 
 - creates every workbench window transparent (one spread spliced into VS Code's window options, read from the
-  state file at creation) and gives it a macOS vibrancy material — the see-through part. Creation-time matters: a
+  state file at creation — in `out/main.js` up to VS Code 1.140, in `out/mainImpl.js` from 1.141, which moved the
+  main process there and does not checksum it either) and gives it a macOS vibrancy material — the see-through
+  part. Creation-time matters: a
   window made transparent afterwards keeps stale pixels wherever the page paints nothing, which shows up as ghosts
   of closed panels and, under backdrop filters, as runaway neon;
 - inserts the glass CSS into each window with Electron's `insertCSS` — VS Code's own stylesheets are never edited;
@@ -34,7 +36,7 @@ does not checksum). The hook:
   inactive fill, and then switches that window's live blur off (an unfocused window costs the window server nothing).
 
 So after one quit-and-reopen, Density, Tint, Material, Lens and Aberration change the window as you type in
-Settings. `VS Glass: Remove` restores `main.js` byte-exact from its backup and deletes the folder.
+Settings. `VS Glass: Remove` restores `main.js` (and `mainImpl.js`) byte-exact and deletes the folder.
 
 ### The window itself as glass (macOS 26)
 
@@ -204,14 +206,15 @@ VS Glass is one extension and needs nothing else: no Vibrancy Continued, no Cust
 
 What "apply" writes, so there are no surprises:
 
-- the hook block in `out/main.js` inside your VS Code installation (backed up first as `main.js.vs-glass-backup`);
+- the hook block in `out/main.js` inside your VS Code installation, and on VS Code 1.141+ the one-spread splice in
+  `out/mainImpl.js` (each backed up first as `<file>.vs-glass-backup`);
 - `<user-data>/vs-glass/glass.css`, `webview.css` and `state.json` (your user-data folder is the parent of `User/`,
   e.g. `~/Library/Application Support/Code/`);
 - the `[Glass …]` blocks in `workbench.colorCustomizations` in your user settings.
 
-**VS Glass: Remove** reverses all three. VS Code updates overwrite `main.js`, so the see-through window
+**VS Glass: Remove** reverses all three. VS Code updates overwrite both files, so the see-through window
 disappears after an update until VS Glass re-applies (it notices at startup and asks). Uninstalling the
-extension without running Remove first also restores `main.js` and deletes the folder (a `vscode:uninstall`
+extension without running Remove first also restores them and deletes the folder (a `vscode:uninstall`
 hook); the `[Glass …]` blocks then stay in your settings, inert without the Glass themes, until you delete
 them. VS Glass needs VS Code 1.94 or newer (its startup file must be an ES module) and applies the
 see-through window on macOS only; elsewhere the wallpaper addon paints an in-page backdrop.

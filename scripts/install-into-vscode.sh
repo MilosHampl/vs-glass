@@ -176,15 +176,17 @@ if [ "$DRY" = 1 ]; then
 else
   node -e "
 const fs = require('fs'), path = require('path');
-const { applyHook, ensureBackup, hookText, hasHook, writeAtomic } = require('$REPO/out/patch.js');
-const main = '$MAIN';
+const { planPatch, ensureBackup, hookText, hasHook, implOf, writeAtomic } = require('$REPO/out/patch.js');
+const main = '$MAIN', impl = implOf(main);
 const before = fs.readFileSync(main, 'utf8');
+const beforeImpl = fs.existsSync(impl) ? fs.readFileSync(impl, 'utf8') : null;
 if (hasHook(before)) { console.log('    ok   the hook is already in place'); }
 else {
+  const r = planPatch(before, beforeImpl, hookText());
+  if (r.impl !== null && r.impl !== beforeImpl) { ensureBackup(impl, beforeImpl); writeAtomic(impl, r.impl); }
   ensureBackup(main, before);
-  const r = applyHook(before, hookText());
-  writeAtomic(main, r.text);
-  console.log('    ok   hook written (creation-time transparency spliced in: ' + r.spliced + ')');
+  writeAtomic(main, r.main);
+  console.log('    ok   hook written (creation-time transparency spliced in: ' + (r.spliceIn || 'no') + ')');
 }
 const dir = path.join('$DATA_DIR', 'vs-glass');
 fs.mkdirSync(dir, { recursive: true });

@@ -1,13 +1,13 @@
 /**
  * VS Glass — `vscode:uninstall` hook. VS Code runs this with plain Node after the extension has been uninstalled and
- * VS Code restarted. It undoes what "VS Glass: Remove" would have: restores out/main.js from its pristine backup (or
+ * VS Code restarted. It undoes what "VS Glass: Remove" would have: restores out/main.js (and out/mainImpl.js) (or
  * strips the hook) and deletes the <user-data>/vs-glass folder. The theme-scoped [Glass …] colour blocks stay in
  * settings.json — they are inert without the Glass themes, and rewriting a user's settings file from a script would
  * lose its comments; "VS Glass: Remove" (run before uninstalling) takes them out cleanly.
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { restoreMain } from './patch';
+import { implOf, restoreMain } from './patch';
 
 const extDir = path.resolve(__dirname, '..');
 const pathsFile = path.join(extDir, '.vs-glass-paths.json');
@@ -22,8 +22,11 @@ try {
     const index = JSON.parse(fs.readFileSync(path.join(path.dirname(extDir), 'extensions.json'), 'utf8')) as Array<{ identifier?: { id?: string } }>;
     if (index.some(e => String(e.identifier?.id ?? '').toLowerCase() === 'miloshampl.vs-glass')) { console.log('VS Glass uninstall: the extension is still installed (extensions.json lists it); nothing undone'); process.exit(0); }
   } catch { /* no index: fall through */ }
-  const paths = JSON.parse(fs.readFileSync(pathsFile, 'utf8')) as { main?: string; stateDir?: string };
+  const paths = JSON.parse(fs.readFileSync(pathsFile, 'utf8')) as { main?: string; impl?: string; stateDir?: string };
   if (paths.main && fs.existsSync(paths.main)) console.log(`VS Glass uninstall: out/main.js ${restoreMain(paths.main)}`);
+  // VS Code 1.141+ keeps the window options (and so the splice) in mainImpl.js; older paths files do not name it
+  const impl = paths.impl ?? (paths.main ? implOf(paths.main) : null);
+  if (impl && fs.existsSync(impl)) console.log(`VS Glass uninstall: out/${path.basename(impl)} ${restoreMain(impl)}`);
   if (paths.stateDir && fs.existsSync(paths.stateDir)) { fs.rmSync(paths.stateDir, { recursive: true, force: true }); console.log(`VS Glass uninstall: deleted ${paths.stateDir}`); }
 } catch (e) {
   console.log(`VS Glass uninstall: nothing to undo (${(e as Error).message})`);

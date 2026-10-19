@@ -116,7 +116,7 @@ set and reviews against: no painted gradients, sheens, bevel bands or shadows un
 bevelled window chrome), and lensing/aberration only where there is in-page content behind the glass.
 
 The extension (`src/ext/extension.ts`, compiled to `out/extension.js` by `npm run compile`) is the installer:
-it writes one hook into VS Code's `out/main.js`, composes `glass.css` + addons + settings into
+it writes one hook into VS Code's `out/main.js` (and the window-options splice into `out/mainImpl.js` on 1.141+), composes `glass.css` + addons + settings into
 `<user-data>/vs-glass/glass.css`, and the hook `insertCSS`es that file into every window and re-applies it
 live when it changes. So the fastest loop against a bed that already has the hook is: edit
 `src/glass/glass.css` → `npm run build` → run **VS Glass: Apply** in the bed (or change any VS Glass setting)

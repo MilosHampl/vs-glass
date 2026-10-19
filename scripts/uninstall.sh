@@ -80,6 +80,20 @@ PY
 else
   echo "   hook not applied — nothing to do"
 fi
+# VS Code 1.141+: the window-options splice lives in out/mainImpl.js
+if [ -f "$OUT/mainImpl.js.vs-glass-backup" ] && grep -q "__vsGlassWindowOptions" "$OUT/mainImpl.js" 2>/dev/null; then
+  cp -p "$OUT/mainImpl.js.vs-glass-backup" "$OUT/mainImpl.js" && rm -f "$OUT/mainImpl.js.vs-glass-backup" && echo "   restored out/mainImpl.js byte-exact"
+elif grep -q "__vsGlassWindowOptions" "$OUT/mainImpl.js" 2>/dev/null; then
+  python3 - "$OUT/mainImpl.js" <<'PY'
+import sys
+p = sys.argv[1]; s = open(p).read()
+s = s.replace(',...(globalThis.__vsGlassWindowOptions?globalThis.__vsGlassWindowOptions():{}),experimentalDarkMode:!0}', ',experimentalDarkMode:!0}')
+open(p, 'w').write(s)
+PY
+  echo "   stripped the window-options splice from out/mainImpl.js (no backup was present)"
+else
+  rm -f "$OUT/mainImpl.js.vs-glass-backup"
+fi
 DATA_DIR="$(dirname "$USER_DIR")"
 if [ -d "$DATA_DIR/vs-glass" ]; then rm -rf "$DATA_DIR/vs-glass" && echo "   deleted $DATA_DIR/vs-glass"; fi
 if [ -f "$USER_DIR/settings.json" ] && grep -q '"\[Glass ' "$USER_DIR/settings.json"; then

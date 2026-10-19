@@ -2,12 +2,17 @@
  * VS Glass — file patching, shared by the extension host (extension.ts), the `vscode:uninstall` hook (uninstall.ts)
  * and scripts/verify-release.sh. No VS Code API in here, so it runs under plain Node as well.
  *
- * Everything VS Glass writes into VS Code's own installation lives in ONE file, `out/main.js` (the main-process
- * bundle, the one bootstrap file VS Code does not checksum):
- *   1. a marker-delimited hook block appended at the end (see hookText below);
+ * Everything VS Glass writes into VS Code's own installation lives in the main-process bundle, which VS Code does not
+ * checksum:
+ *   1. a marker-delimited hook block appended at the end of `out/main.js` (see hookText below);
  *   2. one spread spliced into the object VS Code passes to `new BrowserWindow(...)`, so windows are created transparent
- *      when the user asked for transparency (`OPTIONS_ANCHOR` → `OPTIONS_PATCH`).
- * `stripHook` is the byte-exact inverse of `applyHook`, and a pristine backup (`main.js.vs-glass-backup`) is kept as well.
+ *      when the user asked for transparency (`OPTIONS_ANCHOR` → `OPTIONS_PATCH`). Up to VS Code 1.140 that object is in
+ *      main.js too; 1.141 moved the main process into `out/mainImpl.js`, which main.js loads with a top-level
+ *      `await import`, and the splice goes there. Electron holds `ready` until the entry module (main.js, await included)
+ *      has finished, so the hook at the end of main.js still runs after mainImpl.js set the user-data path and before
+ *      the first window exists.
+ * `stripHook` is the byte-exact inverse of `planPatch`/`applyHook`, and a pristine backup (`<file>.vs-glass-backup`) is
+ * kept of each file written.
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -19,6 +24,9 @@ export const BACKUP_SUFFIX = '.vs-glass-backup';
 /** VS Code 1.136 builds its window options as `{backgroundColor:…, …, experimentalDarkMode:!0}`; this is the tail of that object. */
 export const OPTIONS_ANCHOR = ',experimentalDarkMode:!0}';
 export const OPTIONS_PATCH = ',...(globalThis.__vsGlassWindowOptions?globalThis.__vsGlassWindowOptions():{}),experimentalDarkMode:!0}';
+/** VS Code 1.141+: the main process proper, imported by main.js; it holds the window options (see the header). */
+export const IMPL_FILE = 'mainImpl.js';
+export const implOf = (main: string) => path.join(path.dirname(main), IMPL_FILE);
 /** 1.1.0 previews wrote the CSS into the workbench stylesheet; the extension restores that. */
 export const LEGACY_CSS_START = '/* VS-GLASS-START */';
 export const LEGACY_CSS_END = '/* VS-GLASS-END */';
@@ -64,11 +72,36 @@ export function hookParses(text: string): boolean {
 
 /** Patched text: the clean original, the options splice (when the anchor occurs exactly once) and one hook block. */
 export function applyHook(text: string, hook: string): { text: string; spliced: boolean; anchors: number } {
-  const clean = stripHook(text);
-  const anchors = clean.split(OPTIONS_ANCHOR).length - 1;
-  const spliced = anchors === 1;
-  const body = spliced ? clean.replace(OPTIONS_ANCHOR, OPTIONS_PATCH) : clean;
-  return { text: `${body}\n${hook}`, spliced, anchors };
+  const p = planPatch(text, null, hook);
+  return { text: p.main, spliced: p.spliced, anchors: p.anchors };
+}
+
+export interface PatchPlan {
+  /** main.js: the clean text (+ the splice on builds that keep the window options there) + one hook block */
+  main: string;
+  /** mainImpl.js: the clean text (+ the splice on 1.141+); null when the build has no mainImpl.js */
+  impl: string | null;
+  spliced: boolean;
+  /** where the splice went — null when the anchor does not occur exactly once across both files */
+  spliceIn: 'main.js' | 'mainImpl.js' | null;
+  anchors: number;
+}
+
+/**
+ * The patched content of both files. The options splice goes into whichever file holds the window-options anchor,
+ * provided it occurs exactly once across the two (one object, one place); anything else leaves both without a splice
+ * and the window becomes see-through only after creation.
+ */
+export function planPatch(mainText: string, implText: string | null, hook: string): PatchPlan {
+  const cleanMain = stripHook(mainText);
+  const cleanImpl = implText === null ? null : stripHook(implText);
+  const inMain = cleanMain.split(OPTIONS_ANCHOR).length - 1;
+  const inImpl = cleanImpl === null ? 0 : cleanImpl.split(OPTIONS_ANCHOR).length - 1;
+  const anchors = inMain + inImpl;
+  const spliceIn = anchors !== 1 ? null : inMain === 1 ? 'main.js' : 'mainImpl.js';
+  const main = `${spliceIn === 'main.js' ? cleanMain.replace(OPTIONS_ANCHOR, OPTIONS_PATCH) : cleanMain}\n${hook}`;
+  const impl = cleanImpl === null ? null : spliceIn === 'mainImpl.js' ? cleanImpl.replace(OPTIONS_ANCHOR, OPTIONS_PATCH) : cleanImpl;
+  return { main, impl, spliced: spliceIn !== null, spliceIn, anchors };
 }
 
 /** VS Code's main.js has been an ES module since 1.94; the hook needs that (and refuses older builds rather than break them). */
@@ -96,7 +129,7 @@ export function ensureBackup(file: string, text: string): boolean {
 }
 
 /**
- * Restore main.js. Stripping is the byte-exact inverse of applying, so it is the first choice; the backup is the way
+ * Restore main.js (or mainImpl.js, which only ever carries the splice). Stripping is the byte-exact inverse of applying, so it is the first choice; the backup is the way
  * back only when the hook block is damaged and cannot be stripped cleanly. Nothing of ours in main.js means there is
  * nothing to restore — and a backup left next to it then predates a VS Code update: copying it back would put the OLD
  * build's main process into the new VS Code, so it is deleted instead. The backup is dropped in every case.

@@ -8,8 +8,9 @@ Dark**, answer **Apply** to the one-time prompt, quit and reopen VS Code once. T
 What it writes (and what **VS Glass: Remove** reverses):
 
 - one marker-delimited hook at the end of `out/main.js` inside the VS Code app (the main-process bootstrap;
-  the one bootstrap file VS Code does not checksum), plus one spread spliced into VS Code's window options in
-  the same file, backed up first as `main.js.vs-glass-backup`. Together they create every workbench window
+  the one bootstrap file VS Code does not checksum), plus one spread spliced into VS Code's window options — in
+  the same file up to VS Code 1.140, in `out/mainImpl.js` from 1.141 — each backed up first as
+  `<file>.vs-glass-backup`. Together they create every workbench window
   transparent with a macOS vibrancy material, insert the glass CSS with Electron's `insertCSS`, and watch the
   folder below so changes apply live;
 - `<user-data>/vs-glass/glass.css` and `state.json` — the composed CSS (glass.css + your tint, lens,
@@ -19,7 +20,7 @@ What it writes (and what **VS Glass: Remove** reverses):
   preview, extension views), which paint from theme colours no CSS can reach, carry the same near-clear alphas
   as the planes.
 
-Every setting under **VS Glass** in the Settings UI is live from then on. VS Code updates overwrite `main.js`;
+Every setting under **VS Glass** in the Settings UI is live from then on. VS Code updates overwrite both files;
 VS Glass notices at startup and offers to re-apply. **VS Glass: Status** prints where everything stands.
 
 The routes below are for people who inject CSS by other means (CLI-only setups, or anyone who would rather not
