@@ -176,18 +176,17 @@ if [ "$DRY" = 1 ]; then
 else
   node -e "
 const fs = require('fs'), path = require('path');
-const { planPatch, ensureBackup, hookText, hasHook, implOf, writeAtomic } = require('$REPO/out/patch.js');
+const { planPatch, ensureBackup, hookText, hookParses, implOf, writeAtomic } = require('$REPO/out/patch.js');
 const main = '$MAIN', impl = implOf(main);
 const before = fs.readFileSync(main, 'utf8');
 const beforeImpl = fs.existsSync(impl) ? fs.readFileSync(impl, 'utf8') : null;
-if (hasHook(before)) { console.log('    ok   the hook is already in place'); }
-else {
-  const r = planPatch(before, beforeImpl, hookText());
-  if (r.impl !== null && r.impl !== beforeImpl) { ensureBackup(impl, beforeImpl); writeAtomic(impl, r.impl); }
-  ensureBackup(main, before);
-  writeAtomic(main, r.main);
-  console.log('    ok   hook written (creation-time transparency spliced in: ' + (r.spliceIn || 'no') + ')');
-}
+// plan both files every run: a main.js that already carries a hook can still lack the splice (1.141's mainImpl.js)
+const r = planPatch(before, beforeImpl, hookText());
+if (!hookParses(r.main)) { console.error('    FAIL the generated hook does not parse; nothing written'); process.exit(1); }
+const wrote = [];
+if (r.impl !== null && r.impl !== beforeImpl) { ensureBackup(impl, beforeImpl); writeAtomic(impl, r.impl); wrote.push('mainImpl.js'); }
+if (r.main !== before) { ensureBackup(main, before); writeAtomic(main, r.main); wrote.push('main.js'); }
+console.log('    ok   ' + (wrote.length ? 'wrote ' + wrote.join(' + ') : 'the hook is already in place') + ' (creation-time transparency spliced in: ' + (r.spliceIn || 'no') + ')');
 const dir = path.join('$DATA_DIR', 'vs-glass');
 fs.mkdirSync(dir, { recursive: true });
 const version = require('$REPO/package.json').version;
