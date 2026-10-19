@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.3.3] - 2026-10-19
+
+### Fixed
+
+- **VS Code 1.141 support: windows are created see-through again.** 1.141 moved its main process out of `out/main.js`
+  into `out/mainImpl.js`, window options included, so VS Glass found nowhere to splice its creation-time options:
+  windows turned transparent only after they opened (stale pixels where panels closed) and losing focus snapped to the
+  inactive fill before the 1.3.1 fade. The splice now goes into `mainImpl.js` on those builds (not checksummed either;
+  backed up and restored byte-exact like main.js, by Remove and by the uninstall hook too). The hook itself stays in
+  main.js and still runs before the first window. Quit and reopen VS Code once after the update applies.
+- **The "lays its window options out differently" warning** no longer reappears after every settings change on a build
+  VS Glass can't splice: it shows once per VS Code version, in plainer words.
+
 ## [1.3.2] - 2026-10-16
 
 ### Fixed
@@ -386,7 +399,8 @@ After updating, quit and reopen VS Code once: the hook in the main process is ne
   key coverage against the full VS Code key inventory), `npm run audit:contrast` (WCAG contrast).
 - Project documentation: README, DESIGN.md, and this CHANGELOG.
 
-[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.3.2...HEAD
+[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.3.3...HEAD
+[1.3.3]: https://github.com/MilosHampl/vs-glass/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/MilosHampl/vs-glass/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/MilosHampl/vs-glass/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/MilosHampl/vs-glass/compare/v1.2.2...v1.3.0

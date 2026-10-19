@@ -2,21 +2,22 @@
  * VS Glass — extension host side.
  *
  * The theme (Layer 1) needs nothing from this file. This is Layer 2's installer. VS Code has no extension point for a
- * see-through window or for workbench CSS, so VS Glass patches ONE file inside VS Code, `out/main.js` (the main-process
- * bundle, the one bootstrap file VS Code does not checksum) — see patch.ts for exactly what goes in there. The hook in
+ * see-through window or for workbench CSS, so VS Glass patches VS Code's main-process bundle, which VS Code does not
+ * checksum: a hook in `out/main.js`, and one spread in the window options (main.js up to 1.140, `out/mainImpl.js` from
+ * 1.141) — see patch.ts for exactly what goes in there. The hook in
  * that file creates every workbench window transparent (macOS vibrancy material), inserts the glass CSS with Electron's
  * `insertCSS` (VS Code's own stylesheets are never edited), and watches `<user-data>/vs-glass/{glass.css,state.json}` so
  * every VS Glass setting takes effect the moment it changes — no reload.
  *
  * This file composes glass.css from the shipped glass files and the user's settings, writes state.json (window material,
  * transparency), keeps the hook current, and keeps theme-scoped `[Glass …]` colour blocks in `workbench.colorCustomizations`
- * so webviews match. "VS Glass: Remove" restores main.js byte-exact from its pristine backup and undoes the rest.
+ * so webviews match. "VS Glass: Remove" restores both files byte-exact and undoes the rest.
  */
 import * as vscode from 'vscode';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
-import { BACKUP_SUFFIX, LEGACY_CSS_START, anchorCount, applyHook, cleanupLegacyCss, ensureBackup, hasHook, hasSplice, hookParses, hookText, hookVersionOf, isEsmApp, restoreMain, writeAtomic } from './patch';
+import { BACKUP_SUFFIX, IMPL_FILE, LEGACY_CSS_START, anchorCount, cleanupLegacyCss, ensureBackup, hasHook, hasSplice, hookParses, hookText, hookVersionOf, implOf, isEsmApp, planPatch, restoreMain, writeAtomic } from './patch';
 import { ensureHelper, helperLogFile, helperPid, LIQUID_GLASS, paramsFile, resolveMaterial, retryWindowGlass, stopHelper, windowGlassParams, windowGlassSupport } from './windowGlass';
 import { lensVars, WALLPAPER_CLASSES, WORKBENCH_CLASSES, type LensParams } from './lens';
 
@@ -42,7 +43,7 @@ interface Cfg {
 }
 
 interface Files {
-  root: string; main: string; legacyCss: string; legacyProduct: string;
+  root: string; main: string; impl: string; legacyCss: string; legacyProduct: string;
   stateDir: string | null; glassCss: string | null;
   webviewCss: string | null; stateJson: string | null; hookJson: string | null;
 }
@@ -101,6 +102,7 @@ function files(ctx: vscode.ExtensionContext): Files {
   return {
     root,
     main: path.join(root, 'out', 'main.js'),
+    impl: implOf(path.join(root, 'out', 'main.js')), // VS Code 1.141+ only
     legacyCss: path.join(root, 'out', 'vs', 'workbench', 'workbench.desktop.main.css'),
     legacyProduct: path.join(root, 'product.json'),
     stateDir,
@@ -223,7 +225,7 @@ function writeIfChanged(file: string, content: string): boolean {
 
 interface Status {
   desktop: boolean; esm: boolean; writable: boolean;
-  hookApplied: boolean; hookCurrent: boolean; hookLive: boolean; spliced: boolean; anchors: number; vibrancyContinued: boolean;
+  hookApplied: boolean; hookCurrent: boolean; hookLive: boolean; spliced: boolean; spliceIn: string | null; anchors: number; vibrancyContinued: boolean;
   cssApplied: boolean; cssStale: boolean; webviewStale: boolean; stateStale: boolean; legacyCss: boolean; themeColorsStale: boolean;
   backups: string[]; files: Files;
 }
@@ -242,8 +244,14 @@ function status(ctx: vscode.ExtensionContext, cfg: Cfg): Status {
   const desktop = vscode.env.appHost === 'desktop' && fs.existsSync(f.main);
   const esm = desktop && isEsmApp(f.root);
   let writable = false;
-  try { fs.accessSync(f.main, fs.constants.W_OK); fs.accessSync(path.dirname(f.main), fs.constants.W_OK); writable = true; } catch { writable = false; }
+  const hasImpl = desktop && fs.existsSync(f.impl);
+  try {
+    fs.accessSync(f.main, fs.constants.W_OK); fs.accessSync(path.dirname(f.main), fs.constants.W_OK);
+    if (hasImpl) fs.accessSync(f.impl, fs.constants.W_OK);
+    writable = true;
+  } catch { writable = false; }
   const main = desktop ? fs.readFileSync(f.main, 'utf8') : '';
+  const impl = hasImpl ? fs.readFileSync(f.impl, 'utf8') : '';
   let hookLive = false;
   try { hookLive = !!f.hookJson && JSON.parse(fs.readFileSync(f.hookJson, 'utf8')).pid === process.ppid; } catch { hookLive = false; }
   let css: string | null = null, state: string | null = null, webview: string | null = null;
@@ -251,12 +259,14 @@ function status(ctx: vscode.ExtensionContext, cfg: Cfg): Status {
   try { webview = f.webviewCss ? fs.readFileSync(f.webviewCss, 'utf8') : null; } catch { webview = null; }
   try { state = f.stateJson ? fs.readFileSync(f.stateJson, 'utf8') : null; } catch { state = null; }
   const legacyCss = legacyCssPatched(f);
-  const backups = [f.main, f.legacyCss, f.legacyProduct].filter(p => fs.existsSync(p + BACKUP_SUFFIX)).map(p => path.basename(p) + BACKUP_SUFFIX);
-  const anchors = desktop ? anchorCount(main) : 0;
+  const backups = [f.main, f.impl, f.legacyCss, f.legacyProduct].filter(p => fs.existsSync(p + BACKUP_SUFFIX)).map(p => path.basename(p) + BACKUP_SUFFIX);
+  const anchors = desktop ? anchorCount(main) + (hasImpl ? anchorCount(impl) : 0) : 0;
+  const spliceIn = hasSplice(main) ? 'main.js' : hasImpl && hasSplice(impl) ? IMPL_FILE : null;
   return {
     desktop, esm, writable,
-    hookApplied: hasHook(main), hookCurrent: main.includes(hookText()) && (hasSplice(main) || anchors !== 1), hookLive, // current = the exact shipped hook text is in place
-    spliced: hasSplice(main), anchors, vibrancyContinued: main.includes(VIBRANCY_MARKER),
+    // current = the exact shipped hook text is in place, and the splice too wherever this build allows one
+    hookApplied: hasHook(main), hookCurrent: main.includes(hookText()) && (spliceIn !== null || anchors !== 1), hookLive,
+    spliced: spliceIn !== null, spliceIn, anchors, vibrancyContinued: main.includes(VIBRANCY_MARKER),
     cssApplied: css !== null, cssStale: css !== null && css !== compose(ctx, cfg),
     // the webview sheet is withheld while an older hook runs and written in full once the current one is live: after
     // the restart that loads it, this is what makes the activation apply rewrite the sheet
@@ -299,26 +309,40 @@ async function writeThemeColors(ctx: vscode.ExtensionContext, on: boolean): Prom
   return true;
 }
 
-/** Add the hook (and the options splice) to out/main.js, or take it out. Returns what changed. */
+/** Restore out/main.js and, on 1.141+, out/mainImpl.js. Returns what was done to each, for the log and the message. */
+function restoreFiles(f: Files): string[] {
+  const done: string[] = [];
+  for (const file of [f.main, f.impl]) {
+    if (!fs.existsSync(file)) continue;
+    const how = restoreMain(file);
+    if (how !== 'clean') done.push(`${path.basename(file)} ${how}`);
+  }
+  return done;
+}
+
+/** Add the hook (and the options splice) to out/main.js — the splice to out/mainImpl.js on 1.141+ — or take them out. */
 function writeHook(ctx: vscode.ExtensionContext, remove: boolean): { changed: boolean; spliced: boolean; anchors: number } {
   const f = files(ctx);
-  const cur = fs.readFileSync(f.main, 'utf8');
   if (remove) {
-    const how = restoreMain(f.main);
-    if (how !== 'clean') log(`out/main.js ${how} (hook removed)`);
-    return { changed: how !== 'clean', spliced: false, anchors: 0 };
+    const done = restoreFiles(f);
+    if (done.length) log(`${done.join(', ')} (hook removed)`);
+    return { changed: done.length > 0, spliced: false, anchors: 0 };
   }
-  const next = applyHook(cur, hookText(version(ctx)));
-  if (next.text === cur) return { changed: false, spliced: next.spliced, anchors: next.anchors };
+  const cur = fs.readFileSync(f.main, 'utf8');
+  const curImpl = fs.existsSync(f.impl) ? fs.readFileSync(f.impl, 'utf8') : null;
+  const next = planPatch(cur, curImpl, hookText(version(ctx)));
+  if (next.main === cur && next.impl === curImpl) return { changed: false, spliced: next.spliced, anchors: next.anchors };
   // Never leave a hook in main.js that does not compile: it would stop VS Code's main process from starting at all,
   // and VS Code could not then run this extension to undo it. Refusing costs the glass; writing it costs the editor.
-  if (!hookParses(next.text)) {
+  if (!hookParses(next.main)) {
     log('REFUSED to write the window hook: the generated hook does not parse. out/main.js is untouched; please report this.');
     throw new Error('VS Glass: the generated window hook does not parse — out/main.js was left untouched.');
   }
-  ensureBackup(f.main, cur); // a pristine copy, refreshed whenever main.js is unpatched (e.g. after a VS Code update)
-  writeAtomic(f.main, next.text);
-  log(`wrote the window hook in out/main.js${next.spliced ? ' (creation-time transparency spliced in)' : ` — window-options anchor found ${next.anchors} times, expected 1: windows become see-through only after creation on this VS Code build (${vscode.version})`}`);
+  // mainImpl.js first: its splice reads `globalThis.__vsGlassWindowOptions` only if the hook defined it, so it is inert
+  // until main.js carries the hook. Each file gets a pristine copy, refreshed whenever it is unpatched (a VS Code update).
+  if (next.impl !== null && next.impl !== curImpl) { ensureBackup(f.impl, curImpl as string); writeAtomic(f.impl, next.impl); }
+  if (next.main !== cur) { ensureBackup(f.main, cur); writeAtomic(f.main, next.main); }
+  log(`wrote the window hook in out/main.js${next.spliced ? ` (creation-time transparency spliced into out/${next.spliceIn})` : ` — window-options anchor found ${next.anchors} times, expected 1: windows become see-through only after creation on this VS Code build (${vscode.version})`}`);
   return { changed: true, spliced: next.spliced, anchors: next.anchors };
 }
 
@@ -347,7 +371,7 @@ function writePathsFile(ctx: vscode.ExtensionContext, remove: boolean) {
   try {
     if (remove) { if (fs.existsSync(file)) fs.unlinkSync(file); return; }
     const f = files(ctx);
-    fs.writeFileSync(file, JSON.stringify({ main: f.main, stateDir: f.stateDir, appRoot: f.root, written: new Date().toISOString() }, null, 2));
+    fs.writeFileSync(file, JSON.stringify({ main: f.main, impl: f.impl, stateDir: f.stateDir, appRoot: f.root, written: new Date().toISOString() }, null, 2));
   } catch { /* best effort */ }
 }
 
@@ -387,7 +411,12 @@ async function apply(ctx: vscode.ExtensionContext, interactive: boolean): Promis
     let note = '';
     if (cfg.effects && wantsTransparency(cfg) && cfg.windowMaterial === LIQUID_GLASS && !windowGlassSupport().ok) note += ` The Liquid Glass window material is not available here (${windowGlassSupport().why}); the window stays see-through with no material.`;
     if (cfg.effects && st.vibrancyContinued) note += ' Vibrancy Continued is patched into this VS Code as well; the two will fight over the window — disable one of them.';
-    if (cfg.effects && !hook.spliced && hook.anchors !== 1 && wantsTransparency(cfg)) note += ` This VS Code build (${vscode.version}) lays its window options out differently, so the window becomes see-through only after it opens; you may see stale pixels where panels closed. Please report the version.`;
+    // once per VS Code version: an automatic apply runs on every settings change, and this cannot change until an update
+    const layoutKey = `vsGlass.layoutWarned.${vscode.version}`;
+    if (cfg.effects && !hook.spliced && hook.anchors !== 1 && wantsTransparency(cfg) && (interactive || !ctx.globalState.get<boolean>(layoutKey))) {
+      note += ` VS Glass does not recognise where VS Code ${vscode.version} sets up its windows, so they turn see-through just after they open instead of from the start: closing a panel can leave stale pixels until the window repaints. Everything else works. A VS Glass update for this VS Code version will fix it (github.com/MilosHampl/vs-glass/issues).`;
+      void ctx.globalState.update(layoutKey, true);
+    }
     if (hook.changed || legacy || (cfg.effects && !st.hookLive)) {
       await quitPrompt(cfg.effects
         ? `VS Glass is installed. Quit and reopen VS Code once to start the see-through window; after that every VS Glass setting applies live.${note}`
@@ -414,9 +443,7 @@ async function remove(ctx: vscode.ExtensionContext): Promise<void> {
   log(`remove invoked (${vscode.env.sessionId})`);
   try {
     if (f.stateDir) stopHelper(f.stateDir);
-    const restored: string[] = [];
-    const how = fs.existsSync(f.main) ? restoreMain(f.main) : 'clean';
-    if (how !== 'clean') restored.push(`main.js ${how}`);
+    const restored: string[] = restoreFiles(f);
     if (cleanupLegacyCss(f.root, checksum)) { legacyKnown = false; restored.push('workbench.desktop.main.css + product.json restored'); }
     if (f.stateDir && fs.existsSync(f.stateDir)) { fs.rmSync(f.stateDir, { recursive: true, force: true }); restored.push('vs-glass/ settings folder deleted'); }
     if (await writeThemeColors(ctx, false)) restored.push('[Glass …] colour customizations removed from settings');
@@ -433,10 +460,10 @@ function showStatus(ctx: vscode.ExtensionContext) {
   const cfg = readCfg();
   const st = status(ctx, cfg);
   const hookLine = !st.hookApplied ? 'not applied'
-    : `${st.hookCurrent ? 'applied' : `applied, ${hookVersionOf(fs.readFileSync(st.files.main, 'utf8')) ?? 'older'} (re-run Apply)`}${st.hookLive ? ', running' : ', not running yet (quit and reopen VS Code)'}${st.spliced ? ', windows created transparent' : st.anchors === 1 ? ', creation-time transparency NOT spliced (re-run Apply)' : `, creation-time transparency unavailable on this build (anchor ×${st.anchors})`}`;
+    : `${st.hookCurrent ? 'applied' : `applied, ${hookVersionOf(fs.readFileSync(st.files.main, 'utf8')) ?? 'older'} (re-run Apply)`}${st.hookLive ? ', running' : ', not running yet (quit and reopen VS Code)'}${st.spliced ? `, windows created transparent (splice in out/${st.spliceIn})` : st.anchors === 1 ? ', creation-time transparency NOT spliced (re-run Apply)' : `, creation-time transparency unavailable on this build (anchor ×${st.anchors})`}`;
   const lines = [
     `VS Glass ${version(ctx)} on VS Code ${vscode.version}${st.esm ? '' : ' (startup file is not an ES module: VS Glass needs 1.94+)'}`,
-    `app: ${st.files.root}${st.writable ? '' : '  (out/main.js not writable)'}`,
+    `app: ${st.files.root}${st.writable ? '' : `  (out/main.js${fs.existsSync(st.files.impl) ? ` or out/${IMPL_FILE}` : ''} not writable)`}`,
     `window hook (out/main.js): ${hookLine}${st.vibrancyContinued ? '  — Vibrancy Continued is patched in too' : ''}`,
     `glass CSS (${st.files.stateDir ?? 'user-data folder not found'}/glass.css): ${st.cssApplied ? `written${st.cssStale ? ', out of date with your settings' : ''}` : 'not written'}`,
     `settings: density ${cfg.density} %, widgets ${cfg.widgetDensity} %, tint ${cfg.tint}, lens ${cfg.lens}, aberration ${cfg.aberration}, wallpaper ${wantsWallpaper(cfg) ? 'on' : 'off'}, transparency ${wantsTransparency(cfg) ? `on (${material(cfg)})` : process.platform === 'darwin' ? 'off' : 'off (macOS only)'}`,
@@ -478,7 +505,7 @@ async function firstRun(ctx: vscode.ExtensionContext, st: Status) {
   const pick = await vscode.window.showInformationMessage(
     updated
       ? `VS Glass: VS Code ${vscode.version} replaced its startup file, so the see-through window and glass effects are off. Apply VS Glass again? (Same reversible hook as before.)`
-      : 'VS Glass: make the window see-through and apply the glass effects? VS Code has no extension point for this, so VS Glass patches one file inside VS Code (out/main.js — backed up first, restored byte-exact by "VS Glass: Remove") and adds theme-scoped [Glass …] colour blocks to your settings so webviews match.',
+      : 'VS Glass: make the window see-through and apply the glass effects? VS Code has no extension point for this, so VS Glass patches its main-process startup code inside VS Code (out/main.js, and out/mainImpl.js on 1.141+ — backed up first, restored byte-exact by "VS Glass: Remove") and adds theme-scoped [Glass …] colour blocks to your settings so webviews match.',
     'Apply', 'Not now', 'Never ask again');
   if (pick === 'Never ask again') { await ctx.globalState.update(key, true); return; }
   if (pick === 'Apply') { await ctx.globalState.update(key, true); await apply(ctx, true); }

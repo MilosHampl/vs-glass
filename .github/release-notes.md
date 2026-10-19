@@ -1,9 +1,11 @@
-VS Glass 1.3.2 — the focus fade now follows live setting changes, not only focus.
+VS Glass 1.3.3 — VS Code 1.141 support: windows are see-through from the moment they open.
 
-- Switching an unfocused window to the `none` material or Liquid Glass drops its opaque veil at once; choosing a
-  vibrancy material in an unfocused window fades it and switches its live blur off, as losing focus does; a window
-  whose blur was parked gets its material back whenever one is chosen again.
-- A window opened with Window Transparency off no longer snaps to the flat inactive fill once glass is switched on live.
+- VS Code 1.141 moved its main process (window options included) from `out/main.js` into `out/mainImpl.js`, so VS Glass
+  showed "This VS Code build lays its window options out differently…": windows turned transparent only after opening,
+  which can leave stale pixels where panels closed, and losing focus snapped before the fade. VS Glass now splices its
+  window options into `mainImpl.js` on those builds — backed up first and restored byte-exact by **VS Glass: Remove**
+  and by uninstalling, like main.js. Older VS Code builds are unchanged.
+- That warning, where it still applies, shows once per VS Code version instead of after every settings change.
 
-After updating, quit and reopen VS Code once (hook V10 runs in the main process). The 1.3.1 notes — the focus fade and
-Claude Code's tool rows — still apply. See [CHANGELOG.md](https://github.com/MilosHampl/vs-glass/blob/main/CHANGELOG.md).
+After updating, quit and reopen VS Code once. See
+[CHANGELOG.md](https://github.com/MilosHampl/vs-glass/blob/main/CHANGELOG.md).

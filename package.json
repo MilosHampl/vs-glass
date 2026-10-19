@@ -2,7 +2,7 @@
   "name": "vs-glass",
   "displayName": "VS Glass",
   "description": "Glass optics for VS Code: a see-through window, refracting edges, specular rims and layered translucent planes, with density, tint, lens and aberration settings.",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "publisher": "MilosHampl",
   "author": {
     "name": "Milos Hampl"
@@ -91,7 +91,7 @@
           "type": "boolean",
           "default": true,
           "order": 1,
-          "markdownDescription": "Apply the glass effects (refracting rims, specular edges, near-clear planes) and, on macOS, the see-through window. VS Code has no extension point for either, so VS Glass adds one small, reversible hook to VS Code's own startup file (out/main.js); after one quit-and-reopen every VS Glass setting applies live. Reversible with **VS Glass: Remove**."
+          "markdownDescription": "Apply the glass effects (refracting rims, specular edges, near-clear planes) and, on macOS, the see-through window. VS Code has no extension point for either, so VS Glass adds one small, reversible hook to VS Code's own startup file (out/main.js, plus one splice in out/mainImpl.js on VS Code 1.141+); after one quit-and-reopen every VS Glass setting applies live. Reversible with **VS Glass: Remove**."
         },
         "vsGlass.windowTransparency": {
           "type": "string",

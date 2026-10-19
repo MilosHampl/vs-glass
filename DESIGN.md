@@ -633,7 +633,8 @@ the one bootstrap file `product.json` does not checksum), with a marker-delimite
 writes, backs up once and removes byte-exact. The block runs in Electron's main process and:
 
 1. makes the window transparent **at creation**: VS Code builds its `BrowserWindow` options in the same
-   `out/main.js` (`{backgroundColor:…, …, experimentalDarkMode:!0}`), and the extension splices one spread into
+   `out/main.js` (`{backgroundColor:…, …, experimentalDarkMode:!0}`) — from 1.141 in `out/mainImpl.js`, which
+   main.js loads with a top-level `await import` (see below) — and the extension splices one spread into
    that object — `...(globalThis.__vsGlassWindowOptions?…():{})` — which returns
    `{ transparent: true, backgroundColor: '#00000000', hasShadow: true }` when `state.json` asks for
    transparency and nothing otherwise. Creation-time matters: Electron's `transparent: true` is what makes the
@@ -837,6 +838,17 @@ vibrancy view at all, which costs the window server less than the OS's own inact
 blurs, as before.
 Every live change of look (state.json) runs the same reconciler, so the veil and the parked view always match the
 current material and focus (V10); an opaque window gets `visualEffectState: 'active'` too, for glass switched on later.
+
+**VS Code 1.141: the main process moved to `out/mainImpl.js` (1.3.3).** `out/main.js` became a 100 KB
+bootstrap that ends in `await import("./mainImpl.js")`; the window options went with the rest of the main process,
+so the anchor occurred zero times in main.js and windows were made transparent only after creation (the ghosts
+again, and no `visualEffectState`, so focus loss snapped). The splice now goes into whichever of the two files holds
+the anchor, as long as it occurs exactly once across both (`planPatch`); mainImpl.js is not in `product.json`'s
+checksums either. The hook stays at the end of main.js: Electron emits `ready` only after the entry module —
+top-level awaits included — has finished (measured with a windowless Electron app: `impl evaluated` → `main tail` →
+`ready`, also with an 800 ms await inside the imported module), so the hook runs after mainImpl.js set the user-data
+path and before the first `new BrowserWindow`. mainImpl.js is written first: its splice is inert until main.js
+defines `__vsGlassWindowOptions`.
 
 **The composer (1.3.0)** is a frosted plate with a narrow refracting rim over the base described in §4.1 — the
 conversation softens behind what you type and bends at the edge as it scrolls under — instead of the slider's clear

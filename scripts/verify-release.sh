@@ -49,18 +49,22 @@ chmod +x "$HELPER" 2>/dev/null || true
 [ "$("$HELPER" --version 2>/dev/null)" = "$VER" ] && echo "   ok the installed helper runs and reports $VER" || { echo "   FAIL: the installed helper does not run or reports another version"; exit 1; }
 grep -q "extension/glass/webview-colors.json" "$TMP/vsix-list.txt" && echo "   ok glass/webview-colors.json" || { echo "   FAIL: glass/webview-colors.json missing from the vsix"; exit 1; }
 grep -q "extension/out/patch.js" "$TMP/vsix-list.txt" && echo "   ok out/patch.js" || { echo "   FAIL: out/patch.js missing from the vsix"; exit 1; }
-say "6. The window hook round-trips byte-exact against the pristine app's out/main.js"
+say "6. The window hook round-trips byte-exact against the pristine app's out/main.js (+ out/mainImpl.js on 1.141+)"
 MAIN="$PRISTINE/Contents/Resources/app/out/main.js"
 node -e '
-const fs = require("fs"); const p = require(process.argv[1]); const main = process.argv[2];
-const orig = fs.readFileSync(main, "utf8"); const clean = p.stripHook(orig);
-const anchors = clean.split(p.OPTIONS_ANCHOR).length - 1;
-if (anchors !== 1) { console.log("   FAIL: window-options anchor found " + anchors + " times in the pristine main.js (expected 1)"); process.exit(1); }
-const patched = p.applyHook(clean, p.hookText("verify")); if (!patched.spliced) { console.log("   FAIL: splice not applied"); process.exit(1); }
-if (p.stripHook(patched.text) !== clean) { console.log("   FAIL: stripHook(applyHook(x)) !== x"); process.exit(1); }
+const fs = require("fs"); const p = require(process.argv[1]); const main = process.argv[2]; const impl = p.implOf(main);
+const clean = p.stripHook(fs.readFileSync(main, "utf8"));
+const cleanImpl = fs.existsSync(impl) ? p.stripHook(fs.readFileSync(impl, "utf8")) : null;
+const plan = p.planPatch(clean, cleanImpl, p.hookText("verify"));
+if (plan.anchors !== 1) { console.log("   FAIL: window-options anchor found " + plan.anchors + " times across main.js and mainImpl.js (expected 1)"); process.exit(1); }
+if (!plan.spliced) { console.log("   FAIL: splice not applied"); process.exit(1); }
+if (p.stripHook(plan.main) !== clean) { console.log("   FAIL: stripHook(main.js patched) !== main.js"); process.exit(1); }
+if (cleanImpl !== null && p.stripHook(plan.impl) !== cleanImpl) { console.log("   FAIL: stripHook(mainImpl.js patched) !== mainImpl.js"); process.exit(1); }
 fs.writeFileSync("/tmp/vsg-verify-hook.mjs", p.hookText("verify")); fs.writeFileSync("/tmp/vsg-verify-hook.cjs", p.hookText("verify"));
-console.log("   ok anchor ×1, splice applied, strip is the byte-exact inverse");
+fs.writeFileSync("/tmp/vsg-verify-main.mjs", plan.main); if (plan.impl !== null) fs.writeFileSync("/tmp/vsg-verify-impl.mjs", plan.impl); else fs.rmSync("/tmp/vsg-verify-impl.mjs", { force: true });
+console.log("   ok anchor ×1, splice applied in " + plan.spliceIn + ", strip is the byte-exact inverse of both files");
 ' "$REPO/out/patch.js" "$MAIN" || exit 1
 node --check /tmp/vsg-verify-hook.mjs && node --check /tmp/vsg-verify-hook.cjs && echo "   ok hook parses as ES module and as CommonJS" || { echo "   FAIL: hook does not parse"; exit 1; }
+node --check /tmp/vsg-verify-main.mjs && { [ ! -f /tmp/vsg-verify-impl.mjs ] || node --check /tmp/vsg-verify-impl.mjs; } && echo "   ok parses as an ES module once patched: main.js$( [ -f /tmp/vsg-verify-impl.mjs ] && echo ', mainImpl.js')" || { echo "   FAIL: a patched file does not parse"; exit 1; }
 echo
 echo "Temp dir kept for inspection: $TMP (profile can be launched with the pristine app + --user-data-dir/--extensions-dir above)"

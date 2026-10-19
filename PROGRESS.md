@@ -362,3 +362,19 @@ real and are fixed here (hook V10): `applyAll` now runs `focusFade` after any ap
 follow live material/transparency changes), `focusFade` clears `parked` when no vibrancy is wanted (a parked window kept
 skipping the material once one came back), and opaque windows also get `visualEffectState: 'active'`. Mock-window run
 covers all three plus the 1.3.1 cases.
+
+## 1.3.3 — VS Code 1.141 moved the main process into mainImpl.js (2026-10-19)
+
+Owner installed 1.3.2 (their VS Code had auto-updated to 1.141.0) and got "This VS Code build (1.141.0) lays its window
+options out differently… Please report the version" — "tf is this?". 1.141's `out/main.js` is a 100 KB bootstrap ending
+in `await import("./mainImpl.js")`; the window options (`tc()`, anchor ×1) and `app.setPath('userData')` are in
+mainImpl.js (not checksummed). Fix: `planPatch(main, impl, hook)` splices wherever the anchor occurs exactly once
+across both files; extension/uninstall/fix-hook/install/uninstall.sh/verify-release handle both files and backups.
+Hook placement unchanged — measured with a windowless Electron app (LSUIElement clone of the 1.137 bed, ad-hoc signed;
+note `ELECTRON_RUN_AS_NODE=1` is set in shells spawned from VS Code — unset it): `ready` waits for the entry module's
+top-level awaits, so the hook appended to main.js runs after mainImpl.js set userData and before any window.
+Tested on an APFS clone of the owner's 1.141 app (`scratch/VSCode-141.app`, main.js reset to its pristine backup):
+fresh apply, idempotent re-apply, Remove, the upgrade from their 1.3.2 state (only mainImpl.js written), the
+uninstall hook with an old paths file — all byte-exact; patched files pass `node --check`. Verify step 6 passes on
+1.141 (splice in mainImpl.js) and 1.137 (splice in main.js). Not run as a real window. The layout warning now shows
+once per VS Code version.
