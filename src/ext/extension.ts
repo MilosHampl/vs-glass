@@ -174,6 +174,9 @@ function compose(ctx: vscode.ExtensionContext, cfg: Cfg): string {
     parts.push(`/* VS Glass settings (vsGlass.lens ${cfg.lens}, vsGlass.aberration ${cfg.aberration}, vsGlass.widgetDensity ${cfg.widgetDensity}) */\n${blocks.join('\n')}\n`);
   }
   parts.push(`/* VS Glass settings (vsGlass.density, vsGlass.widgetDensity) */\n${GUARD} {\n  --vsg-density: ${(cfg.density / 100).toFixed(3)};\n  --vsg-widget-density: ${(cfg.widgetDensity / 100).toFixed(3)};\n}\n`);
+  // Gone from the sheet once the current hook is live, which makes the activation apply rewrite it.
+  const live = liveHookVersion(files(ctx));
+  if (PARKING_HOOKS.includes(live)) parts.push(`/* VS Glass: this window still runs hook V${live}, which removes an unfocused window's blur; covered until VS Code is quit and reopened */\n${GUARD}.vs-glass-inactive::after {\n  content: "";\n  position: absolute;\n  inset: 0;\n  border-radius: var(--vsg-radius-window);\n  background: var(--vsg-ground);\n  pointer-events: none;\n  z-index: -1;\n}\n`);
   return parts.join('\n');
 }
 
@@ -183,6 +186,9 @@ function liveHookVersion(f: Files): number {
 }
 /** Webview styling needs hook V7 or newer: the V6 sweep re-applied the sheet every few seconds, which glitched and lagged the chat. */
 const WEBVIEW_HOOK_MIN = 7;
+/** Hooks V9–V10 (1.3.1–1.3.3) remove an unfocused window's vibrancy under a veil the 1.4 sheet no longer has: the main
+ *  process keeps the hook it started with, so after updating, unfocused windows were bare desktop until a second restart. */
+const PARKING_HOOKS = [9, 10];
 
 /** The sheet the hook adopts inside webview frames (the Claude Code chat and friends): its own filters, the same presets. */
 function composeWebview(ctx: vscode.ExtensionContext, cfg: Cfg): string {

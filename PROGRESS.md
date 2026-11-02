@@ -408,3 +408,16 @@ with them: `windowMaterial: under-window`, `density: 60`, `widgetDensity: 140` (
   rings at −1). Not measured on a real window (no screen tests on the owner's machine).
 - Site: copy updated (no slab card; lens = clear glass). `docs/assets/sync.sh` still lifts the 1.3 widget lens for the
   live demo and the lens figure — repoint it at the composer before the next site rebuild.
+
+## 1.4.1 — unfocused windows bare after the update (2026-11-02)
+
+Owner, with a screenshot: "vs glass looks completely transparent when not in focus (looks bad), fix & reinstall".
+- Measured on their install (read-only): VS Code started 16:02:46 with hook V10 in main.js; 1.4.0 activated 12 s later
+  (`hook old live`), wrote V11 and the veil-less sheet; `hook.json` still `version: 10`. V10 parks an unfocused window's
+  vibrancy 1.6 s after blur and toggles `.vs-glass-inactive` for a veil 1.4.0 deleted → bare desktop, no blur. Every
+  1.3.x upgrader gets this until a second restart (the main process keeps the hook it started with).
+- Fix: `compose()` appends an opaque `--vsg-ground` veil on `.vs-glass-inactive::after` (no transition) while
+  `liveHookVersion` is 9 or 10 (`PARKING_HOOKS`); with V11 live the sheet goes stale and the activation apply drops it.
+  Mocked-vscode run of the compiled extension (throwaway app from the owner's pristine backups): first apply no veil,
+  V10 live veil, V11 live gone, V9 live veil. Headless Chrome: focused no `::after`; unfocused opaque `rgb(10, 14, 23)`
+  at z −1 inside the isolated workbench. Not seen on a real window (no screen tests).
