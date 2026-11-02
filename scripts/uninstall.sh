@@ -13,7 +13,7 @@
 #   5. If the VS Glass extension (1.1.0) applied its window hook                   → restores out/main.js from its
 #      .vs-glass-backup, deletes <user-data>/vs-glass/ and removes the [Glass …] blocks it added to
 #      workbench.colorCustomizations (this is exactly what the "VS Glass: Remove" command does)
-#   6. If the window-slab helper (1.2.0+, bin/vs-glass-helper) is still running                 → stops it (it normally exits
+#   6. If the window-slab helper of VS Glass 1.2–1.3 is still running              → stops it (it normally exits
 #      with VS Code; it only ever owned windows of its own, nothing on disk)
 # Nothing else outside the repository was modified. Test copies of VS Code live in <repo>/scratch (safe to delete).
 set -euo pipefail
@@ -113,7 +113,7 @@ if isinstance(cc, dict):
 PY
 fi
 
-# 6. the window-slab helper: a detached process the 1.2.0 extension starts; it dies with VS Code, but make sure
+# 6. the window-slab helper: a detached process the 1.2–1.3 extension starts; it dies with VS Code, but make sure
 if pkill -x vs-glass-helper 2>/dev/null; then say "stopped the vs-glass-helper process"; fi
 
 echo

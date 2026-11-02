@@ -18,12 +18,12 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
 import { BACKUP_SUFFIX, IMPL_FILE, LEGACY_CSS_START, anchorCount, cleanupLegacyCss, ensureBackup, hasHook, hasSplice, hookParses, hookText, hookVersionOf, implOf, isEsmApp, planPatch, restoreMain, writeAtomic } from './patch';
-import { ensureHelper, helperLogFile, helperPid, LIQUID_GLASS, paramsFile, resolveMaterial, retryWindowGlass, stopHelper, windowGlassParams, windowGlassSupport } from './windowGlass';
+import * as cp from 'node:child_process';
 import { lensVars, WALLPAPER_CLASSES, WORKBENCH_CLASSES, type LensParams } from './lens';
 
 const GUARD = '.monaco-workbench[class*="-vs-glass-themes-glass-"]:not([class*="glass-opaque"]):not(.vs-glass-off)';
 const VIBRANCY_MARKER = 'VSCODE-VIBRANCY-START';
-const MATERIALS = ['auto', LIQUID_GLASS, 'none', 'hud', 'fullscreen-ui', 'popover', 'menu', 'sidebar', 'selection', 'titlebar', 'header', 'sheet', 'window', 'tooltip', 'content', 'under-window', 'under-page', 'appearance-based', 'light', 'dark', 'medium-light', 'ultra-dark'];
+const MATERIALS = ['auto', 'none', 'hud', 'fullscreen-ui', 'popover', 'menu', 'sidebar', 'selection', 'titlebar', 'header', 'sheet', 'window', 'tooltip', 'content', 'under-window', 'under-page', 'appearance-based', 'light', 'dark', 'medium-light', 'ultra-dark'];
 /** Written into the extension folder on every apply so the `vscode:uninstall` hook (uninstall.ts) knows what to undo. */
 const PATHS_FILE = '.vs-glass-paths.json';
 
@@ -32,7 +32,6 @@ interface Cfg {
   effects: boolean;
   windowTransparency: Tri;
   windowMaterial: string;
-  windowGlassStyle: string;
   density: number;
   widgetDensity: number;
   tint: string;
@@ -77,7 +76,6 @@ function readCfg(): Cfg {
     effects: c.get<boolean>('effects', true) !== false,
     windowTransparency: setting<Tri>(c, 'windowTransparency', 'auto'),
     windowMaterial: MATERIALS.includes(material) ? material : 'auto',
-    windowGlassStyle: setting(c, 'windowGlassStyle', 'apple-clear'),
     density: num('density', 100, 0, 200),
     widgetDensity: num('widgetDensity', 100, 0, 200),
     tint: setting(c, 'tint', 'none'),
@@ -116,16 +114,25 @@ function files(ctx: vscode.ExtensionContext): Files {
 /** The see-through window is an Electron/macOS feature (vibrancy); elsewhere the wallpaper addon stands in. */
 const wantsTransparency = (cfg: Cfg) => process.platform === 'darwin' && cfg.windowTransparency !== 'off';
 const wantsWallpaper = (cfg: Cfg) => cfg.wallpaper === 'on' || (cfg.wallpaper === 'auto' && !wantsTransparency(cfg));
-/** The material the window actually gets (`auto` resolved). */
-const material = (cfg: Cfg) => resolveMaterial(cfg.windowMaterial);
-/** The window slab: Liquid Glass under a see-through window, where this macOS can do it. */
-const wantsWindowGlass = (cfg: Cfg) => cfg.effects && wantsTransparency(cfg) && material(cfg) === LIQUID_GLASS && windowGlassSupport().ok;
-let unsupportedShown = false;
-function reportUnsupported(why: string) {
-  if (unsupportedShown) return;
-  unsupportedShown = true;
-  log(`window glass: unsupported here: ${why}`);
-  vscode.window.showWarningMessage(`VS Glass: this macOS cannot make the window itself Liquid Glass (${why || 'the helper reported it unsupported'}). The window stays see-through with no material.`);
+/** The material the window actually gets: `auto` is the system's under-window material, the frost that keeps a
+ *  see-through editor readable over any desktop. */
+const material = (cfg: Cfg) => cfg.windowMaterial === 'auto' ? 'under-window' : cfg.windowMaterial;
+
+/**
+ * VS Glass 1.2–1.3 could put a Liquid Glass slab under the window: a helper process (vs-glass-helper) with its own
+ * files in the state folder. That is gone; end a helper still running from an older version and remove its files.
+ * The helper exits by itself once its parameters file is gone, so this only speeds it up.
+ */
+function retireWindowSlab(stateDir: string | null): void {
+  if (!stateDir) return;
+  try {
+    const pid = Number(fs.readFileSync(path.join(stateDir, 'window-glass.pid'), 'utf8').trim());
+    // pids are reused: only signal it when that process really is the helper
+    if (pid && path.basename(cp.execFileSync('/bin/ps', ['-p', String(pid), '-o', 'comm='], { encoding: 'utf8', timeout: 2000 }).trim()) === 'vs-glass-helper') process.kill(pid, 'SIGTERM');
+  } catch { /* no pid file, or the helper is gone */ }
+  for (const name of ['window-glass.json', 'window-glass.pid', 'window-glass.lock', 'window-glass.log']) {
+    try { fs.rmSync(path.join(stateDir, name), { force: true }); } catch { /* best effort */ }
+  }
 }
 const isGlassTheme = () => /Glass (Regular Dark|Regular Light|Clear|Opaque)/.test(String(vscode.workspace.getConfiguration('workbench').get('colorTheme') ?? ''));
 const version = (ctx: vscode.ExtensionContext) => String(ctx.extension.packageJSON.version ?? '0');
@@ -199,15 +206,13 @@ function composeWebview(ctx: vscode.ExtensionContext, cfg: Cfg): string {
 function stateFor(ctx: vscode.ExtensionContext, cfg: Cfg): State {
   const kind = vscode.window.activeColorTheme.kind;
   const light = kind === vscode.ColorThemeKind.Light || kind === vscode.ColorThemeKind.HighContrastLight;
-  // the slab replaces the vibrancy view: the hook gets `none` so nothing blurs or tints what the glass refracts
-  const m = material(cfg);
-  return { transparent: cfg.effects && wantsTransparency(cfg), material: m === LIQUID_GLASS ? 'none' : m, background: light ? '#f3f3f3' : '#1f1f1f', version: version(ctx) };
+  return { transparent: cfg.effects && wantsTransparency(cfg), material: material(cfg), background: light ? '#f3f3f3' : '#1f1f1f', version: version(ctx) };
 }
 const stateText = (ctx: vscode.ExtensionContext, cfg: Cfg) => JSON.stringify(stateFor(ctx, cfg), null, 2) + '\n';
 
 /** Our state files must stay writable by us AND by the hook (hook.json): put back 0644 on anything that lost it. */
 function repairStateDir(dir: string): void {
-  for (const name of ['hook.json', 'glass.css', 'webview.css', 'state.json', 'window-glass.json']) {
+  for (const name of ['hook.json', 'glass.css', 'webview.css', 'state.json']) {
     const file = path.join(dir, name);
     try { fs.accessSync(file, fs.constants.W_OK); } catch { try { if (fs.existsSync(file)) { fs.chmodSync(file, 0o644); log(`restored write permission on ${name}`); } } catch { /* not ours to fix */ } }
   }
@@ -359,8 +364,6 @@ function writeState(ctx: vscode.ExtensionContext, cfg: Cfg): boolean {
     for (const file of [f.glassCss, f.webviewCss]) if (file && fs.existsSync(file)) { fs.rmSync(file, { force: true }); changed = true; }
   }
   changed = writeIfChanged(f.stateJson, stateText(ctx, cfg)) || changed;
-  // the window slab's parameters; the helper watches this file and exits when it says off
-  changed = writeIfChanged(paramsFile(f.stateDir), JSON.stringify(windowGlassParams(wantsWindowGlass(cfg), cfg.lens, cfg.aberration, cfg.windowGlassStyle), null, 2) + '\n') || changed;
   if (changed) log(`wrote ${path.basename(f.stateDir)}/ (effects ${cfg.effects ? 'on' : 'off'}, transparency ${wantsTransparency(cfg) && cfg.effects ? 'on' : 'off'}, material ${material(cfg)}, density ${cfg.density}/${cfg.widgetDensity}, tint ${cfg.tint}, lens ${cfg.lens}, aberration ${cfg.aberration})`);
   return changed;
 }
@@ -403,13 +406,9 @@ async function apply(ctx: vscode.ExtensionContext, interactive: boolean): Promis
     if (legacy) { legacyKnown = false; log('restored the workbench stylesheet and product.json patched by a 1.1.0 preview'); }
     const hook = writeHook(ctx, !cfg.effects);
     const filesChanged = writeState(ctx, cfg);
-    if (interactive) { retryWindowGlass(); unsupportedShown = false; }
-    if (wantsWindowGlass(cfg)) ensureHelper(ctx.extensionPath, st.files.stateDir as string, log, reportUnsupported);
-    else stopHelper(st.files.stateDir as string);
     const coloursChanged = await writeThemeColors(ctx, cfg.effects);
     writePathsFile(ctx, !cfg.effects);
     let note = '';
-    if (cfg.effects && wantsTransparency(cfg) && cfg.windowMaterial === LIQUID_GLASS && !windowGlassSupport().ok) note += ` The Liquid Glass window material is not available here (${windowGlassSupport().why}); the window stays see-through with no material.`;
     if (cfg.effects && st.vibrancyContinued) note += ' Vibrancy Continued is patched into this VS Code as well; the two will fight over the window — disable one of them.';
     // once per VS Code version: an automatic apply runs on every settings change, and this cannot change until an update
     const layoutKey = `vsGlass.layoutWarned.${vscode.version}`;
@@ -442,7 +441,7 @@ async function remove(ctx: vscode.ExtensionContext): Promise<void> {
   const f = files(ctx);
   log(`remove invoked (${vscode.env.sessionId})`);
   try {
-    if (f.stateDir) stopHelper(f.stateDir);
+    retireWindowSlab(f.stateDir);
     const restored: string[] = restoreFiles(f);
     if (cleanupLegacyCss(f.root, checksum)) { legacyKnown = false; restored.push('workbench.desktop.main.css + product.json restored'); }
     if (f.stateDir && fs.existsSync(f.stateDir)) { fs.rmSync(f.stateDir, { recursive: true, force: true }); restored.push('vs-glass/ settings folder deleted'); }
@@ -467,7 +466,6 @@ function showStatus(ctx: vscode.ExtensionContext) {
     `window hook (out/main.js): ${hookLine}${st.vibrancyContinued ? '  — Vibrancy Continued is patched in too' : ''}`,
     `glass CSS (${st.files.stateDir ?? 'user-data folder not found'}/glass.css): ${st.cssApplied ? `written${st.cssStale ? ', out of date with your settings' : ''}` : 'not written'}`,
     `settings: density ${cfg.density} %, widgets ${cfg.widgetDensity} %, tint ${cfg.tint}, lens ${cfg.lens}, aberration ${cfg.aberration}, wallpaper ${wantsWallpaper(cfg) ? 'on' : 'off'}, transparency ${wantsTransparency(cfg) ? `on (${material(cfg)})` : process.platform === 'darwin' ? 'off' : 'off (macOS only)'}`,
-    `window glass (Liquid Glass under the window): ${wantsWindowGlass(cfg) ? (helperPid(st.files.stateDir ?? '') ? `helper running (pid ${helperPid(st.files.stateDir ?? '')}, log ${helperLogFile(st.files.stateDir ?? '')})` : 'helper not running — run VS Glass: Apply') : material(cfg) === LIQUID_GLASS ? `unavailable: ${windowGlassSupport().why}` : `off (window material is ${material(cfg)})`}`,
     `webview colours ([Glass …] blocks in workbench.colorCustomizations): ${st.themeColorsStale ? (cfg.effects ? 'missing or out of date' : 'still present') : (cfg.effects ? 'applied' : 'none')}`,
     `backups: ${st.backups.length ? st.backups.join(', ') : 'none'}${st.legacyCss ? '  — a 1.1.0 preview patched the workbench stylesheet; Apply restores it' : ''}`,
   ];
@@ -547,19 +545,12 @@ export async function activate(ctx: vscode.ExtensionContext) {
   const themeIsGlass = isGlassTheme();
   log(`activate ${version(ctx)} on ${vscode.version}: theme ${themeIsGlass ? 'Glass' : 'other'}, effects ${cfg.effects}, hook ${st.hookApplied ? (st.hookCurrent ? 'current' : 'old') : 'absent'}${st.hookLive ? ' live' : ''}${st.spliced ? ' spliced' : ''}, css ${st.cssApplied ? (st.cssStale ? 'stale' : 'current') : 'absent'}, legacy ${st.legacyCss}`);
   if (st.hookApplied) writePathsFile(ctx, false);
+  retireWindowSlab(st.files.stateDir);
   if (!cfg.effects) return;
   // installed, effects on, but no Glass theme yet: one nudge, then stay quiet
   if (!themeIsGlass) { if (!st.hookApplied && !st.cssApplied) void themeNudge(ctx); return; }
   if (!st.hookApplied) { void firstRun(ctx, st); return; } // consent before touching VS Code's file (again, after a VS Code update)
   if ((st.cssStale || st.webviewStale || !st.cssApplied || st.stateStale || !st.hookCurrent || st.legacyCss || st.themeColorsStale) && cfg.autoApply) scheduleApply(ctx); // settings or version changed since the last apply
-  // the window slab: start its helper now and make sure one keeps running (another window's extension host may have
-  // owned it and closed)
-  if (wantsWindowGlass(cfg)) ensureHelper(ctx.extensionPath, st.files.stateDir as string, log, reportUnsupported);
-  const keepAlive = setInterval(() => {
-    const c = readCfg();
-    if (wantsWindowGlass(c) && st.files.stateDir && fs.existsSync(paramsFile(st.files.stateDir))) ensureHelper(ctx.extensionPath, st.files.stateDir, log, reportUnsupported);
-  }, 30_000);
-  ctx.subscriptions.push({ dispose: () => clearInterval(keepAlive) });
 }
 
-export function deactivate() { /* nothing to do: the patches are files, and the window-slab helper is detached — it serves every window of this VS Code and exits with it */ }
+export function deactivate() { /* nothing to do: the patches are files */ }

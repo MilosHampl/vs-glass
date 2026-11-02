@@ -2,6 +2,11 @@
  * Lens filters (Layer 2) — shared by the build (src/build.ts) and the extension, which composes the lens and
  * aberration settings into one set of filters at runtime (the preset files cannot combine: each re-emits every filter).
  *
+ * A surface is EITHER frosted OR a lens, never both: a bent rim over a cloudy body showed neither clearly, and the full
+ * lens chain (two map images, three displacement passes, a blur and five composites) on every floating widget — the
+ * Settings page included, at the size of the window — was what made VS Glass lag. Frosted widgets get `frost` (a blur
+ * over a base, three primitives). The lens stays where it can be seen: on clear glass with something drawn behind it.
+ *
  * Each class is one SVG filter, referenced from CSS as a data URI in `backdrop-filter`. Everything is in CSS px:
  *  - the displacement map is an SVG image, not a bitmap. feImage lays it out in the filter region at the element's
  *    real size, so its ramps are fixed-width: a rim is the same 30 px and bends the same distance on a 120 px tooltip
@@ -21,8 +26,9 @@
 export interface LensClass {
   /** CSS custom property suffix, e.g. "widget" → --vsg-lens-widget */
   name: string;
-  /** rim: a refracting band of `edge` px on every edge over a frosted body; dome: the whole surface is one curve */
-  kind: 'rim' | 'dome';
+  /** frost: a blurred body over a base, no bend; rim: a refracting band of `edge` px on every edge over a clear body;
+   *  dome: the whole surface is one curve */
+  kind: 'frost' | 'rim' | 'dome';
   /** which axes bend */
   axes: 'xy' | 'x' | 'y';
   /** rim width in CSS px (rim kind) */
@@ -61,32 +67,23 @@ export interface LensParams {
 }
 
 // Slopes stay under the folding limit: the bevel's steepest point is ~2.9× its mean, so the backdrop folds (text
-// doubles inside the rim) once 2.9 × (scale / 2) / edge passes ~0.7. Regular Dark (lensScale 14): widget 2.9·5.6/30 =
-// 0.54, menu 2.9·4.2/20 = 0.61; Clear (18): bar 2.9·2.25/10 = 0.65, tip 2.9·1.35/6 = 0.65, composer 2.9·3.6/16 = 0.65.
+// doubles inside the rim) once 2.9 × (scale / 2) / edge passes ~0.7. Clear (lensScale 18): composer 2.9·3.6/16 = 0.65.
 // The lens presets scale the edge with the displacement, so the slope holds at every preset.
 export const LENS_CLASSES: LensClass[] = [
-  // quick input, suggest, hovers, notifications, dialogs, modal editors
-  { name: 'widget', kind: 'rim', axes: 'xy', edge: 30, disp: 0.8, abr: 0.8, blur: 'widget', pad: 0.08, base: 0.93 },
-  // context and dropdown lists, the terminal find bar, the editor's overlay message
-  { name: 'menu', kind: 'rim', axes: 'xy', edge: 20, disp: 0.6, abr: 0.6, blur: 'widget', pad: 0.08, base: 0.93 },
-  // bars (the editor's find and rename widgets, the terminal's find, the overlay message, the debug toolbar; 25–35 px
-  // tall): a widget rim would make the whole bar one dome and smear the code behind it across the search text, so a
-  // bar bends only in a 10 px band at its edge (slope 2.9 · 2.25 / 10 = 0.65 on Clear)
-  { name: 'bar', kind: 'rim', axes: 'xy', edge: 10, disp: 0.25, abr: 0.5, blur: 'widget', pad: 0.12, base: 0.93, rimAlpha: 0.7 },
-  // tooltips (compact hovers, ~25 px tall): any wider rim would make the whole tip one dome, and the label would sit on a
-  // bent copy of whatever is under it. A thin band at the very edge, half bend and half frost, is all a tip carries.
-  { name: 'tip', kind: 'rim', axes: 'xy', edge: 6, disp: 0.15, abr: 0.3, blur: 'widget', pad: 0.12, base: 0.93, rimAlpha: 0.35 },
+  // every floating widget — quick input, suggest, hovers, menus, notifications, dialogs, find bars, tooltips: frosted
+  // glass, no bend. The base hides the sharp original that Chromium leaves under a backdrop filter in a see-through window.
+  { name: 'widget', kind: 'frost', axes: 'xy', disp: 0, abr: 0, blur: 'widget', pad: 0.08, base: 0.93 },
   // the file overview's viewport slider: a clear magnifying dome over the minimap canvas — warp and fringe only
   { name: 'slider', kind: 'dome', axes: 'xy', disp: 2, abr: 2, blur: 0, pad: 0.1 },
   // side bars, panel and activity bar — wallpaper mode only (a see-through window gives base panes no filter)
-  { name: 'pane', kind: 'rim', axes: 'xy', edge: 36, disp: 0.9, abr: 0.9, blur: 'pane', pad: 0.04 },
-  // a chat composer (the Claude Code input, in the webview sheet): a refracting rim over a frosted body, so the
-  // messages scrolling under it bend and fringe at the edge and soften behind the text being typed
-  { name: 'composer', kind: 'rim', axes: 'xy', edge: 16, disp: 0.4, abr: 0.6, blur: 8, pad: 0.1, base: 0.96, rimAlpha: 0.6 },
+  { name: 'pane', kind: 'frost', axes: 'xy', disp: 0, abr: 0, blur: 'pane', pad: 0.04 },
+  // a chat composer (the Claude Code input, in the webview sheet): clear, darker glass. The messages under it stay sharp
+  // and bend and fringe at the rim; the dark base hides the unbent original Chromium leaves under the filter.
+  { name: 'composer', kind: 'rim', axes: 'xy', edge: 16, disp: 0.4, abr: 0.6, blur: 0, pad: 0.1, base: 0.82 },
 ];
 
 /** Classes the workbench sheet references (the composer lives in the webview sheet only). */
-export const WORKBENCH_CLASSES = ['widget', 'menu', 'bar', 'tip', 'slider'];
+export const WORKBENCH_CLASSES = ['widget', 'slider'];
 /** Classes only the wallpaper addon references: they ship in glass-wallpaper.css, not in the sheet every window loads. */
 export const WALLPAPER_CLASSES = ['pane'];
 
@@ -176,6 +173,15 @@ export function filterSvg(id: string, cls: LensClass, v: LensValues): string {
   const out: string[] = [
     `<filter id='${id}' x='${-pad}' y='${-pad}' width='${1 + 2 * pad}' height='${1 + 2 * pad}' filterUnits='objectBoundingBox' primitiveUnits='userSpaceOnUse' color-interpolation-filters='sRGB'>`,
   ];
+  if (cls.kind === 'frost') {
+    out.push(v.blur > 0 ? `<feGaussianBlur in='SourceGraphic' stdDeviation='${num(v.blur)}' result='frost'/>` : `<feOffset in='SourceGraphic' result='frost'/>`);
+    if (v.base > 0) out.push(
+      `<feFlood flood-color='rgb(${v.baseRgb})' flood-opacity='${num(Math.min(1, v.base))}' result='base'/>`,
+      `<feComposite in='frost' in2='base' operator='over'/>`,
+    );
+    out.push(`</filter>`);
+    return out.join('');
+  }
   // the map: R = x bend, G = y bend (0.5 = none)
   if (xs) out.push(`<feImage href='${svgImage(axisMap('x', cls, v.edge))}' preserveAspectRatio='none' result='ix'/>`,
     `<feColorMatrix in='ix' type='matrix' values='.5 -.5 0 0 .5  0 0 0 0 ${ys ? 0 : 0.5}  0 0 0 0 0  0 0 0 0 1' result='${ys ? 'mx' : 'map'}'/>`);

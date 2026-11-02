@@ -19,7 +19,7 @@ import * as path from 'node:path';
 
 export const WIN_START = '/* VS-GLASS-WINDOW-START */';
 export const WIN_END = '/* VS-GLASS-WINDOW-END */';
-export const HOOK_VERSION = 'VS-GLASS-HOOK-V10';
+export const HOOK_VERSION = 'VS-GLASS-HOOK-V11';
 export const BACKUP_SUFFIX = '.vs-glass-backup';
 /** VS Code 1.136 builds its window options as `{backgroundColor:…, …, experimentalDarkMode:!0}`; this is the tail of that object. */
 export const OPTIONS_ANCHOR = ',experimentalDarkMode:!0}';
@@ -199,18 +199,11 @@ export function hookText(_version?: string): string {
       var CLEAR = '#00000000';
       var read = function (file) { try { return fs.readFileSync(file, 'utf8'); } catch (err) { return ''; } };
       var readState = function () { try { return JSON.parse(read(stateFile) || 'null'); } catch (err) { return null; } };
-      // visualEffectState 'active': macOS would otherwise switch the vibrancy view to its flat inactive fill the instant
-      // the window loses focus — a snap from glass to opaque. The hook fades to the inactive look itself (below). It is
-      // creation-time only, so an opaque window gets it too (harmless without a vibrancy view) in case glass is
-      // switched on live later.
+      // Unfocused windows are left to macOS: its vibrancy view switches to the system's inactive look on its own.
       globalThis.__vsGlassWindowOptions = function () {
         try {
           var st = readState();
-          if (!st) return {};
-          var o = {};
-          if (process.platform === 'darwin') o.visualEffectState = 'active';
-          if (st.transparent) { o.transparent = true; o.backgroundColor = CLEAR; }
-          return o;
+          return st && st.transparent ? { transparent: true, backgroundColor: CLEAR } : {};
         } catch (err) { return {}; }
       };
       var isWorkbench = function (win) {
@@ -218,30 +211,28 @@ export function hookText(_version?: string): string {
       };
       var stateOf = function (win) {
         if (!win.__vsGlass) {
-          win.__vsGlass = { setBackgroundColor: win.setBackgroundColor.bind(win), transparent: null, look: null, queue: Promise.resolve(), key: null, css: null, parked: false, parkT: null };
+          win.__vsGlass = { setBackgroundColor: win.setBackgroundColor.bind(win), transparent: null, look: null, queue: Promise.resolve(), key: null, css: null };
           win.setBackgroundColor = function (c) { win.__vsGlass.setBackgroundColor(win.__vsGlass.transparent ? CLEAR : c); };
         }
         return win.__vsGlass;
       };
       // force: a fresh document or a finished load (VS Code may have reset the background); otherwise only a change in
       // state.json touches the window — re-applying the same vibrancy material rebuilds the OS view and flickers.
-      // Returns whether it applied anything (the focus veil then follows the new look).
       var applyWindow = function (win, force) {
         try {
-          if (!win || win.isDestroyed() || !isWorkbench(win)) return false;
+          if (!win || win.isDestroyed() || !isWorkbench(win)) return;
           var st = readState();
           var s = stateOf(win);
           var transparent = !!(st && st.transparent);
           var material = st && /^[a-z-]+$/.test(String(st.material || '')) ? st.material : 'hud';
           var look = (transparent ? 'clear:' + material : 'opaque:' + ((st && st.background) || '#1f1f1f'));
-          if (!force && s.look === look) return false;
+          if (!force && s.look === look) return;
           var changed = s.transparent !== transparent;
           s.transparent = transparent; s.look = look;
           var mac = process.platform === 'darwin' && typeof win.setVibrancy === 'function';
           if (transparent) {
             s.setBackgroundColor(CLEAR);
-            // an unfocused window whose vibrancy is parked (see focusFade) keeps it parked; focus brings the new material
-            if (mac && !s.parked) {
+            if (mac) {
               // 'none' = no vibrancy view at all: the transparent window shows the desktop unblurred and untinted,
               // which is as see-through as a window can be. Any other value is a macOS material.
               if (material === 'none') { try { win.setVibrancy(null); } catch (err) { /* ignore */ } }
@@ -249,51 +240,12 @@ export function hookText(_version?: string): string {
             }
           } else {
             if (mac) { try { win.setVibrancy(null); } catch (err) { /* ignore */ } }
-            s.parked = false;
             s.setBackgroundColor((st && st.background) || '#1f1f1f');
           }
           if (changed && mac && !win.isMaximized() && !win.isFullScreen()) {
             try { var b = win.getBounds(); win.setBounds({ width: b.width + 1 }); win.setBounds({ width: b.width }); } catch (err) { /* recomposite nudge */ }
           }
-          return true;
-        } catch (err) { return false; /* never break VS Code */ }
-      };
-      // Focus. The window keeps its vibrancy view active (creation option above), so losing focus no longer snaps to the
-      // OS's flat inactive fill. Instead the page fades a veil in behind all its content (glass.css, .vs-glass-inactive,
-      // an opacity transition); once that is opaque the vibrancy view is removed — an unfocused window then costs the
-      // window server no live blur at all, cheaper than the OS's own inactive state. Focus restores the view under the
-      // still-opaque veil, and the veil fades out over it. Nothing of this runs without a vibrancy material. It is also
-      // the reconciler after a live change of look (applyAll): it only ever moves the window to the state its focus and
-      // the current material call for.
-      var FADE_MS = 1600;
-      var markInactive = function (win, on) {
-        try {
-          var wc = win.webContents;
-          if (!wc || wc.isDestroyed()) return;
-          var p = wc.executeJavaScript('(function(){var w=document.querySelector(".monaco-workbench");if(w){w.classList.toggle("vs-glass-inactive",' + (on ? 'true' : 'false') + ');}})()', true);
-          if (p && p.catch) p.catch(function () { /* ignore */ });
-        } catch (err) { /* ignore */ }
-      };
-      var focusFade = function (win, unfocused) {
-        try {
-          if (!win || win.isDestroyed() || !isWorkbench(win)) return;
-          var s = stateOf(win);
-          var st = readState();
-          var material = st && /^[a-z-]+$/.test(String(st.material || '')) ? st.material : 'hud';
-          var vibrant = !!(st && st.transparent) && process.platform === 'darwin' && typeof win.setVibrancy === 'function' && material !== 'none';
-          clearTimeout(s.parkT); s.parkT = null;
-          markInactive(win, unfocused && vibrant);
-          // no vibrancy wanted: nothing is parked any more (applyWindow already set the view the look calls for)
-          if (!vibrant) { s.parked = false; return; }
-          if (unfocused) {
-            s.parkT = setTimeout(function () {
-              try { if (!win.isDestroyed() && !win.isFocused()) { win.setVibrancy(null); s.parked = true; } } catch (err) { /* ignore */ }
-            }, FADE_MS);
-          } else if (s.parked) {
-            s.parked = false;
-            try { win.setVibrancy(material); } catch (err) { try { win.setVibrancy('hud'); } catch (err2) { /* ignore */ } }
-          }
-        } catch (err) { /* ignore */ }
+        } catch (err) { /* never break VS Code */ }
       };
       // the sheet goes in once per document and again only when glass.css changed (it is the whole workbench sheet:
       // re-inserting it restyles every element of the window)
@@ -374,7 +326,7 @@ export function hookText(_version?: string): string {
       var claim = function () { if (!owner && BrowserWindow.getAllWindows().length) { owner = true; writeHookJson(); } };
       var writeHookJson = function () {
         var file = path.join(dir, 'hook.json');
-        var body = JSON.stringify({ pid: process.pid, version: 10, sync: true, started: started, webviews: wvSeen.length, webviewUrls: wvSeen });
+        var body = JSON.stringify({ pid: process.pid, version: 11, sync: true, started: started, webviews: wvSeen.length, webviewUrls: wvSeen });
         try { fs.writeFileSync(file, body); }
         catch (err) { try { fs.chmodSync(file, 420); fs.writeFileSync(file, body); } catch (err2) { /* a read-only folder: the extension reports the hook as not running */ } }
       };
@@ -408,7 +360,7 @@ export function hookText(_version?: string): string {
       var applyAll = function (names) {
         if (!names || names['webview.css']) wvCss = null;
         BrowserWindow.getAllWindows().forEach(function (win) {
-          if ((!names || names['state.json']) && applyWindow(win, false)) focusFade(win, !win.isFocused());
+          if (!names || names['state.json']) applyWindow(win, false);
           if (!names || names['glass.css']) applyCss(win, false);
         });
         applyWebviews();
@@ -416,9 +368,7 @@ export function hookText(_version?: string): string {
       var attach = function (win) {
         try {
           var wc = win.webContents;
-          wc.on('dom-ready', function () { applyWindow(win, true); applyCss(win, true); focusFade(win, !win.isFocused()); });
-          win.on('blur', function () { focusFade(win, true); });
-          win.on('focus', function () { focusFade(win, false); });
+          wc.on('dom-ready', function () { applyWindow(win, true); applyCss(win, true); });
           wc.on('did-finish-load', function () { applyWindow(win, true); });
           wc.on('frame-created', function (_e, details) {
             try { var f = details && details.frame; if (f && f.on) f.on('dom-ready', function () { injectFrame(f, true); }); } catch (err) { /* ignore */ }

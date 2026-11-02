@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VS Glass — glass optics for VS Code</title>
-<meta name="description" content="A see-through VS Code: a real refracting lens at every rim, near-clear planes, and on macOS 26 the window itself made of the system's Liquid Glass.">
+<meta name="description" content="A see-through VS Code: frosted floating glass, near-clear planes, and a real refracting lens where the glass is clear.">
 <link rel="icon" href="assets/icon-512.png">
 <link rel="stylesheet" href="assets/demo.css">
 <meta property="og:title" content="VS Glass">
-<meta property="og:description" content="Glass optics for VS Code. A see-through window, a real refracting lens at every rim, and on macOS 26 the window itself made of the system's Liquid Glass.">
+<meta property="og:description" content="Glass optics for VS Code. A see-through window, frosted floating glass, and a real refracting lens where the glass is clear.">
 <meta property="og:image" content="https://miloshampl.github.io/vs-glass/assets/social-preview.png">
 <meta property="og:url" content="https://miloshampl.github.io/vs-glass/">
 <meta name="twitter:card" content="summary_large_image">
@@ -129,12 +129,12 @@
 
 <header>
   <div class="wrap">
-    <span class="badge"><img src="assets/icon-512.png" alt=""> VS Glass 1.3.3</span>
+    <span class="badge"><img src="assets/icon-512.png" alt=""> VS Glass 1.4.0</span>
     <h1>Your editor, made of glass.</h1>
-    <p class="lede">A see-through VS Code with a real refracting lens at every rim — and, on macOS&nbsp;26, a window
-      made of the system's own Liquid Glass, bending whatever is live behind it.</p>
+    <p class="lede">A see-through VS Code: near-clear planes over the desktop, frosted glass where widgets float, and a
+      real refracting lens where the glass is clear.</p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/MilosHampl/vs-glass/releases/latest">Download 1.3.3</a>
+      <a class="btn primary" href="https://github.com/MilosHampl/vs-glass/releases/latest">Download 1.4.0</a>
       <a class="btn" href="https://github.com/MilosHampl/vs-glass">GitHub</a>
       <a class="btn" href="https://github.com/MilosHampl/vs-glass/blob/main/CONTRIBUTING.md">Contribute</a>
       <a class="btn" href="https://github.com/MilosHampl/vs-glass/blob/main/DESIGN.md">How it works</a>
@@ -186,27 +186,15 @@ pick a Glass theme · answer Apply · quit and reopen once</pre>
 
       <div class="card">
         <h3>A generated lens, not a blur</h3>
-        <p>Each surface class gets a displacement map drawn as an SVG image in CSS pixels and fed to an SVG
-          <code>feDisplacementMap</code> inside <code>backdrop-filter</code>, so a rim is the same width and bends the
-          same distance on a tooltip and on a palette. Red, green and blue are displaced by different amounts, so the rim
-          disperses like real glass.</p>
+        <p>Clear glass — the minimap slider, the Claude Code composer — gets a displacement map drawn as an SVG image
+          in CSS pixels and fed to an SVG <code>feDisplacementMap</code> inside <code>backdrop-filter</code>, so a rim
+          is the same width and bends the same distance on any size of surface. Red, green and blue are displaced by
+          different amounts, so the rim disperses like real glass. Floating widgets are frosted instead: a lens over a
+          cloudy body shows neither.</p>
         <div class="mapfig">
           <img src="assets/lens-map.svg" alt="A displacement map: red and green encode the bend toward the centre">
-          <span>The widget class's real map from <code>glass.css</code>: R carries the bend along x, G along y.</span>
+          <span>A real lens map from <code>glass.css</code>: R carries the bend along x, G along y.</span>
         </div>
-      </div>
-
-      <div class="card">
-        <h3>The window itself is glass</h3>
-        <p>A <code>backdrop-filter</code> can never see past its own page. On macOS 26, with Window Material set to
-          <code>liquid-glass</code>, a helper process keeps a real Liquid Glass plane under the window — Apple's own
-          Clear or Regular material, with the rim refraction retuned by the Lens setting — so other windows, video and
-          the desktop frost and bend behind the frame and the gaps between the panes, live.</p>
-        <table class="num">
-          <tr><th>Material</th><td>Apple's Clear or Regular, or a clear plane</td></tr>
-          <tr><th>Rim</th><td>refraction retuned by Lens</td></tr>
-          <tr><th>Colour split</th><td>in-window rims only: chained to the slab, macOS drew no glass at all</td></tr>
-        </table>
       </div>
 
       <div class="card">
@@ -270,7 +258,7 @@ win.webContents.insertCSS(glassCss)
     <p class="muted" style="max-width: 64ch; margin: 0 0 16px;">Download the <code>.vsix</code>, then in VS Code:
       <strong>Extensions</strong> → the <code>…</code> menu → <strong>Install from VSIX…</strong>. Or from a terminal:</p>
     <pre class="cmd"><b>"/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" \
-  --install-extension vs-glass-1.3.3.vsix</b>
+  --install-extension vs-glass-1.4.0.vsix</b>
 the full path matters: a `code` alias that wraps `open` swallows --install-extension</pre>
     <p class="muted" style="margin-top:18px; max-width: 64ch;">Then pick <strong>Glass Regular Dark</strong>,
       <strong>Regular Light</strong>, <strong>Clear</strong> or <strong>Opaque</strong>, answer <strong>Apply</strong>

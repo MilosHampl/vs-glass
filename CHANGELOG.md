@@ -9,6 +9,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.4.0] - 2026-11-02
+
+Frosted glass that keeps up. Quit and reopen VS Code once after the update applies (the window hook changed).
+
+### Changed
+
+- **A surface is frosted or a lens, never both.** Floating widgets — command palette, suggest, hovers, menus,
+  notifications, dialogs, find bars, tooltips — are frosted glass: a blur over a base of the widget colour, with no
+  refracting rim. The lens stays where it can be seen: the minimap slider and the Claude Code composer.
+- **The Claude Code composer is clear, darker glass.** No frost: the conversation stays sharp behind it and bends and
+  fringes at its rim; a dark base (the webview's own plane colour) and a film that follows Widget Density keep what you
+  type readable.
+- **Settings (and every modal editor) carries no backdrop filter.** It is nearly the size of the window, and its
+  filter re-ran over the whole window on every scroll frame. Its body is the widget base as a plain colour.
+- **Window, card and editor rings paint under the content.** Above a scrolling list each was a composited mask layer
+  the size of its pane, redrawn every frame.
+- The sheet every window loads is a third smaller (214 KB → 142 KB). Lens and Aberration now tune the minimap slider
+  and the composer only.
+
+### Removed
+
+- **The Liquid Glass window slab** (`vsGlass.windowMaterial: liquid-glass`, `vsGlass.windowGlassStyle`, the
+  `vs-glass-helper` process). A leftover `liquid-glass` value falls back to `auto` (the system's under-window blur);
+  the update ends a helper still running and deletes its files.
+- **The focus fade** (hook V11). An unfocused window takes macOS's own inactive look again.
+
 ## [1.3.3] - 2026-10-19
 
 ### Fixed
@@ -399,7 +425,8 @@ After updating, quit and reopen VS Code once: the hook in the main process is ne
   key coverage against the full VS Code key inventory), `npm run audit:contrast` (WCAG contrast).
 - Project documentation: README, DESIGN.md, and this CHANGELOG.
 
-[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.3.3...HEAD
+[Unreleased]: https://github.com/MilosHampl/vs-glass/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/MilosHampl/vs-glass/compare/v1.3.3...v1.4.0
 [1.3.3]: https://github.com/MilosHampl/vs-glass/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/MilosHampl/vs-glass/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/MilosHampl/vs-glass/compare/v1.3.0...v1.3.1

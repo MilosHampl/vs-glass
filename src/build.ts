@@ -198,6 +198,15 @@ const lensParams = (p: Palette): LensParams => ({
   blur: p.effects.blur, blurWidget: p.effects.blurWidget, baseRgb: rgbOf(p.planes.widget),
 });
 
+/** The webview sheet's filters: the Clear palette's optics for dark webviews and Regular Light's for light ones, over
+ *  the webview's own plane colour (`--vsgw-plane-rgb` in src/glass/webview.css) — the composer is darker glass than a
+ *  workbench widget. */
+const WEBVIEW_PLANE_RGB = { dark: '14, 18, 26', light: '248, 250, 253' };
+const webviewLensParams = (kind: 'dark' | 'light'): LensParams => ({
+  ...lensParams(palettes.find(p => p.id === (kind === 'dark' ? 'glass-clear' : 'glass-regular-light')) ?? palettes[0]),
+  baseRgb: WEBVIEW_PLANE_RGB[kind],
+});
+
 /** Lens filter variables for the classes the workbench sheet uses. lensMul scales displacement and rim width together
  *  (same slope), aberrationMul scales the chromatic spread. Presets re-emit only these variables. */
 function lensVars(p: Palette, lensMul = 1, aberrationMul = 1, idSuffix = '', classes = WORKBENCH_CLASSES): { vars: Record<string, string>; filtersSvg: string[] } {
@@ -310,7 +319,7 @@ function main() {
   // webview: the dark and light palettes the webview sheet is built from)
   const lensJson = {
     workbench: palettes.filter(p => p.effects.lensScale > 0).map(lensParams),
-    webview: { dark: lensParams(palettes.find(p => p.id === 'glass-clear') ?? palettes[0]), light: lensParams(palettes.find(p => p.id === 'glass-regular-light') ?? palettes[0]) },
+    webview: { dark: webviewLensParams('dark'), light: webviewLensParams('light') },
     presets: {
       lens: Object.fromEntries([['default', 1], ...LENS_PRESETS.map(l => [l.id, l.mul])]),
       aberration: Object.fromEntries([['default', 1], ...ABERRATION_PRESETS.map(a => [a.id, a.mul])]),
@@ -324,11 +333,9 @@ function main() {
   // webviews and Regular Light for light ones. The window hook loads it into every webview frame.
   fs.mkdirSync(path.join(ROOT, 'glass', 'webview'), { recursive: true });
   const wvTemplate = fs.readFileSync(path.join(ROOT, 'src', 'glass', 'webview.css'), 'utf8');
-  const wvDark = palettes.find(p => p.id === 'glass-clear') ?? palettes[0];
-  const wvLight = palettes.find(p => p.id === 'glass-regular-light') ?? palettes[0];
   const wvVars = (lensMul: number, aberrationMul: number, suffix: string): Record<string, string> => {
-    const d = lensVarsFor(lensParams(wvDark), lensMul, aberrationMul, suffix, ['composer']).vars;
-    const l = lensVarsFor(lensParams(wvLight), lensMul, aberrationMul, suffix, ['composer']).vars;
+    const d = lensVarsFor(webviewLensParams('dark'), lensMul, aberrationMul, suffix, ['composer']).vars;
+    const l = lensVarsFor(webviewLensParams('light'), lensMul, aberrationMul, suffix, ['composer']).vars;
     return { LENS_COMPOSER_DARK: d['--vsg-lens-composer'], LENS_COMPOSER_LIGHT: l['--vsg-lens-composer'] };
   };
   const fill = (tpl: string, v: Record<string, string>) => Object.entries(v).reduce((t, [k, val]) => t.replaceAll(`@${k}`, val), tpl);
