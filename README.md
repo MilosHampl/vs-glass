@@ -1,6 +1,6 @@
 # VS Glass
 
-Glass optics for VS Code: a see-through window, refracting edges, a hairline of specular light and near-clear translucent planes. One extension, no companions, every setting live.
+Glass optics for VS Code: a see-through window, frosted floating widgets, a hairline of specular light and near-clear translucent planes, with real refraction where there is clear glass to see it through. One extension, no companions, every setting live.
 
 [![Latest release](https://img.shields.io/github/v/release/MilosHampl/vs-glass)](https://github.com/MilosHampl/vs-glass/releases/latest)
 [![License](https://img.shields.io/github/license/MilosHampl/vs-glass)](LICENSE)
@@ -13,9 +13,11 @@ VS Glass is colourless clear glass, built for a transparent window first. The El
 see-through; the work planes above it — editor, side bars, panel — are sheets of smoked glass with a body you
 choose, floating in a frame (title bar, status bar, the gaps between the panes) that stays almost clear, so what
 you see around and through the code is your desktop through the OS material. Floating widgets (command palette,
-menus, hovers, notifications) have a frosted body that hides what is behind them, and their rims genuinely refract
-the code beneath them: SVG displacement in `backdrop-filter`, with chromatic aberration, like a curved glass edge. There are no painted gradients, sheens, bevels or
-drop shadows under the base planes — a shaded band inside a rim reads as a bevelled window frame, not as glass.
+menus, hovers, notifications) are frosted glass that hides what is behind them. Refraction — SVG displacement in
+`backdrop-filter`, with chromatic aberration, like a curved glass edge — lives on clear glass only, where what it
+bends stays sharp enough to see: the minimap slider and the Claude Code composer. A surface is frosted or a lens,
+never both. There are no painted gradients, sheens, bevels or drop shadows under the base planes — a shaded band
+inside a rim reads as a bevelled window frame, not as glass.
 
 ## How it works
 
@@ -32,37 +34,11 @@ does not checksum). The hook:
 - inserts the glass CSS into each window with Electron's `insertCSS` — VS Code's own stylesheets are never edited;
 - watches `<user-data>/vs-glass/glass.css` and `state.json`, which the extension rewrites whenever a VS Glass
   setting changes, and re-applies them live.
-- fades a window that loses focus to an opaque ground over 1.4 s, instead of letting macOS snap its vibrancy to the flat
-  inactive fill, and then switches that window's live blur off (an unfocused window costs the window server nothing).
+
+A window that loses focus takes macOS's own inactive look, as any vibrant window does.
 
 So after one quit-and-reopen, Density, Tint, Material, Lens and Aberration change the window as you type in
 Settings. `VS Glass: Remove` restores `main.js` (and `mainImpl.js`) byte-exact and deletes the folder.
-
-### The window itself as glass (macOS 26)
-
-> **Opt-in since 1.2.3; working since 1.3.0.** Before 1.3.0 the slab drew nothing at all unless Aberration was `off`
-> (the aberration stage chained to the system glass switched the glass off). **Opt-in:** The slab can only show what is actually behind the window, and it needs the OS blur switched
-> off to be seen. Over a plain or smooth wallpaper that trades a guaranteed readable blur for an effect that does not
-> appear — which is why `auto` is `under-window` vibrancy and the slab is `vsGlass.windowMaterial: liquid-glass` by
-> name. It is at its best with a busy desktop, video or other windows behind a zoomed (not native full-screen) window.
-
-Everything above bends what is *inside* the window: a `backdrop-filter` can only sample its own page, never the
-windows or video behind it — the compositor draws those later. On macOS 26 the OS's own Liquid Glass can, so VS Glass
-ships a second, tiny piece: `bin/vs-glass-helper` (a 300 KB native process) keeps a real Liquid Glass window —
-transparent, click-through, shadowless — directly under every VS Code window, ordered just below it and tracked from
-the window list (120 Hz while the window moves, 20 Hz at rest, at once when an app is activated). Its body is Apple's
-own Clear or Regular material (or, with the `clear-plane` style, a pixel-exact pass-through), and `Lens` retunes the
-refraction at its rim: other windows, video and the desktop frost and bend behind the frame and the gaps between the
-panes. Nothing is screen-captured; the compositor does it. The slab carries no chromatic aberration: chained to the
-system glass, the aberration stage made macOS draw no glass at all (measured with the helper under a stand-in
-window), so the colour fringe stays in the in-window rims.
-
-It is a separate process because VS Code's main process runs with library validation, so no extension can load
-native code into it. It exits with VS Code, and whenever Window Material is anything else; `VS Glass: Remove` stops
-it. Limits: macOS 26 or newer (elsewhere `auto` resolves to `hud`); the slab follows a fast drag with up to a frame
-of lag; fullscreen windows are skipped; under the dense work planes the slab shows mostly in the frame. The tuning uses CoreAnimation's undocumented filter keys — the same ones AppKit sets — so if a future macOS
-drops them the helper exits and the window stays see-through with no material. DESIGN.md §5.2 has the anatomy and
-the measurements.
 
 ## Settings
 
@@ -72,13 +48,12 @@ Everything is a normal VS Code setting (⌘, then search **VS Glass**). Every ch
 |---|---|
 | **Effects** | The glass effects and, on macOS, the see-through window. Off restores plain VS Code (the hook is removed on the next Apply). |
 | **Window Transparency** | `auto` (macOS: on), `on`, `off`. |
-| **Window Material** | `auto` (default) is the system's `under-window` vibrancy: macOS blurs the desktop behind the window, which is what keeps code readable over any wallpaper. `liquid-glass` (macOS 26 or newer) instead puts a Liquid Glass slab under the window and switches that blur **off** — it only looks like glass where there is real content behind the window to refract; over a plain wallpaper it reads as a clear window. See [The window itself as glass](#the-window-itself-as-glass-macos-26). `none` turns both off; the other values are macOS vibrancy materials. |
-| **Window Glass Style** | With Window Material on `liquid-glass` (macOS 26): what the slab is made of. `apple-clear` (default) and `apple-regular` are the OS's own Clear and Regular materials; `frosted` is Regular's face under a much deeper blur, for a slab that stays readable over anything; `clear-plane` is a pixel-exact pass-through where only the rim bends. Over a plain wallpaper they all look alike — there is nothing behind the window for a material to show. |
+| **Window Material** | `auto` (default) is the system's `under-window` vibrancy: macOS blurs the desktop behind the window, which is what keeps code readable over any wallpaper. `none` turns the blur off (the desktop shows unblurred); the other values are macOS vibrancy materials. |
 | **Density** (0 to 200) | How dense the work planes are — the editor card, the side bars, the panel, the activity bar. 0 is absolutely clear: only rims and text. 100 is the tuned default (Regular Dark: editor 30 %, side panes 26 %). 200 is opaque. The frame (title bar, status bar, the gaps between the panes) stays near-clear at every value. |
-| **Widget Density** (0 to 200) | The body of floating widgets (command palette, hovers, suggestions, notifications, dialogs, modal editors such as Settings). Their frost always hides what is behind them (a base inside the lens filter); this moves the film on top and, gently, the base. |
+| **Widget Density** (0 to 200) | How dense and dark the floating widgets are (command palette, hovers, suggestions, notifications, dialogs, modal editors such as Settings) and the Claude Code composer. Their frost always hides what is behind them (a base inside the frost filter); this moves the film on top and, gently, the base. |
 | **Tint** | `none` (colourless, default) or a thin coloured film: `graphite`, `blue`, `indigo`, `violet`, `teal`, `mint`, `rose`, `amber`. |
-| **Lens** | `soft`, `default`, `strong`, `extreme`: how far the rims bend what is behind them (`extreme` turns every rim into a magnifier; displacement and rim width scale together, so nothing folds). |
-| **Aberration** | `off`, `subtle`, `default`, `strong`, `extreme`: red-to-blue fringing at the rims, like a curved glass edge (`extreme` is a prism). Lens and Aberration combine. |
+| **Lens** | `soft`, `default`, `strong`, `extreme`: how far the lens surfaces — the minimap slider and the Claude Code composer — bend what is behind them (`extreme` turns them into magnifiers; displacement and rim width scale together, so nothing folds). |
+| **Aberration** | `off`, `subtle`, `default`, `strong`, `extreme`: red-to-blue fringing on the lens surfaces, like a curved glass edge (`extreme` is a prism). Lens and Aberration combine. |
 | **Wallpaper** | `auto` paints a neutral smoke backdrop only when the window is not see-through (an opaque window still gets rims with something to bend). |
 | **Auto Apply** | Re-apply on every settings change (default). Off means you run **VS Glass: Apply** yourself. |
 
@@ -93,8 +68,8 @@ are removed with the effects.
 Webviews are separate documents, so the workbench stylesheet cannot reach into them. The window hook therefore adopts a
 second sheet, `glass/webview.css`, into every webview frame — as a constructed stylesheet, which a webview's Content
 Security Policy does not govern. It styles only surfaces it recognises: today that is the **Claude Code** chat, whose
-composer becomes a frosted plate with a refracting, colour-fringed rim — the conversation softens behind what you type
-and bends at the edge as it scrolls under — and whose messages are the same pill as a selected tab. Lens, Aberration
+composer becomes clear, darker glass with a refracting, colour-fringed rim — the conversation stays sharp behind
+what you type and bends at the edge as it scrolls under — and whose messages are the same pill as a selected tab. Lens, Aberration
 and Widget Density apply to it too. The sheet is written once the hook in this window is current (quit and reopen
 after updating).
 
@@ -125,8 +100,8 @@ completeness, not tuned for the transparent window, and isn't a headline variant
 
 ### Layer 1 alone vs. Layer 1 + 2
 
-The command palette floating over code is where the refraction actually reads: a frosted body, a clear
-refracted rim, and a chromatic edge where the backdrop bends.
+The command palette floating over code, Layer 1 alone and with the glass layer. (These captures predate 1.4.0,
+where floating widgets became plain frosted glass without a refracting rim.)
 
 | Layer 1 only | Layer 1 + 2 |
 |---|---|
@@ -142,16 +117,17 @@ refracted rim, and a chromatic edge where the backdrop bends.
   beneath it — the one place where glass slides over rendered content. The minimap is its own backdrop root, so the
   slider sees only the overview and not the pane behind it. Set `"editor.minimap.showSlider": "always"` to keep it
   on the overview instead of only on hover.
-- A lensing rim on every floating element — command palette, menus, hovers, suggest, notifications, dialogs,
-  modal editors, the find bar, tooltips. The backdrop is genuinely displaced (SVG `feDisplacementMap` in
-  `backdrop-filter`, the map drawn in CSS pixels so a rim is the same width on any size of surface), with
-  red-to-blue fringing at the edge. A base inside the filter hides the original under the glass, so the bend and the
-  frost never sit on a second, sharp copy of what is behind. The base panes (side bars,
-  panel, bars) carry no filter over the see-through window: nothing in-page sits behind them to bend, and a
-  filter over a see-through region only re-samples stale pixels. In wallpaper mode, where the in-page smoke is a
-  real backdrop, their rims refract too.
-- Edges are a rim hairline — the liquid-glass border, a masked 1 px ring — and nothing else: the lens draws no light
-  of its own. No drop shadows anywhere, no bevel bands, no sheens.
+- Frosted glass on every floating element — command palette, menus, hovers, suggest, notifications, dialogs,
+  the find bar, tooltips: a blur over a base of the widget colour inside one small SVG filter. The base hides the
+  original under the glass, so the frost never sits on a second, sharp copy of what is behind. Modal editors
+  (Settings) are the size of the window, so they carry no filter at all — the same base as a plain colour.
+- Real refraction on the clear glass: the minimap slider and the Claude Code composer displace their backdrop
+  (SVG `feDisplacementMap` in `backdrop-filter`, the map drawn in CSS pixels so a rim is the same width on any size
+  of surface), with red-to-blue fringing at the edge. The base panes (side bars, panel, bars) carry no filter over
+  the see-through window: nothing in-page sits behind them to bend, and a filter over a see-through region only
+  re-samples stale pixels. In wallpaper mode they are frosted.
+- Edges are a rim hairline — a masked 1 px gradient ring, painted under the pane's content — and nothing else:
+  the lens draws no light of its own. No drop shadows anywhere, no bevel bands, no sheens.
 - Widgets hide what is behind them (their frost sits on a base of about 93 %), so menus and modals stay readable
   whatever the base density.
 - Small controls (activity-bar and status-bar pills, secondary buttons, the active tab, sticky scroll) are
@@ -191,7 +167,7 @@ VS Glass is one extension and needs nothing else: no Vibrancy Continued, no Cust
 - *No "VS Glass" in the Extensions view* — the install did not run. See the `type code` note above, or use the
   Install from VSIX menu.
 - *Installed, but no prompt* — the prompt only appears while one of the four Glass themes is active. Run
-  **VS Glass: Status** from the Command Palette; it reports the hook, the CSS and the window slab in one message.
+  **VS Glass: Status** from the Command Palette; it reports the hook, the CSS and the settings in one message.
 - *Applied, but the window is still opaque* — quit VS Code fully (⌘Q) rather than reloading the window, and check
   that no other window patcher (Vibrancy Continued, Custom CSS and JS Loader) is still patched in: both write to the
   same startup file and fight over the window. VS Glass refuses to patch on top of Vibrancy Continued and says so.
@@ -273,8 +249,8 @@ Materials). Layer 1 = the color theme; Layer 2 = the injected CSS.
 
 | # | Optic | Status | Layer | Notes |
 |---|---|---|---|---|
-| 1 | Lensing / refraction | Reproduced | 2 | SVG `feDisplacementMap` in `backdrop-filter`, the map drawn in CSS pixels: frosted body, refracting rim, chromatic aberration; `lens`/`aberration` settings retune the strength. Reads wherever glass overlaps in-page content — every widget over code, the minimap slider over the overview, the Claude Code composer over the conversation — and, in wallpaper mode, the neutral smoke behind every card. Refracting what's actually behind the window (the desktop, another window, a playing video) is impossible from CSS; see the limitations note below. With `liquid-glass` (macOS 26) Apple's material under the window frosts and refracts what is genuinely behind it — other apps, video, the desktop — through the OS compositor. |
-| 2 | Specular edge highlight | Reproduced | 2 | A masked 1 px gradient ring, bright at the top-left and bottom-right corners. The lens filters draw no light of their own (owner's direction: the shape comes from the bend and the fringe). Static: Apple's moves with device motion. |
+| 1 | Lensing / refraction | Reproduced | 2 | SVG `feDisplacementMap` in `backdrop-filter`, the map drawn in CSS pixels: a clear body, a refracting rim, chromatic aberration; `lens`/`aberration` settings retune the strength. On clear glass only — the minimap slider over the overview and the Claude Code composer over the conversation; floating widgets are frosted instead (1.4.0: a bent rim over a cloudy body showed neither clearly, and cost frames). Refracting what's actually behind the window (the desktop, another window, a playing video) is impossible from CSS; see the limitations note below. |
+| 2 | Specular edge highlight | Reproduced | 2 | A masked 1 px gradient ring, bright at the top-left and bottom-right corners, painted under each pane's content. The lens filters draw no light of their own (owner's direction: the shape comes from the bend and the fringe). Static: Apple's moves with device motion. |
 | 3 | Material thickness | Approximated | 2 | A rim hairline and, above all, the optic: the rim bends and disperses what is behind it. No drop shadows anywhere (1.2.0). Not content-aware the way Apple's is. |
 | 4 | Vibrancy | Approximated | 1 + 2 | Four alpha label tiers plus `saturate()` and `mix-blend-mode: plus-lighter` on chrome text. No true per-pixel colour sampling of what's behind each glyph. |
 | 5 | Floating layered panes | Reproduced | 1 + 2 | VS Code's modern floating layout; the cards are smoked panes with a rim light in a near-clear frame. Degrades to flush seams without `workbench.experimental.modernUI`. |

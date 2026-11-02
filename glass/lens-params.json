@@ -36,7 +36,7 @@
       "aberration": 2.9,
       "blur": 6,
       "blurWidget": 16,
-      "baseRgb": "45, 51, 61"
+      "baseRgb": "14, 18, 26"
     },
     "light": {
       "id": "glass-regular-light",
@@ -45,7 +45,7 @@
       "aberration": 1.9,
       "blur": 16,
       "blurWidget": 24,
-      "baseRgb": "241, 245, 254"
+      "baseRgb": "248, 250, 253"
     }
   },
   "presets": {

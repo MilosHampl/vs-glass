@@ -378,3 +378,33 @@ fresh apply, idempotent re-apply, Remove, the upgrade from their 1.3.2 state (on
 uninstall hook with an old paths file — all byte-exact; patched files pass `node --check`. Verify step 6 passes on
 1.141 (splice in mainImpl.js) and 1.137 (splice in main.js). Not run as a real window. The layout warning now shows
 once per VS Code version.
+
+## 1.4.0 — frosted glass that keeps up (2026-11-02)
+
+Owner, on an M3 Pro: "extremely laggy … just opening settings of the plugin feels like a chore. rm any vs glass under
+window plane, make it just pretty transparency/frosted glass plugin, leave the refraction/chroma aberration effects on
+some elements tho. i dont really like the combination of lensing effect and cloudy glass (especially on the claude input
+— make it transparent, just darker, so i can see the effects clearly)"; then "the effect of fade in out is horrible,
+remove entirely, revert to original"; "when done, publish it and update". Before this, their live settings were tuned
+with them: `windowMaterial: under-window`, `density: 60`, `widgetDensity: 140` (from liquid-glass / 10 / 65).
+
+- Frost XOR lens (`src/ext/lens.ts`): new `frost` kind (blur + flood base + composite). `widget` and `pane` are frost;
+  `menu`/`bar`/`tip` removed (their rules in glass.css went too). Lens classes left: `slider` (dome) and `composer`
+  (rim, blur 0, base 0.82, base colour = the webview plane `14, 18, 26` / `248, 250, 253` via `webviewLensParams` in
+  build.ts). Composer film in webview.css darker (0.12 + 0.14·density).
+- Modal editors (Settings): no backdrop filter; body = tint + widget film + `--vsg-widget-base` (the frost base as a
+  plain colour, `clamp(0, 1 − 0.07·(1.6 − 0.6·d), 0.99)`, matches `baseAt(0.93, d)`).
+- Rings under content: window `::before` z 100000 → −1 (inside the isolated workbench), card `::before` 100 → −1 with
+  the card film `::after` → −2, editor card `::before` 50 → −1 with `isolation: isolate` on the card. Widget rings left
+  as they were (small, already their own surface).
+- Hook V11: no `visualEffectState`, no blur/focus handlers, no parking; glass.css lost the veil and `--vsg-focus-fade`.
+  Round-tripped in memory against the owner's installed 1.141 files (read-only): pristine → V11 byte-exact strip,
+  installed V10 → V11 rewrites main.js only, parses.
+- Window slab removed: `src/ext/windowGlass.ts`, `bin/`, `native/`, `scripts/build-helper.sh`, the CI helper job, the
+  verify-release helper checks, `windowGlassStyle`, `liquid-glass` from the material enum (a leftover value → `auto`).
+  `retireWindowSlab()` (activate + Remove) SIGTERMs a helper still running (pid file + `ps` comm check) and deletes
+  `window-glass.{json,pid,lock,log}`. `scripts/uninstall.sh` still pkills a stray helper.
+- Sheet 214 → 142 KB. Computed styles checked in headless Chrome (frost-only widgets, modal filter none + 0.93 body,
+  rings at −1). Not measured on a real window (no screen tests on the owner's machine).
+- Site: copy updated (no slab card; lens = clear glass). `docs/assets/sync.sh` still lifts the 1.3 widget lens for the
+  live demo and the lens figure — repoint it at the composer before the next site rebuild.

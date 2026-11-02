@@ -24,4 +24,3 @@ src/**
 tsconfig.json
 tsconfig.extension.json
 .vs-glass-paths.json
-native/**

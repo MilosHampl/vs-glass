@@ -20,7 +20,7 @@
 #                                               restore its own copy of main.js over the VS Glass hook)
 #   6. ~/.vscode/extensions/                  — VS Glass installed with VS Code's own CLI
 #   7. your user settings.json                — workbench.colorTheme set to a Glass theme (nothing else touched)
-#   8. <user-data>/vs-glass/                  — glass.css, state.json and window-glass.json written up front, so the
+#   8. <user-data>/vs-glass/                  — glass.css and state.json written up front, so the
 #                                               very first window after the restart is already glass
 #
 # `bash scripts/uninstall.sh` reverses all of it. Quit VS Code fully (⌘Q) and reopen once when this finishes.
@@ -172,7 +172,7 @@ fi
 # ---- 5. the hook and the state, so the first window is already glass ---------------------------------------------------
 say "Applying the VS Glass hook to out/main.js"
 if [ "$DRY" = 1 ]; then
-  warn "would write the hook block and <user-data>/vs-glass/{glass.css,state.json,window-glass.json}"
+  warn "would write the hook block and <user-data>/vs-glass/{glass.css,state.json}"
 else
   node -e "
 const fs = require('fs'), path = require('path');
@@ -194,9 +194,8 @@ const css = fs.readFileSync('$REPO/glass/glass.css', 'utf8')
   + '\n/* VS Glass settings (vsGlass.density, vsGlass.widgetDensity) */\n'
   + '.monaco-workbench[class*=\"-vs-glass-themes-glass-\"]:not([class*=\"glass-opaque\"]):not(.vs-glass-off) {\n  --vsg-density: 1.000;\n  --vsg-widget-density: 1.000;\n}\n';
 fs.writeFileSync(path.join(dir, 'glass.css'), css);
-fs.writeFileSync(path.join(dir, 'state.json'), JSON.stringify({ transparent: true, material: 'none', background: '#1f1f1f', version }, null, 2) + '\n');
-fs.writeFileSync(path.join(dir, 'window-glass.json'), JSON.stringify({ enabled: process.platform === 'darwin', radius: 20, margin: 40, refraction: -60, refractionHeight: 20, chroma: 1.5, chromaBand: 12, chromaLevels: 1 }, null, 2) + '\n');
-console.log('    ok   wrote ' + dir + '/{glass.css,state.json,window-glass.json}');
+fs.writeFileSync(path.join(dir, 'state.json'), JSON.stringify({ transparent: true, material: 'under-window', background: '#1f1f1f', version }, null, 2) + '\n');
+console.log('    ok   wrote ' + dir + '/{glass.css,state.json}');
 "
 fi
 

@@ -2,7 +2,7 @@
   "name": "vs-glass",
   "displayName": "VS Glass",
   "description": "Glass optics for VS Code: a see-through window, refracting edges, specular rims and layered translucent planes, with density, tint, lens and aberration settings.",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "publisher": "MilosHampl",
   "author": {
     "name": "Milos Hampl"
@@ -113,7 +113,6 @@
           "type": "string",
           "enum": [
             "auto",
-            "liquid-glass",
             "none",
             "hud",
             "fullscreen-ui",
@@ -137,25 +136,7 @@
           ],
           "default": "auto",
           "order": 2,
-          "markdownDescription": "The macOS material behind the see-through window. `auto` (recommended) uses the system's `under-window` vibrancy: the window server blurs the desktop behind the window, which is what keeps code readable over any wallpaper.\n\n`liquid-glass` instead puts a macOS 26 Liquid Glass slab under the window and switches the vibrancy blur **off**, so the window shows the desktop unblurred. It only looks like glass where there is real content behind the window to refract — over a plain or smooth wallpaper it reads as a plain transparent window. `none` turns off both. Applies live."
-        },
-        "vsGlass.windowGlassStyle": {
-          "type": "string",
-          "enum": [
-            "apple-clear",
-            "apple-regular",
-            "frosted",
-            "clear-plane"
-          ],
-          "default": "apple-clear",
-          "order": 2,
-          "enumDescriptions": [
-            "Apple's Clear material as the system draws it: a light frost with the OS's own rim refraction — what the rest of macOS 26 looks like over the desktop.",
-            "Apple's Regular material: a heavier, darker frost, the standard glass of macOS 26 toolbars and sidebars.",
-            "A deep frost under Apple's Regular face: whatever is behind the window dissolves into soft colour, so code stays readable over anything, while the rim still bends the edge.",
-            "A pixel-exact pass-through: nothing of the OS material in the body, only the rim bends what is behind the window's edge."
-          ],
-          "markdownDescription": "With `#vsGlass.windowMaterial#` on `liquid-glass` (macOS 26 or newer): what the body of the system glass under the window is made of. `apple-clear` (default) and `apple-regular` are the OS's own two materials, retuned only at the rim by `#vsGlass.lens#` (the slab carries no chromatic aberration: chained to the system glass, macOS drew no glass at all — `#vsGlass.aberration#` applies to the in-window rims). `clear-plane` removes Apple's blur and face tint entirely, so the window is a clear sheet whose edge alone refracts. A material can only show what is behind it: over a plain dark wallpaper all three read as a translucent sheet that differs only in brightness, and on a window that fills the screen the refracting edge sits on the screen border with nothing beyond it. The slab shows through the frame and the gaps between the panes; un-zoom the window over other windows or a detailed wallpaper, and lower `#vsGlass.density#` to see it through the panes as well. Applies live."
+          "markdownDescription": "The macOS material behind the see-through window. `auto` (recommended) uses the system's `under-window` vibrancy: the window server blurs the desktop behind the window, which is what keeps code readable over any wallpaper. `none` turns the blur off, so the window shows the desktop unblurred. Applies live."
         },
         "vsGlass.density": {
           "type": "number",
@@ -171,7 +152,7 @@
           "minimum": 0,
           "maximum": 200,
           "order": 4,
-          "markdownDescription": "How frosted the floating widgets are (command palette, hovers, menus, notifications, dialogs), in percent. They keep a readable floor whatever the base density. Applies live."
+          "markdownDescription": "How dense and dark the floating widgets are (command palette, hovers, menus, notifications, dialogs, the Settings page) and the Claude Code composer, in percent. They keep a readable floor whatever the base density. Applies live."
         },
         "vsGlass.tint": {
           "type": "string",
@@ -200,7 +181,7 @@
           ],
           "default": "default",
           "order": 6,
-          "markdownDescription": "How far the rims bend what is behind them (displacement and rim width scale together, so nothing folds). `extreme` turns every rim into a magnifier. Applies live."
+          "markdownDescription": "How far the lens surfaces bend what is behind them — the minimap slider and the Claude Code composer (displacement and rim width scale together, so nothing folds). `extreme` turns them into magnifiers. Floating widgets are frosted glass and do not bend. Applies live."
         },
         "vsGlass.aberration": {
           "type": "string",
@@ -213,7 +194,7 @@
           ],
           "default": "default",
           "order": 7,
-          "markdownDescription": "Chromatic aberration at the in-window rims: red-to-blue fringing like a curved glass edge. `extreme` is a prism. (The Liquid Glass window slab carries none.) Applies live."
+          "markdownDescription": "Chromatic aberration on the lens surfaces (the minimap slider and the Claude Code composer): red-to-blue fringing like a curved glass edge. `extreme` is a prism. Applies live."
         },
         "vsGlass.wallpaper": {
           "type": "string",
