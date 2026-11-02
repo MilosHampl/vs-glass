@@ -218,7 +218,10 @@ export function filterSvg(id: string, cls: LensClass, v: LensValues): string {
       v.blur > 0 ? `<feGaussianBlur in='SourceGraphic' stdDeviation='${num(v.blur)}' result='frost'/>` : `<feOffset in='SourceGraphic' result='frost'/>`,
       `<feGaussianBlur in='lens' stdDeviation='0.35' result='lensSoft'/>`,
       `<feComposite in='lensSoft' in2='rimA' operator='in' result='rim'/>`,
-      `<feComposite in='rim' in2='frost' operator='over'${v.base > 0 ? ` result='glass'` : ''}/>`,
+      // the body is cut out where the rim is (complementary weights, then added): laid under the rim instead, an
+      // unblurred body showed every stroke twice in the band — once where it is, once where the rim bent it to
+      `<feComposite in='frost' in2='rimA' operator='out' result='body'/>`,
+      `<feComposite in='rim' in2='body' operator='arithmetic' k1='0' k2='1' k3='1' k4='0'${v.base > 0 ? ` result='glass'` : ''}/>`,
     );
     if (v.base > 0) out.push(
       `<feFlood flood-color='rgb(${v.baseRgb})' flood-opacity='${num(Math.min(1, v.base))}' result='base'/>`,
