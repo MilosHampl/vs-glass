@@ -855,6 +855,9 @@ vibrancy view at all, which costs the window server less than the OS's own inact
 blurs, as before.
 Every live change of look (state.json) runs the same reconciler, so the veil and the parked view always match the
 current material and focus (V10); an opaque window gets `visualEffectState: 'active'` too, for glass switched on later.
+The main process keeps the hook it started with, so the first launch after an update to 1.4 still ran V10 and parked
+unfocused windows with no veil in the sheet — bare desktop. While the live hook is V9 or V10, the extension appends the
+veil without its transition (1.4.1); once V11 is live the sheet is rewritten without it.
 
 **VS Code 1.141: the main process moved to `out/mainImpl.js` (1.3.3).** `out/main.js` became a 100 KB
 bootstrap that ends in `await import("./mainImpl.js")`; the window options went with the rest of the main process,

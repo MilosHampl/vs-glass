@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [1.4.1] - 2026-11-02
+
+### Fixed
+
+- **Unfocused windows turned fully see-through after updating from 1.3.x.** VS Code's main process keeps the window hook
+  it started with, so the first launch after the update still ran the 1.3 hook, which removes an unfocused window's blur
+  under a veil the 1.4 sheet no longer carries: the bare desktop showed through until a second restart. While that hook
+  runs, the sheet now covers an unfocused window at once, the way macOS's own inactive look does; after the next quit and
+  reopen it is dropped.
+
 ## [1.4.0] - 2026-11-02
 
 Frosted glass that keeps up. Quit and reopen VS Code once after the update applies (the window hook changed).
